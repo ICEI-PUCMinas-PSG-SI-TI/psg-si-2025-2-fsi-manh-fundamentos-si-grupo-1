@@ -1,24 +1,22 @@
 cff-version: 1.0.1
-message: Sistema para planejamento de viagens
-title: Mochileiros
+title: Nome ainda não definido
+message: Projeto de Extensão - Fundamento de Sistemas de Informação
 authors:
-  - family-names: Ortega Acerbi
-    given-names: Ariel
-  - family-names: Gontijo de Castro
-    given-names: Isabela 
-  - family-names: Ferreira Amorim 
-    given-names: Pedro Henrique
-  - family-names: Rodrigues Silva de Oliveira
-    given-names: Thiago    
+  - family-names: 
+    given-names: Bruno Marinho da Silva
+  - family-names: 
+    given-names: Lucas Loiolla Gomes 
+  - family-names:  
+    given-names: Marcelo Antonino Soares Juscelino
+  - family-names: 
+    given-names: Mateus Junior Silva Santana    
   - name-suffix: Professor
     affiliation: PUC Minas
-    family-names: Nunes Bezerra
-    given-names: Sinaide
+    family-names: Padilha
+    given-names: Juliana
 keywords:
-  - viagens
-  - mochileiros
-  - gastos
-repository-code: https://github.com/ICEI-PUCMinas-PSG-SI-TI/PSG-SI-2025-1-P5-TIAS-6428101-mochileiros
+  - extensão
+repository-code: https://raw.githubusercontent.com/ICEI-PUCMinas-PSG-SI-TI/psg-si-2025-2-fsi-manh-fundamentos-si-grupo-1
 license: CC-BY-4.0
 version: 1.0.0
-date-released: 2024-06-26
+date-released: 1970-01-01

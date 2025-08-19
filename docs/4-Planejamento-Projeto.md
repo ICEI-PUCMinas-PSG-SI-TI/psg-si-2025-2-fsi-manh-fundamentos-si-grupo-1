@@ -4,7 +4,7 @@ Esta seção apresenta como o grupo organizou o trabalho ao longo do semestre, c
 
 ---
 
-## 4.2 Sprints do Projeto 
+## 4.2 Sprints do Projeto
 
 O projeto será realizado em **4 sprints**, cada uma com foco específico:
 
