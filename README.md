@@ -10,8 +10,10 @@
 ## Participantes
 
 Os membros do grupo são: 
-- Fulano da Silva
-- Ciclano Albuquerque
+- Bruno Marinho da Silva
+- Lucas Loiolla Gomes
+- Marcelo Antonino Soares Juscelino
+- Mateus Junior Silva Santana
 
 > Inclua a lista dos membros da equipe com seus nomes completos.
 
