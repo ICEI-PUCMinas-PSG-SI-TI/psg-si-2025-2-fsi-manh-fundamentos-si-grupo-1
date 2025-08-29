@@ -10,7 +10,7 @@ A proposta será conduzida com base na metodologia ágil Scrum, incentivando a c
 
 ## 1.2 Coleta de Informações com o Cliente
 
-Nesta etapa, os alunos deverão realizar uma entrevista com o responsável pela empresa ou organização parceira para levantar informações sobre o contexto atual, identificar problemas e entender as expectativas em relação à solução tecnológica. 
+Nesta etapa, os alunos deverão realizar uma entrevista com o responsável pela empresa ou organização parceira para levantar informações sobre o contexto atual, identificar problemas e entender as expectativas em relação à solução tecnológica.
 
 O roteiro abaixo deve ser utilizado como base para a conversa. As perguntas devem ser respondidas de forma clara e completa, com base no que for dito pelo entrevistado. Caso necessário, os alunos podem complementar com perguntas adicionais.
 
@@ -24,7 +24,7 @@ A etapa de entrevista é fundamental para identificar as reais necessidades da e
 
 ### 1.4 Roteiro da Entrevista
 
-_(Caso os alunos identifiquem a necessidade de incluir novas perguntas, podem fazê-lo.)_
+Caso os alunos identifiquem a necessidade de incluir novas perguntas, podem fazê-lo.
 
 ---
 
@@ -61,6 +61,9 @@ _Resposta:_
 
 ### 4. Dores e Dificuldades
 
+**Atualmente, os funcionários possuem dificuldades com os sistemas implementados? Quais?**
+_Resposta:_
+
 **Quais tarefas consomem mais tempo ou causam retrabalho?**  
 _Resposta:_  
 
@@ -81,36 +84,31 @@ _Resposta:_
 
 ### 6. Análise e Validação
 
-_Após a realização da entrevista, as informações serão analisadas para identificar padrões, gargalos e oportunidades de melhoria. Com base nisso, os alunos deverão elaborar uma proposta de solução tecnológica que será validada com o cliente antes de ser desenvolvida._ 
-
+_Após a realização da entrevista, as informações serão analisadas para identificar padrões, gargalos e oportunidades de melhoria. Com base nisso, os alunos deverão elaborar uma proposta de solução tecnológica que será validada com o cliente antes de ser desenvolvida._
 
 > Roteiro para ajudar na escrita do texto referente a proposta de sistema que será desenvolvida. Descreva de forma clara:
+>
 > - Qual problema será resolvido
 > - Qual será a principal funcionalidade do sistema
 > - Quem será o usuário principal
 > - Qual impacto esperado para a empresa/parceiro
 
 ---
-## _✏️Coloque aqui o SEU TEXTO_ 
 
+## _✏️Coloque aqui o SEU TEXTO_
 
 ---
   
-> ### _🧩Exemplo de estrutura de resposta esperada para a Seção 6. Análise e Validação:🧩_  
+> ### _🧩Exemplo de estrutura de resposta esperada para a Seção 6. Análise e Validação:🧩_
+>
 > **Sistema web para controle de estoque de hortifruti**, voltado para o responsável pelo gerenciamento dos produtos no estabelecimento. O sistema permitirá:  
-> 
+>
 > - Registrar entradas e saídas de produtos do estoque  
 > - Controlar validade dos alimentos (com alertas de vencimento)  
 > - Monitorar perdas (produtos danificados ou vencidos)  
 > - Gerar relatórios simples sobre produtos mais vendidos e perdas recorrentes  
 > - Consultar o estoque em tempo real, mesmo durante o atendimento ao cliente  
-> 
+>
 > O objetivo é substituir os controles feitos em papel ou planilhas, que geram retrabalho, dificultam o acompanhamento e favorecem erros.  
-> 
+>
 > A expectativa é melhorar a organização, reduzir perdas, evitar desperdícios e facilitar a tomada de decisões sobre compras e reposições de forma mais rápida e precisa.
-
-
-
-
-
-
