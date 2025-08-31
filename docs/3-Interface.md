@@ -1,7 +1,7 @@
 
 # 3. Projeto de Interface
 
-**Pré-requisitos:** <a href="2-Especificação.md"> Documentação de Especificação</a>
+**Pré-requisitos:** [Documentação de Especificação](2-Especificação.md)
 
 Nesta seção, apresente as principais telas da plataforma e explique como a interface foi elaborada para atender aos requisitos funcionais, requisitos não funcionais e histórias de usuário definidos na Especificação do Projeto.
 
@@ -12,6 +12,7 @@ Nesta seção, apresente as principais telas da plataforma e explique como a int
 Wireframes são protótipos simples que representam a estrutura e o layout básico de um site ou aplicação web, destacando os elementos essenciais da interface e a organização das páginas.
 
 ### Exemplo de Wireframes
+
 🗑️ _[Esta seção deve ser apagada e substituída pelos seus exemplos de wireframes ou mockups]_
 
 ![Exemplo de Wireframe](images/wireframe-example.png)
@@ -36,15 +37,20 @@ Wireframes são protótipos simples que representam a estrutura e o layout bási
 - Considerações sobre usabilidade, feedback ao usuário, etc.  
 - (Imagem)
 
-### Tela 4 – [colocar o nome] 
+### Tela 4 – [colocar o nome]
 
-### Tela x – [colocar o nome] 
+### Tela x – [colocar o nome]
+
+## Fluxo de Usuário (User Flow)
+
+O fluxo de usuário (User Flow) é uma técnica que permite ao desenvolvedor mapear todo fluxo de telas do site ou app.
+
+![Exemplo de Fluxo](images/userflow.jpg)
 
 ...
 
- 
 > **Links Úteis**:
+>
 > - [Ferramentas de Wireframes](https://rockcontent.com/blog/wireframes/)
 > - [MarvelApp](https://marvelapp.com/developers/documentation/tutorials/)
 > - [Balsamiq](https://balsamiq.com/)
-

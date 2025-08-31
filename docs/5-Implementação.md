@@ -1,8 +1,7 @@
 # 5. Projeto da Solução
 
-<span style="color:red">Pré-requisitos: <a href="4-Gestão-Configuração.md"> Planejamento do Projeto</a></span>
-
-
+<span style="color:red">Pré-requisitos:</span>
+[Planejamento do Projeto](4-Planejamento-Projeto.md)
 
 ## 5.1 Tecnologias Utilizadas
 
@@ -39,18 +38,21 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 ### 5.3 Registro Visual das Telas
 
 #### 5.3.1 Tela principal do sistema
+
 **Descrição:** Apresenta visão geral das funcionalidades e acessos principais.  
 [`Tela principal do sistema`](images/)
 
 ---
 
 #### 5.3.2 Tela de login
+
 **Descrição:** Permite acesso de usuários registrados.  
 [`Tela de login`](images/)
 
 ---
 
 #### 5.3.3 Tela de cadastro de produto
+
 **Descrição:** Formulário para inserir novos produtos no estoque.  
 [`Tela de cadastro`](images/)
 
@@ -66,14 +68,3 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 3. Descrever brevemente as funcionalidades implementadas ou mudanças feitas desde a última atualização.
 
 📌 **Objetivo**: Esta seção deve permitir que o professor visualize rapidamente **o que já foi entregue, o que está em andamento e o que ainda falta desenvolver**, garantindo acompanhamento eficaz do projeto.
-
-
-
-
-
-
-
-
-
-
-
