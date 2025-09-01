@@ -88,52 +88,52 @@ Caso os alunos identifiquem a necessidade de incluir novas perguntas, podem faz�
 
 ### P1. Sobre o Entrevistado
 
-**Nome:**  
-**Cargo/função:**  
-**Tempo na empresa:**  
+**Nome:**  Evaldo Ferreira
+**Cargo/função:**  Administrador
+**Tempo na empresa:**  25 anos
 
 ---
 
 ### P2. Sobre a Empresa
 
 **Qual o principal produto ou serviço prestado?**  
-_Resposta:_  
+_Resposta:_  Camisas de malha (uniformes)
 
 **Quantos funcionários atuam atualmente?**  
-_Resposta:_  
+_Resposta:_  9
 
 **Há algum sistema utilizado para controle interno? Qual?**  
-_Resposta:_  
+_Resposta:_  Sim, YAMPA
 
 ---
 
 ### P3. Processos Atuais
 
 **Como é feito o controle de processos (ex: estoque, vendas, agendamento)?**  
-_Resposta:_  
+_Resposta:_  Não possui sistema para isso.
 
 **Quais ferramentas são utilizadas atualmente? (papel, planilhas, sistemas...)**  
-_Resposta:_  
+_Resposta:_  Planilhas
 
 ---
 
 ### P4. Dores e Dificuldades
 
 **Quais tarefas consomem mais tempo ou causam retrabalho?**  
-_Resposta:_  
+_Resposta:_  Controlar o estoque.
 
 **Há ocorrência de erros ou desperdícios? Em quais situações?**  
-_Resposta:_  
+_Resposta:_  Sim, há por causa da falta de controle, podendo exceder a quantidade necessária.
 
 ---
 
 ### P5. Expectativas
 
 **Que tipo de solução poderia facilitar o seu dia a dia?**  
-_Resposta:_  
+_Resposta:_  Um sistema automatizado para fácil controle de entrada e saída.
 
 **Já foi feita alguma tentativa anterior de resolver esse problema?**  
-_Resposta:_  
+_Resposta:_  Não.
 
 ---
 
