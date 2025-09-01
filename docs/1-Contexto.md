@@ -22,13 +22,71 @@ Após a entrevista, os dados coletados devem ser analisados para definir a **pro
 
 A etapa de entrevista é fundamental para identificar as reais necessidades da empresa/parceiro atendido, servindo como base para definição dos requisitos do sistema.
 
-### 1.4 Roteiro da Entrevista
-
-Caso os alunos identifiquem a necessidade de incluir novas perguntas, podem fazê-lo
+## 1.4 Roteiro da Entrevista (1º Candidato)
 
 ---
 
-### 1. Sobre o Entrevistado
+### P1. Sobre o Entrevistado
+
+**Nome:** Gislene Camilo  
+**Cargo/função:** Gerente  
+**Tempo na empresa:** 10 meses  
+
+---
+
+### P2. Sobre a Empresa
+
+**Qual o principal produto ou serviço prestado?**  
+_Resposta:_ Comércio: Venda de materia prima para confecção de bolsas, mochilas e acessórios.
+
+**Quantos funcionários atuam atualmente?**  
+_Resposta:_ 32 Funcionários  
+
+**Há algum sistema utilizado para controle interno? Qual?**  
+_Resposta:_  Sim, Trade Soft
+
+---
+
+### P3. Processos Atuais
+
+**Como é feito o controle de processos (ex: estoque, vendas, agendamento)?**  
+_Resposta:_  Através do sistema, porém nao está atualizado.
+
+**Quais ferramentas são utilizadas atualmente? (papel, planilhas, sistemas...)**  
+_Resposta:_ O controle de estoque é realizado através de planilhas e o controle de vendas é realizado pelo sistema Trade Soft.  
+
+---
+
+### P4. Dores e Dificuldades
+
+**Atualmente, os funcionários possuem dificuldades com os sistemas implementados? Quais?**  
+_Resposta:_ Sim, os colaboradores são mais antigos e não tem muita qualificação, além disso o sistema também é muito desatualizado.
+
+**Quais tarefas consomem mais tempo ou causam retrabalho?**  
+_Resposta:_ Atualização de estoque, há dificuldades no trabalho e o estoque de itens necessita ser conferido recorrentemente.  
+
+**Há ocorrência de erros ou desperdícios? Em quais situações?**  
+_Resposta:_ Sim, produtos danificados e que não constam no sistema e baixa incorreta de produtos.  
+
+---
+
+### P5. Expectativas
+
+**Que tipo de solução poderia facilitar o seu dia a dia?**  
+_Resposta:_ Um sistema mais atualizado com ferramentas que podem evitar erros no controle de estoque.  
+
+**Já foi feita alguma tentativa anterior de resolver esse problema?**  
+_Resposta:_ Sim e no momento a direção está na análise de migrar para um sistema melhor.  
+
+---
+
+## 1.5 Roteiro da Entrevista (2º Candidato)
+
+Caso os alunos identifiquem a necessidade de incluir novas perguntas, podem fazê-lo.
+
+---
+
+### P1. Sobre o Entrevistado
 
 **Nome:**  
 **Cargo/função:**  
@@ -36,7 +94,7 @@ Caso os alunos identifiquem a necessidade de incluir novas perguntas, podem faz�
 
 ---
 
-### 2. Sobre a Empresa
+### P2. Sobre a Empresa
 
 **Qual o principal produto ou serviço prestado?**  
 _Resposta:_  
@@ -49,7 +107,7 @@ _Resposta:_
 
 ---
 
-### 3. Processos Atuais
+### P3. Processos Atuais
 
 **Como é feito o controle de processos (ex: estoque, vendas, agendamento)?**  
 _Resposta:_  
@@ -59,7 +117,7 @@ _Resposta:_
 
 ---
 
-### 4. Dores e Dificuldades
+### P4. Dores e Dificuldades
 
 **Quais tarefas consomem mais tempo ou causam retrabalho?**  
 _Resposta:_  
@@ -69,7 +127,7 @@ _Resposta:_
 
 ---
 
-### 5. Expectativas
+### P5. Expectativas
 
 **Que tipo de solução poderia facilitar o seu dia a dia?**  
 _Resposta:_  
@@ -79,7 +137,7 @@ _Resposta:_
 
 ---
 
-### 6. Análise e Validação
+## 2. Análise e Validação
 
 _Após a realização da entrevista, as informações serão analisadas para identificar padrões, gargalos e oportunidades de melhoria. Com base nisso, os alunos deverão elaborar uma proposta de solução tecnológica que será validada com o cliente antes de ser desenvolvida._
 
