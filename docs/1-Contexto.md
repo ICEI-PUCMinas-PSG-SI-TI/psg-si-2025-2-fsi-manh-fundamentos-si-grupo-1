@@ -151,7 +151,29 @@ _Após a realização da entrevista, as informações serão analisadas para ide
 ---
 
 ## _✏️Coloque aqui o SEU TEXTO_
+Durante as entrevistas, ficou claro que as maiores dificuldades enfrentadas pelas empresas estão ligadas ao controle de estoque: sistemas desatualizados, processos manuais em planilhas e retrabalho constante. Isso gera perda de tempo, erros como baixa incorreta e até desperdício de produtos.
 
+Para resolver esses pontos, a proposta é desenvolver um sistema web de controle de estoque, simples e intuitivo, que automatize as entradas e saídas de produtos e ofereça uma visão clara para os gestores.
+
+O que o sistema vai oferecer:
+
+- Registro de entradas e saídas de produtos em tempo real
+- Atualização automática do estoque
+- Alertas sobre inconsistências ou falta de produtos
+- Relatórios práticos de movimentação e perdas
+- Interface acessível, pensada para facilitar o uso até por colaboradores com pouca experiência em tecnologia
+
+Quem vai usar:
+
+- Gerentes e administradores da empresa
+- Colaboradores responsáveis pelo estoque
+
+Impactos esperados:
+
+- Redução de erros e retrabalho
+- Estoque sempre atualizado e confiável
+- Mais agilidade na conferência e reposição de produtos
+- Menos desperdícios e melhor organização interna
 ---
 
 > ### _🧩Exemplo de estrutura de resposta esperada para a Seção 6. Análise e Validação:🧩_
