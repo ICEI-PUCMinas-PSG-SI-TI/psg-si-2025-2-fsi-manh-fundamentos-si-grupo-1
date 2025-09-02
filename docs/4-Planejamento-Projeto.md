@@ -91,26 +91,25 @@ _O grupo poderá usar esta parte para informar a professora quais tarefas estão
 
 ### 📋 Legenda para o Status do Quadro de Tarefas
 
-                **Legenda:**
-                - ✔️ Concluído
-                - 📝 Em andamento
-                - ⌛ Atrasado
-                - ❌ Não iniciado
+**Legenda:**
+
+- ✔️ Concluído
+- 📝 Em andamento
+- ⌛ Atrasado
+- ❌ Não iniciado
 
 ---
 
 ### 🟢 Sprint 1 – Entendimento do Problema e Proposta de Solução  
 
-**Período estimado:** definido no Canvas (_os alunos podem colocar o período aqui_)  
+**Prazo final da Entrega:** 02/09/2025  
 **Objetivo:** Realizar entrevista com o cliente, identificar o problema, descrever o contexto da empresa e propor a solução.
 
 | Responsável | Função no Grupo | Tarefa | Início | Prazo | Status | Entrega |
 |-------------|------------------|--------|--------|--------|--------|---------|
-| AlunoX | Líder | Agendar e conduzir entrevista com o cliente | 29/07 | 02/08 | ✔️ | Link/print |
-| AlunoY | Redator | Preencher roteiro da entrevista no repositório | 30/07 | 03/08 | ✔️ | README.md |
-| AlunaZ | Relatora | Descrever o contexto da empresa e os problemas atuais | 01/08 | 05/08 | ✔️ | README.md |
-| AlunoK | Escritor técnico | Redigir proposta de sistema com base nos dados | 05/08 | 08/08 | ✔️ | README.md |
-| Todos | Organização | Conferir e revisar o conteúdo publicado no GitHub | 08/08 | 16/08 | ✔️ | Repositório Git |
+| Mateus    | Não Definido | Conduzir entrevista e preencher roteiro no repositório | N/A | 01/09 | ✔️ | docs/Contexto |
+| Marcelo   | Não Definido | Conduzir entrevista e preencher roteiro no repositório | N/A | 02/09 | ✔️ | docs/Contexto |
+| Todos     | Organização  | Conferir, editar e revisar o conteúdo publicado no GitHub      | N/A | 02/09 | ✔️ | Repositório Git |
 
 ---
 
