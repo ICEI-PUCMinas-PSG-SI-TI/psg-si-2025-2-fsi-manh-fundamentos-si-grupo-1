@@ -17,8 +17,6 @@ Os membros do grupo são:
 - Marcelo Antonino Soares Juscelino
 - Mateus Junior Silva Santana
 
-> Inclua a lista dos membros da equipe com seus nomes completos.
-
 ## Estrutura do Projeto
 
 1. [Contextualização do Projeto](./docs/1-Contexto.md)
@@ -32,9 +30,6 @@ Os membros do grupo são:
 ## Pasta docs
 
 Esta pasta arquiva a documentação dos projetos.
-
-Na pasta `docs`, há uma subpasta `images` que deve arquivar todas as
-imagens utilizadas para a elaboração do documento.
 
 ## Pasta src
 

@@ -8,21 +8,11 @@ A proposta será conduzida com base na metodologia ágil Scrum, incentivando a c
 
 ---
 
-## 1.2 Coleta de Informações com o Cliente
-
-Nesta etapa, os alunos deverão realizar uma entrevista com o responsável pela empresa ou organização parceira para levantar informações sobre o contexto atual, identificar problemas e entender as expectativas em relação à solução tecnológica.
-
-O roteiro abaixo deve ser utilizado como base para a conversa. As perguntas devem ser respondidas de forma clara e completa, com base no que for dito pelo entrevistado. Caso necessário, os alunos podem complementar com perguntas adicionais.
-
-Após a entrevista, os dados coletados devem ser analisados para definir a **proposta de solução** que será desenvolvida ao longo do projeto.
-
----
-
-## 1.3 Entrevista Diagnóstica
+## 1.2 Coleta de Informações com o Cliente / Entrevista Diagnóstica
 
 A etapa de entrevista é fundamental para identificar as reais necessidades da empresa/parceiro atendido, servindo como base para definição dos requisitos do sistema.
 
-## 1.4 Roteiro da Entrevista (1º Candidato)
+## 1.3 Roteiro da Entrevista (1º Candidato)
 
 ---
 
@@ -139,18 +129,6 @@ _Resposta:_  Não.
 
 ## 2. Análise e Validação
 
-_Após a realização da entrevista, as informações serão analisadas para identificar padrões, gargalos e oportunidades de melhoria. Com base nisso, os alunos deverão elaborar uma proposta de solução tecnológica que será validada com o cliente antes de ser desenvolvida._
-
-> Roteiro para ajudar na escrita do texto referente a proposta de sistema que será desenvolvida. Descreva de forma clara:
->
-> - Qual problema será resolvido
-> - Qual será a principal funcionalidade do sistema
-> - Quem será o usuário principal
-> - Qual impacto esperado para a empresa/parceiro
-
----
-
-## _✏️Coloque aqui o SEU TEXTO_
 Durante as entrevistas, ficou claro que as maiores dificuldades enfrentadas pelas empresas estão ligadas ao controle de estoque: sistemas desatualizados, processos manuais em planilhas e retrabalho constante. Isso gera perda de tempo, erros como baixa incorreta e até desperdício de produtos.
 
 Para resolver esses pontos, a proposta é desenvolver um sistema web de controle de estoque, simples e intuitivo, que automatize as entradas e saídas de produtos e ofereça uma visão clara para os gestores.
@@ -174,18 +152,3 @@ Impactos esperados:
 - Estoque sempre atualizado e confiável
 - Mais agilidade na conferência e reposição de produtos
 - Menos desperdícios e melhor organização interna
----
-
-> ### _🧩Exemplo de estrutura de resposta esperada para a Seção 6. Análise e Validação:🧩_
->
-> **Sistema web para controle de estoque de hortifrúti**, voltado para o responsável pelo gerenciamento dos produtos no estabelecimento. O sistema permitirá:  
->
-> - Registrar entradas e saídas de produtos do estoque  
-> - Controlar validade dos alimentos (com alertas de vencimento)  
-> - Monitorar perdas (produtos danificados ou vencidos)  
-> - Gerar relatórios simples sobre produtos mais vendidos e perdas recorrentes  
-> - Consultar o estoque em tempo real, mesmo durante o atendimento ao cliente  
->
-> O objetivo é substituir os controles feitos em papel ou planilhas, que geram retrabalho, dificultam o acompanhamento e favorecem erros.  
->
-> A expectativa é melhorar a organização, reduzir perdas, evitar desperdícios e facilitar a tomada de decisões sobre compras e reposições de forma mais rápida e precisa.
