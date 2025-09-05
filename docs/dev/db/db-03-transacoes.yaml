@@ -1,0 +1,8 @@
+# /api/v1/registros
+# /api/v1/registro/[id]
+
+fields:
+  - name: nome
+    type: string
+    description: Nome do usuário
+    example: João da Silva

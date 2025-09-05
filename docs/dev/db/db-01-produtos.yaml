@@ -1,0 +1,104 @@
+# /api/v1/produtos
+# /api/v1/protudo/[id]
+
+# Outras informações que podem ser adicionadas:
+# ? preco_marcacao: Preço de etiqueta do produto (venda: preço base)
+# ? fornecedores:Nome, CNPJ/CPF, contato, endereço, histórico de transações.
+
+fields:
+  - name: nome
+    type: string
+    description: Nome do produto
+    example: Samsung Galaxy S24 FE
+  
+  - name: sku
+    type: string
+    description: Stock Keeping Unit
+    example: 54a6s4d63748623
+
+  - name: barcode
+    type: string
+    description: Código de Barras ou QRCODE
+    example: "3402834802934"
+
+  - name: descricao
+    type: string
+    description: descricao
+    example: Celular da Samsung lançado em 2024
+    
+  - name: categoria
+    type: list
+    description: lista de categorias que o produto se encaixa
+    example:
+      - cat1
+      - cat2
+    
+  - name: fornecedor
+    # O campo de fornecedor pode ser alterado futuramente para manter uma lista de fornecedores já cadastrados/recorrentes.
+    type: string
+    description: Nome do fornecedor do produto
+    example: Fornecedor X
+    
+  - name: preco_custo
+    # Valores serao armazenados em int (padding de 4 caracteres)
+    # Ou seja, se uma unidade custa R$ 2500,0000 = 25000000
+    type: integer
+    description: Preço de compra do produto por unidade
+    example: 25000000
+    
+  - name: preco_venda
+    # Valores serao armazenados em int (padding de 4 caracteres)
+    # Ou seja, se uma unidade custa R$ 2500,0000 = 25000000
+    type: integer
+    description: Preço de venda do produto por unidade
+    example: 30000000
+    
+  - name: unidade_medida
+    # TODO: Criar uma lista de opções
+    # unidade_medida = [
+    #     "Toneladas",
+    #     "Kg",
+    #     "g",
+    #     "mg",
+    #     "L",
+    #     "ml",
+    #     "m",
+    #     "cm",
+    #     "mm",
+    #     "Unidades",
+    # ]
+    type: string
+    description: Metodo de quantificação do protudo
+    example: unidadades
+    
+  - name: quantidade_atual
+    type: integer
+    description: Quantidade do produto em estoque
+    example: 5
+    
+  - name: quantidade_minima
+    type: integer
+    description: Quantidade minima do produto que deve conter em estoque
+    example: 1
+    
+  - name: quantidade_maxima
+    type: integer
+    description: Quantidade máxima do produto que deve conter em estoque
+    example: 20
+    
+  - name: localizacao
+    type: string
+    description: Local em que o produto se encontra (Armazen X ou Andar, ...)
+    example: Armazen Y
+    
+  - name: imagem
+    type: list
+    description: imagem ou lista de imagem do produto (base64_encoded ou url)
+    example:
+      - "https://url.com/image1"
+      - "https://url.com/image2"
+    
+  - name: temp
+    type: temp
+    description: temp
+    example: temp

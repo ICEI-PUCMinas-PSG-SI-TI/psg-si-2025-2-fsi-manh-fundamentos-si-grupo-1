@@ -1,0 +1,27 @@
+# /api/v1/usuarios
+# /api/v1/usuario/[id]
+
+fields:
+  - name: nome
+    type: string
+    description: Nome do usuário
+    example: João da Silva
+
+  - name: identificacao
+    type: string
+    description: CPF e/ou RG
+    example: 123.456.789-10
+
+  - name: cargo
+    type: string
+    description: Cargo do funcionário
+    example: Gerente de Estoque
+
+  - name: nivel_permissoes
+    type: integer
+    description: Define a quantidade de permissões disponiveis
+    # 0: administrador (Consegue alterar configurações e adicionar novos usuários)
+    # 1: cadastro (Consegue realizar o cadastro de produtos) 
+    # 2: controle (Consegue realizar o controle de quantidades de estoque)
+    # 3: leitura (Consegue apenas visualizar informações)
+    example: 1
