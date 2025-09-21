@@ -115,16 +115,15 @@ _O grupo poderá usar esta parte para informar a professora quais tarefas estão
 
 ### 🟡 Sprint 2 – Levantamento de Requisitos e Wireframes  
 
-**Período estimado:** definido no Canvas (_os alunos podem colocar o período aqui_)
+**Prazo final da Entrega:** 22/09/2025  
 **Objetivo:** Levantar os requisitos do sistema com base na entrevista e construir os primeiros wireframes da solução.
 
 | Responsável | Função no Grupo | Tarefa | Início | Prazo | Status | Entrega |
 |-------------|------------------|--------|--------|--------|--------|---------|
-| AlunoY | Analista | Elaborar lista de requisitos funcionais e não funcionais | 19/08 | 23/08 | ❌ | — |
-| AlunaZ | UX Designer | Criar wireframes das principais telas do sistema | 20/08 | 27/08 | ❌ | — |
-| AlunoK | Documentação | Escrever as histórias de usuário no README | 22/08 | 29/08 | ❌ | — |
-| AlunaX (Líder) | Revisão geral | Validar com o cliente os requisitos e protótipos | 30/08 | 06/09 | ❌ | — |
-| Todos | Contribuição coletiva | Inserir os links/imagens dos wireframes no GitHub | 04/09 | 06/09 | ❌ | — |
+| Mateus e Bruno | Não Definido | Registrar personas | 02/09 | 21/09 | ✔️ | docs/Especificações |
+| Mateus  | Não Definido | Elaborar histórios de usuário, requisitos funcionais e não funcionais | 02/09 | 21/09 | ✔️ | docs/Especificações |
+| Todos   | Contribuição coletiva | Organizar e selecionar especificações (requisitos, ...) | 02/09 | 21/09 | ✔️ | docs/Especificações |
+| Todos   | Contribuição coletiva | Criar wireframes das principais telas do sistema e inserir os links/imagens no GitHub | 02/09 | 22/09 | ❌ | docs/Interfaces |
 
 ---
 
