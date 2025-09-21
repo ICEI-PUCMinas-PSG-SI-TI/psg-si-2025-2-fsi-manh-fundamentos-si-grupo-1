@@ -39,6 +39,7 @@
 <!-- Requisições -->
 - Quero emitir nota de reserva de produto, para garantir que o item não seja vendido a outro cliente.
 - Como vendedor, quero reservear itens no estoque ao registrar um pedido, para envitar vendas de produtos indispóniveis.
+- Como vendedor, quero receber notificações quando um produto reservado for liberado, para saber quando posso movimentá-lo.
 - Como um gerente de estoque, quero acompanhar status de pedidos em tempo real, para informar clientes com precisão.
 <!-- Relátorios -->
 - Quero visualizar dashboards com indicadores-chave (giro, rupturas, perdas, cobertura de estoque, sazonalidade, previsões de vendas), para tomar decisões rápidas e eficientes.
@@ -85,6 +86,7 @@ N - Não Funcionais - Requisitos Não Funcionais
 | CNTR-16X | BAIXA | O sistema deve possuir formas de escanear códigos de barra ou QR para agilizar no preenchimento do formulário de produtos. |
 | CNTR-17X | BAIXA | O sistema deve realizar backups recorrentes das informações. |
 | CNTR-18P | MÉDIA | O sistema deve manter um dashboard para fácil identificação de indicadores importantes e rotineiros. |
+| CNTR-19S | BAIXA | O sistema deve notificar quando produtos reservados do estoque estiverem disponíveis. |
 
 ## 3.2 REQUISITOS NÃO FUNCIONAIS
 
@@ -112,6 +114,8 @@ Historias de usuário fora do escopo desse projeto:
 ### Cadastro
 
 - ~~Como gerente de estoque, eu quero criar "kits" ou "produtos compostos" (um produto que é composto por vários outros itens do estoque), para que, ao registrar a saída do kit, o sistema automaticamente dê baixa nos seus componentes.~~
+- Como gerente de estoque, eu quero cadastrar produtos com variações (ex: tamanho, cor, voltagem), para gerenciar o estoque de cada variação de forma independente dentro do mesmo produto principal.
+- Como gerente de estoque, eu quero anexar imagens e documentos (manuais, especificações técnicas) ao cadastro de um produto, para facilitar a identificação e consulta por parte da equipe.
 
 ### Controle
 
@@ -121,6 +125,9 @@ Historias de usuário fora do escopo desse projeto:
 
 - ~~Como um operador de estoque, eu quero consultar e registrar a transferência de produtos entre diferentes almoxarifados ou locais, para manter a acuracidade dos níveis de estoque em cada local.~~
 - ~~Como um gerente de estoque, eu quero cadastrar e gerenciar informações dos fornecedores, para facilitar o processo de cotação e compra de novos itens.~~
+- ~~Quero sugerir produtos substitutos automaticamente, caso o item desejado esteja em falta.~~
+- Como fornecedor quero acompanhar status de entrega dos meus pedidos, para garantir prazos.
+- Como funcionário, quero registrar devoluções de itens para produtos entregues incorretamente ou pós validade.
 
 ### Conectividade
 
