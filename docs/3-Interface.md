@@ -34,7 +34,8 @@ Registro de transações: Compras/Vendas/Uso Interno, histórico recente de alte
 - Campos para registrar novas movimentações
 - Campo de pesquisa de produtos
 
-![Wireframe 03](images/wireframes/wf03.png)
+![Wireframe 03](images/wireframes/operacoes-dark.png)
+![Wireframe 03](images/wireframes/operacoes-white.png)
 
 ### Tela - 4 - Catálogo de Produtos e Pesquisa
 
@@ -79,7 +80,9 @@ Operações realizadas no sistema.
 
 - Lista de operações realizadas como alterações de configuração, entrada/saida, alterações nos cadastro de itens.
 
-![Wireframe 08](images/wireframes/wf08.png)
+![Wireframe 08](images/wireframes/Historico-dark.png)
+![Wireframe 08](images/wireframes/Historico-white.png)
+
 
 ### Tela - 9 - Relatórios
 
