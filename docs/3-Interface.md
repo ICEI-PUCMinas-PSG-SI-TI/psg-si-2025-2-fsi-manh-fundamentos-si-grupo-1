@@ -51,7 +51,8 @@ CRUD de produtos e informações.
 
 - Página de alteração do protudo (formulário)
 
-![Wireframe 05](images/wireframes/wf05.png)
+![Wireframe 05](images/wireframes/cad-produto-dark.png)
+![Wireframe 05](images/wireframes/cad-produto-white.png)
 
 ### Tela - 6 - Administrativo - Cadastro de Usuários
 
@@ -60,7 +61,8 @@ Apenas para admins, Cadastro e edição de usuários na plataforma.
 - Lista de usuários cadastrados
 - Campo de alteração das informações de usuário
 
-![Wireframe 06](images/wireframes/wf06.png)
+![Wireframe 06](images/wireframes/cad-usuario-dark.png)
+![Wireframe 06](images/wireframes/cad-usuario-white.png)
 
 ### Tela - 7 - Administrativo - Configurações
 
