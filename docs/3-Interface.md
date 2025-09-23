@@ -14,7 +14,7 @@ O 1º login é cadastrado como administrador, próximos logins são controlados 
 - Texto motivador da plataforma
 - Login
 
-![Wireframe 01](images/wireframes/wf01.png)
+![Wireframe 01](images/wireframes/login.png)
 
 ### Tela - 2 - Dashboard inicial
 
@@ -24,7 +24,9 @@ Visão resumida dos itens, informações importantes como validades, baixo estoq
 - Ultimas transações
 - Alertas (Validade, Estoque Baixo)
 
-![Wireframe 02](images/wireframes/wf02.png)
+![Wireframe 02](images/wireframes/dashboard-dark.png)
+![Wireframe 02](images/wireframes/dashboard-white.png)
+
 
 ### Tela - 3 - Operações diárias
 
@@ -44,7 +46,9 @@ Lista de items cadastrados com informações breves (Ex: Fotos, item, sku, quant
 - Barra de pesquisa com filtros
 - Lista de produtos com informações mais importantes
 
-![Wireframe 04](images/wireframes/wf04.png)
+![Wireframe 04](images/wireframes/catalogo-dark.png)
+![Wireframe 04](images/wireframes/catalogo-white.png)
+
 
 ### Tela - 5 - Cadastro e Alteração de Produtos
 
@@ -72,7 +76,9 @@ Altera configurações do funcionamento do sistema.
 - Alterar informações da empresa (Nome, CNPJ, ...)
 - Altarar informações como moeda, tema, padrões de medidas, ...
 
-![Wireframe 07](images/wireframes/wf07.png)
+![Wireframe 07](images/wireframes/config-dark.png)
+![Wireframe 07](images/wireframes/config-white.png)
+
 
 ### Tela - 8 - Histórico de Operações
 
@@ -91,7 +97,17 @@ Template para relatórios diversos
 - Graficos
 - Informações gerais
 
-![Wireframe 09](images/wireframes/wf09.png)
+![Wireframe 09](images/wireframes/relatoriof-dark.png)
+![Wireframe 09](images/wireframes/relatoriof-white.png)
+![Wireframe 09](images/wireframes/relatorioi-dark.png)
+![Wireframe 09](images/wireframes/relatorioi-white.png)
+![Wireframe 09](images/wireframes/relatoriofor-dark.png)
+![Wireframe 09](images/wireframes/relatoriofor-white.png)
+![Wireframe 09](images/wireframes/relatorioes-dark.png)
+![Wireframe 09](images/wireframes/relatorioes-white.png)
+
+
+
 
 ## Fluxo de Usuário (User Flow)
 
