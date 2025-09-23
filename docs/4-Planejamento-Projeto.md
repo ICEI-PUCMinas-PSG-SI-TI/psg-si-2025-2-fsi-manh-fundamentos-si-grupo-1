@@ -123,7 +123,7 @@ _O grupo poderá usar esta parte para informar a professora quais tarefas estão
 | Mateus e Bruno | Não Definido | Registrar personas | 02/09 | 21/09 | ✔️ | docs/Especificações |
 | Mateus  | Não Definido | Elaborar histórios de usuário, requisitos funcionais e não funcionais | 02/09 | 21/09 | ✔️ | docs/Especificações |
 | Todos   | Contribuição coletiva | Organizar e selecionar especificações (requisitos, ...) | 02/09 | 21/09 | ✔️ | docs/Especificações |
-| Todos   | Contribuição coletiva | Criar wireframes das principais telas do sistema e inserir os links/imagens no GitHub | 02/09 | 22/09 | ❌ | docs/Interfaces |
+| Todos   | Contribuição coletiva | Criar wireframes das principais telas do sistema e inserir os links/imagens no GitHub | 02/09 | 22/09 | ✔️ | docs/Interfaces |
 
 ---
 
