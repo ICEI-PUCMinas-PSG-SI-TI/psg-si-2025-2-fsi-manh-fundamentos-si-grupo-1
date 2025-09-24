@@ -14,10 +14,10 @@
 **Profissão**: Atendende  
 **Perfil**: Camila Souza, 29 anos, é atendente em uma padaria de bairro, curte festas e encontros sociais. No trabalho, realiza diariamente o atendimento ao público com o uso de um aplicativo que integra o controle de estoque com as vendas, facilitando o acompanhamento das saídas. Camila valoriza soluções que otimizem seu tempo no dia a dia.
 
-**Persona 3**
-**Nome**: Izaquiel Cesário
-**Idade**: 44 anos
-**Profissão**: Encarregado de Loja
+**Persona 3**  
+**Nome**: Izaquiel Cesário  
+**Idade**: 44 anos  
+**Profissão**: Encarregado de Loja  
 **Perfil**: Izaquiel é responsável pela gestão de uma loja de médio porte, coordenando equipe de vendedores e garantindo que o estoque esteja sempre atualizado. É organizado, mas confia muito no “olho clínico” e na experiência prática para resolver problemas do dia a dia. Costuma usar planilhas básicas e relatórios impressos para acompanhar metas e estoque, mas às vezes sente dificuldade em consolidar todas as informações de forma rápida. Izaquiel valoriza soluções que tragam clareza e agilidade na tomada de decisões, principalmente se ajudarem a monitorar vendas e reposições em tempo real. No tempo livre, gosta de futebol com os amigos e de churrascos em família.
 
 ## 2.2 Historias de usuário
@@ -147,6 +147,5 @@ Historias de usuário fora do escopo desse projeto:
 ### Extras
 
 - ~~Como usuário do sistema, quero poder registrar movimentações mesmo quando estiver sem conexão com o servidor, para que eu possa continuar trabalhando normalmente e sincronizar os dados assim que a conexão for restabelecida.~~
-
 
 -->
