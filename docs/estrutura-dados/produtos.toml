@@ -1,0 +1,123 @@
+[[fields]]
+field = "id"
+sqlite.type = "TEXT"
+description = "Identificador único universal (UUID) do produto."
+example = "3152b2af-a681-440e-8def-453e30326cdc"
+
+[[fields]]
+field = "nome"
+sqlite.type = "TEXT"
+description = "Nome comercial do produto."
+example = "Samsung Galaxy S24 FE"
+
+[[fields]]
+field = "sku"
+sqlite.type = "TEXT"
+description = "Stock Keeping Unit (SKU) - Código único para controle de estoque interno."
+example = "54a6s4d63748623"
+
+[[fields]]
+field = "codigo_barra"
+sqlite.type = "TEXT"
+description = "Código de Barras do produto (EAN, UPC, etc.)."
+example = "3402834802934"
+
+[[fields]]
+field = "descricao"
+sqlite.type = "TEXT"
+description = "Descrição detalhada do produto."
+example = "Celular da Samsung lançado em 2024"
+
+# TODO: Verificar a necessidade de utilizar outra 'table' para armazenar a relação produtos+categorias
+[[fields]]
+field = "categoria"
+sqlite.type = "TEXT"
+description = "Lista de IDs de categorias às quais o produto pertence"
+example = "Smartphones, Eletronicos"
+
+[[fields]]
+field = "marca"
+sqlite.type = "TEXT"
+description = "Marca do produto."
+example = "Samsung"
+
+# TODO: O campo de fornecedor pode ser alterado futuramente para manter uma lista de fornecedores já cadastrados/recorrentes.
+[[fields]]
+field = "fornecedor"
+sqlite.type = "TEXT"
+description = "Nome do fornecedor do produto."
+example = "Fornecedor X"
+
+# TODO: separar em campos diferentes
+[[fields]]
+field = "dimensoes"
+sqlite.type = "TEXT"
+description = "Dimensões do produto no formato 'LxAxP'."
+example = "100cm x 100cm x 100cm"
+
+# TODO: peso_liquido x peso_bruto
+[[fields]]
+field = "peso"
+sqlite.type = "INTEGER"
+description = "Peso de cada unidade, armazenado como um inteiro com 4 casas decimais (ex: 3000000 representa 300,0000 gramas)."
+example = "3000000"
+
+[[fields]]
+field = "preco_custo"
+sqlite.type = "INTEGER"
+description = "Preço de compra do produto, armazenado como um inteiro com 4 casas decimais (ex: 25000000 representa R$ 2500,0000)."
+example = "25000000"
+
+[[fields]]
+field = "preco_venda"
+sqlite.type = "INTEGER"
+description = "Preço de venda do produto, armazenado como um inteiro com 4 casas decimais (ex: 30000000 representa R$ 3000,0000)."
+example = "30000000"
+
+[[fields]]
+field = "preco_promocao"
+sqlite.type = "INTEGER"
+description = "Preço promocional (pode ser nulo), armazenado como um inteiro com 4 casas decimais."
+example = "28000000"
+
+[[fields]]
+field = "quantidade_unidade_medida"
+example = "unidades"
+sqlite.type = "TEXT"
+description = "Método de quantificação do produto (ex: 'unidades', 'kg', 'litros')."
+
+[[fields]]
+field = "quantidade_minima"
+example = "1"
+sqlite.type = "INTEGER"
+description = "Quantidade mínima do produto que deve ser mantida em estoque. Armazenado como um inteiro com 4 casas decimais (ex: 25000000 representa 2500.0000)."
+
+[[fields]]
+field = "quantidade_maxima"
+example = "20"
+sqlite.type = "INTEGER"
+description = "Quantidade máxima do produto que pode ser mantida em estoque. Armazenado como um inteiro com 4 casas decimais (ex: 25000000 representa 2500.0000)"
+
+[[fields]]
+field = "localizacao"
+example = "Armazem Y"
+sqlite.type = "TEXT"
+description = "Local de armazenamento físico do produto (Armazen X ou Andar Y, ...)."
+
+[[fields]]
+field = "imagem"
+example = '["https://url.com/image1", "https://url.com/image2"]'
+sqlite.type = "TEXT"
+description = "Lista de URLs ou strings base64 das imagens do produto, armazenado como um JSON array."
+
+[[fields]]
+field = "status"
+sqlite.type = "INTEGER"
+description = "Status do produto (0: Ativo, 1: Inativo, 2: Descontinuado, 3: Bloqueado)."
+example = "0"
+
+# TODO: db_schema
+# Outras informações que podem ser adicionadas:
+# ? preco_marcacao: Preço de etiqueta do produto (venda: preço base)
+# ? fornecedores:Nome, CNPJ/CPF, contato, endereço, histórico de transações.
+# ? informações tributarias

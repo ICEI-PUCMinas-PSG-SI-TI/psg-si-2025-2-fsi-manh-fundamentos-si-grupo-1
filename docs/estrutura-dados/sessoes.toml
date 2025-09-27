@@ -1,0 +1,39 @@
+[[fields]]
+field = "id"
+example = "b1c2d3e4-5f6a-7b8c-9d0e-1f2a3b4c5d6e"
+sqlite.type = "BLOB"
+description = "O identificador único da sessão (UUID)."
+
+[[fields]]
+field = "user_id"
+example = "3152b2af-a681-440e-8def-453e30326cdc"
+sqlite.type = "BLOB"
+description = "O identificador único do usuário da sessão (UUID)."
+
+[[fields]]
+field = "token"
+sqlite.type = "TEXT"
+description = "Token da sessão"
+example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE2MTYyMzk0MjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+
+[[fields]]
+field = "user_agent"
+sqlite.type = "TEXT"
+description = "User Agent do navegador do browser"
+example = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+
+[[fields]]
+field = "ip"
+sqlite.type = "TEXT"                       # for now a text because of v4/v6
+description = "IP da navegador da sessão."
+example = "127.0.0.1"
+
+[[fields]]
+field = "created_at"
+sqlite.type = "DATETIME"
+description = "Data/Horário de criação do token da sessão."
+example = "2025-09-01 00:00:00"
+
+# TODO: db_schema
+# 1. Armazenar no SQL ou em memória?
+# 2. Armazenar data de expiracao?
