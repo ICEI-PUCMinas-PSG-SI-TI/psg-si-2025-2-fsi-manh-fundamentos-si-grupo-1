@@ -70,6 +70,7 @@ Define o nível de acesso do usuário.
 """
 example = "1"
 
+# campo pode ser blob (base64) ou text
 [[fields]]
 field = "foto"
 sqlite.type = "TEXT"

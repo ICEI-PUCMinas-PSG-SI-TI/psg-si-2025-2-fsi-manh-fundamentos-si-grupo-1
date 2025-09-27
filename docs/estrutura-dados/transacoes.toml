@@ -57,11 +57,11 @@ example = "loja-centro"
 sqlite.type = "TEXT"
 description = "ID do local para onde o produto foi. Usado principalmente para TRANSFERENCIA e ENTRADA. Pode ser nulo."
 
-[[fields]]
-field = "referencia_externa_id"
-example = "pedido-venda-9876"
-sqlite.type = "TEXT"
-description = "ID de referência a outra tabela/entidade, como um pedido de venda, nota fiscal de entrada ou ordem de ajuste. Ajuda a agrupar movimentações."
+# [[fields]]
+# field = "referencia_externa_id"
+# example = "pedido-venda-9876"
+# sqlite.type = "TEXT"
+# description = "ID de referência a outra tabela/entidade, como um pedido de venda, nota fiscal de entrada ou ordem de ajuste. Ajuda a agrupar movimentações."
 
 [[fields]]
 field = "observacao"
@@ -69,17 +69,17 @@ example = "Venda realizada para o cliente João da Silva, referente ao pedido on
 sqlite.type = "TEXT"
 description = "Um campo de texto livre para adicionar detalhes, justificativas ou qualquer informação relevante sobre a movimentação."
 
-[[fields]]
-field = "saldo_anterior"
-example = "100"
-sqlite.type = "REAL"
-description = "Campo para auditoria. Armazena a quantidade em estoque do produto *antes* da movimentação ocorrer."
-
-[[fields]]
-field = "saldo_posterior"
-example = "90"
-sqlite.type = "REAL"
-description = "Campo para auditoria. Armazena a quantidade em estoque do produto *depois* da movimentação ocorrer."
+# [[fields]]
+# field = "saldo_anterior"
+# example = "100"
+# sqlite.type = "REAL"
+# description = "Campo para auditoria. Armazena a quantidade em estoque do produto *antes* da # movimentação ocorrer."
+# 
+# [[fields]]
+# field = "saldo_posterior"
+# example = "90"
+# sqlite.type = "REAL"
+# description = "Campo para auditoria. Armazena a quantidade em estoque do produto *depois* da movimentação ocorrer."
 
 # TODO: db_schema
 # ? como reservar
