@@ -1,3 +1,5 @@
+# Entidade/Tabela que armazena os grupos ou classificações dos produtos.
+
 [[fields]]
 field = "id"
 sqlite.type = "BLOB"

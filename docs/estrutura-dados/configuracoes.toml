@@ -1,3 +1,5 @@
+# Entidade/Tabela que guarda parâmetros e preferências do sistema.
+
 # Por enquanto, será armazeado apenas um valor nessa tabela devido ao deploy
 # de unica instancia, futuramente, seria interessante criar organizações e
 # permitir o gerenciador de multiplos clientes/empresas

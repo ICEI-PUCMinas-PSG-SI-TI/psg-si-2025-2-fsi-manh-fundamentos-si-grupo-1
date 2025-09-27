@@ -1,3 +1,5 @@
+# Entidade/Tabela que registra os lotes de produtos recebidos ou produzidos.
+
 [[fields]]
 field = "id"
 sqlite.type = "BLOB"

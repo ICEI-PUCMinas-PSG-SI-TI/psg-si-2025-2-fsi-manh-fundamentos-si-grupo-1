@@ -1,3 +1,5 @@
+# Entidade/Tabela que registra todas as movimentações de estoque.
+
 [[fields]]
 field = "id"
 sqlite.type = "BLOB"

@@ -1,3 +1,5 @@
+# Entidade/Tabela que representa os itens armazenados no estoque.
+
 [[fields]]
 field = "id"
 sqlite.type = "TEXT"

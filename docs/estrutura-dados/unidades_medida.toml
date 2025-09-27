@@ -1,3 +1,5 @@
+# Entidade/Tabela que define as unidades de quantificação dos produtos.
+
 [[fields]]
 field = "id"
 sqlite.type = "BLOB"

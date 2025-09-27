@@ -1,3 +1,5 @@
+# Entidade/Tabela que armazena os dados dos usuários do sistema.
+
 [[fields]]
 field = "id"
 sqlite.type = "BLOB"
