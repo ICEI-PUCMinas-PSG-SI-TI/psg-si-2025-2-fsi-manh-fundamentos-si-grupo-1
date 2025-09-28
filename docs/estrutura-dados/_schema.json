@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "sqlite": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "null": {
+                  "type": "boolean"
+                },
+                "primary": {
+                  "type": "boolean"
+                }
+              },
+              "required": ["type", "null", "primary"]
+            },
+            "description": {
+              "type": "string"
+            },
+            "example": {
+              "type": "string"
+            }
+          },
+          "required": ["field", "sqlite", "description", "example"]
+        }
+      ]
+    }
+  },
+  "required": ["fields"]
+}

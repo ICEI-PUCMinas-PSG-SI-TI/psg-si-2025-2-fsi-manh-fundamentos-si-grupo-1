@@ -1,0 +1,46 @@
+fornecedores - Para gerenciar de onde vêm os produtos.
+- id (BLOB)
+- nome_razao_social (TEXT)
+- nome_fantasia (TEXT)
+- cnpj_cpf (TEXT)
+- contato_principal (TEXT)
+- email (TEXT)
+- telefone (TEXT)
+- endereco (TEXT)
+- data_cadastro (DATETIME)
+
+locais_armazenamento - Para gerenciar estoques em múltiplos locais físicos (depósitos, lojas, prateleiras).
+- id (BLOB)
+- nome (TEXT, Ex: "Depósito Principal")
+- codigo (TEXT, Ex: "DEP-01")
+- descricao (TEXT, Ex: "Corredor A, Prateleira 3")
+- endereco (TEXT, se for um local físico distinto)
+
+pedidos (Pode ser de Compra ou Venda) - Para agrupar transações relacionadas a uma única operação comercial.
+- id (BLOB)
+- tipo (TEXT, "COMPRA" ou "VENDA")
+- cliente_id / fornecedor_id (BLOB, FK)
+- data_pedido (DATETIME)
+- status (TEXT, "PENDENTE", "PROCESSANDO", "CONCLUIDO", "CANCELADO")
+- valor_total (INTEGER)
+- observacoes (TEXT)
+
+pedido_itens - Itens que compõem um pedido.
+- id (BLOB)
+- pedido_id (BLOB, FK para pedidos)
+- produto_id (BLOB, FK para produtos)
+- quantidade (INTEGER)
+- preco_unitario (INTEGER)
+
+auditoria_logs - Para registrar outras ações.
+- id (BLOB)
+- usuario_id (BLOB, FK para usuarios)
+- acao (TEXT, Ex: "PRODUTO_CRIADO", "LOGIN_FALHOU", "BACKUP_REALIZADO")
+- detalhes (TEXT/JSON, Ex: {"produto_id": "...", "campo_alterado": "nome", "valor_antigo": "Produto X", "valor_novo": "Produto Y"})
+- ip_origem (TEXT)
+- timestamp (DATETIME)
+
+imagens - Para armazenar imagens
+- id
+- relacao (produto, perfil, ...)
+- blob
