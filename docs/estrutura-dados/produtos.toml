@@ -123,3 +123,4 @@ example = "0"
 # ? preco_marcacao: Preço de etiqueta do produto (venda: preço base)
 # ? fornecedores:Nome, CNPJ/CPF, contato, endereço, histórico de transações.
 # ? informações tributarias
+# ? criar uma entidade separada para foto/imagens

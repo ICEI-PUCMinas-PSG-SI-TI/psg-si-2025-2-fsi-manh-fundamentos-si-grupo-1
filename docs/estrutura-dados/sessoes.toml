@@ -26,7 +26,8 @@ example = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Ge
 
 [[fields]]
 field = "ip"
-sqlite.type = "TEXT"                       # for now a text because of v4/v6
+# for now a text because of v4/v6
+sqlite.type = "TEXT"
 description = "IP da navegador da sessão."
 example = "127.0.0.1"
 
@@ -36,6 +37,7 @@ sqlite.type = "DATETIME"
 description = "Data/Horário de criação do token da sessão."
 example = "2025-09-01 00:00:00"
 
-# TODO: db_schema
+# Melhorias:
 # 1. Armazenar no SQL ou em memória?
+# Resolução: O escopo do projeto é pequeno e não haverá degradação de performance significante
 # 2. Armazenar data de expiracao?

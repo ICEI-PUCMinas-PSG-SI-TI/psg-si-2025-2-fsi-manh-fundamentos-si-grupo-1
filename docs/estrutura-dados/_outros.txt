@@ -39,3 +39,8 @@ auditoria_logs - Para registrar outras ações.
 - detalhes (TEXT/JSON, Ex: {"produto_id": "...", "campo_alterado": "nome", "valor_antigo": "Produto X", "valor_novo": "Produto Y"})
 - ip_origem (TEXT)
 - timestamp (DATETIME)
+
+imagens - Para armazenar imagens
+- id
+- relacao (produto, perfil, ...)
+- blob
