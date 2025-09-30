@@ -1,6 +1,6 @@
 # Informações do Projeto de Extensão
 
-`TÍTULO DO PROJETO`:
+`TÍTULO DO PROJETO`: Trem de Controle
 
 `DISCIPLINA`: Fundamentos de Sistemas de Informação
 
