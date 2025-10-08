@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import NavigationMenu from './components/NavigationMenu.vue'
+import { useTemaStore } from './store/config/tema'
+
+const tema = useTemaStore()
 </script>
 
 <template>
-  <div class="flex flex-row h-full w-full">
-    <div class="flex h-full">
-      <NavigationMenu />
-    </div>
+  <div :data-theme="tema.isDarkModePreferred ? 'dark' : 'light'" class="flex flex-row size-full">
+    <NavigationMenu class="flex h-full" />
     <RouterView />
   </div>
 </template>
-
-<style scoped></style>
