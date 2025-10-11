@@ -1,3 +1,6 @@
 # IDEs
 *.swp
 *.swo
+
+node_modules/
+mockup.json

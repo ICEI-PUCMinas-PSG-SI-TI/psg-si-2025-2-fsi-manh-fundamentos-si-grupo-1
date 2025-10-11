@@ -1,0 +1,90 @@
+# Entidade/Tabela que registra todas as movimentações de estoque.
+
+[[fields]]
+field = "id"
+sqlite.type = "BLOB"
+sqlite.null = false
+sqlite.primary = true
+description = "Identificador único da movimentação (UUID). Chave primária."
+example = "d8a1b2c3-e4f5-6789-0123-456789abcdef"
+
+[[fields]]
+field = "produto_id"
+sqlite.type = "BLOB"
+description = "Chave estrangeira referenciando o ID da tabela de produtos."
+example = "3152b2af-a681-440e-8def-453e30326cdc"
+
+[[fields]]
+field = "usuario_id"
+sqlite.type = "BLOB"
+description = "Chave estrangeira referenciando o ID do usuário que realizou a operação."
+example = "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+
+[[fields]]
+field = "lote_id"
+sqlite.type = "BLOB"
+description = "Identificador do lote do produto, para rastreabilidade de validade e origem."
+example = "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+
+# TODO: Verificar necessidade de utilizar enum e reduzir quantidade de campos
+[[fields]]
+field = "tipo"
+description = "Tipo de movimentação: ENTRADA, SAIDA, VENDA, CONTAGEM, PERDA, DEVOLUCAO, TRANSFERENCIA, RESERVA, AJUSTE_POSITIVO, AJUSTE_NEGATIVO."
+sqlite.type = "TEXT"
+example = "VENDA"
+
+# TODO: Positiva para entradas, negativa para saídas ou utilizar o "tipo"?
+[[fields]]
+field = "quantidade"
+sqlite.type = "INTEGER"
+description = "A quantidade de produto movimentada.  Armazenado como um inteiro com 4 casas decimais (ex: 25000000 representa 2500.0000)"
+example = "100000"
+
+[[fields]]
+field = "data_hora"
+example = "2025-09-26T21:45:00-03:00"
+sqlite.type = "DATETIME"
+sqlite.null = false
+description = "Data e hora exatas da transação no formato ISO 8601."
+
+[[fields]]
+field = "local_origem_id"
+example = "deposito-central"
+sqlite.type = "TEXT"
+description = "ID do local de onde o produto saiu. Usado principalmente para TRANSFERENCIA e SAIDA. Pode ser nulo."
+
+[[fields]]
+field = "local_destino_id"
+example = "loja-centro"
+sqlite.type = "TEXT"
+description = "ID do local para onde o produto foi. Usado principalmente para TRANSFERENCIA e ENTRADA. Pode ser nulo."
+
+# [[fields]]
+# field = "referencia_externa_id"
+# example = "pedido-venda-9876"
+# sqlite.type = "TEXT"
+# description = "ID de referência a outra tabela/entidade, como um pedido de venda, nota fiscal de entrada ou ordem de ajuste. Ajuda a agrupar movimentações."
+
+[[fields]]
+field = "observacao"
+example = "Venda realizada para o cliente João da Silva, referente ao pedido online 9876."
+sqlite.type = "TEXT"
+description = "Um campo de texto livre para adicionar detalhes, justificativas ou qualquer informação relevante sobre a movimentação."
+
+# [[fields]]
+# field = "saldo_anterior"
+# example = "100"
+# sqlite.type = "REAL"
+# description = "Campo para auditoria. Armazena a quantidade em estoque do produto *antes* da # movimentação ocorrer."
+# 
+# [[fields]]
+# field = "saldo_posterior"
+# example = "90"
+# sqlite.type = "REAL"
+# description = "Campo para auditoria. Armazena a quantidade em estoque do produto *depois* da movimentação ocorrer."
+
+# TODO: db_schema
+# ? como reservar
+# ? informar status do pedido ao cliente
+# ? inserir solicitacao de estoque -> pagina de solicitacao de estoque
+# manter log de outras informações: transacao_realizada, backup_realizado, alteração_produto, lote_solicitado, lote_cadastrado, ...
