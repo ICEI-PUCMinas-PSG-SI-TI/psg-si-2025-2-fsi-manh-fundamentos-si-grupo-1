@@ -1,0 +1,37 @@
+import {
+  Router,
+  type Request,
+  type Response,
+  type NextFunction,
+} from "express";
+import apiV1Router from "./api/v1";
+
+const apiRouter = Router();
+
+// TODO: middleware de autenticacao e permissoes
+apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
+  console.log("api.usuarioEstaAutenticado");
+  let usuarioEstaAutenticado = true;
+  if (usuarioEstaAutenticado) {
+    // Redireciona para o próximo middleware
+    next();
+  } else {
+    // Responde diretamente a conexão
+    res.status(401).send("O usuário não esta autenticado!");
+  }
+});
+
+apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
+  console.log("api.usuarioTemPermissoes");
+  let usuarioTemPermissoes = true;
+  if (usuarioTemPermissoes) {
+    next();
+  } else {
+    res.status(401).send("O usuário não tem permissões!");
+  }
+});
+
+// {host}/api/v1/
+apiRouter.use("/v1", apiV1Router);
+
+export default apiRouter;

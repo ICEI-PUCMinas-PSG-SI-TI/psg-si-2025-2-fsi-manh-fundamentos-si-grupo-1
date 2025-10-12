@@ -1,18 +1,19 @@
 {
-  "name": "psg-si-backend",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
   "dependencies": {
     "express": "^5.1.0"
   },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.3"
+  },
+  "module": "index.ts",
+  "name": "psg-si-backend",
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "private": true,
   "scripts": {
     "dev": "bun --watch index.ts"
-  }
+  },
+  "type": "module"
 }
