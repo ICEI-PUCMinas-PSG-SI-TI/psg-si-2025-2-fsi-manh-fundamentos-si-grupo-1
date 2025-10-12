@@ -3,6 +3,7 @@ import {
   ArchiveBoxIcon,
   ArrowsUpDownIcon,
   ChartBarIcon,
+  ClipboardDocumentListIcon,
   Cog6ToothIcon,
   PresentationChartBarIcon,
   UsersIcon,
@@ -27,9 +28,16 @@ import DarkModeToggle from './DarkModeToggle.vue'
       </NavigationMenuItem>
     </RouterLink>
 
-    <RouterLink to="/movimentacoes" v-slot="{ href, navigate, isActive }" custom>
+    <RouterLink to="/operacoes" v-slot="{ href, navigate, isActive }" custom>
       <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
         <ArrowsUpDownIcon class="m-2" />
+        Operações
+      </NavigationMenuItem>
+    </RouterLink>
+
+    <RouterLink to="/movimentacoes" v-slot="{ href, navigate, isActive }" custom>
+      <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
+        <ClipboardDocumentListIcon class="m-2" />
         Movimentações
       </NavigationMenuItem>
     </RouterLink>

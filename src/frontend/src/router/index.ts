@@ -21,6 +21,12 @@ const router = createRouter({
       component: DashboardView,
     },
     {
+      // Página de controle de estoque (registra entradas e saidas).
+      path: '/operacoes',
+      component: NotImplementedView,
+    },
+    {
+      // Página de visualização de registro (histórico de movimentações).
       path: '/movimentacoes',
       component: MovimentacoesView,
     },
