@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { lotesTable, type InsertLote, type SelectLote } from "../db/schema";
 import baseDados from "../db";
 import { stringify as stringifyUUID } from "uuid";
+import { debug, json, LogLevel } from "../logging";
 
 function updateUUID(result: SelectLote[]) {
   result.forEach((_, index, array) => {
@@ -23,8 +24,8 @@ export class LoteService {
       .insert(lotesTable)
       .values(lote)
       .then((result) => {
-        console.log("Novo lote criado: ", result.toJSON());
-        return result;
+        debug(`Novo lote criado!`, { label: "LoteService" });
+        return result.lastInsertRowid;
       });
   }
 
@@ -34,7 +35,7 @@ export class LoteService {
       .from(lotesTable)
       .then(updateUUID)
       .then((result) => {
-        console.log(`Retornando lotes`);
+        debug(`Retornando lotes`, { label: "LoteService" });
         return result;
       });
   }
@@ -47,7 +48,7 @@ export class LoteService {
       .then(updateUUID)
       .then((result) => {
         let strId = stringifyUUID(id);
-        console.log(`Retornando lote ${strId}`);
+        debug(`Retornando lote ${strId}`, { label: "LoteService" });
         return result;
       });
   }
@@ -61,7 +62,9 @@ export class LoteService {
       .where(eq(lotesTable.id, id))
       .then((result) => {
         let strId = stringifyUUID(id);
-        console.log(`Informações do lote ${strId} atualizadas!`);
+        debug(`Informações do lote ${strId} atualizadas!`, {
+          label: "LoteService",
+        });
         return result;
       });
   }
@@ -72,7 +75,9 @@ export class LoteService {
       .where(eq(lotesTable.id, id))
       .then((result) => {
         let strId = stringifyUUID(id);
-        console.log(`Informações do lote ${strId} excluidas!`);
+        debug(`Informações do lote ${strId} excluidas!`, {
+          label: "LoteService",
+        });
         return result;
       });
   }

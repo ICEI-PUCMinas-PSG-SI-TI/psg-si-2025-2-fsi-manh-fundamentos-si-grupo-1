@@ -18,7 +18,7 @@ function criar(_: Request, res: Response) {
       quantidade: 100,
       validade: new Date(2026, 0, 1, 15, 0, 0, 0),
     })
-    .then((result) => res.send(result.toJSON()));
+    .then(() => res.send());
 }
 
 function encontrarUnico(req: Request<{ id?: string }>, res: Response) {

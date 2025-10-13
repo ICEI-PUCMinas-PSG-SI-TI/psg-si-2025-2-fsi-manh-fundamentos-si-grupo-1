@@ -5,12 +5,13 @@ import {
   type NextFunction,
 } from "express";
 import apiV1Router from "./api/v1";
+import { debug } from "./logging";
 
 const apiRouter = Router();
 
 // TODO: middleware de autenticacao e permissoes
 apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
-  console.log("api.usuarioEstaAutenticado");
+  debug("api.usuarioEstaAutenticado");
   let usuarioEstaAutenticado = true;
   if (usuarioEstaAutenticado) {
     // Redireciona para o próximo middleware
@@ -22,7 +23,7 @@ apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
-  console.log("api.usuarioTemPermissoes");
+  debug("api.usuarioTemPermissoes");
   let usuarioTemPermissoes = true;
   if (usuarioTemPermissoes) {
     next();
