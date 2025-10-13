@@ -3,18 +3,6 @@ import type { NextFunction, Request, Response } from "express";
 
 const locale = process.env.LOCALE || "iso";
 
-function colorStatusCode(statusCode: number): string {
-  let text;
-  if (statusCode >= 600) text = `${statusCode}`;
-  else if (statusCode >= 500) text = chalk.redBright(statusCode);
-  else if (statusCode >= 400) text = chalk.red(statusCode);
-  else if (statusCode >= 300) text = chalk.yellow(statusCode);
-  else if (statusCode >= 200) text = chalk.green(statusCode);
-  else if (statusCode >= 100) text = chalk.blue(statusCode);
-  else text = `${statusCode}`;
-  return text;
-}
-
 // RFC 5424
 export enum LogLevel {
   Emergency,
@@ -25,6 +13,24 @@ export enum LogLevel {
   Notice,
   Informational,
   Debug,
+}
+
+let logLevel = LogLevel.Informational;
+
+export function setLogLevel(level: LogLevel) {
+  logLevel = level;
+}
+
+function colorStatusCode(statusCode: number): string {
+  let text;
+  if (statusCode >= 600) text = `${statusCode}`;
+  else if (statusCode >= 500) text = chalk.redBright(statusCode);
+  else if (statusCode >= 400) text = chalk.red(statusCode);
+  else if (statusCode >= 300) text = chalk.yellow(statusCode);
+  else if (statusCode >= 200) text = chalk.green(statusCode);
+  else if (statusCode >= 100) text = chalk.blue(statusCode);
+  else text = `${statusCode}`;
+  return text;
 }
 
 function colorLogLevel(level: LogLevel) {
@@ -65,6 +71,7 @@ function log(
   level: LogLevel,
   opts?: { excludeTimestamp?: boolean; label?: string }
 ) {
+  if (level > logLevel) return;
   let messageArray: string[] = [];
   if (!opts?.excludeTimestamp)
     messageArray.push(
