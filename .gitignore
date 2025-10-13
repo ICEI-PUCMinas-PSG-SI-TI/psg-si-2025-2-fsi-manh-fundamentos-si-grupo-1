@@ -1,6 +1,8 @@
 # IDEs
 *.swp
 *.swo
+.vscode/
+.vs/
 
 node_modules/
 mockup.json

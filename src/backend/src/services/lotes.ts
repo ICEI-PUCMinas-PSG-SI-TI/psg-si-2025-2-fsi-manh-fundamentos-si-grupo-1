@@ -1,43 +1,58 @@
 import "dotenv/config";
 import { eq } from "drizzle-orm";
-import { lotesTable } from "../db/schema";
+import { lotesTable, type InsertLote, type SelectLote } from "../db/schema";
 import baseDados from "../db";
-import { parse as parseUUID, v7 as uuid } from "uuid";
+import { stringify as stringifyUUID } from "uuid";
 
-// CRUD
+function updateUUID(result: SelectLote[]) {
+  result.forEach((_, index, array) => {
+    if (!array[index]) return;
+    if (array[index].id instanceof Uint8Array) {
+      array[index].id = stringifyUUID(array[index].id);
+    }
+    if (array[index].produto_id instanceof Uint8Array) {
+      array[index].produto_id = stringifyUUID(array[index].produto_id);
+    }
+  });
+  return result;
+}
+
 export class LoteService {
-  // Create
-  async criarLote() {
+  async inserir(lote: InsertLote) {
     return await baseDados
-      .select()
-      .from(lotesTable)
+      .insert(lotesTable)
+      .values(lote)
       .then((result) => {
-        console.log("New lote created!");
+        console.log("Novo lote criado: ", result.toJSON());
         return result;
       });
   }
 
-  // Read
-  async lerLotes() {
-    const lote: typeof lotesTable.$inferInsert = {
-      id: parseUUID(uuid()),
-      produto_id: parseUUID(uuid()),
-      lote: "SR221115",
-      quantidade: 100,
-      validade: new Date(2026, 0, 1, 15, 0, 0, 0),
-    };
-
+  async selecionarTodos() {
     return await baseDados
-      .insert(lotesTable)
-      .values(lote)
-      .then((users) => {
-        console.log("Returning values from $lotes: ", users);
-        return users;
+      .select()
+      .from(lotesTable)
+      .then(updateUUID)
+      .then((result) => {
+        console.log(`Retornando lotes`);
+        return result;
       });
   }
 
-  // Update
-  async atualizarLote(id: Uint8Array, quantidade: number) {
+  async selecionarId(id: Uint8Array) {
+    return await baseDados
+      .select()
+      .from(lotesTable)
+      .where(eq(lotesTable.id, id))
+      .then(updateUUID)
+      .then((result) => {
+        let strId = stringifyUUID(id);
+        console.log(`Retornando lote ${strId}`);
+        return result;
+      });
+  }
+
+  async atualizar(id: Uint8Array, quantidade: number) {
     return await baseDados
       .update(lotesTable)
       .set({
@@ -45,18 +60,19 @@ export class LoteService {
       })
       .where(eq(lotesTable.id, id))
       .then((result) => {
-        console.log("Lotes info updated!");
+        let strId = stringifyUUID(id);
+        console.log(`Informações do lote ${strId} atualizadas!`);
         return result;
       });
   }
 
-  // Delete
-  async excluirLote(id: Uint8Array) {
+  async excluir(id: Uint8Array) {
     return await baseDados
       .delete(lotesTable)
       .where(eq(lotesTable.id, id))
       .then((result) => {
-        console.log("Lote deleted!");
+        let strId = stringifyUUID(id);
+        console.log(`Informações do lote ${strId} excluidas!`);
         return result;
       });
   }
