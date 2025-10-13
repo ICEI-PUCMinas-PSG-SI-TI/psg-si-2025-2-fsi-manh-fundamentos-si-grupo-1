@@ -1,6 +1,8 @@
 import chalk from "chalk";
 import type { NextFunction, Request, Response } from "express";
 
+const locale = process.env.LOCALE || "iso";
+
 function colorStatusCode(statusCode: number): string {
   let text;
   if (statusCode >= 600) text = `${statusCode}`;
@@ -64,9 +66,21 @@ function log(
   opts?: { excludeTimestamp?: boolean; label?: string }
 ) {
   let messageArray: string[] = [];
-  opts?.excludeTimestamp ? "" : messageArray.push(new Date().toISOString());
+  if (!opts?.excludeTimestamp)
+    messageArray.push(
+      new Date().toLocaleString(locale, {
+        hour12: false,
+        year: "2-digit",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        fractionalSecondDigits: 3,
+      })
+    );
   messageArray.push(colorLogLevel(level));
-  opts?.label?.length ? messageArray.push(`[${opts.label}]`) : undefined;
+  if (opts?.label?.length) messageArray.push(`[${opts.label}]`);
   messageArray.push(messsage);
   const finalMessage = messageArray.join(" ");
   console.log(finalMessage);
