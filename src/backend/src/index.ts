@@ -1,8 +1,13 @@
-import express from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import apiRouter from "./api";
 import "dotenv/config";
 import { middlewareHTTP } from "./logging";
 import chalk from "chalk";
+import { ClientError } from "./error";
 
 const app = express();
 const port = 8080;
@@ -15,6 +20,20 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", apiRouter);
+
+// Manipulação de errors
+// Obs: É importante que todos os métodos HTTP chamem uma próxima função para que o erro sejá manipulado
+app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
+  if (err) {
+    if (err instanceof ClientError) {
+      res.status(400).send(err.message);
+    } else {
+      res.sendStatus(500);
+    }
+  } else {
+    next();
+  }
+});
 
 app.listen(port, () => {
   console.log(
