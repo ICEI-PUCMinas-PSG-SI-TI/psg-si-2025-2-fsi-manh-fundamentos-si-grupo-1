@@ -21,3 +21,9 @@ export const lotesTable = sqliteTable("lotes", {
 
 export type InsertLote = InferInsertModel<typeof lotesTable>;
 export type SelectLote = InferSelectModel<typeof lotesTable>;
+
+export type UpdateLote = {
+  lote?: string;
+  quantidade?: number;
+  validade?: Date;
+};

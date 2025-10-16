@@ -1,5 +1,8 @@
 import { parse, parse as parseUUID, v4 as uuid } from "uuid";
-import { LoteService } from "../../services/lotes";
+import {
+  LoteService,
+  type LoteQueryOptions,
+} from "../../services/ServicoLotes";
 import {
   Router,
   type NextFunction,
@@ -11,9 +14,24 @@ const api_v1_lotes_router = Router();
 
 let lotes = new LoteService();
 
-function getLotes(_: Request, res: Response, next: NextFunction) {
+function getLotes(
+  req: Request<any, any, LoteQueryOptions>,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    lotes.selecionarTodos().then((result) => res.send(result));
+    if (req.body) {
+      // TODO: Validar body: use zod
+      lotes
+        .selecionarConsulta(req.body)
+        .then((result) => res.send(result))
+        .catch((err) => next(err));
+    } else {
+      lotes
+        .selecionarTodos()
+        .then((result) => res.send(result))
+        .catch((err) => next(err));
+    }
   } catch (err) {
     next(err);
   }
@@ -42,7 +60,7 @@ function getLoteId(
   try {
     const { id } = req.params;
     if (typeof id === "string") {
-      lotes.selecionarId(parse(id)).then((result) => {
+      lotes.selecionarPorId(parse(id)).then((result) => {
         if (result.length === 0) res.status(404).send();
         else res.send(result);
       });

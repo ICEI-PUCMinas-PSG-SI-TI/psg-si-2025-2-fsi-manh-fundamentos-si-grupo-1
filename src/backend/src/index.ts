@@ -15,6 +15,8 @@ const port = 8080;
 // MAYBE: add request id?
 app.use(middlewareHTTP);
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("ping do endpoint /");
 });
@@ -28,6 +30,7 @@ app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
     if (err instanceof ClientError) {
       res.status(400).send(err.message);
     } else {
+      if (err instanceof Error) console.log(err.message);
       res.sendStatus(500);
     }
   } else {
