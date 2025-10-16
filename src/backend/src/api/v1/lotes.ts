@@ -1,8 +1,5 @@
 import { parse, parse as parseUUID, v4 as uuid } from "uuid";
-import {
-  LoteService,
-  type LoteQueryOptions,
-} from "../../services/ServicoLotes";
+import { loteConsultaSchema, LoteService } from "../../services/ServicoLotes";
 import {
   Router,
   type NextFunction,
@@ -14,16 +11,12 @@ const api_v1_lotes_router = Router();
 
 let lotes = new LoteService();
 
-function getLotes(
-  req: Request<any, any, LoteQueryOptions>,
-  res: Response,
-  next: NextFunction
-) {
+function getLotes(req: Request, res: Response, next: NextFunction) {
   try {
     if (req.body) {
-      // TODO: Validar body: use zod
+      const parsedBody = loteConsultaSchema.parse(req.body);
       lotes
-        .selecionarConsulta(req.body)
+        .selecionarConsulta(parsedBody)
         .then((result) => res.send(result))
         .catch((err) => next(err));
     } else {

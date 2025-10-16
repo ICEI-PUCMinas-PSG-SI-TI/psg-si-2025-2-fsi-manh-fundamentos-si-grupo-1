@@ -1,6 +1,7 @@
 import { sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { int, sqliteTable, text, blob as uuid } from "drizzle-orm/sqlite-core";
 import { parse, v4 as genUUID } from "uuid";
+import z from "zod";
 
 export const lotesTable = sqliteTable("lotes", {
   id: uuid()
@@ -27,3 +28,11 @@ export type UpdateLote = {
   quantidade?: number;
   validade?: Date;
 };
+
+export const loteUpdateSchema = z.object({
+  lote: z.string().min(1).optional(),
+  quantidade: z.number().optional(),
+  validade: z.iso.datetime(),
+});
+
+export type UpdateLoteZ = z.infer<typeof loteUpdateSchema>;

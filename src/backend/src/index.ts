@@ -5,9 +5,12 @@ import express, {
 } from "express";
 import apiRouter from "./api";
 import "dotenv/config";
-import { middlewareHTTP } from "./logging";
+import { error, middlewareHTTP } from "./logging";
 import chalk from "chalk";
 import { ClientError } from "./error";
+import z, { ZodError } from "zod";
+
+z.config(z.locales.pt());
 
 const app = express();
 const port = 8080;
@@ -29,6 +32,9 @@ app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
   if (err) {
     if (err instanceof ClientError) {
       res.status(400).send(err.message);
+    } else if (err instanceof ZodError) {
+      error(err.message);
+      res.status(400).send("Parâmetros inválidos!");
     } else {
       if (err instanceof Error) console.log(err.message);
       res.sendStatus(500);

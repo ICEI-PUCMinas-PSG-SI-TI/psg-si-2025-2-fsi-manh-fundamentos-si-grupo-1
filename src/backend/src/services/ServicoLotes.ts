@@ -1,22 +1,32 @@
+import z from "zod";
 import type { InsertLote, SelectLote, UpdateLote } from "../db/schema";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/RepositorioLotes";
 import { stringify as stringifyUUID } from "uuid";
 
-// JSON: primitive only
-export type LoteQueryOptions = {
-  page?: number;
-  pageSize?: number;
-  validade?: {
-    min: string;
-    max: string;
-  };
-  quantidade?: {
-    min: number;
-    max: number;
-  };
-  lote?: string;
-};
+export const loteConsultaSchema = z.object({
+  paginacao: z
+    .object({
+      page: z.number().int().gt(0),
+      pageSize: z.number().int().gt(0),
+    })
+    .optional(),
+  quantidade: z
+    .object({
+      min: z.number().optional().default(-Infinity),
+      max: z.number().optional().default(Infinity),
+    })
+    .optional(),
+  validade: z
+    .object({
+      min: z.iso.datetime().optional().default("1970-01-01T00:00:00.000Z"),
+      max: z.iso.datetime().optional().default("3000-01-01T00:00:00.000Z"),
+    })
+    .optional(),
+  lote: z.string().min(1).optional(),
+});
+
+type LoteConsultaZ = z.infer<typeof loteConsultaSchema>;
 
 function updateUUID(result: SelectLote[]) {
   result.forEach((value, index, array) => {
@@ -49,26 +59,26 @@ export class LoteService {
       });
   }
 
-  async selecionarConsulta(opts?: LoteQueryOptions) {
+  async selecionarConsulta(opts?: LoteConsultaZ) {
     let query = repositorioLotes.selecionarQuery();
     if (opts) {
       if (typeof opts.lote === "string") {
         query = query.comLote(opts.lote);
       }
-      if (opts.page || opts.pageSize) {
-        query = query.comPaginacao(opts.page, opts.pageSize);
+      if (opts.paginacao) {
+        query = query.comPaginacao(
+          opts.paginacao.page,
+          opts.paginacao.pageSize
+        );
       }
       if (opts.quantidade) {
         query = query.comQuantidade(opts.quantidade.min, opts.quantidade.max);
       }
       if (opts.validade) {
-        const MAX_DATE = 8640000000000000;
-        const valMin = new Date(opts.validade.min ? opts.validade.min : 0);
-        const valMax = new Date(
-          opts.validade.max ? opts.validade.max : MAX_DATE
+        query = query.comValidadeEntre(
+          new Date(opts.validade.min),
+          new Date(opts.validade.max)
         );
-        // TODO: Validar datas
-        query = query.comValidadeEntre(valMin, valMax);
       }
     }
 
