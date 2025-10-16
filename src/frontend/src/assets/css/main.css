@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@plugin "daisyui" {
+  themes:
+    light --default,
+    dark --prefersdark;
+}
+/* https://daisyui.com/theme-generator */
+@plugin "daisyui/theme" {
+  name: 'light';
+  default: true;
+  prefersdark: false;
+  color-scheme: 'light';
+  --color-neutral: oklch(39% 0.095 152.535);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+@plugin "daisyui/theme" {
+  name: 'dark';
+  default: false;
+  prefersdark: true;
+  color-scheme: 'dark';
+  --color-neutral: oklch(39% 0.095 152.535);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
