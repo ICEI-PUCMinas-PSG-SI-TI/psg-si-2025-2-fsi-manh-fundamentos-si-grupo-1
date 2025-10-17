@@ -1,4 +1,3 @@
-import { parse as parseUUID, v4 as uuid } from "uuid";
 import { loteConsultaSchema, LoteService } from "../../services/ServicoLotes";
 import {
   Router,
@@ -8,6 +7,7 @@ import {
 } from "express";
 import { ClientError } from "../../error";
 import z from "zod";
+import { InsertLoteSchemaZ } from "../../db/schema";
 
 const api_v1_lotes_router = Router();
 
@@ -15,6 +15,7 @@ const lotes = new LoteService();
 
 async function getLotes(req: Request, res: Response, next: NextFunction) {
   try {
+    // TODO: Utilizar parametros
     if (req.body) {
       const parsedBody = loteConsultaSchema.parse(req.body);
       const consulta = await lotes.selecionarConsulta(parsedBody);
@@ -28,14 +29,12 @@ async function getLotes(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function postLote(_: Request, res: Response, next: NextFunction) {
+async function postLote(req: Request, res: Response, next: NextFunction) {
   try {
-    await lotes.inserir({
-      produto_id: parseUUID(uuid()),
-      lote: "SR221115",
-      quantidade: 100,
-      validade: new Date(2026, 0, 1, 15, 0, 0, 0),
-    });
+    if (!req.body)
+      throw new ClientError("Não há informações para serem inseridas!");
+    const parsedBody = InsertLoteSchemaZ.parse(req.body);
+    await lotes.inserir(parsedBody);
     res.send();
   } catch (err) {
     next(err);
@@ -49,7 +48,7 @@ const GetLoteIdParamsSchema = z.object({
 async function getLoteId(req: Request, res: Response, next: NextFunction) {
   try {
     const params = GetLoteIdParamsSchema.parse(req.params);
-    const consulta = await lotes.selecionarPorId(parseUUID(params.id));
+    const consulta = await lotes.selecionarPorId(params.id);
     if (consulta.length === 0) throw new ClientError("", 404);
     res.send(consulta);
   } catch (err) {

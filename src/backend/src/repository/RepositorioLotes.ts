@@ -2,7 +2,7 @@ import "dotenv/config";
 import { and, eq, gte, like, lte } from "drizzle-orm";
 import {
   lotesTable,
-  type InsertLote,
+  type InsertLoteSchema,
   type SelectLote,
   type UpdateLote,
 } from "../db/schema";
@@ -58,13 +58,14 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 
 // TODO: Verificar como retornar erros de funções async
 export class RepositorioLotes {
-  async inserir(lote: InsertLote) {
+  async inserir(lote: InsertLoteSchema) {
+    console.log(lote);
     return await baseDados.transaction(async (tx) => {
       return (await tx.insert(lotesTable).values(lote)).lastInsertRowid;
     });
   }
 
-  async selecionarPorId(id: Uint8Array): Promise<SelectLote[]> {
+  async selecionarPorId(id: string): Promise<SelectLote[]> {
     return await baseDados.transaction(async (tx) => {
       return await tx.select().from(lotesTable).where(eq(lotesTable.id, id));
     });
@@ -81,7 +82,7 @@ export class RepositorioLotes {
     return new RepositorioLotesConsulta(queryBase);
   }
 
-  async atualizarPorId(id: Uint8Array, lote: UpdateLote): Promise<number> {
+  async atualizarPorId(id: string, lote: UpdateLote): Promise<number> {
     return await baseDados.transaction(async (tx) => {
       return (
         await tx.update(lotesTable).set(lote).where(eq(lotesTable.id, id))
@@ -89,7 +90,7 @@ export class RepositorioLotes {
     });
   }
 
-  async excluirPorId(id: Uint8Array) {
+  async excluirPorId(id: string) {
     return await baseDados.transaction(async (tx) => {
       return (await tx.delete(lotesTable).where(eq(lotesTable.id, id)))
         .rowsAffected;
