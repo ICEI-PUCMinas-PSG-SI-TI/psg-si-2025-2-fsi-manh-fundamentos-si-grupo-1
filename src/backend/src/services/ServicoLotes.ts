@@ -42,7 +42,7 @@ const repositorioLotes = new RepositorioLotes();
 
 export class LoteService {
   async inserir(lote: InsertLote) {
-    let res = await repositorioLotes.inserir(lote);
+    const res = await repositorioLotes.inserir(lote);
     if (res && res > 0) {
       debug(`Novo lote criado!`, { label: "LoteService" });
     }
@@ -50,7 +50,7 @@ export class LoteService {
 
   async selecionarPorId(id: Uint8Array) {
     let res = await repositorioLotes.selecionarPorId(id);
-    let strId = stringifyUUID(id);
+    const strId = stringifyUUID(id);
     debug(`Retornando lote ${strId}`, { label: "LoteService" });
     res = updateUUID(res);
     return res;
@@ -92,8 +92,8 @@ export class LoteService {
   }
 
   async atualizar(id: Uint8Array, lote: UpdateLote) {
-    let res = await repositorioLotes.atualizarPorId(id, lote);
-    let strId = stringifyUUID(id);
+    const res = await repositorioLotes.atualizarPorId(id, lote);
+    const strId = stringifyUUID(id);
     debug(`Informações do lote ${strId} atualizadas!`, {
       label: "LoteService",
     });
@@ -101,8 +101,8 @@ export class LoteService {
   }
 
   async excluir(id: Uint8Array) {
-    let res = repositorioLotes.excluirPorId(id);
-    let strId = stringifyUUID(id);
+    const res = repositorioLotes.excluirPorId(id);
+    const strId = stringifyUUID(id);
     debug(`Informações do lote ${strId} excluidas!`, {
       label: "LoteService",
     });

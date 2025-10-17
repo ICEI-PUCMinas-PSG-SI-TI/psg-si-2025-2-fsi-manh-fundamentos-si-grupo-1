@@ -72,7 +72,7 @@ function log(
   opts?: { excludeTimestamp?: boolean; label?: string }
 ) {
   if (level > logLevel) return;
-  let messageArray: string[] = [];
+  const messageArray: string[] = [];
   if (!opts?.excludeTimestamp)
     messageArray.push(
       new Date().toLocaleString(locale, {
@@ -115,7 +115,7 @@ export function error(
 }
 
 export function json(
-  message: {},
+  message: object,
   level: LogLevel,
   opts?: { excludeTimestamp?: boolean; label?: string }
 ) {
@@ -140,7 +140,7 @@ export function middlewareHTTP(
     const finishTime = Date.now();
     const status = res.statusCode;
     const totalTime = finishTime - startTime;
-    let logging = [
+    const logging = [
       chalk.blue(remote_addr),
       chalk.yellow(method),
       chalk.yellow(url),

@@ -1,5 +1,4 @@
 import http from "k6/http";
-import { sleep } from "k6";
 import { expect } from "https://jslib.k6.io/k6-testing/0.5.0/index.js";
 
 // grafana/k6

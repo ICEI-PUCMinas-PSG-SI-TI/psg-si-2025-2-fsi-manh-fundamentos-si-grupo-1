@@ -12,7 +12,7 @@ const apiRouter = Router();
 // TODO: middleware de autenticacao e permissoes
 apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
   debug("api.usuarioEstaAutenticado");
-  let usuarioEstaAutenticado = true;
+  const usuarioEstaAutenticado = true;
   if (usuarioEstaAutenticado) {
     // Redireciona para o próximo middleware
     next();
@@ -24,7 +24,7 @@ apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
 
 apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
   debug("api.usuarioTemPermissoes");
-  let usuarioTemPermissoes = true;
+  const usuarioTemPermissoes = true;
   if (usuarioTemPermissoes) {
     next();
   } else {
