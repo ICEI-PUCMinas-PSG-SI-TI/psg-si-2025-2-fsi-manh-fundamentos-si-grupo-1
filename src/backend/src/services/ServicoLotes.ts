@@ -3,6 +3,7 @@ import type { InsertLote, SelectLote, UpdateLote } from "../db/schema";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/RepositorioLotes";
 import { stringify as stringifyUUID } from "uuid";
+import { parseUuidBuffer } from "../tooling";
 
 export const loteConsultaSchema = z.object({
   paginacao: z
@@ -31,8 +32,8 @@ type LoteConsultaZ = z.infer<typeof loteConsultaSchema>;
 function updateUUID(result: SelectLote[]) {
   result.forEach((value, index, array) => {
     if (!array[index]) return;
-    array[index].id = stringifyUUID(parseUuid(value.id));
-    array[index].produto_id = stringifyUUID(parseUuid(value.produto_id));
+    array[index].id = stringifyUUID(parseUuidBuffer(value.id));
+    array[index].produto_id = stringifyUUID(parseUuidBuffer(value.produto_id));
   });
   return result;
 }
@@ -41,22 +42,18 @@ const repositorioLotes = new RepositorioLotes();
 
 export class LoteService {
   async inserir(lote: InsertLote) {
-    repositorioLotes.inserir(lote).then((res) => {
-      if (res && res > 0) {
-        debug(`Novo lote criado!`, { label: "LoteService" });
-      }
-    });
+    let res = await repositorioLotes.inserir(lote);
+    if (res && res > 0) {
+      debug(`Novo lote criado!`, { label: "LoteService" });
+    }
   }
 
   async selecionarPorId(id: Uint8Array) {
-    return repositorioLotes
-      .selecionarPorId(id)
-      .then(updateUUID)
-      .then((res) => {
-        let strId = stringifyUUID(id);
-        debug(`Retornando lote ${strId}`, { label: "LoteService" });
-        return res;
-      });
+    let res = await repositorioLotes.selecionarPorId(id);
+    let strId = stringifyUUID(id);
+    debug(`Retornando lote ${strId}`, { label: "LoteService" });
+    res = updateUUID(res);
+    return res;
   }
 
   async selecionarConsulta(opts?: LoteConsultaZ) {
@@ -81,53 +78,34 @@ export class LoteService {
         );
       }
     }
-
-    return query
-      .executarConsulta()
-      .then(updateUUID)
-      .then((result) => {
-        debug(`Retornando lotes selecionados`, { label: "LoteService" });
-        return result;
-      });
+    let res = await query.executarConsulta();
+    res = updateUUID(res);
+    debug(`Retornando lotes selecionados`, { label: "LoteService" });
+    return res;
   }
 
   async selecionarTodos() {
-    return repositorioLotes
-      .selecionarTodos()
-      .then(updateUUID)
-      .then((result) => {
-        debug(`Retornando lotes`, { label: "LoteService" });
-        return result;
-      });
+    let res = await repositorioLotes.selecionarTodos();
+    debug(`Retornando lotes`, { label: "LoteService" });
+    res = updateUUID(res);
+    return res;
   }
 
   async atualizar(id: Uint8Array, lote: UpdateLote) {
-    return repositorioLotes.atualizarPorId(id, lote).then((result) => {
-      let strId = stringifyUUID(id);
-      debug(`Informações do lote ${strId} atualizadas!`, {
-        label: "LoteService",
-      });
-      return result;
+    let res = await repositorioLotes.atualizarPorId(id, lote);
+    let strId = stringifyUUID(id);
+    debug(`Informações do lote ${strId} atualizadas!`, {
+      label: "LoteService",
     });
+    return res;
   }
 
   async excluir(id: Uint8Array) {
-    return repositorioLotes.excluirPorId(id).then((result) => {
-      let strId = stringifyUUID(id);
-      debug(`Informações do lote ${strId} excluidas!`, {
-        label: "LoteService",
-      });
-      return result;
+    let res = repositorioLotes.excluirPorId(id);
+    let strId = stringifyUUID(id);
+    debug(`Informações do lote ${strId} excluidas!`, {
+      label: "LoteService",
     });
-  }
-}
-
-function parseUuid(id: unknown): Uint8Array<ArrayBufferLike> {
-  if (id instanceof Uint8Array) {
-    return id;
-  } else if (id instanceof ArrayBuffer) {
-    return new Uint8Array(id);
-  } else {
-    throw new Error("Not a valid UUID");
+    return res;
   }
 }

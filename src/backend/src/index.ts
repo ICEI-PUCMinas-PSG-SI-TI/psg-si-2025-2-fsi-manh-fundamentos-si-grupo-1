@@ -31,7 +31,7 @@ app.use("/api", apiRouter);
 app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
   if (err) {
     if (err instanceof ClientError) {
-      res.status(400).send(err.message);
+      res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {
       error(err.message);
       res.status(400).send("Parâmetros inválidos!");

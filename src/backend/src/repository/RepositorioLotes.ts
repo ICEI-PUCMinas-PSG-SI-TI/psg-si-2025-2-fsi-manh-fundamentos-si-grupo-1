@@ -20,10 +20,6 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     this._query = queryBase;
   }
 
-  parseDate(date: Date | string) {
-    throw new Error();
-  }
-
   comPaginacao(page: number = 1, pageSize: number = 10) {
     this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
     return this;
@@ -54,8 +50,8 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   }
 
   async executarConsulta(): Promise<SelectLote[]> {
-    return baseDados.transaction(async (tx) => {
-      return tx.all(this._query.getSQL());
+    return await baseDados.transaction(async (tx) => {
+      return await tx.all(this._query.getSQL());
     });
   }
 }
@@ -63,47 +59,40 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 // TODO: Verificar como retornar erros de funções async
 export class RepositorioLotes {
   async inserir(lote: InsertLote) {
-    return baseDados.transaction(async (tx) => {
-      return tx
-        .insert(lotesTable)
-        .values(lote)
-        .then((result) => result.lastInsertRowid);
+    return await baseDados.transaction(async (tx) => {
+      return (await tx.insert(lotesTable).values(lote)).lastInsertRowid;
     });
   }
 
   async selecionarPorId(id: Uint8Array): Promise<SelectLote[]> {
-    return baseDados.transaction(async (tx) => {
-      return tx.select().from(lotesTable).where(eq(lotesTable.id, id));
+    return await baseDados.transaction(async (tx) => {
+      return await tx.select().from(lotesTable).where(eq(lotesTable.id, id));
     });
   }
 
   async selecionarTodos(): Promise<SelectLote[]> {
-    return baseDados.transaction(async (tx) => {
-      return tx.select().from(lotesTable);
+    return await baseDados.transaction(async (tx) => {
+      return await tx.select().from(lotesTable);
     });
   }
 
   selecionarQuery() {
-    let queryBase = new QueryBuilder().select().from(lotesTable).$dynamic();
+    const queryBase = new QueryBuilder().select().from(lotesTable).$dynamic();
     return new RepositorioLotesConsulta(queryBase);
   }
 
   async atualizarPorId(id: Uint8Array, lote: UpdateLote): Promise<number> {
-    return baseDados.transaction(async (tx) => {
-      return tx
-        .update(lotesTable)
-        .set(lote)
-        .where(eq(lotesTable.id, id))
-        .then((res) => res.rowsAffected);
+    return await baseDados.transaction(async (tx) => {
+      return (
+        await tx.update(lotesTable).set(lote).where(eq(lotesTable.id, id))
+      ).rowsAffected;
     });
   }
 
   async excluirPorId(id: Uint8Array) {
-    return baseDados.transaction(async (tx) => {
-      return tx
-        .delete(lotesTable)
-        .where(eq(lotesTable.id, id))
-        .then((result) => result.rowsAffected);
+    return await baseDados.transaction(async (tx) => {
+      return (await tx.delete(lotesTable).where(eq(lotesTable.id, id)))
+        .rowsAffected;
     });
   }
 }

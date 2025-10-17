@@ -1,4 +1,4 @@
-import { parse, parse as parseUUID, v4 as uuid } from "uuid";
+import { parse as parseUUID, v4 as uuid } from "uuid";
 import { loteConsultaSchema, LoteService } from "../../services/ServicoLotes";
 import {
   Router,
@@ -6,58 +6,52 @@ import {
   type Request,
   type Response,
 } from "express";
+import { ClientError } from "../../error";
+import z from "zod";
 
 const api_v1_lotes_router = Router();
 
-let lotes = new LoteService();
+const lotes = new LoteService();
 
-function getLotes(req: Request, res: Response, next: NextFunction) {
+async function getLotes(req: Request, res: Response, next: NextFunction) {
   try {
     if (req.body) {
       const parsedBody = loteConsultaSchema.parse(req.body);
-      lotes
-        .selecionarConsulta(parsedBody)
-        .then((result) => res.send(result))
-        .catch((err) => next(err));
+      const consulta = await lotes.selecionarConsulta(parsedBody);
+      res.send(consulta);
     } else {
-      lotes
-        .selecionarTodos()
-        .then((result) => res.send(result))
-        .catch((err) => next(err));
+      const consulta = await lotes.selecionarTodos();
+      res.send(consulta);
     }
   } catch (err) {
     next(err);
   }
 }
 
-function postLote(_: Request, res: Response, next: NextFunction) {
+async function postLote(_: Request, res: Response, next: NextFunction) {
   try {
-    lotes
-      .inserir({
-        produto_id: parseUUID(uuid()),
-        lote: "SR221115",
-        quantidade: 100,
-        validade: new Date(2026, 0, 1, 15, 0, 0, 0),
-      })
-      .then(() => res.send());
+    await lotes.inserir({
+      produto_id: parseUUID(uuid()),
+      lote: "SR221115",
+      quantidade: 100,
+      validade: new Date(2026, 0, 1, 15, 0, 0, 0),
+    });
+    res.send();
   } catch (err) {
     next(err);
   }
 }
 
-function getLoteId(
-  req: Request<{ id?: string }>,
-  res: Response,
-  next: NextFunction
-) {
+const GetLoteIdParamsSchema = z.object({
+  id: z.uuid(),
+});
+
+async function getLoteId(req: Request, res: Response, next: NextFunction) {
   try {
-    const { id } = req.params;
-    if (typeof id === "string") {
-      lotes.selecionarPorId(parse(id)).then((result) => {
-        if (result.length === 0) res.status(404).send();
-        else res.send(result);
-      });
-    }
+    const params = GetLoteIdParamsSchema.parse(req.params);
+    const consulta = await lotes.selecionarPorId(parseUUID(params.id));
+    if (consulta.length === 0) throw new ClientError("", 404);
+    res.send(consulta);
   } catch (err) {
     next(err);
   }
