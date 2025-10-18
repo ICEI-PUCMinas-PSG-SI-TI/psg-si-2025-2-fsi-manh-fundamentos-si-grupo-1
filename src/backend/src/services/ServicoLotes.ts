@@ -84,7 +84,7 @@ export class LoteService {
     return res;
   }
 
-  async excluir(id: string) {
+  async excluirPorId(id: string) {
     const res = repositorioLotes.excluirPorId(id);
     debug(`Informações do lote ${id} excluidas!`, {
       label: "LoteService",

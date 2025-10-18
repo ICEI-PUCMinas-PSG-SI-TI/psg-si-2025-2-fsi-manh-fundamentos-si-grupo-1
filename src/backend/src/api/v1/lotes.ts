@@ -56,11 +56,40 @@ async function getLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function substituirLoteId(_: Request, res: Response, next: NextFunction) {
+  res.status(405).send("Not supported, use PATCH.");
+  next();
+}
+
+async function atualizarLoteId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    // TODO: Atualizar informaçoes do lote
+    throw new Error("Not implemented");
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
+  try {
+    const params = GetLoteIdParamsSchema.parse(req.params);
+    const consulta = await lotes.excluirPorId(params.id);
+    if (consulta === 0) throw new ClientError("", 404);
+    res.send(consulta);
+  } catch (err) {
+    next(err);
+  }
+}
+
 api_v1_lotes_router.get("/", getLotes);
 api_v1_lotes_router.post("/", postLote);
 api_v1_lotes_router.get("/:id", getLoteId);
-// api_v1_lotes_router.put("/:id", atualizar);
-// api_v1_lotes_router.patch("/:id", atualizar);
-// api_v1_lotes_router.delete("/:id", excluir);
+api_v1_lotes_router.put("/:id", substituirLoteId);
+api_v1_lotes_router.patch("/:id", atualizarLoteId);
+api_v1_lotes_router.delete("/:id", excluirLoteId);
 
 export default api_v1_lotes_router;
