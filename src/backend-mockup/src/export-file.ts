@@ -12,12 +12,12 @@ export function exportFile(data: {}, filePath: string) {
     (err) => {
       if (err) {
         if (err.code === "EEXIST") {
-          console.error("Error writing JSON file: File already exists!");
+          console.error("Error escrevendo arquivo JSON: Arquivo já existe!");
         } else {
-          console.error("Error writing JSON file:", err);
+          console.error("Error escrevendo arquivo JSON:", err);
         }
       } else {
-        console.log(`JSON data successfully exported to ${filePath}`);
+        console.log(`Arquivo JSON criado com sucesso em ${filePath}`);
       }
     }
   );
