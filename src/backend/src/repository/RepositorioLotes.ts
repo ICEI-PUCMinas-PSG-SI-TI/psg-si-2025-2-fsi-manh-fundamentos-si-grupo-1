@@ -1,23 +1,25 @@
 import "dotenv/config";
-import { and, eq, gte, like, lte } from "drizzle-orm";
-import {
-  lotesTable,
-  type InsertLoteSchema,
-  type SelectLote,
-  type UpdateLote,
-} from "../db/schema";
+import { and, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
+import { lotesTable } from "../db/schema";
 import baseDados from "../db";
 import {
   QueryBuilder,
   type SQLiteSelectQueryBuilder,
 } from "drizzle-orm/sqlite-core";
-import { ClientError } from "../error";
+import type {
+  InsertLoteSchema,
+  SelectLoteSchema,
+  UpdateLoteSchema,
+} from "../db/types";
 
+// TODO: Prevent calling where functions more than 1 time
 class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   _query: T;
+  _where: SQLWrapper[];
 
   constructor(queryBase: T) {
     this._query = queryBase;
+    this._where = [];
   }
 
   comPaginacao(page: number = 1, pageSize: number = 10) {
@@ -25,31 +27,43 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
-  // TODO: Verificar se as datas são validas
-  comValidadeEntre(min: Date, max: Date) {
-    if (min > max) throw new ClientError("comValidadeEntre: min > max");
-
-    this._query = this._query.where(
-      and(gte(lotesTable.validade, min), lte(lotesTable.validade, max))
-    );
+  comId(id: string) {
+    this._where.push(eq(lotesTable.id, id));
     return this;
   }
 
-  comQuantidade(min: number, max: number) {
-    if (min > max) throw new ClientError("comQuantidade: min > max");
+  comProdutoId(id: string) {
+    this._where.push(eq(lotesTable.produto_id, id));
+    return this;
+  }
 
-    this._query = this._query.where(
-      and(gte(lotesTable.quantidade, min), lte(lotesTable.quantidade, max))
-    );
+  comValidadeMaiorIgualQue(data: Date) {
+    this._where.push(gte(lotesTable.validade, data));
+    return this;
+  }
+
+  comValidadeMenorIgualQue(data: Date) {
+    this._where.push(lte(lotesTable.validade, data));
+    return this;
+  }
+
+  comQuantidadeMaiorIgualQue(valor: number) {
+    this._where.push(gte(lotesTable.quantidade, valor));
+    return this;
+  }
+
+  comQuantidadeMenorIgualQue(valor: number) {
+    this._where.push(lte(lotesTable.quantidade, valor));
     return this;
   }
 
   comLote(lote: string) {
-    this._query = this._query.where(like(lotesTable.lote, `%${lote}%`));
+    this._where.push(like(lotesTable.lote, `%${lote}%`));
     return this;
   }
 
-  async executarConsulta(): Promise<SelectLote[]> {
+  async executarConsulta(): Promise<SelectLoteSchema[]> {
+    this._query.where(and(...this._where));
     return await baseDados.transaction(async (tx) => {
       return await tx.all(this._query.getSQL());
     });
@@ -59,21 +73,31 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 // TODO: Verificar como retornar erros de funções async
 export class RepositorioLotes {
   async inserir(lote: InsertLoteSchema) {
-    console.log(lote);
     return await baseDados.transaction(async (tx) => {
       return (await tx.insert(lotesTable).values(lote)).lastInsertRowid;
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectLote[]> {
+  async selecionarPorId(id: string): Promise<SelectLoteSchema[]> {
     return await baseDados.transaction(async (tx) => {
       return await tx.select().from(lotesTable).where(eq(lotesTable.id, id));
     });
   }
 
-  async selecionarTodos(): Promise<SelectLote[]> {
+  async selecionarTodos(
+    page: number = 1,
+    pageSize: number = 10
+  ): Promise<SelectLoteSchema[]> {
     return await baseDados.transaction(async (tx) => {
-      return await tx.select().from(lotesTable);
+      if (page >= 1 && pageSize >= 1) {
+        return await tx
+          .select()
+          .from(lotesTable)
+          .limit(pageSize)
+          .offset((page - 1) * pageSize);
+      } else {
+        return await tx.select().from(lotesTable);
+      }
     });
   }
 
@@ -82,7 +106,7 @@ export class RepositorioLotes {
     return new RepositorioLotesConsulta(queryBase);
   }
 
-  async atualizarPorId(id: string, lote: UpdateLote): Promise<number> {
+  async atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
     return await baseDados.transaction(async (tx) => {
       return (
         await tx.update(lotesTable).set(lote).where(eq(lotesTable.id, id))

@@ -1,4 +1,4 @@
-import { loteConsultaSchema, LoteService } from "../../services/ServicoLotes";
+import { LoteConsultaSchema, LoteService } from "../../services/ServicoLotes";
 import {
   Router,
   type NextFunction,
@@ -6,19 +6,25 @@ import {
   type Response,
 } from "express";
 import { ClientError } from "../../error";
-import z from "zod";
-import { InsertLoteSchemaZ } from "../../db/schema";
+import { ParamsIdSchema } from "./objects";
+import { InsertLoteSchemaZ } from "../../db/types";
 
 const api_v1_lotes_router = Router();
 
 const lotes = new LoteService();
 
+// GET / { queryParams: SelectLoteSchema }
+// POST / { body: InsertLoteSchema }
+// GET /:id
+// PUT /:id { body: UpdateLoteSchema }
+// PATCH /:id { body: UpdateLoteSchema }
+// DELETE /:id
+
 async function getLotes(req: Request, res: Response, next: NextFunction) {
   try {
-    // TODO: Utilizar parametros
-    if (req.body) {
-      const parsedBody = loteConsultaSchema.parse(req.body);
-      const consulta = await lotes.selecionarConsulta(parsedBody);
+    if (req.query) {
+      const parsedQueryParams = LoteConsultaSchema.parse(req.query);
+      const consulta = await lotes.selecionarConsulta(parsedQueryParams);
       res.send(consulta);
     } else {
       const consulta = await lotes.selecionarTodos();
@@ -41,13 +47,9 @@ async function postLote(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-const GetLoteIdParamsSchema = z.object({
-  id: z.uuid(),
-});
-
 async function getLoteId(req: Request, res: Response, next: NextFunction) {
   try {
-    const params = GetLoteIdParamsSchema.parse(req.params);
+    const params = ParamsIdSchema.parse(req.params);
     const consulta = await lotes.selecionarPorId(params.id);
     if (consulta.length === 0) throw new ClientError("", 404);
     res.send(consulta);
@@ -56,8 +58,15 @@ async function getLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function substituirLoteId(_: Request, res: Response, next: NextFunction) {
+async function substituirLoteId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   res.status(405).send("Not supported, use PATCH.");
+  // const params = ParamsIdSchema.parse(req.params);
+  // if (!req.body)
+  //   throw new ClientError("Não há informações para serem inseridas!");
   next();
 }
 
@@ -67,6 +76,9 @@ async function atualizarLoteId(
   next: NextFunction
 ) {
   try {
+    // const params = ParamsIdSchema.parse(req.params);
+    // if (!req.body)
+    //   throw new ClientError("Não há informações para serem inseridas!");
     // TODO: Atualizar informaçoes do lote
     throw new Error("Not implemented");
   } catch (err) {
@@ -76,7 +88,7 @@ async function atualizarLoteId(
 
 async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
   try {
-    const params = GetLoteIdParamsSchema.parse(req.params);
+    const params = ParamsIdSchema.parse(req.params);
     const consulta = await lotes.excluirPorId(params.id);
     if (consulta === 0) throw new ClientError("", 404);
     res.send(consulta);

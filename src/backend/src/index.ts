@@ -36,7 +36,7 @@ app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
       error(err.message);
       res.status(400).send("Parâmetros inválidos!");
     } else {
-      if (err instanceof Error) console.log(err.message);
+      if (err instanceof Error) error(err.message);
       res.sendStatus(500);
     }
   } else {

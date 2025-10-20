@@ -1,31 +1,21 @@
 import z from "zod";
-import type { InsertLoteSchema, UpdateLote } from "../db/schema";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/RepositorioLotes";
+import type { InsertLoteSchema, UpdateLoteSchema } from "../db/types";
 
-export const loteConsultaSchema = z.object({
-  paginacao: z
-    .object({
-      page: z.number().int().gt(0),
-      pageSize: z.number().int().gt(0),
-    })
-    .optional(),
-  quantidade: z
-    .object({
-      min: z.number().optional().default(-Infinity),
-      max: z.number().optional().default(Infinity),
-    })
-    .optional(),
-  validade: z
-    .object({
-      min: z.iso.datetime().optional().default("1970-01-01T00:00:00.000Z"),
-      max: z.iso.datetime().optional().default("3000-01-01T00:00:00.000Z"),
-    })
-    .optional(),
+export const LoteConsultaSchema = z.strictObject({
+  id: z.uuid().optional(),
+  produtoId: z.uuid().optional(),
+  pagina: z.coerce.number().int().gt(0).optional(),
+  paginaTamanho: z.coerce.number().int().gt(0).optional(),
+  quantidadeMin: z.coerce.number().optional(),
+  quantidadeMax: z.coerce.number().optional(),
+  validadeAte: z.iso.datetime().optional(),
+  validadeApos: z.iso.datetime().optional(),
   lote: z.string().min(1).optional(),
 });
 
-type LoteConsultaZ = z.infer<typeof loteConsultaSchema>;
+type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
 
 const repositorioLotes = new RepositorioLotes();
 
@@ -46,23 +36,29 @@ export class LoteService {
   async selecionarConsulta(opts?: LoteConsultaZ) {
     let query = repositorioLotes.selecionarQuery();
     if (opts) {
-      if (typeof opts.lote === "string") {
+      if (opts.id) {
+        query = query.comId(opts.id);
+      }
+      if (opts.produtoId) {
+        query = query.comProdutoId(opts.produtoId);
+      }
+      if (opts.lote) {
         query = query.comLote(opts.lote);
       }
-      if (opts.paginacao) {
-        query = query.comPaginacao(
-          opts.paginacao.page,
-          opts.paginacao.pageSize
-        );
+      query = query.comPaginacao(opts.pagina, opts.paginaTamanho);
+      if (opts.validadeApos) {
+        const validadeApos = new Date(opts.validadeApos);
+        query = query.comValidadeMaiorIgualQue(validadeApos);
       }
-      if (opts.quantidade) {
-        query = query.comQuantidade(opts.quantidade.min, opts.quantidade.max);
+      if (opts.validadeAte) {
+        const validadeAte = new Date(opts.validadeAte);
+        query = query.comValidadeMenorIgualQue(validadeAte);
       }
-      if (opts.validade) {
-        query = query.comValidadeEntre(
-          new Date(opts.validade.min),
-          new Date(opts.validade.max)
-        );
+      if (opts.quantidadeMin) {
+        query = query.comQuantidadeMaiorIgualQue(opts.quantidadeMin);
+      }
+      if (opts.quantidadeMax) {
+        query = query.comQuantidadeMenorIgualQue(opts.quantidadeMax);
       }
     }
     const res = await query.executarConsulta();
@@ -76,7 +72,7 @@ export class LoteService {
     return res;
   }
 
-  async atualizar(id: string, lote: UpdateLote) {
+  async atualizar(id: string, lote: UpdateLoteSchema) {
     const res = await repositorioLotes.atualizarPorId(id, lote);
     debug(`Informações do lote ${id} atualizadas!`, {
       label: "LoteService",
