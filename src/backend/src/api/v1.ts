@@ -1,13 +1,13 @@
 import { Router } from "express";
-import api_v1_usuarios from "./v1/usuarios";
-import api_v1_lotes from "./v1/lotes";
+import apiV1Usuarios from "./v1/usuarios";
+import apiV1Lotes from "./v1/lotes";
 
-const api_v1_router = Router();
+const apiV1Router = Router();
 
 // {host}/api/v1/usuarios
-api_v1_router.use("/usuarios", api_v1_usuarios);
+apiV1Router.use("/usuarios", apiV1Usuarios);
 
 // {host}/api/v1/lotes
-api_v1_router.use("/lotes", api_v1_lotes);
+apiV1Router.use("/lotes", apiV1Lotes);
 
-export default api_v1_router;
+export default apiV1Router;

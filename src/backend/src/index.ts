@@ -45,7 +45,7 @@ app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(port, () => {
-  console.log(
+  console.info(
     [
       chalk.bgBlueBright("psg-si-fundamentos-backend"),
       `O backend está online na porta ${port}`,

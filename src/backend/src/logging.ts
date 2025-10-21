@@ -90,7 +90,7 @@ function log(
   if (opts?.label?.length) messageArray.push(`[${opts.label}]`);
   messageArray.push(messsage);
   const finalMessage = messageArray.join(" ");
-  console.log(finalMessage);
+  console.info(finalMessage);
 }
 
 export function info(
@@ -130,7 +130,7 @@ export function middlewareHTTP(
 ) {
   const startTime = Date.now();
   // :date[iso] :remote-addr :method :url :status :response-time ms
-  const remote_addr = req.ip;
+  const remoteAddr = req.ip;
   const method = req.method;
   const url = req.url;
   // const httpVersion = req.httpVersion;
@@ -141,7 +141,7 @@ export function middlewareHTTP(
     const status = res.statusCode;
     const totalTime = finishTime - startTime;
     const logging = [
-      chalk.blue(remote_addr),
+      chalk.blue(remoteAddr),
       chalk.yellow(method),
       chalk.yellow(url),
       colorStatusCode(status),

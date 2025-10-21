@@ -5,7 +5,7 @@ import {
   type Response,
 } from "express";
 
-const api_v1_usuarios_router = Router();
+const apiV1UsuariosRouter = Router();
 
 function notImplemented(req: Request, res: Response, next: NextFunction) {
   try {
@@ -15,11 +15,11 @@ function notImplemented(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-api_v1_usuarios_router.get("/", notImplemented);
-api_v1_usuarios_router.post("/", notImplemented);
-api_v1_usuarios_router.get("/:id", notImplemented);
-api_v1_usuarios_router.put("/:id", notImplemented);
-api_v1_usuarios_router.patch("/:id", notImplemented);
-api_v1_usuarios_router.delete("/:id", notImplemented);
+apiV1UsuariosRouter.get("/", notImplemented);
+apiV1UsuariosRouter.post("/", notImplemented);
+apiV1UsuariosRouter.get("/:id", notImplemented);
+apiV1UsuariosRouter.put("/:id", notImplemented);
+apiV1UsuariosRouter.patch("/:id", notImplemented);
+apiV1UsuariosRouter.delete("/:id", notImplemented);
 
-export default api_v1_usuarios_router;
+export default apiV1UsuariosRouter;

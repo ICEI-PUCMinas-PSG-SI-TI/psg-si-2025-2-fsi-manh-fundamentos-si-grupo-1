@@ -6,5 +6,40 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig(
   eslint.configs.recommended,
-  tseslint.configs.recommended
+  tseslint.configs.recommended,
+  [
+    {
+      rules: {
+        camelcase: "warn",
+        "consistent-return": "warn",
+        "dot-notation": "warn",
+        "no-inline-comments": "warn",
+        "no-lonely-if": "warn",
+        "no-nested-ternary": "warn",
+        "no-var": "warn",
+        "prefer-object-has-own": "warn",
+        radix: "warn",
+        "require-await": "warn",
+        "no-eval": "warn",
+        "no-continue": "warn",
+        eqeqeq: ["warn", "always", { null: "ignore" }],
+        "no-restricted-syntax": [
+          "warn",
+          {
+            selector:
+              "CallExpression[callee.object.name='console'][callee.property.name!=/^(warn|error|info|trace)$/]",
+            message:
+              "log() is not recommended, use info(), error() or something else.",
+          },
+        ],
+        "one-var": [
+          "warn",
+          {
+            initialized: "never",
+            uninitialized: "consecutive",
+          },
+        ],
+      },
+    },
+  ]
 );

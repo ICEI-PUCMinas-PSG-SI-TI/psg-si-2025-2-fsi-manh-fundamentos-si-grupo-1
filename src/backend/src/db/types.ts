@@ -11,7 +11,7 @@ export const UpdateLoteSchemaZ = z.strictObject({
 
 export const InsertLoteSchemaZ = createInsertSchema(lotesTable, {
   id: z.uuid().optional(),
-  produto_id: z.uuid(),
+  produtoId: z.uuid(),
 });
 
 InsertLoteSchemaZ.strict();

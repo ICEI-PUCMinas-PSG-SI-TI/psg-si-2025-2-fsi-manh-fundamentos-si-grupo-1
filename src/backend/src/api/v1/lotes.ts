@@ -9,7 +9,7 @@ import { ClientError } from "../../error";
 import { ParamsIdSchema } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/types";
 
-const api_v1_lotes_router = Router();
+const apiV1LotesRouter = Router();
 
 const lotes = new LoteService();
 
@@ -58,11 +58,7 @@ async function getLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function substituirLoteId(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+function substituirLoteId(req: Request, res: Response, next: NextFunction) {
   res.status(405).send("Not supported, use PATCH.");
   // const params = ParamsIdSchema.parse(req.params);
   // if (!req.body)
@@ -70,11 +66,7 @@ async function substituirLoteId(
   next();
 }
 
-async function atualizarLoteId(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+function atualizarLoteId(req: Request, res: Response, next: NextFunction) {
   try {
     // const params = ParamsIdSchema.parse(req.params);
     // if (!req.body)
@@ -97,11 +89,11 @@ async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-api_v1_lotes_router.get("/", getLotes);
-api_v1_lotes_router.post("/", postLote);
-api_v1_lotes_router.get("/:id", getLoteId);
-api_v1_lotes_router.put("/:id", substituirLoteId);
-api_v1_lotes_router.patch("/:id", atualizarLoteId);
-api_v1_lotes_router.delete("/:id", excluirLoteId);
+apiV1LotesRouter.get("/", getLotes);
+apiV1LotesRouter.post("/", postLote);
+apiV1LotesRouter.get("/:id", getLoteId);
+apiV1LotesRouter.put("/:id", substituirLoteId);
+apiV1LotesRouter.patch("/:id", atualizarLoteId);
+apiV1LotesRouter.delete("/:id", excluirLoteId);
 
-export default api_v1_lotes_router;
+export default apiV1LotesRouter;
