@@ -104,6 +104,7 @@ export class RepositorioLotes {
 
   async excluirPorId(id: string) {
     return await baseDados.transaction(async (tx) => {
+      // or .returning()
       return (await tx.delete(lotesTable).where(eq(lotesTable.id, id))).rowsAffected;
     });
   }
