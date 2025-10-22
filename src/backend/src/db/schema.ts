@@ -42,6 +42,8 @@ export const usuariosTable = sqliteTable("usuario", {
   descricao: text(),
   habilitado: int({ mode: "boolean" }).notNull().default(false),
   modoEscuro: int("modo_escuro", { mode: "boolean" }).notNull().default(false),
+  // TODO: Verificar se esse formato é o ideal para validar permissões
+  nivelPermissoes: int("nivel_permissoes").notNull().default(3),
   foto: blob(),
   // TODO: Campo não é necessário, haverá logs separados
   // criado_por: text(),

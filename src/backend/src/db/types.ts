@@ -27,22 +27,24 @@ export type InsertLoteSchema = z.infer<typeof InsertLoteSchemaZ>;
 export const UpdateUsuarioSchemaZ = z.strictObject({
   nome: z.string().optional(),
   login: z.string().optional(),
-  // salted_password?
+  saltedPassword: z.string().optional(),
   descricao: z.string().optional(),
-  habilitado: z.int().min(0).max(1).optional(),
-  modoEscuro: z.int().min(0).max(1).optional(),
+  habilitado: z.boolean().optional(),
+  modoEscuro: z.boolean().optional(),
   foto: z.base64().optional(),
+  // TODO: Verificar como limitar nível de proteção para alterar permissões do usuário
+  nivelPermissoes: z.int().min(0).max(3).optional(),
 });
 
 export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
   id: z.uuid().optional(),
-  habilitado: z.int().min(0).max(1).optional(),
-  modoEscuro: z.int().min(0).max(1).optional(),
+  habilitado: z.boolean().optional(),
+  modoEscuro: z.boolean().optional(),
   foto: z.base64(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 });
 
-export type SelectUsuarioSchema = InferSelectModel<typeof lotesTable>;
+export type SelectUsuarioSchema = InferSelectModel<typeof usuariosTable>;
 export type UpdateUsuarioSchema = z.infer<typeof UpdateUsuarioSchemaZ>;
 export type InsertUsuarioSchema = z.infer<typeof InsertUsuarioSchemaZ>;
