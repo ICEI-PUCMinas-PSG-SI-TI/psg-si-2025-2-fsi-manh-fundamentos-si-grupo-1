@@ -1,7 +1,7 @@
 import z from "zod";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/RepositorioLotes";
-import type { InsertLoteSchema, UpdateLoteSchema } from "../db/types";
+import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
 
 export const LoteConsultaSchema = z.strictObject({
   id: z.uuid().optional(),

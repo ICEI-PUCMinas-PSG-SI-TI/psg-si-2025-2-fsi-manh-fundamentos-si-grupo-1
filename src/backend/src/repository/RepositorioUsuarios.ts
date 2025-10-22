@@ -1,11 +1,11 @@
 import { and, eq, type SQLWrapper } from "drizzle-orm";
 import bancoDados from "../db";
-import { usuariosTable as tabelaUsuarios } from "../db/schema";
+import { usuariosTable as tabelaUsuarios } from "../db/schema/usuarios";
 import type {
   InsertUsuarioSchema,
   SelectUsuarioSchema,
   UpdateUsuarioSchema,
-} from "../db/types";
+} from "../db/schema/usuarios";
 import {
   QueryBuilder,
   type SQLiteSelectQueryBuilder,

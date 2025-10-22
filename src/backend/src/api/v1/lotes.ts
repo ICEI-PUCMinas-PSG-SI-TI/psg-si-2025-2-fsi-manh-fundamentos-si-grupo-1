@@ -7,7 +7,7 @@ import {
 } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchema } from "./objects";
-import { InsertLoteSchemaZ } from "../../db/types";
+import { InsertLoteSchemaZ } from "../../db/schema/lotes";
 
 const apiV1LotesRouter = Router();
 

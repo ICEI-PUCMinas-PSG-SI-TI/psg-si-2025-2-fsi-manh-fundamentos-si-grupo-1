@@ -1,28 +1,34 @@
+import { sql } from "drizzle-orm";
+import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
-import { lotesTable, usuariosTable } from "./schema";
 import { createInsertSchema } from "drizzle-zod";
 import z from "zod";
 
-// Repositorio :: Lote
-
-export const UpdateLoteSchemaZ = z.strictObject({
-  lote: z.string().min(1).optional(),
-  quantidade: z.number().optional(),
-  validade: z.coerce.date().optional(),
+export const usuariosTable = sqliteTable("usuarios", {
+  id: text()
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => genUUID()),
+  nome: text().notNull(),
+  // TODO: Verificar necessidade de login, email e identificação
+  login: text().notNull(),
+  saltedPassword: text("salted_password").notNull(),
+  descricao: text(),
+  habilitado: int({ mode: "boolean" }).notNull().default(false),
+  modoEscuro: int("modo_escuro", { mode: "boolean" }).notNull().default(false),
+  // TODO: Verificar se esse formato é o ideal para validar permissões
+  nivelPermissoes: int("nivel_permissoes").notNull().default(3),
+  foto: blob(),
+  // TODO: Campo não é necessário, haverá logs separados
+  // criado_por: text(),
+  createdAt: int("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: int("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
 });
-
-export const InsertLoteSchemaZ = createInsertSchema(lotesTable, {
-  id: z.uuid().optional(),
-  produtoId: z.uuid(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-}).strict();
-
-export type SelectLoteSchema = InferSelectModel<typeof lotesTable>;
-export type UpdateLoteSchema = z.infer<typeof UpdateLoteSchemaZ>;
-export type InsertLoteSchema = z.infer<typeof InsertLoteSchemaZ>;
-
-// Repositorio :: Usuários
 
 export const UpdateUsuarioSchemaZ = z.strictObject({
   nome: z.string().optional(),
