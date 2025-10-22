@@ -9,8 +9,8 @@ export const sessoesTable = sqliteTable("sessoes", {
     .primaryKey()
     .notNull()
     .$defaultFn(() => genUUID()),
-  userId: text("user_id").notNull(),
-  token: text().notNull(),
+  usuarioId: text("user_id").notNull(),
+  token: text().notNull().unique(),
   userAgent: text("user_agent"),
   ip: text().notNull(),
   createdAt: int("created_at", { mode: "timestamp" })
@@ -30,7 +30,7 @@ export const UpdateSessaoSchemaZ = z.strictObject({
 
 export const InsertSessaoSchemaZ = createInsertSchema(sessoesTable, {
   id: z.uuid().optional(),
-  userId: z.uuid(),
+  usuarioId: z.uuid(),
   ip: z.union([z.ipv4(), z.ipv6()]),
 })
   .omit({

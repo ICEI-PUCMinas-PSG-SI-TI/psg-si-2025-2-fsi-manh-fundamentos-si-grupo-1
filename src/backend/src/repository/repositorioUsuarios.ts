@@ -76,6 +76,7 @@ export class RepositorioUsuarios {
     });
   }
 
+  // TODO: Return apenas primeiro
   async selecionarPorLogin(login: string): Promise<SelectUsuarioSchema[]> {
     return await bancoDados.transaction(async (tx) => {
       return await tx

@@ -24,6 +24,15 @@ export class RepositorioSessoes {
     });
   }
 
+  async selecionarPorToken(token: string): Promise<SelectSessaoSchema[]> {
+    return await bancoDados.transaction(async (tx) => {
+      return await tx
+        .select()
+        .from(tabelaSessoes)
+        .where(eq(tabelaSessoes.token, token));
+    });
+  }
+
   async selecionarTodos(
     page: number = 1,
     pageSize: number = 10,
