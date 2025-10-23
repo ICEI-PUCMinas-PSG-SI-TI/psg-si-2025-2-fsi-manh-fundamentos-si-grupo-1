@@ -25,6 +25,7 @@ export class LoteService {
     if (res && res > 0) {
       debug(`Novo lote criado!`, { label: "LoteService" });
     }
+    return res;
   }
 
   async selecionarPorId(id: string) {

@@ -12,8 +12,8 @@ export const usuariosTable = sqliteTable("usuarios", {
     .$defaultFn(() => genUUID()),
   nome: text().notNull(),
   // TODO: Verificar necessidade de login, email e identificação
-  login: text().notNull(),
-  saltedPassword: text("salted_password").notNull(),
+  login: text().notNull().unique(),
+  hashedPassword: text("hashed_password").notNull(),
   descricao: text(),
   habilitado: int({ mode: "boolean" }).notNull().default(false),
   modoEscuro: int("modo_escuro", { mode: "boolean" }).notNull().default(false),
@@ -33,7 +33,7 @@ export const usuariosTable = sqliteTable("usuarios", {
 export const UpdateUsuarioSchemaZ = z.strictObject({
   nome: z.string().optional(),
   login: z.string().optional(),
-  saltedPassword: z.string().optional(),
+  hashedPassword: z.string().optional(),
   descricao: z.string().optional(),
   habilitado: z.boolean().optional(),
   modoEscuro: z.boolean().optional(),
@@ -46,9 +46,13 @@ export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
   id: z.uuid().optional(),
   habilitado: z.boolean().optional(),
   modoEscuro: z.boolean().optional(),
-  foto: z.base64(),
+  foto: z.base64().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
+}).omit({
+  id: true,
+  updatedAt: true,
+  createdAt: true,
 });
 
 export type SelectUsuarioSchema = InferSelectModel<typeof usuariosTable>;

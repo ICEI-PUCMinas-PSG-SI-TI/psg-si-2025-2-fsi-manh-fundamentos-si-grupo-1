@@ -26,7 +26,7 @@ description = "e-mail do usuário"
 example = "mail@example.com"
 
 [[fields]]
-field = "salted_password"
+field = "hashed_password"
 sqlite.type = "TEXT"
 description = "Hash da senha do usuário com salt"
 example = "mv853wa9n5auohfd083hhp45"
