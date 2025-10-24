@@ -33,6 +33,9 @@ export const lotesTable = sqliteTable("lotes", {
     .default(sql`(unixepoch())`),
 });
 
+// Campos da tabela que podem ser atualizados. Os campos não são inferidos
+// diretamente para evitar a permissão de edição de futuros campos que podem
+// ser adicionados a tabela.
 export const UpdateLoteSchemaZ = z.strictObject({
   lote: z.string().min(1).optional(),
   quantidade: z.number().optional(),

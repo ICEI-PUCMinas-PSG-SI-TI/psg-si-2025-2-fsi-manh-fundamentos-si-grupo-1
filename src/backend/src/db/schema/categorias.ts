@@ -1,5 +1,5 @@
-import type { InferSelectModel } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sql, type InferSelectModel } from "drizzle-orm";
+import { sqliteTable, text, int } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
@@ -11,6 +11,9 @@ export const categoriasTable = sqliteTable("categorias", {
     .notNull()
     .$defaultFn(() => genUUID()),
   nome: text().notNull(),
+  createdAt: int("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
 });
 
 export const InsertCategoriaSchemaZ = createInsertSchema(categoriasTable, {

@@ -30,6 +30,9 @@ export const usuariosTable = sqliteTable("usuarios", {
     .default(sql`(unixepoch())`),
 });
 
+// Campos da tabela que podem ser atualizados. Os campos não são inferidos
+// diretamente para evitar a permissão de edição de futuros campos que podem
+// ser adicionados a tabela.
 export const UpdateUsuarioSchemaZ = z.strictObject({
   nome: z.string().optional(),
   login: z.string().optional(),

@@ -21,6 +21,9 @@ export const sessoesTable = sqliteTable("sessoes", {
     .default(sql`(unixepoch())`),
 });
 
+// Campos da tabela que podem ser atualizados. Os campos não são inferidos
+// diretamente para evitar a permissão de edição de futuros campos que podem
+// ser adicionados a tabela.
 export const UpdateSessaoSchemaZ = z.strictObject({
   token: z.string().optional(),
 });
