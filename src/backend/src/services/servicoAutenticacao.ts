@@ -4,6 +4,7 @@ import { RepositorioSessoes } from "../repository/repositorioSessoes";
 import { ClientError } from "../error";
 import { compare } from "bcrypt";
 import { error } from "../logging";
+import type { SelectSessaoSchema } from "../db/schema/sessoes";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
 
@@ -120,37 +121,43 @@ export class AutenticacaoServico {
     return token;
   }
 
-  async consultarSessao(sessionId: string) {
+  async consultarSessao(sessionId: string): Promise<SelectSessaoSchema | null> {
     const now = new Date();
 
     const sessao = await repositorioSessoes.selecionarPorId(sessionId);
     if (!sessao) return null;
 
-    const session = {
-      id: sessao.id,
-      secretHash: sessao.secretHash,
-      createdAt: sessao.createdAt,
-    };
-
     // Check expiration
     if (
-      now.getTime() - session.createdAt.getTime() >=
+      now.getTime() - sessao.createdAt.getTime() >=
       SESSION_EXPIRES_IN_SECONDS * 1000
     ) {
       await repositorioSessoes.excluirPorId(sessionId);
       return null;
     }
 
-    return session;
+    return sessao;
   }
 
-  // TODO: Adicionar cache, não validar sessão em cada conexão
+  async consultarSessaoPorToken(
+    token: string,
+  ): Promise<SelectSessaoSchema | null> {
+    const _token = parseToken(token);
+    if (!_token) return null;
+    return await this.consultarSessao(_token?.id);
+  }
+
+  // NOTE: Aqui, todas as conexões serão validadas via hash do segredo.
+  // Isso pode ser lento e a segurança adicional não é necessária no escopo do projeto.
+  // TODO: Adicionar validarSessaoInseguro()
   async validarSessao(token: string): Promise<boolean> {
     const _token = parseToken(token);
     if (!_token) return false;
     const sessao = await repositorioSessoes.selecionarPorId(_token.id);
     if (!sessao) return false;
     const tokenSecretHash = await hashSecret(_token.secret);
+    // Node.js only
+    // crypto.timingSafeEqual(tokenSecretHash, sessao.secretHash)
     const validSecret = constantTimeEqual(tokenSecretHash, sessao.secretHash);
     if (!validSecret) return false;
     return true;

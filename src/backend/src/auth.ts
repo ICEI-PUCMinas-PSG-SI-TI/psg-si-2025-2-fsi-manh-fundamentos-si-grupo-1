@@ -69,7 +69,23 @@ async function logout(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function validate(req: Request, res: Response, next: NextFunction) {
+  try {
+    const cookies = req.cookies;
+    if (typeof cookies.session_token !== "string")
+      throw new ClientError("Não autenticado!", 400);
+    const sessaoAtiva = await servicoAutenticacao.consultarSessaoPorToken(
+      cookies.session_token,
+    );
+    if (!sessaoAtiva) throw new ClientError("Não autenticado!", 400);
+    res.send("Autenticado");
+  } catch (err) {
+    next(err);
+  }
+}
+
 authRouter.post("/login", login);
 authRouter.post("/logout", logout);
+authRouter.post("/validate", validate);
 
 export default authRouter;
