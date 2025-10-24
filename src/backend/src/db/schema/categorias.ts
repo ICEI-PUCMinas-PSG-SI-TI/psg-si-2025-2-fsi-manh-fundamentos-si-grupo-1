@@ -12,10 +12,10 @@ export const categoriasTable = sqliteTable("categorias", {
   nome: text().notNull(),
 });
 
-export const InsertLoteSchemaZ = createInsertSchema(categoriasTable, {
+export const InsertCategoriaSchemaZ = createInsertSchema(categoriasTable, {
   id: z.uuid().optional(),
   nome: z.string().min(1).max(128),
 }).strict();
 
-export type SelectLoteSchema = InferSelectModel<typeof categoriasTable>;
-export type InsertLoteSchema = z.infer<typeof InsertLoteSchemaZ>;
+export type SelectCategoriaSchema = InferSelectModel<typeof categoriasTable>;
+export type InsertCategoriaSchema = z.infer<typeof InsertCategoriaSchemaZ>;
