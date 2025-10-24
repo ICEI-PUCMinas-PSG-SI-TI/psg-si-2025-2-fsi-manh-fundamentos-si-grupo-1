@@ -1,44 +1,31 @@
 import { sql, type InferSelectModel } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-import { v4 as genUUID } from "uuid";
 import z from "zod";
+import { usuariosTable } from "./usuarios";
 
+// NOTE: UserAgent and ipAddress will be recorded at login time, for now, this will not be updated or invalidated if user changes those infos
 export const sessoesTable = sqliteTable("sessoes", {
-  id: text()
-    .primaryKey()
+  id: text().primaryKey().notNull(),
+  secretHash: blob("secret_hash", { mode: "buffer" }).notNull(),
+  usuarioId: text("user_id")
     .notNull()
-    .$defaultFn(() => genUUID()),
-  usuarioId: text("user_id").notNull(),
-  token: text().notNull().unique(),
+    .references(() => usuariosTable.id),
   userAgent: text("user_agent"),
-  ip: text().notNull(),
+  ipAddress: text("ip_address").notNull(),
   createdAt: int("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`(unixepoch())`),
-});
-
-// Campos da tabela que podem ser atualizados. Os campos não são inferidos
-// diretamente para evitar a permissão de edição de futuros campos que podem
-// ser adicionados a tabela.
-export const UpdateSessaoSchemaZ = z.strictObject({
-  token: z.string().optional(),
 });
 
 export const InsertSessaoSchemaZ = createInsertSchema(sessoesTable, {
-  id: z.uuid().optional(),
   usuarioId: z.uuid(),
-  ip: z.union([z.ipv4(), z.ipv6()]),
+  ipAddress: z.union([z.ipv4(), z.ipv6()]),
 })
   .omit({
     createdAt: true,
-    updatedAt: true,
   })
   .strict();
 
 export type SelectSessaoSchema = InferSelectModel<typeof sessoesTable>;
-export type UpdateSessaoSchema = z.infer<typeof UpdateSessaoSchemaZ>;
 export type InsertSessaoSchema = z.infer<typeof InsertSessaoSchemaZ>;

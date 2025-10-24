@@ -76,13 +76,14 @@ export class RepositorioUsuarios {
     });
   }
 
-  // TODO: Return apenas primeiro
-  async selecionarPorLogin(login: string): Promise<SelectUsuarioSchema[]> {
+  async selecionarPorLogin(login: string): Promise<SelectUsuarioSchema | null> {
     return await bancoDados.transaction(async (tx) => {
-      return await tx
+      const res = await tx
         .select()
         .from(tabelaUsuarios)
         .where(eq(tabelaUsuarios.login, login));
+      if (res.length && res[0]) return res[0];
+      return null;
     });
   }
 
