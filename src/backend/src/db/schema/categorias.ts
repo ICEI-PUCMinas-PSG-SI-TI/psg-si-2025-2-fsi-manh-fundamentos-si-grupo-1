@@ -4,6 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
 
+// TODO: Verificar necessidade de desabilitar ou atualizar categorias
 export const categoriasTable = sqliteTable("categorias", {
   id: text()
     .primaryKey()
