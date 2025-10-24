@@ -14,8 +14,8 @@ export const unidadesMedidaTable = sqliteTable("unidades_medida", {
 });
 
 export const UpdateUnidadesMedidasSchemaZ = z.strictObject({
-  nome: z.string().min(1).max(128),
-  abreviacao: z.string().min(1).max(16),
+  nome: z.string().min(1).max(128).optional(),
+  abreviacao: z.string().min(1).max(16).optional(),
 });
 
 export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
