@@ -6,7 +6,14 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig(
   eslint.configs.recommended,
-  tseslint.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+      },
+    },
+  },
   [
     {
       rules: {
@@ -39,7 +46,12 @@ export default defineConfig(
             uninitialized: "consecutive",
           },
         ],
+        "@typescript-eslint/no-misused-promises": "error",
+        "@typescript-eslint/no-floating-promises": [
+          "error",
+          { checkThenables: true },
+        ],
       },
     },
-  ]
+  ],
 );
