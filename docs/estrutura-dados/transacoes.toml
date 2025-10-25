@@ -2,7 +2,7 @@
 
 [[fields]]
 field = "id"
-sqlite.type = "BLOB"
+sqlite.type = "TEXT"
 sqlite.null = false
 sqlite.primary = true
 description = "Identificador único da movimentação (UUID). Chave primária."
@@ -28,7 +28,7 @@ example = "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
 
 # TODO: Verificar necessidade de utilizar enum e reduzir quantidade de campos
 [[fields]]
-field = "tipo"
+field = "motivo"
 description = "Tipo de movimentação: ENTRADA, SAIDA, VENDA, CONTAGEM, PERDA, DEVOLUCAO, TRANSFERENCIA, RESERVA, AJUSTE_POSITIVO, AJUSTE_NEGATIVO."
 sqlite.type = "TEXT"
 example = "VENDA"
