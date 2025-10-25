@@ -52,11 +52,13 @@ export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
   foto: z.base64().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-}).omit({
-  id: true,
-  updatedAt: true,
-  createdAt: true,
-});
+})
+  .omit({
+    id: true,
+    updatedAt: true,
+    createdAt: true,
+  })
+  .strict();
 
 export type SelectUsuarioSchema = InferSelectModel<typeof usuariosTable>;
 export type UpdateUsuarioSchema = z.infer<typeof UpdateUsuarioSchemaZ>;

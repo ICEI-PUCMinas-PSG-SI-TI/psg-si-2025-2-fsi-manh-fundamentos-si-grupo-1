@@ -32,9 +32,12 @@ export const InsertSessaoSchemaZ = createInsertSchema(sessoesTable, {
   id: z.uuid().optional(),
   userId: z.uuid(),
   ip: z.union([z.ipv4(), z.ipv6()]),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-}).strict();
+})
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+  })
+  .strict();
 
 export type SelectSessaoSchema = InferSelectModel<typeof sessoesTable>;
 export type UpdateSessaoSchema = z.infer<typeof UpdateSessaoSchemaZ>;

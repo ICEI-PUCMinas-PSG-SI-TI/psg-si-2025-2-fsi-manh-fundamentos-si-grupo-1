@@ -34,7 +34,12 @@ export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
     nome: z.string().min(1).max(128),
     abreviacao: z.string().min(1).max(16),
   },
-).strict();
+)
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+  })
+  .strict();
 
 export type SelectUnidadesMedidaSchema = InferSelectModel<
   typeof unidadesMedidaTable

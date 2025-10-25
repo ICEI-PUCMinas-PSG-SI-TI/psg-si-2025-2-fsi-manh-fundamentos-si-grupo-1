@@ -45,9 +45,12 @@ export const UpdateLoteSchemaZ = z.strictObject({
 export const InsertLoteSchemaZ = createInsertSchema(lotesTable, {
   id: z.uuid().optional(),
   produtoId: z.uuid(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
-}).strict();
+})
+  .omit({
+    createdAt: true,
+    updatedAt: true,
+  })
+  .strict();
 
 export type SelectLoteSchema = InferSelectModel<typeof lotesTable>;
 export type UpdateLoteSchema = z.infer<typeof UpdateLoteSchemaZ>;

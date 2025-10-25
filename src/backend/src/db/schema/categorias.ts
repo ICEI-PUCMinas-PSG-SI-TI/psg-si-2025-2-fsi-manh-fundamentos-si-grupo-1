@@ -19,7 +19,11 @@ export const categoriasTable = sqliteTable("categorias", {
 export const InsertCategoriaSchemaZ = createInsertSchema(categoriasTable, {
   id: z.uuid().optional(),
   nome: z.string().min(1).max(128),
-}).strict();
+})
+  .omit({
+    createdAt: true,
+  })
+  .strict();
 
 export type SelectCategoriaSchema = InferSelectModel<typeof categoriasTable>;
 export type InsertCategoriaSchema = z.infer<typeof InsertCategoriaSchemaZ>;
