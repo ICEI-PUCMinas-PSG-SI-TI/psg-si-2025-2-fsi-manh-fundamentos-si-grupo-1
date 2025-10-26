@@ -3,7 +3,7 @@ import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
-import { unidadesMedidaTable } from "./unidades-medida";
+import { unidadesMedidaTable } from "./unidadesMedida";
 
 export const produtosTable = sqliteTable("produtos", {
   id: text()

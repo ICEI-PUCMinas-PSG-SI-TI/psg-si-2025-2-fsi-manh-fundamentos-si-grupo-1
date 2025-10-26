@@ -1,6 +1,6 @@
 import z from "zod";
 import { debug } from "../logging";
-import { RepositorioLotes } from "../repository/RepositorioLotes";
+import { RepositorioLotes } from "../repository/repositorioLotes";
 import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
 
 export const LoteConsultaSchema = z.strictObject({

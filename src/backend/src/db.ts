@@ -7,7 +7,7 @@ import { configuracoesTable } from "./db/schema/configuracoes";
 import { produtosTable } from "./db/schema/produtos";
 import { sessoesTable } from "./db/schema/sessoes";
 import { transacoesTable } from "./db/schema/transacoes";
-import { unidadesMedidaTable } from "./db/schema/unidades-medida";
+import { unidadesMedidaTable } from "./db/schema/unidadesMedida";
 import { usuariosTable } from "./db/schema/usuarios";
 
 export const baseDados = drizzle(process.env.DB_FILE_NAME!);

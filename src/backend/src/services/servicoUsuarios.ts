@@ -4,7 +4,7 @@ import {
   type UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
 import { debug } from "../logging";
-import { RepositorioUsuarios } from "../repository/RepositorioUsuarios";
+import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { hash } from "bcrypt";
 import { ClientError } from "../error";
 

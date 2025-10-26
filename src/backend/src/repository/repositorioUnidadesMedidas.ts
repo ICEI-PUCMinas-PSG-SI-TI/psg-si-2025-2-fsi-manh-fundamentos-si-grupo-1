@@ -6,7 +6,7 @@ import {
   type InsertUnidadesMedidaSchema,
   type SelectUnidadesMedidaSchema,
   type UpdateUnidadesMedidaSchema,
-} from "../db/schema/unidades-medida";
+} from "../db/schema/unidadesMedida";
 
 export class RepositorioUnidadesMedida {
   async inserir(unidadeMedida: InsertUnidadesMedidaSchema) {

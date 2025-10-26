@@ -1,4 +1,4 @@
-import servicoConfiguracoes from "../../services/ServicoConfiguracoes";
+import servicoConfiguracoes from "../../services/servicoConfiguracoes";
 import {
   Router,
   type NextFunction,

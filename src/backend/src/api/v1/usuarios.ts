@@ -6,7 +6,7 @@ import {
 } from "express";
 import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
-} from "../../services/ServicoUsuarios";
+} from "../../services/servicoUsuarios";
 import { ClientError } from "../../error";
 import { ParamsIdSchema } from "./objects";
 

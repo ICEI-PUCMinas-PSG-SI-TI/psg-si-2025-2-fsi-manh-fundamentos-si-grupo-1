@@ -1,4 +1,4 @@
-import { LoteConsultaSchema, LoteService } from "../../services/ServicoLotes";
+import { LoteConsultaSchema, LoteService } from "../../services/servicoLotes";
 import {
   Router,
   type NextFunction,
