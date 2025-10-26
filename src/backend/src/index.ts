@@ -5,12 +5,18 @@ import express, {
 } from "express";
 import apiRouter from "./api";
 import "dotenv/config";
-import { error, middlewareHTTP } from "./logging";
+import { error, info, middlewareHTTP } from "./logging";
 import chalk from "chalk";
 import { ClientError } from "./error";
 import z, { ZodError } from "zod";
+import { verificarBancoDados } from "./db";
 
 z.config(z.locales.pt());
+
+console.info(chalk.bgBlueBright("psg-si-fundamentos-backend\n"));
+
+// Verifica se a base de dados está ok
+if (!(await verificarBancoDados())) process.exit();
 
 const app = express();
 const port = 8080;
@@ -44,12 +50,6 @@ app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.listen(port, () => {
-  console.info(
-    [
-      chalk.bgBlueBright("psg-si-fundamentos-backend"),
-      `O backend está online na porta ${port}`,
-      chalk.bold("Requests:"),
-    ].join("\n\n")
-  );
-});
+app.listen(port, () =>
+  info(`O backend está online na porta ${port}.`, { label: "server" }),
+);
