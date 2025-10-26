@@ -7,15 +7,12 @@ import {
   type UpdateConfiguracaoSchema,
 } from "../db/schema/configuracoes";
 
-export class RepositorioCategorias {
+export class RepositorioConfiguracoes {
   inserir(
     configuracoes: InsertConfiguracaoSchema,
-  ): Promise<bigint | undefined> {
-    return baseDados.transaction(async (tx) => {
-      const resultSet = await tx
-        .insert(configuracoesTable)
-        .values(configuracoes);
-      return resultSet.lastInsertRowid;
+  ): Promise<SelectConfiguracaoSchema[]> {
+    return baseDados.transaction((tx) => {
+      return tx.insert(configuracoesTable).values(configuracoes).returning();
     });
   }
 
