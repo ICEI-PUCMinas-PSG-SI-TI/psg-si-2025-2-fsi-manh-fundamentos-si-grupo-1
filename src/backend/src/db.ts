@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/libsql";
-import { error, info, notice, warning } from "./logging";
+import { error, notice, warning } from "./logging";
 import { DrizzleQueryError, sql } from "drizzle-orm";
 import { lotesTable } from "./db/schema/lotes";
 import { categoriasTable } from "./db/schema/categorias";
