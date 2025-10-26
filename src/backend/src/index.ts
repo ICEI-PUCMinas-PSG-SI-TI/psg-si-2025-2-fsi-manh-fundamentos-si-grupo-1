@@ -10,6 +10,8 @@ import chalk from "chalk";
 import { ClientError } from "./error";
 import z, { ZodError } from "zod";
 import { verificarBancoDados } from "./db";
+import cookieParser from "cookie-parser";
+import authRouter from "./auth";
 
 z.config(z.locales.pt());
 
@@ -26,10 +28,13 @@ app.use(middlewareHTTP);
 
 app.use(express.json());
 
+app.use(cookieParser());
+
 app.get("/", (req, res) => {
   res.send("ping do endpoint /");
 });
 
+app.use("/auth", authRouter);
 app.use("/api", apiRouter);
 
 // Manipulação de errors

@@ -4,7 +4,6 @@ import {
   sessoesTable as tabelaSessoes,
   type InsertSessaoSchema,
   type SelectSessaoSchema,
-  type UpdateSessaoSchema,
 } from "../db/schema/sessoes";
 import bancoDados from "../db";
 
@@ -15,12 +14,14 @@ export class RepositorioSessoes {
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectSessaoSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      return await tx
+  selecionarPorId(id: string): Promise<SelectSessaoSchema | null> {
+    return bancoDados.transaction(async (tx) => {
+      const res = await tx
         .select()
         .from(tabelaSessoes)
         .where(eq(tabelaSessoes.id, id));
+      if (res.length && res[0]) return res[0];
+      return null;
     });
   }
 
@@ -41,21 +42,7 @@ export class RepositorioSessoes {
     });
   }
 
-  async atualizarPorId(
-    id: string,
-    sessao: UpdateSessaoSchema,
-  ): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
-      return (
-        await tx
-          .update(tabelaSessoes)
-          .set(sessao)
-          .where(eq(tabelaSessoes.id, id))
-      ).rowsAffected;
-    });
-  }
-
-  async excluirPorId(id: string) {
+  async excluirPorId(id: string): Promise<number> {
     return await bancoDados.transaction(async (tx) => {
       // or .returning()
       return (await tx.delete(tabelaSessoes).where(eq(tabelaSessoes.id, id)))

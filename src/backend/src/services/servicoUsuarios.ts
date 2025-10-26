@@ -25,10 +25,10 @@ class ServicoUsuarios {
     const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
     const hashedPassword: string = await hash(usuario.password, rounds);
     // Verifica se login já existe
-    const listaLogins = await repositorioUsuarios.selecionarPorLogin(
+    const _usuario = await repositorioUsuarios.selecionarPorLogin(
       usuario.login,
     );
-    if (listaLogins.length > 0) throw new ClientError("Login já existe.", 409);
+    if (_usuario) throw new ClientError("Login já existe.", 409);
     const insertUsuario = InsertUsuarioSchemaZ.parse({
       nome: usuario.nome,
       login: usuario.login,
