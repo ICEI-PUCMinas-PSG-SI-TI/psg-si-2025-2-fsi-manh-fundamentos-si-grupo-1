@@ -8,7 +8,6 @@ import {
 } from "../db/schema/sessoes";
 import bancoDados from "../db";
 
-// TODO: Verificar como retornar erros de funções async
 export class RepositorioSessoes {
   async inserir(sessao: InsertSessaoSchema) {
     return await bancoDados.transaction(async (tx) => {

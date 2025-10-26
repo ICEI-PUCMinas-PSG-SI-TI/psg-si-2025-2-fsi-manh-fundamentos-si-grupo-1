@@ -1,4 +1,3 @@
-// TODO: Verificar a necessidade de adicionar código aos errors
 export class ClientError extends Error {
   code: number;
 

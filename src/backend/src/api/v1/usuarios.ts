@@ -33,7 +33,7 @@ async function postUsuario(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function getLoteId(req: Request, res: Response, next: NextFunction) {
+async function getUsuarioId(req: Request, res: Response, next: NextFunction) {
   try {
     const params = ParamsIdSchema.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
@@ -44,7 +44,11 @@ async function getLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
+async function excluirUsuarioId(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const params = ParamsIdSchema.parse(req.params);
     const consulta = await servicoUsuarios.excluirPorId(params.id);
@@ -63,11 +67,13 @@ function notImplemented(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-apiV1UsuariosRouter.get("/", getUsuarios);
-apiV1UsuariosRouter.post("/", postUsuario);
-apiV1UsuariosRouter.get("/:id", getLoteId);
-apiV1UsuariosRouter.put("/:id", notImplemented);
-apiV1UsuariosRouter.patch("/:id", notImplemented);
-apiV1UsuariosRouter.delete("/:id", excluirLoteId);
+apiV1UsuariosRouter
+  .get("/", getUsuarios)
+  .post("/", postUsuario)
+  .get("/:id", getUsuarioId)
+  // TODO: Implementar PUT e PATCH para o endpoint de usuários.
+  .put("/:id", notImplemented)
+  .patch("/:id", notImplemented)
+  .delete("/:id", excluirUsuarioId);
 
 export default apiV1UsuariosRouter;

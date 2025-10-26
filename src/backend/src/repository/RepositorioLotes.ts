@@ -12,7 +12,7 @@ import type {
   UpdateLoteSchema,
 } from "../db/schema/lotes";
 
-// TODO: Prevent calling where functions more than 1 time
+// TODO(!scope): Prevent calling where functions more than 1 time
 class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   _query: T;
   _where: SQLWrapper[];
@@ -70,7 +70,6 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   }
 }
 
-// TODO: Verificar como retornar erros de funções async
 export class RepositorioLotes {
   async inserir(lote: InsertLoteSchema) {
     return await baseDados.transaction(async (tx) => {

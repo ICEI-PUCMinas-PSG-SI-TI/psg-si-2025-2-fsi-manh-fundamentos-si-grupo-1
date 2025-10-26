@@ -20,8 +20,6 @@ export const usuariosTable = sqliteTable("usuarios", {
   // TODO: Verificar se esse formato é o ideal para validar permissões
   nivelPermissoes: int("nivel_permissoes").notNull().default(3),
   foto: blob(),
-  // TODO: Campo não é necessário, haverá logs separados
-  // criado_por: text(),
   createdAt: int("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

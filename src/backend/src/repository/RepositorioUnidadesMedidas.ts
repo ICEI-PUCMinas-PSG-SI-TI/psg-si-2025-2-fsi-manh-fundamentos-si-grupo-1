@@ -8,7 +8,6 @@ import {
   type UpdateUnidadesMedidaSchema,
 } from "../db/schema/unidades-medida";
 
-// TODO: Verificar como retornar erros de funções async
 export class RepositorioUnidadesMedida {
   async inserir(unidadeMedida: InsertUnidadesMedidaSchema) {
     return await bancoDados.transaction(async (tx) => {

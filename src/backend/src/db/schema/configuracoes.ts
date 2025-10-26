@@ -34,7 +34,7 @@ export const InsertConfiguracaoSchemaZ = createInsertSchema(
   configuracoesTable,
   {
     id: z.uuid().optional(),
-    // TODO: Validar cpf/cnpj?
+    // TODO(!scope): Validar cpf/cnpj?
   },
 )
   .omit({
