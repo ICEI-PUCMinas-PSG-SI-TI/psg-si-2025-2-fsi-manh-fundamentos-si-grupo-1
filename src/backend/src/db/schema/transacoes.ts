@@ -56,9 +56,9 @@ export const UpdateTransacoesSchemaZ = z.strictObject({
 // Os campos de inserção podem ser inferidos. Alguns deles podem ser adicionalmente validados como UUID e omitidos.
 export const InsertTransacoesSchemaZ = createInsertSchema(transacoesTable, {
   id: z.uuid().optional(),
-  produtoId: z.uuid().optional(),
-  usuarioId: z.uuid().optional(),
-  loteId: z.uuid().optional(),
+  produtoId: z.uuid(),
+  usuarioId: z.uuid(),
+  loteId: z.uuid(),
   horario: z.coerce.date().optional(),
 })
   .omit({
