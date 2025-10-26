@@ -32,7 +32,8 @@
     "db:push": "drizzle-kit push",
     "dev": "bun --watch src/index.ts",
     "lint": "eslint .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prettier": "prettier --write './src/**/*.ts' --config ./.prettierrc.toml"
   },
   "type": "module"
 }
