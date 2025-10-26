@@ -1,4 +1,4 @@
-import { LoteConsultaSchema, LoteService } from "../../services/ServicoLotes";
+import { LoteConsultaSchema, LoteService } from "../../services/servicoLotes";
 import {
   Router,
   type NextFunction,
@@ -7,7 +7,7 @@ import {
 } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchema } from "./objects";
-import { InsertLoteSchemaZ } from "../../db/types";
+import { InsertLoteSchemaZ } from "../../db/schema/lotes";
 
 const apiV1LotesRouter = Router();
 
@@ -58,26 +58,6 @@ async function getLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-function substituirLoteId(req: Request, res: Response, next: NextFunction) {
-  res.status(405).send("Not supported, use PATCH.");
-  // const params = ParamsIdSchema.parse(req.params);
-  // if (!req.body)
-  //   throw new ClientError("Não há informações para serem inseridas!");
-  next();
-}
-
-function atualizarLoteId(req: Request, res: Response, next: NextFunction) {
-  try {
-    // const params = ParamsIdSchema.parse(req.params);
-    // if (!req.body)
-    //   throw new ClientError("Não há informações para serem inseridas!");
-    // TODO: Atualizar informaçoes do lote
-    throw new Error("Not implemented");
-  } catch (err) {
-    next(err);
-  }
-}
-
 async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
   try {
     const params = ParamsIdSchema.parse(req.params);
@@ -89,11 +69,21 @@ async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-apiV1LotesRouter.get("/", getLotes);
-apiV1LotesRouter.post("/", postLote);
-apiV1LotesRouter.get("/:id", getLoteId);
-apiV1LotesRouter.put("/:id", substituirLoteId);
-apiV1LotesRouter.patch("/:id", atualizarLoteId);
-apiV1LotesRouter.delete("/:id", excluirLoteId);
+function notImplemented(req: Request, res: Response, next: NextFunction) {
+  try {
+    throw new Error("Not implemented");
+  } catch (err) {
+    next(err);
+  }
+}
+
+apiV1LotesRouter
+  .get("/", getLotes)
+  .post("/", postLote)
+  .get("/:id", getLoteId)
+  // TODO: Implementar PUT e PATCH para o endpoint de lotes.
+  .put("/:id", notImplemented)
+  .patch("/:id", notImplemented)
+  .delete("/:id", excluirLoteId);
 
 export default apiV1LotesRouter;

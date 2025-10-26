@@ -1,11 +1,18 @@
 import "dotenv/config";
 import { and, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
-import { lotesTable } from "../db/schema";
+import { lotesTable } from "../db/schema/lotes";
 import baseDados from "../db";
-import { QueryBuilder, type SQLiteSelectQueryBuilder } from "drizzle-orm/sqlite-core";
-import type { InsertLoteSchema, SelectLoteSchema, UpdateLoteSchema } from "../db/types";
+import {
+  QueryBuilder,
+  type SQLiteSelectQueryBuilder,
+} from "drizzle-orm/sqlite-core";
+import type {
+  InsertLoteSchema,
+  SelectLoteSchema,
+  UpdateLoteSchema,
+} from "../db/schema/lotes";
 
-// TODO: Prevent calling where functions more than 1 time
+// TODO(!scope): Prevent calling where functions more than 1 time
 class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   _query: T;
   _where: SQLWrapper[];
@@ -63,7 +70,6 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   }
 }
 
-// TODO: Verificar como retornar erros de funções async
 export class RepositorioLotes {
   async inserir(lote: InsertLoteSchema) {
     return await baseDados.transaction(async (tx) => {
@@ -77,7 +83,10 @@ export class RepositorioLotes {
     });
   }
 
-  async selecionarTodos(page: number = 1, pageSize: number = 10): Promise<SelectLoteSchema[]> {
+  async selecionarTodos(
+    page: number = 1,
+    pageSize: number = 10,
+  ): Promise<SelectLoteSchema[]> {
     return await baseDados.transaction(async (tx) => {
       if (page >= 1 && pageSize >= 1) {
         return await tx
@@ -98,13 +107,17 @@ export class RepositorioLotes {
 
   async atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
     return await baseDados.transaction(async (tx) => {
-      return (await tx.update(lotesTable).set(lote).where(eq(lotesTable.id, id))).rowsAffected;
+      return (
+        await tx.update(lotesTable).set(lote).where(eq(lotesTable.id, id))
+      ).rowsAffected;
     });
   }
 
   async excluirPorId(id: string) {
     return await baseDados.transaction(async (tx) => {
-      return (await tx.delete(lotesTable).where(eq(lotesTable.id, id))).rowsAffected;
+      // or .returning()
+      return (await tx.delete(lotesTable).where(eq(lotesTable.id, id)))
+        .rowsAffected;
     });
   }
 }

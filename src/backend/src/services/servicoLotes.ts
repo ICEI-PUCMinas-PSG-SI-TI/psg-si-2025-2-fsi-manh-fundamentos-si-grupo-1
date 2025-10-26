@@ -1,7 +1,7 @@
 import z from "zod";
 import { debug } from "../logging";
-import { RepositorioLotes } from "../repository/RepositorioLotes";
-import type { InsertLoteSchema, UpdateLoteSchema } from "../db/types";
+import { RepositorioLotes } from "../repository/repositorioLotes";
+import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
 
 export const LoteConsultaSchema = z.strictObject({
   id: z.uuid().optional(),
@@ -25,6 +25,7 @@ export class LoteService {
     if (res && res > 0) {
       debug(`Novo lote criado!`, { label: "LoteService" });
     }
+    return res;
   }
 
   async selecionarPorId(id: string) {

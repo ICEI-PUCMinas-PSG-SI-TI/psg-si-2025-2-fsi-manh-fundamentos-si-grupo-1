@@ -69,7 +69,7 @@ function colorLogLevel(level: LogLevel) {
 function log(
   messsage: string,
   level: LogLevel,
-  opts?: { excludeTimestamp?: boolean; label?: string }
+  opts?: { excludeTimestamp?: boolean; label?: string },
 ) {
   if (level > logLevel) return;
   const messageArray: string[] = [];
@@ -84,7 +84,7 @@ function log(
         minute: "numeric",
         second: "numeric",
         fractionalSecondDigits: 3,
-      })
+      }),
     );
   messageArray.push(colorLogLevel(level));
   if (opts?.label?.length) messageArray.push(`[${opts.label}]`);
@@ -93,31 +93,45 @@ function log(
   console.info(finalMessage);
 }
 
+export function error(
+  messsage: string,
+  opts?: { excludeTimestamp?: boolean; label?: string },
+) {
+  log(messsage, LogLevel.Error, opts);
+}
+
+export function warning(
+  messsage: string,
+  opts?: { excludeTimestamp?: boolean; label?: string },
+) {
+  log(messsage, LogLevel.Warning, opts);
+}
+
+export function notice(
+  messsage: string,
+  opts?: { excludeTimestamp?: boolean; label?: string },
+) {
+  log(messsage, LogLevel.Notice, opts);
+}
+
 export function info(
   messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string }
+  opts?: { excludeTimestamp?: boolean; label?: string },
 ) {
   log(messsage, LogLevel.Informational, opts);
 }
 
 export function debug(
   messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string }
+  opts?: { excludeTimestamp?: boolean; label?: string },
 ) {
   log(messsage, LogLevel.Debug, opts);
-}
-
-export function error(
-  messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string }
-) {
-  log(messsage, LogLevel.Error, opts);
 }
 
 export function json(
   message: object,
   level: LogLevel,
-  opts?: { excludeTimestamp?: boolean; label?: string }
+  opts?: { excludeTimestamp?: boolean; label?: string },
 ) {
   const stringMessage = JSON.stringify(message, null, 2);
   log(stringMessage, level, opts);
@@ -126,7 +140,7 @@ export function json(
 export function middlewareHTTP(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const startTime = Date.now();
   // :date[iso] :remote-addr :method :url :status :response-time ms
