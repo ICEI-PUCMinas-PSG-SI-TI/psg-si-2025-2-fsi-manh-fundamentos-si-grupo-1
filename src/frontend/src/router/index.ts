@@ -4,6 +4,7 @@ import LoginView from '@/views/LoginView.vue'
 import MovimentacoesView from '@/views/MovimentacoesView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import NotImplementedView from '@/views/NotImplementedView.vue'
+import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,7 +53,7 @@ const router = createRouter({
     },
     {
       path: '/configuracoes',
-      component: NotImplementedView,
+      component: ConfiguracoesView,
     },
   ],
 })
