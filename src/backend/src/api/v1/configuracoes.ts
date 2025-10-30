@@ -1,3 +1,5 @@
+import { UpdateConfiguracaoSchemaZ } from "../../db/schema/configuracoes";
+import { ClientError } from "../../error";
 import servicoConfiguracoes from "../../services/servicoConfiguracoes";
 import {
   Router,
@@ -21,9 +23,12 @@ async function getConfiguracoes(
   }
 }
 
-function notImplemented(req: Request, res: Response, next: NextFunction) {
+async function notImplemented(req: Request, res: Response, next: NextFunction) {
   try {
-    throw new Error("Not implemented");
+    if (!req.body) throw new ClientError("Bad Request");
+    const parsedBody = UpdateConfiguracaoSchemaZ.parse(req.body);
+    await servicoConfiguracoes.atualizar(parsedBody);
+    res.send();
   } catch (err) {
     next(err);
   }
