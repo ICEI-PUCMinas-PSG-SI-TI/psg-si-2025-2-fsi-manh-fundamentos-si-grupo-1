@@ -7,7 +7,7 @@ const tema = useTemaStore()
 
 <template>
   <div :data-theme="tema.isDarkModePreferred ? 'dark' : 'light'" class="flex flex-row size-full">
-    <NavigationMenu class="flex h-full" />
+    <NavigationMenu />
     <RouterView />
   </div>
 </template>
