@@ -96,7 +96,7 @@
         </div>
         <div class="xl:col-span-2">
           <div
-            class="badge badge-xl badgde-soft badge-primary m-1"
+            class="badge badge-lg badgde-soft badge-primary m-1"
             v-for="categoria in refCategorias"
             :key="categoria.id"
           >
@@ -112,31 +112,35 @@
     <CardComponent>
       <CardTitleBar title="Unidades de medida" />
       <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full gap-4">
-        <form class="xl:col-span-1">
+        <div class="xl:col-span-1">
           <LabeledInput
             class="w-full"
             html-type="text"
-            label-text="Unidades de medida"
-            html-place-holder="Unidades de medida"
+            label-text="Nome da unidades de medida"
+            html-place-holder="Nome da unidades de medida"
+            v-model="refNovaUnidadeMedida.nome"
           />
           <LabeledInput
             class="w-full mb-4"
             html-type="text"
             label-text="Abreviação"
             html-place-holder="Abreviação"
+            v-model="refNovaUnidadeMedida.abreviacao"
           />
-          <ButtonComponent class="w-full">Adicionar</ButtonComponent>
-        </form>
+          <ButtonComponent class="w-full" @click="adicionarUnidadeMedida"
+            >Adicionar</ButtonComponent
+          >
+        </div>
         <div class="xl:col-span-2">
           <div
-            class="badge badge-xl badgde-soft badge-primary m-1"
-            v-for="unidade in unidadesMedida"
-            :key="unidade.uuid"
+            class="badge badge-lg badgde-soft badge-primary m-1"
+            v-for="unidade in refUnidadesMedida"
+            :key="unidade.id"
           >
             <div class="flex flex-col">
-              <p>{{ unidade.nome }} ({{ unidade.abrev }})</p>
+              <p>{{ unidade.nome }} ({{ unidade.abreviacao }})</p>
             </div>
-            <button>
+            <button class="btn btn-xs btn-primary" @click="removerUnidadeMedida(unidade.id)">
               <XMarkIcon class="size-6" />
             </button>
           </div>
@@ -155,6 +159,7 @@ import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ref } from 'vue'
 import { ApiConfiguracoes } from '@/api/configuracoes'
 import { ApiCategorias, type Categorias } from '@/api/categorias'
+import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
 
 const refConfig = ref({
   nomeCliente: '',
@@ -167,31 +172,16 @@ const refCategorias = ref([] as Categorias[])
 // TODO: Verificar se é possível extrair o valor sem declarar uma ref
 const refNovaCategoria = ref()
 
-const unidadesMedida = ref([
-  {
-    uuid: 1,
-    nome: 'Metro',
-    abrev: 'm',
-  },
-  {
-    uuid: 2,
-    nome: 'Litro',
-    abrev: 'L',
-  },
-  {
-    uuid: 3,
-    nome: 'Bytes',
-    abrev: 'B',
-  },
-  {
-    uuid: 4,
-    nome: 'bits',
-    abrev: 'b',
-  },
-])
+const refNovaUnidadeMedida = ref({
+  nome: '',
+  abreviacao: '',
+})
+
+const refUnidadesMedida = ref([] as UnidadeMedida[])
 
 const configuracoes = new ApiConfiguracoes()
 const categorias = new ApiCategorias()
+const unidadesMedida = new ApiUnidadesMedida()
 
 async function obterConfiguracoes() {
   const data = await configuracoes.obterTodos()
@@ -238,6 +228,36 @@ async function removerCategorias(id: string) {
   }
 }
 
+async function obterUnidadesMedida() {
+  const data = await unidadesMedida.obterTodos()
+  if (data.ok) {
+    refUnidadesMedida.value = await data.json()
+  } else {
+    // TODO: mostrar toast
+    alert(data.statusText)
+  }
+}
+
+async function adicionarUnidadeMedida() {
+  const { nome, abreviacao } = refNovaUnidadeMedida.value
+  const res = await unidadesMedida.criar(nome, abreviacao)
+  if (res.ok) {
+    obterUnidadesMedida()
+  } else {
+    alert(res.statusText)
+  }
+}
+
+async function removerUnidadeMedida(id: string) {
+  const res = await unidadesMedida.excluir(id)
+  if (res.ok) {
+    obterUnidadesMedida()
+  } else {
+    alert(res.statusText)
+  }
+}
+
 obterConfiguracoes()
 obterCategorias()
+obterUnidadesMedida()
 </script>

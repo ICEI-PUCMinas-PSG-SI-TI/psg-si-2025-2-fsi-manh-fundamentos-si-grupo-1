@@ -65,6 +65,7 @@ async function deleteUnidadeMedida(
     // TODO: Verificar se uuid existe
     const params = ParamsIdSchemaZ.parse(req.params);
     await servicoUnidadesMedida.excluirPorId(params.id);
+    res.send();
   } catch (err) {
     next(err);
   }
