@@ -8,7 +8,7 @@ import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../services/servicoUsuarios";
 import { ClientError } from "../../error";
-import { ParamsIdSchema } from "./objects";
+import { ParamsIdSchemaZ } from "./objects";
 
 const apiV1UsuariosRouter = Router();
 
@@ -35,7 +35,7 @@ async function postUsuario(req: Request, res: Response, next: NextFunction) {
 
 async function getUsuarioId(req: Request, res: Response, next: NextFunction) {
   try {
-    const params = ParamsIdSchema.parse(req.params);
+    const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
     if (consulta.length === 0) throw new ClientError("Not Found", 404);
     res.send(consulta);
@@ -50,7 +50,7 @@ async function excluirUsuarioId(
   next: NextFunction,
 ) {
   try {
-    const params = ParamsIdSchema.parse(req.params);
+    const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.excluirPorId(params.id);
     if (consulta === 0) throw new ClientError("", 404);
     res.send(consulta);

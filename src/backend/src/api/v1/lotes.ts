@@ -6,7 +6,7 @@ import {
   type Response,
 } from "express";
 import { ClientError } from "../../error";
-import { ParamsIdSchema } from "./objects";
+import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
 
 const apiV1LotesRouter = Router();
@@ -49,7 +49,7 @@ async function postLote(req: Request, res: Response, next: NextFunction) {
 
 async function getLoteId(req: Request, res: Response, next: NextFunction) {
   try {
-    const params = ParamsIdSchema.parse(req.params);
+    const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.selecionarPorId(params.id);
     if (consulta.length === 0) throw new ClientError("", 404);
     res.send(consulta);
@@ -60,7 +60,7 @@ async function getLoteId(req: Request, res: Response, next: NextFunction) {
 
 async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
   try {
-    const params = ParamsIdSchema.parse(req.params);
+    const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.excluirPorId(params.id);
     if (consulta === 0) throw new ClientError("", 404);
     res.send(consulta);
