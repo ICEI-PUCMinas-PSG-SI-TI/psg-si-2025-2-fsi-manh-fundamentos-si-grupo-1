@@ -23,7 +23,11 @@ async function getConfiguracoes(
   }
 }
 
-async function notImplemented(req: Request, res: Response, next: NextFunction) {
+async function patchConfiguracoes(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     if (!req.body) throw new ClientError("Bad Request");
     const parsedBody = UpdateConfiguracaoSchemaZ.parse(req.body);
@@ -36,7 +40,7 @@ async function notImplemented(req: Request, res: Response, next: NextFunction) {
 
 apiV1ConfiguracoesRouter
   .get("/", getConfiguracoes)
-  .put("/", notImplemented)
-  .patch("/", notImplemented);
+  .put("/", patchConfiguracoes)
+  .patch("/", patchConfiguracoes);
 
 export default apiV1ConfiguracoesRouter;

@@ -25,9 +25,9 @@ export const configuracoesTable = sqliteTable("configuracoes", {
 // diretamente para evitar a permissão de edição de futuros campos que podem
 // ser adicionados a tabela.
 export const UpdateConfiguracaoSchemaZ = z.strictObject({
-  nomeCliente: z.string().optional(),
-  cpfCnpj: z.string().optional(),
-  endereco: z.string().optional(),
+  nomeCliente: z.string().nullish(),
+  cpfCnpj: z.string().nullish(),
+  endereco: z.string().nullish(),
 });
 
 export const InsertConfiguracaoSchemaZ = createInsertSchema(

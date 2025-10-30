@@ -4,7 +4,7 @@
     <CardComponent>
       <CardTitleBar title="Perfil do usuário" />
 
-      <form class="flex flex-col">
+      <div class="flex flex-col">
         <div class="flex flex-col justify-center items-center mb-4">
           <img
             class="avatar rounded-full border"
@@ -48,34 +48,37 @@
           />
         </div>
         <ButtonComponent>Salvar</ButtonComponent>
-      </form>
+      </div>
     </CardComponent>
     <!-- Configurações do sistema -->
     <CardComponent>
       <CardTitleBar title="Configurações do sistema" />
-      <form class="flex flex-col">
+      <div class="flex flex-col">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8 justify-between">
           <LabeledInput
             class="floating-label me-2"
             html-type="text"
             html-place-holder="Nome da empresa"
             label-text="Nome da empresa"
+            v-model="refConfig.nomeCliente"
           />
           <LabeledInput
             class="floating-label me-2"
             html-type="text"
             html-place-holder="CNPJ/CPF"
             label-text="CNPJ/CPF"
+            v-model="refConfig.cpfCnpj"
           />
           <LabeledInput
             class="floating-label me-2"
             html-type="text"
             html-place-holder="Endereço"
             label-text="Endereço"
+            v-model="refConfig.endereco"
           />
         </div>
-        <ButtonComponent>Salvar</ButtonComponent>
-      </form>
+        <ButtonComponent @click="salvarConfiguracoes">Salvar</ButtonComponent>
+      </div>
     </CardComponent>
     <!-- Categorias -->
     <CardComponent>
@@ -149,6 +152,13 @@ import ButtonComponent from '@/components/ButtonComponent.vue'
 import LabeledInput from '@/components/LabeledInput.vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ref } from 'vue'
+import { ApiConfiguracoes } from '@/api/configuracoes'
+
+const refConfig = ref({
+  nomeCliente: '',
+  cpfCnpj: '',
+  endereco: '',
+})
 
 const categorias = ref([
   'Automotivo',
@@ -196,4 +206,25 @@ const unidadesMedida = ref([
     abrev: 'b',
   },
 ])
+
+const configuracoes = new ApiConfiguracoes()
+
+async function obterConfiguracoes() {
+  const data = await configuracoes.obter()
+  if (data.ok) {
+    refConfig.value = await data.json()
+  } else {
+    // TODO: mostrar toast
+    alert(data.statusText)
+  }
+}
+
+async function salvarConfiguracoes() {
+  const res = await configuracoes.atualizar(refConfig.value)
+  // TODO: mostrar toast
+  // if (res.ok)
+  alert(res.statusText)
+}
+
+obterConfiguracoes()
 </script>
