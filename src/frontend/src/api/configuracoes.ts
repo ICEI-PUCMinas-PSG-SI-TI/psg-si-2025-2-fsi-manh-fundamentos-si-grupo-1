@@ -27,7 +27,7 @@ interface RespostaApi extends Response {
 }
 
 export class ApiConfiguracoes {
-  obter(): Promise<RespostaApi> {
+  obterTodos(): Promise<RespostaApi> {
     return fetch(backend_path, {
       method: 'GET',
     })
@@ -36,7 +36,6 @@ export class ApiConfiguracoes {
   // TODO: Como retornar status? 400, 500, ...
   atualizar(opts: ConfiguracoesEnvioSchema) {
     const obj = ConfiguracoesEnvioZ.parse(opts)
-    console.log(obj)
     return fetch(backend_path, {
       method: 'PATCH',
       headers: {

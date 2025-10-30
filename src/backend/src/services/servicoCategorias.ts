@@ -14,7 +14,7 @@ class ServicoCategorias {
   }
 
   selecionarTodos() {
-    return repositorioCategorias.selecionarTodos();
+    return repositorioCategorias.selecionarTodos(0, 0);
   }
 
   // TODO: validar UUID
