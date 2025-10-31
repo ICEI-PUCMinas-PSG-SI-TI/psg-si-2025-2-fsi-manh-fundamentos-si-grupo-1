@@ -1,19 +1,11 @@
 <template>
   <div class="mb-10 ml-10">
-  <!-- Título centralizado -->
-  <h3 class="text-lg font-semibold  mb-2 ">Filtrar por Data</h3>
-
-  <!-- Inputs alinhados à esquerda -->
-  <div class="flex gap-2">
-    <input type="date" v-model="dataInicio" class="input input-bordered" />
-    <input type="date" v-model="dataFim" class="input input-bordered" />
+    <h3 class="text-lg font-semibold mb-2">Filtrar por Data</h3>
+    <div class="flex gap-2">
+      <input type="date" v-model="dataInicio" class="input input-bordered" />
+      <input type="date" v-model="dataFim" class="input input-bordered" />
+    </div>
   </div>
-</div>
-
-
-
-
-
   <div class="flex flex-col h-full gap-4 bg-base-200 rounded-2xl p-6 shadow-md m-8 mb-3">
     <h2 class="text-left text-4xl font-bold mb-4">Tabela de Histórico</h2>
     <div class="flex-1 overflow-x-auto overflow-y-auto max-h-screen">
