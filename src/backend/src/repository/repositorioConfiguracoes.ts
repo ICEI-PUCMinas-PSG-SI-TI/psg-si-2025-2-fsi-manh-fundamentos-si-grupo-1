@@ -16,12 +16,14 @@ export class RepositorioConfiguracoes {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectConfiguracaoSchema[]> {
-    return baseDados.transaction((tx) => {
-      return tx
+  selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | null> {
+    return baseDados.transaction(async (tx) => {
+      const res = await tx
         .select()
         .from(configuracoesTable)
         .where(eq(configuracoesTable.id, id));
+      if (res.length === 1) return res[0]!;
+      return null;
     });
   }
 

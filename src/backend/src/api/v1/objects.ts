@@ -1,5 +1,5 @@
 import z from "zod";
 
-export const ParamsIdSchema = z.strictObject({
+export const ParamsIdSchemaZ = z.strictObject({
   id: z.uuid(),
 });
