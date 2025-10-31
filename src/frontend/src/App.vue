@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import NavigationMenu from './components/NavigationMenu.vue'
 import { useTemaStore } from './store/config/tema'
+import { computed } from 'vue'
 
 const tema = useTemaStore()
-const route = useRouter()
+const route = useRoute()
+const isLogin = computed(() => route.path.startsWith('/login'))
+const dataTema = computed(() => (isLogin.value ? '' : tema.isDarkModePreferred ? 'dark' : 'light'))
 </script>
 
 <template>
-  <div :data-theme="route.currentRoute.value.path === '/login' ? '' : (tema.isDarkModePreferred ? 'dark' : 'light')"
-  :class="[
-    'size-full',
-    route.currentRoute.value.path === '/login'
-      ? 'flex justify-center items-center '
-      : 'flex flex-row'
-  ]">
-    <NavigationMenu class="flex h-full" v-if="route.currentRoute.value.path !=='/login'"/>
+  <div
+    :data-theme="dataTema"
+    class="size-full"
+    :class="[isLogin ? 'flex justify-center items-center ' : 'flex flex-row']"
+  >
+    <NavigationMenu class="flex h-full" v-if="!isLogin" />
     <RouterView />
-
   </div>
 </template>
