@@ -13,7 +13,7 @@ const repositorioSessoes = new RepositorioSessoes();
 
 export const CredenciaisSchemaZ = z.strictObject({
   login: z.string(),
-  password: z.string(),
+  senha: z.string(),
 });
 
 export type CredenciaisSchema = z.infer<typeof CredenciaisSchemaZ>;
@@ -96,14 +96,29 @@ function parseToken(token: string): Token | null {
 const ONE_DAY = 60 * 60 * 24;
 const SESSION_EXPIRES_IN_SECONDS = ONE_DAY;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const UserSessionInfoZ = z.object({
+  id: z.string(),
+  nome: z.string(),
+  login: z.string(),
+  modoEscuro: z.boolean(),
+  nivelPermissoes: z.number(),
+  foto: z.base64(),
+});
+
+type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
+
 // TODO: Check for timing attacks
 export class AutenticacaoServico {
   async login(
-    credenciais: CredenciaisSchema,
+    login: string,
+    senha: string,
     userAgent: string,
     ipAddress: string,
-  ): Promise<string> {
-    const { login, password } = credenciais;
+  ): Promise<{
+    token: string;
+    usuario: UserSessionInfo;
+  }> {
     // Verificar se existe um usuário com este login
     const usuario = await repositorioUsuarios.selecionarPorLogin(login);
     if (!usuario) {
@@ -112,13 +127,23 @@ export class AutenticacaoServico {
       });
       throw new ClientError("Unauthorized", 401);
     }
-    const passwordCheck = await compare(password, usuario.hashedPassword);
+    const passwordCheck = await compare(senha, usuario.hashedPassword);
     if (!passwordCheck) {
       error("A senha informada não confere.", { label: "Auth" });
       throw new ClientError("Unauthorized", 401);
     }
-    const token = criarSessao(usuario.id, userAgent, ipAddress);
-    return token;
+    const token = await criarSessao(usuario.id, userAgent, ipAddress);
+    return {
+      token,
+      usuario: {
+        id: usuario.id,
+        nome: usuario.nome,
+        login: usuario.login,
+        modoEscuro: usuario.modoEscuro,
+        nivelPermissoes: usuario.nivelPermissoes,
+        foto: usuario.foto as string,
+      },
+    };
   }
 
   async consultarSessao(sessionId: string): Promise<SelectSessaoSchema | null> {

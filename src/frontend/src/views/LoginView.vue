@@ -59,12 +59,13 @@
 </template>
 
 <script setup lang="ts">
-import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
 import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
 import { ref, type Ref } from 'vue'
-import { useRouter } from 'vue-router'
+import z from 'zod'
+import { ApiAutenticacao } from '@/api/auth'
+import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
+import router from '@/router'
 
-const router = useRouter()
 const refFormulario: Ref<{
   usuario: string
   senha: string
@@ -75,42 +76,48 @@ const refFormulario: Ref<{
 const erro = ref('')
 const mostrarSenha = ref(false)
 
-interface Usuario {
-  id: string
-  nome: string
-  login: string
-  salted_password: string
-  [key: string]: string
-}
-function validarEmail(email: string): boolean {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return regex.test(email)
-}
-function login() {
-  if (!validarEmail(refFormulario.value.usuario)) {
-    erro.value = 'Digite um email válido'
-    return
+const CrecenciaisZ = z.object({
+  usuario: z.string().nonempty({ error: 'Digite um usuário válido.' }),
+  senha: z
+    .string()
+    .min(8, { error: 'A senha é inválida.' })
+    .max(64, { error: 'A senha é nválida.' }),
+})
+
+const autenticacao = new ApiAutenticacao()
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const UserSessionInfoZ = z.object({
+  id: z.string(),
+  nome: z.string(),
+  login: z.string(),
+  modoEscuro: z.boolean(),
+  nivelPermissoes: z.number(),
+  foto: z.base64(),
+})
+
+type UserSessionInfo = z.infer<typeof UserSessionInfoZ>
+
+async function login() {
+  const credenciais = CrecenciaisZ.safeParse(refFormulario.value)
+  if (credenciais.error) {
+    erro.value = credenciais.error.issues[0].message
+  } else {
+    const res = await autenticacao.login(credenciais.data.usuario, credenciais.data.senha)
+    if (res.ok) {
+      const data = (await res.json()) as UserSessionInfo
+      // TODO: Criar um serviço para armazenar informações
+      localStorage.setItem('TREM.id', data.id)
+      localStorage.setItem('TREM.nome', data.nome)
+      localStorage.setItem('TREM.login', data.login)
+      // TODO: Realizar ligação entre configurações do frontend e backend
+      localStorage.setItem('TREM.modoEscuro', data.modoEscuro.toString())
+      localStorage.setItem('TREM.nivelPermissoes', data.nivelPermissoes.toString())
+      localStorage.setItem('TREM.foto', data.foto)
+      router.push('/dashboard')
+    } else {
+      erro.value = 'Credenciais inválidas!'
+    }
   }
-  fetch('http://localhost:3000/usuarios')
-    .then((res) => {
-      if (!res.ok) throw new Error('Não foi possível carregar os usuários')
-      return res.json()
-    })
-    .then((usuarios: Usuario[]) => {
-      const { usuario, senha } = refFormulario.value
-      const encontrado = usuarios.find((u) => u.email === usuario && u.login === senha)
-      if (encontrado) {
-        erro.value = ''
-        alert(`Bem-vindo, ${encontrado.nome}!`)
-        router.push('/dashboard')
-      } else {
-        erro.value = 'Login ou senha incorretos'
-        refFormulario.value.senha = ''
-        refFormulario.value.usuario = ''
-      }
-    })
-    .catch((e) => {
-      erro.value = e.message
-    })
 }
 </script>

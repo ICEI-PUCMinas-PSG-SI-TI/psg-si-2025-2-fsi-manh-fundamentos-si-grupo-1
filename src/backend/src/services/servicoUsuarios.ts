@@ -33,7 +33,7 @@ class ServicoUsuarios {
       nome: usuario.nome,
       login: usuario.login,
       foto: usuario.foto,
-      descricaco: usuario.descricao,
+      descricao: usuario.descricao,
       habilitado: usuario.habilitado,
       nivelPermissoes: usuario.nivelPermissoes,
       hashedPassword: hashedPassword,
