@@ -1,17 +1,17 @@
-import {
-  Router,
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import { Router, type NextFunction, type Response } from "express";
 import { ParamsIdSchemaZ } from "./objects";
 import servicoCategorias from "../../services/servicoCategorias";
 import { InsertCategoriaSchemaZ } from "../../db/schema/categorias";
 import { ClientError } from "../../error";
+import type { SessionRequest } from "../../cookies";
 
 const apiV1CategoriasRouter = Router();
 
-async function getCategorias(req: Request, res: Response, next: NextFunction) {
+async function getCategorias(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const categorias = await servicoCategorias.selecionarTodos();
     res.send(categorias);
@@ -20,7 +20,11 @@ async function getCategorias(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function postCategoria(req: Request, res: Response, next: NextFunction) {
+async function postCategoria(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     if (!req.body) throw new ClientError("Bad Request");
     const categoria = InsertCategoriaSchemaZ.parse(req.body);
@@ -31,7 +35,11 @@ async function postCategoria(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function getCategoria(req: Request, res: Response, next: NextFunction) {
+async function getCategoria(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     // TODO: if length === 0 return 404
@@ -43,7 +51,7 @@ async function getCategoria(req: Request, res: Response, next: NextFunction) {
 }
 
 async function deleteCategorias(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {

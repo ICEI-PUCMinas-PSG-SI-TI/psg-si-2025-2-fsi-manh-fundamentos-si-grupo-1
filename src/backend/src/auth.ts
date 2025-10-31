@@ -10,6 +10,7 @@ import {
   CredenciaisSchemaZ,
 } from "./services/servicoAutenticacao";
 import { error } from "./logging";
+import { loadCookies, requireSession, type SessionRequest } from "./cookies";
 
 const authRouter = Router();
 
@@ -53,12 +54,12 @@ async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function logout(req: Request, res: Response, next: NextFunction) {
+async function logout(req: SessionRequest, res: Response, next: NextFunction) {
   // this function will receive the token, invalidate, and redirect
   try {
-    const cookies = req.cookies;
-    if (typeof cookies.session_token === "string") {
-      await servicoAutenticacao.logout(cookies.session_token);
+    const _sessionToken = req._sessionToken;
+    if (_sessionToken) {
+      await servicoAutenticacao.logout(_sessionToken);
       // limpar cookies
       res.clearCookie(COOKIE_SESSION_TOKEN);
     }
@@ -69,14 +70,15 @@ async function logout(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function validate(req: Request, res: Response, next: NextFunction) {
+async function validate(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
-    const cookies = req.cookies;
-    if (typeof cookies.session_token !== "string")
-      throw new ClientError("Não autenticado!", 400);
-    const sessaoAtiva = await servicoAutenticacao.consultarSessaoPorToken(
-      cookies.session_token,
-    );
+    const _sessionToken = req._sessionToken!;
+    const sessaoAtiva =
+      await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
     if (!sessaoAtiva) throw new ClientError("Não autenticado!", 400);
     res.send("Autenticado");
   } catch (err) {
@@ -85,7 +87,7 @@ async function validate(req: Request, res: Response, next: NextFunction) {
 }
 
 authRouter.post("/login", login);
-authRouter.post("/logout", logout);
-authRouter.post("/validate", validate);
+authRouter.post("/logout", loadCookies, logout);
+authRouter.post("/validate", loadCookies, requireSession, validate);
 
 export default authRouter;

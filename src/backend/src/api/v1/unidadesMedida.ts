@@ -1,9 +1,5 @@
-import {
-  Router,
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import type { SessionRequest } from "../../cookies";
+import { Router, type NextFunction, type Response } from "express";
 import { ParamsIdSchemaZ } from "./objects";
 import servicoUnidadesMedida from "../../services/servicoUnidadesMedida";
 import { InsertUnidadesMedidasSchemaZ } from "../../db/schema/unidadesMedida";
@@ -12,7 +8,7 @@ import { ClientError } from "../../error";
 const apiV1UnidadesMedida = Router();
 
 async function getUnidadesMedida(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -25,7 +21,7 @@ async function getUnidadesMedida(
 }
 
 async function postUnidadeMedida(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -40,7 +36,7 @@ async function postUnidadeMedida(
 }
 
 async function getUnidadeMedida(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -57,7 +53,7 @@ async function getUnidadeMedida(
 }
 
 async function deleteUnidadeMedida(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {

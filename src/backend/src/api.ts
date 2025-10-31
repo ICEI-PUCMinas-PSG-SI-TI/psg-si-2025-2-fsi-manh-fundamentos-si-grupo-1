@@ -1,38 +1,11 @@
-import {
-  Router,
-  type Request,
-  type Response,
-  type NextFunction,
-} from "express";
+import { Router } from "express";
 import apiV1Router from "./api/v1";
-import { debug } from "./logging";
+import { loadCookies, requireSession } from "./cookies";
 
 const apiRouter = Router();
 
-// TODO: middleware de autenticacao e permissoes
-apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
-  debug("api.usuarioEstaAutenticado");
-  const usuarioEstaAutenticado = true;
-  if (usuarioEstaAutenticado) {
-    // Redireciona para o próximo middleware
-    next();
-  } else {
-    // Responde diretamente a conexão
-    res.status(401).send("O usuário não esta autenticado!");
-  }
-});
-
-apiRouter.use("/", (req: Request, res: Response, next: NextFunction) => {
-  debug("api.usuarioTemPermissoes");
-  const usuarioTemPermissoes = true;
-  if (usuarioTemPermissoes) {
-    next();
-  } else {
-    res.status(401).send("O usuário não tem permissões!");
-  }
-});
-
 // {host}/api/v1/
-apiRouter.use("/v1", apiV1Router);
+// TODO: Verificar se usuário tem permissões para acessar toda a API
+apiRouter.use("/v1", loadCookies, requireSession, apiV1Router);
 
 export default apiRouter;

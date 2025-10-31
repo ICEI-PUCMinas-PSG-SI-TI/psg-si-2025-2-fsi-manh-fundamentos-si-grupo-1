@@ -1,10 +1,6 @@
+import type { SessionRequest } from "../../cookies";
 import { LoteConsultaSchema, LoteService } from "../../services/servicoLotes";
-import {
-  Router,
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import { Router, type NextFunction, type Response } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
@@ -20,7 +16,11 @@ const lotes = new LoteService();
 // PATCH /:id { body: UpdateLoteSchema }
 // DELETE /:id
 
-async function getLotes(req: Request, res: Response, next: NextFunction) {
+async function getLotes(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     if (req.query) {
       const parsedQueryParams = LoteConsultaSchema.parse(req.query);
@@ -35,7 +35,11 @@ async function getLotes(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function postLote(req: Request, res: Response, next: NextFunction) {
+async function postLote(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     if (!req.body)
       throw new ClientError("Não há informações para serem inseridas!");
@@ -47,7 +51,11 @@ async function postLote(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function getLoteId(req: Request, res: Response, next: NextFunction) {
+async function getLoteId(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.selecionarPorId(params.id);
@@ -58,7 +66,11 @@ async function getLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
+async function excluirLoteId(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.excluirPorId(params.id);
@@ -69,7 +81,11 @@ async function excluirLoteId(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-function notImplemented(req: Request, res: Response, next: NextFunction) {
+function notImplemented(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     throw new Error("Not implemented");
   } catch (err) {

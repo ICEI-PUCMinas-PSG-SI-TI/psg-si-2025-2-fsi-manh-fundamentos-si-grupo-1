@@ -1,9 +1,5 @@
-import {
-  Router,
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import type { SessionRequest } from "../../cookies";
+import { Router, type NextFunction, type Response } from "express";
 import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../services/servicoUsuarios";
@@ -12,7 +8,11 @@ import { ParamsIdSchemaZ } from "./objects";
 
 const apiV1UsuariosRouter = Router();
 
-async function getUsuarios(req: Request, res: Response, next: NextFunction) {
+async function getUsuarios(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const consulta = await servicoUsuarios.selecionarTodos();
     res.send(consulta);
@@ -21,7 +21,11 @@ async function getUsuarios(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function postUsuario(req: Request, res: Response, next: NextFunction) {
+async function postUsuario(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     if (!req.body)
       throw new ClientError("Não há informações para serem inseridas!");
@@ -33,7 +37,11 @@ async function postUsuario(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function getUsuarioId(req: Request, res: Response, next: NextFunction) {
+async function getUsuarioId(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
@@ -45,7 +53,7 @@ async function getUsuarioId(req: Request, res: Response, next: NextFunction) {
 }
 
 async function excluirUsuarioId(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -59,7 +67,11 @@ async function excluirUsuarioId(
   }
 }
 
-function notImplemented(req: Request, res: Response, next: NextFunction) {
+function notImplemented(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     throw new Error("Not implemented");
   } catch (err) {

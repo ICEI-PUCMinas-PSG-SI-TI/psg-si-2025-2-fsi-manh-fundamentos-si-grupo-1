@@ -1,17 +1,13 @@
+import type { SessionRequest } from "../../cookies";
 import { UpdateConfiguracaoSchemaZ } from "../../db/schema/configuracoes";
 import { ClientError } from "../../error";
 import servicoConfiguracoes from "../../services/servicoConfiguracoes";
-import {
-  Router,
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import { Router, type NextFunction, type Response } from "express";
 
 const apiV1ConfiguracoesRouter = Router();
 
 async function getConfiguracoes(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -24,7 +20,7 @@ async function getConfiguracoes(
 }
 
 async function patchConfiguracoes(
-  req: Request,
+  req: SessionRequest,
   res: Response,
   next: NextFunction,
 ) {
