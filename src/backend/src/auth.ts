@@ -22,6 +22,27 @@ const servicoAutenticacao = new AutenticacaoServico();
 // POST /auth/login
 // POST /auth/logout
 
+/**
+ * Retorna informações do usuário da sessão de acordo com o token de sessão.
+ */
+async function sessao(req: SessionRequest, res: Response, next: NextFunction) {
+  try {
+    const _sessionToken = req._sessionToken;
+    if (!_sessionToken) throw new ClientError("Não autenticado!", 400);
+    else {
+      const sessao =
+        await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
+      res.send(sessao);
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Recebe login e senha e cria uma nova sessão retornando token e informações
+ * do usuário da sessão.
+ */
 async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const parsedCredenciais = CredenciaisSchemaZ.parse(req.body);
@@ -60,8 +81,7 @@ async function logout(req: SessionRequest, res: Response, next: NextFunction) {
       // limpar cookies
       res.clearCookie(COOKIE_SESSION_TOKEN);
     }
-    // redirecionar
-    res.redirect("/login");
+    res.send();
   } catch (err) {
     next(err);
   }
@@ -80,33 +100,16 @@ async function logoutAll(
       // limpar cookies
       res.clearCookie(COOKIE_SESSION_TOKEN);
     }
-    // redirecionar
-    res.redirect("/login");
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function validate(
-  req: SessionRequest,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const _sessionToken = req._sessionToken!;
-    const sessaoAtiva =
-      await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
-    if (!sessaoAtiva) throw new ClientError("Não autenticado!", 400);
-    res.send("Autenticado");
+    res.send();
   } catch (err) {
     next(err);
   }
 }
 
 authRouter
+  .get("/sessao", loadCookies, requireSession, sessao)
   .post("/login", login)
   .post("/logout", loadCookies, logout)
-  .post("/logout/all", loadCookies, logoutAll)
-  .post("/validate", loadCookies, requireSession, validate);
+  .post("/logout/all", loadCookies, logoutAll);
 
 export default authRouter;

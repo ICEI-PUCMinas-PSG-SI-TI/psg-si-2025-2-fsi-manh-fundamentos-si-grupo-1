@@ -146,7 +146,29 @@ export class AutenticacaoServico {
     };
   }
 
-  async consultarSessao(sessionId: string): Promise<SelectSessaoSchema | null> {
+  async consultarSessaoPorToken(
+    token: string,
+  ): Promise<UserSessionInfo | null> {
+    const _token = parseToken(token);
+    if (!_token) return null;
+    // TODO: Unificar queries
+    const sessao = await repositorioSessoes.selecionarPorId(_token?.id);
+    if (!sessao) return null;
+    const usuario = await repositorioUsuarios.selecionarPorId(sessao.usuarioId);
+    if (!usuario || !usuario[0]) return null;
+    return {
+      id: usuario[0].id,
+      nome: usuario[0].nome,
+      login: usuario[0].login,
+      modoEscuro: usuario[0].modoEscuro,
+      nivelPermissoes: usuario[0].nivelPermissoes,
+      foto: usuario[0].foto as string,
+    };
+  }
+
+  async selecionarSessao(
+    sessionId: string,
+  ): Promise<SelectSessaoSchema | null> {
     const now = new Date();
 
     const sessao = await repositorioSessoes.selecionarPorId(sessionId);
@@ -164,12 +186,12 @@ export class AutenticacaoServico {
     return sessao;
   }
 
-  async consultarSessaoPorToken(
+  async selecionarSessaoPorToken(
     token: string,
   ): Promise<SelectSessaoSchema | null> {
     const _token = parseToken(token);
     if (!_token) return null;
-    return await this.consultarSessao(_token?.id);
+    return await this.selecionarSessao(_token?.id);
   }
 
   // NOTE: Aqui, todas as conexões serão validadas via hash do segredo.
