@@ -1,6 +1,5 @@
+import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
 import { defineStore } from 'pinia'
-
-const KEY_DARK_THEME = 'darktheme'
 
 // TODO: View if system has any type of "light", "dark", "other"
 function isSystemDarkModePreferred() {
@@ -8,13 +7,13 @@ function isSystemDarkModePreferred() {
 }
 
 function isUserDarkModePrefered() {
-  const item = localStorage.getItem(KEY_DARK_THEME)
+  const item = localStorage.getItem(CONFIG_KEY_DARK_THEME)
   if (item === null) return null
   return item === 'true'
 }
 
 // INFO: Se o usuário alterar o tema uma única vez, a configuração fica dessincronizada com o sistema
-export const useTemaStore = defineStore('counter', {
+export const useTemaStore = defineStore('tema', {
   state: () => ({
     isSystemDarkModePreferred: isSystemDarkModePreferred() as boolean,
     isUserDarkModePrefered: isUserDarkModePrefered() as boolean | null,

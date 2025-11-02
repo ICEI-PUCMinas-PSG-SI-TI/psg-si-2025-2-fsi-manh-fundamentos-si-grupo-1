@@ -65,6 +65,7 @@ import z from 'zod'
 import { ApiAutenticacao } from '@/api/auth'
 import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
 import router from '@/router'
+import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
 
 const refFormulario: Ref<{
   usuario: string
@@ -111,7 +112,7 @@ async function login() {
       localStorage.setItem('TREM.nome', data.nome)
       localStorage.setItem('TREM.login', data.login)
       // TODO: Realizar ligação entre configurações do frontend e backend
-      localStorage.setItem('TREM.modoEscuro', data.modoEscuro.toString())
+      localStorage.setItem(CONFIG_KEY_DARK_THEME, data.modoEscuro.toString())
       localStorage.setItem('TREM.nivelPermissoes', data.nivelPermissoes.toString())
       localStorage.setItem('TREM.foto', data.foto)
       router.push('/dashboard')
