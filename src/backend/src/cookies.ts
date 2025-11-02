@@ -61,3 +61,18 @@ export async function parseSessionUser(
     next(err);
   }
 }
+
+export function requireRoot(
+  req: SessionUserRequest,
+  _res: Response,
+  next: NextFunction,
+) {
+  try {
+    const usuario = req._usuario!;
+    if (usuario.nivelPermissoes !== 0)
+      throw new ClientError("Unauthorized", 401);
+    next();
+  } catch (err) {
+    next(err);
+  }
+}

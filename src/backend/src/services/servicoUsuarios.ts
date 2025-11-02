@@ -7,6 +7,7 @@ import { debug, error } from "../logging";
 import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { compare, hash } from "bcrypt";
 import { ClientError } from "../error";
+import { PasswordZ } from "../api/v1/objects";
 
 const repositorioUsuarios = new RepositorioUsuarios();
 
@@ -15,7 +16,7 @@ export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
   modoEscuro: true,
 }).extend({
   // TODO: Quando criado o usuário terá uma senha padrão ou temporária?
-  password: z.string().min(8).max(128),
+  password: PasswordZ,
 });
 
 type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
@@ -82,6 +83,18 @@ class ServicoUsuarios {
   // TODO: Unificar validação de senha
   // async validarSenhaPorLogin(): Promise<boolean> {}
   // async validarSenhaPorLogin(): Promise<boolean> {}
+
+  async substituirSenha(usuarioId: string, senha: string) {
+    // Realizar hash da nova senha
+    const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
+    const hashedPassword: string = await hash(senha, rounds);
+    // Atualizar a senha
+    const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
+      hashedPassword,
+    });
+    // TODO: Verificar necessidade de invalidar sessões
+    return updates === 1;
+  }
 
   async alterarSenha(
     senhaAnterior: string,
