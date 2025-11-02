@@ -95,6 +95,12 @@
           <ButtonComponent class="w-full" @click="adicionarCategoria"> Adicionar</ButtonComponent>
         </div>
         <div class="xl:col-span-2">
+          <p
+            class="flex size-full text-center m-auto justify-center items-center"
+            v-if="refUnidadesMedida.length === 0"
+          >
+            Não há categorias.
+          </p>
           <div
             class="badge badge-lg badgde-soft badge-primary m-1"
             v-for="categoria in refCategorias"
@@ -132,6 +138,12 @@
           </ButtonComponent>
         </div>
         <div class="xl:col-span-2">
+          <p
+            class="flex size-full text-center m-auto justify-center items-center"
+            v-if="refUnidadesMedida.length === 0"
+          >
+            Não há unidades de medida.
+          </p>
           <div
             class="badge badge-lg badgde-soft badge-primary m-1"
             v-for="unidade in refUnidadesMedida"
