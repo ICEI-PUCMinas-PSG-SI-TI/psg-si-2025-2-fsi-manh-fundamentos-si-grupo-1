@@ -25,16 +25,20 @@
           html-type="text"
           html-place-holder="Login"
           label-text="Login"
+          v-model="refSessao.login"
         />
         <LabeledInput
           class="floating-label justify-self-center w-full"
           html-type="text"
           html-place-holder="Nome"
           label-text="Nome"
+          v-model="refSessao.nome"
         />
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center align-middle items-center">
-        <ButtonComponent class="btn-accent">Salvar</ButtonComponent>
+        <ButtonComponent class="btn-accent" @click="alterarInformacoesUsuario">
+          Salvar
+        </ButtonComponent>
         <ButtonComponent class="btn-warning" @click="showAlterarSenha = true">
           Alterar Senha
         </ButtonComponent>
@@ -153,6 +157,8 @@ import { ApiCategorias, type Categorias } from '@/api/categorias'
 import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
 import { useNotificationStore } from '@/store/config/toast'
 import AlterarSenha from '@/components/config/AlterarSenha.vue'
+import { ApiAutenticacao } from '@/api/auth'
+import { ApiUsuario } from '@/api/usuario'
 
 const refConfig = ref({
   nomeCliente: '',
@@ -170,6 +176,11 @@ const refNovaUnidadeMedida = ref({
   abreviacao: '',
 })
 
+const refSessao = ref({
+  login: '',
+  nome: '',
+})
+
 const showAlterarSenha = ref(false)
 
 const refUnidadesMedida = ref([] as UnidadeMedida[])
@@ -177,24 +188,48 @@ const refUnidadesMedida = ref([] as UnidadeMedida[])
 const configuracoes = new ApiConfiguracoes()
 const categorias = new ApiCategorias()
 const unidadesMedida = new ApiUnidadesMedida()
+const autenticacao = new ApiAutenticacao()
+const usuario = new ApiUsuario()
 
 const notificacoes = useNotificationStore()
+
+async function obterSessao() {
+  const data = await autenticacao.sessao()
+  if (data.ok) {
+    const jotaSon = await data.json()
+    refSessao.value.login = jotaSon.login
+    refSessao.value.nome = jotaSon.nome
+  } else {
+    notificacoes.addNotification(data.statusText, true)
+  }
+}
+
+async function alterarInformacoesUsuario() {
+  const req = await usuario.alterarLoginNome(refSessao.value.login, refSessao.value.nome)
+  if (req.ok) {
+    notificacoes.addNotification('Informações alteradas.')
+    obterSessao()
+  } else {
+    notificacoes.addNotification(req.statusText, true)
+  }
+}
 
 async function obterConfiguracoes() {
   const data = await configuracoes.obterTodos()
   if (data.ok) {
     refConfig.value = await data.json()
   } else {
-    // TODO: mostrar toast
     notificacoes.addNotification(data.statusText, true)
   }
 }
 
 async function salvarConfiguracoes() {
   const res = await configuracoes.atualizar(refConfig.value)
-  // TODO: mostrar toast
-  // if (res.ok)
-  notificacoes.addNotification(res.statusText, true)
+  if (res.ok) {
+    notificacoes.addNotification('Informações alteradas.')
+  } else {
+    notificacoes.addNotification(res.statusText, true)
+  }
 }
 
 async function obterCategorias() {
@@ -202,7 +237,6 @@ async function obterCategorias() {
   if (data.ok) {
     refCategorias.value = await data.json()
   } else {
-    // TODO: mostrar toast
     notificacoes.addNotification(data.statusText, true)
   }
 }
@@ -210,6 +244,7 @@ async function obterCategorias() {
 async function adicionarCategoria() {
   const res = await categorias.criar(refNovaCategoria.value)
   if (res.ok) {
+    notificacoes.addNotification('Informações adicionadas.')
     obterCategorias()
   } else {
     notificacoes.addNotification(res.statusText, true)
@@ -219,6 +254,7 @@ async function adicionarCategoria() {
 async function removerCategorias(id: string) {
   const res = await categorias.excluir(id)
   if (res.ok) {
+    notificacoes.addNotification('Informações excluídas.')
     obterCategorias()
   } else {
     notificacoes.addNotification(res.statusText, true)
@@ -238,6 +274,7 @@ async function adicionarUnidadeMedida() {
   const { nome, abreviacao } = refNovaUnidadeMedida.value
   const res = await unidadesMedida.criar(nome, abreviacao)
   if (res.ok) {
+    notificacoes.addNotification('Informações adicionadas.')
     obterUnidadesMedida()
   } else {
     notificacoes.addNotification(res.statusText, true)
@@ -247,12 +284,14 @@ async function adicionarUnidadeMedida() {
 async function removerUnidadeMedida(id: string) {
   const res = await unidadesMedida.excluir(id)
   if (res.ok) {
+    notificacoes.addNotification('Informações excluídas.')
     obterUnidadesMedida()
   } else {
     notificacoes.addNotification(res.statusText, true)
   }
 }
 
+obterSessao()
 obterConfiguracoes()
 obterCategorias()
 obterUnidadesMedida()

@@ -10,9 +10,11 @@ import servicoUsuarios, {
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
 import z from "zod";
+import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
 
 const apiV1UsuariosRouter = Router();
 
+/*
 async function getUsuarios(
   req: SessionRequest,
   res: Response,
@@ -40,7 +42,7 @@ async function postUsuario(
   } catch (err) {
     next(err);
   }
-}
+}*/
 
 // TODO: Adicionar mais regras
 const AlteracaoSenhaZ = z.strictObject({
@@ -71,7 +73,7 @@ async function alterarSenha(
     next(err);
   }
 }
-
+/*
 async function getUsuarioId(
   req: SessionRequest,
   res: Response,
@@ -87,6 +89,7 @@ async function getUsuarioId(
   }
 }
 
+
 async function excluirUsuarioId(
   req: SessionRequest,
   res: Response,
@@ -101,27 +104,45 @@ async function excluirUsuarioId(
     next(err);
   }
 }
+*/
 
-function notImplemented(
-  req: SessionRequest,
+const UpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.pick({
+  login: true,
+  nome: true,
+  modoEscuro: true,
+  foto: true,
+}).strict();
+
+async function patchUsuario(
+  req: SessionUserRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    throw new Error("Not implemented");
+    if (!req.body) throw new Error("Not implemented");
+    const updateFields = UpdateUsuarioEndpointSchema.parse(req.body);
+    const usuario = req._usuario!;
+    const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
+    if (updates === 1) {
+      res.send();
+    } else {
+      throw new ClientError("Bad Request", 400);
+    }
   } catch (err) {
     next(err);
   }
 }
 
 apiV1UsuariosRouter
-  .get("/", getUsuarios)
-  .post("/", postUsuario)
-  .post("/alterar-senha", parseSessionUser, alterarSenha)
-  .get("/:id", getUsuarioId)
+  .use(parseSessionUser)
+  .post("/alterar-senha", alterarSenha)
   // TODO: Implementar PUT e PATCH para o endpoint de usuários.
-  .put("/:id", notImplemented)
-  .patch("/:id", notImplemented)
-  .delete("/:id", excluirUsuarioId);
+  .patch("/", patchUsuario);
+
+// TODO: criar um endpoint /api/v1/admin/usuarios
+// .get("/", getUsuarios)
+// .post("/", postUsuario);
+// .get("/:id", getUsuarioId)
+// .delete("/:id", excluirUsuarioId);
 
 export default apiV1UsuariosRouter;
