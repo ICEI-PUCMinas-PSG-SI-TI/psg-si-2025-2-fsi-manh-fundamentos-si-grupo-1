@@ -4,7 +4,6 @@ import { Router, type NextFunction, type Response } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
-import { error, json } from "../../logging";
 
 const apiV1LotesRouter = Router();
 

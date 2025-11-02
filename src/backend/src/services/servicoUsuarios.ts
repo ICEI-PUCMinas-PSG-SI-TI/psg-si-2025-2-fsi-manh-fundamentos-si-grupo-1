@@ -58,6 +58,11 @@ class ServicoUsuarios {
     return res;
   }
 
+  // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
+  selecionarIdTodos() {
+    return repositorioUsuarios.selecionarIdTodos();
+  }
+
   async atualizar(id: string, usuario: UpdateUsuarioSchema) {
     const res = await repositorioUsuarios.atualizarPorId(id, usuario);
     debug(`Informações do usuário ${id} atualizadas!`, {

@@ -1,6 +1,7 @@
 import z from "zod";
 import { RepositorioTransacoes } from "../repository/repositorioTransacoes";
 import { debug } from "../logging";
+import type { InsertTransacoesSchema } from "../db/schema/transacoes";
 
 const repositorioTransacoes = new RepositorioTransacoes();
 
@@ -18,6 +19,14 @@ export const TransacoesConsultaSchema = z.strictObject({
 type TransacoesConsultaZ = z.infer<typeof TransacoesConsultaSchema>;
 
 export class ServicoTransacoes {
+  async inserir(transacao: InsertTransacoesSchema) {
+    const res = await repositorioTransacoes.inserir(transacao);
+    if (res && res > 0) {
+      debug(`Nova transação criada!`, { label: "ServTransacoes" });
+    }
+    return res;
+  }
+
   async selecionarConsulta(opts?: TransacoesConsultaZ) {
     let query = repositorioTransacoes.selecionarQuery();
     if (opts) {
@@ -42,7 +51,7 @@ export class ServicoTransacoes {
       }
     }
     const res = await query.executarConsulta();
-    debug(`Retornando lotes selecionados`, { label: "LoteService" });
+    debug(`Retornando transações selecionadas`, { label: "ServTransacoes" });
     return res;
   }
 

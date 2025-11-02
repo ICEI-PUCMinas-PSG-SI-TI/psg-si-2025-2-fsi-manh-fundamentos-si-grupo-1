@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import bancoDados from "../db";
 import {
   unidadesMedidaTable,
@@ -42,6 +42,16 @@ export class RepositorioUnidadesMedida {
     });
   }
 
+  selecionarIdTodos(): Promise<{ id: string }[]> {
+    return bancoDados.transaction((tx) => {
+      return tx
+        .select({
+          id: unidadesMedidaTable.id,
+        })
+        .from(unidadesMedidaTable);
+    });
+  }
+
   async atualizarPorId(
     id: string,
     unidadeMedida: UpdateUnidadesMedidaSchema,
@@ -65,5 +75,9 @@ export class RepositorioUnidadesMedida {
           .where(eq(unidadesMedidaTable.id, id))
       ).rowsAffected;
     });
+  }
+
+  contar() {
+    return bancoDados.select({ count: count() }).from(unidadesMedidaTable);
   }
 }

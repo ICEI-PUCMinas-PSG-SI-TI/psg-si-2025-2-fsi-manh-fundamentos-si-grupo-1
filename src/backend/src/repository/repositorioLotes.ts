@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { and, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
+import { and, count, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
 import { lotesTable } from "../db/schema/lotes";
 import baseDados from "../db";
 import {
@@ -105,6 +105,17 @@ export class RepositorioLotes {
     return new RepositorioLotesConsulta(queryBase);
   }
 
+  selecionarIdProdutosTodos(): Promise<{ id: string; produtoId: string }[]> {
+    return baseDados.transaction((tx) => {
+      return tx
+        .select({
+          id: lotesTable.id,
+          produtoId: lotesTable.produtoId,
+        })
+        .from(lotesTable);
+    });
+  }
+
   async atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
     return await baseDados.transaction(async (tx) => {
       return (
@@ -119,5 +130,9 @@ export class RepositorioLotes {
       return (await tx.delete(lotesTable).where(eq(lotesTable.id, id)))
         .rowsAffected;
     });
+  }
+
+  contar() {
+    return baseDados.select({ count: count() }).from(lotesTable);
   }
 }

@@ -2,6 +2,7 @@ import "dotenv/config";
 import {
   and,
   asc,
+  count,
   eq,
   getTableColumns,
   gte,
@@ -171,6 +172,16 @@ export class RepositorioProdutos {
     });
   }
 
+  selecionarIdTodos(): Promise<{ id: string }[]> {
+    return baseDados.transaction((tx) => {
+      return tx
+        .select({
+          id: produtosTable.id,
+        })
+        .from(tabelaProdutos);
+    });
+  }
+
   selecionarQuery() {
     const queryBase = new QueryBuilder()
       .select()
@@ -213,5 +224,9 @@ export class RepositorioProdutos {
         .where(eq(tabelaProdutos.id, id));
       return resultSet.rowsAffected;
     });
+  }
+
+  contar() {
+    return baseDados.select({ count: count() }).from(tabelaProdutos);
   }
 }

@@ -16,9 +16,19 @@ class ServicoUnidadesMedida {
     return repositorioUnidadesMedida.selecionarTodos(0, 0);
   }
 
+  selecionarIdTodos() {
+    return repositorioUnidadesMedida.selecionarIdTodos();
+  }
+
   // TODO: validar UUID
   excluirPorId(id: string) {
     return repositorioUnidadesMedida.excluirPorId(id);
+  }
+
+  async contar() {
+    const res = await repositorioUnidadesMedida.contar();
+    if (!res[0]) return 0;
+    return res[0].count;
   }
 }
 

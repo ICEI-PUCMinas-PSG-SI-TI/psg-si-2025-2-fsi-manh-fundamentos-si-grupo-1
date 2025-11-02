@@ -51,12 +51,12 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
   }
 
   comDataMaiorQue(data: Date) {
-    this._whereAnd.push(eq(tabelaTransacoes.createdAt, data));
+    this._whereAnd.push(eq(tabelaTransacoes.horario, data));
     return this;
   }
 
   comDataMenorQue(data: Date) {
-    this._whereAnd.push(eq(tabelaTransacoes.createdAt, data));
+    this._whereAnd.push(eq(tabelaTransacoes.horario, data));
     return this;
   }
 
