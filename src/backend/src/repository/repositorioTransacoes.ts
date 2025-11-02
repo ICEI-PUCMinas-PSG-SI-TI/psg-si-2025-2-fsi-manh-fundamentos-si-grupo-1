@@ -50,6 +50,16 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
+  comDataMaiorQue(data: Date) {
+    this._whereAnd.push(eq(tabelaTransacoes.createdAt, data));
+    return this;
+  }
+
+  comDataMenorQue(data: Date) {
+    this._whereAnd.push(eq(tabelaTransacoes.createdAt, data));
+    return this;
+  }
+
   executarConsulta(): Promise<SelectProdutosSchema[]> {
     this._query.where(and(...this._whereAnd));
     return baseDados.transaction((tx) => {
