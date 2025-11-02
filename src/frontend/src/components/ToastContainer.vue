@@ -1,5 +1,5 @@
 <template>
-  <div class="toast toast-top">
+  <div class="toast toast-top z-20">
     <div
       v-for="notification in useNotifications.notificationList"
       :v-if="!notification.dismissed"

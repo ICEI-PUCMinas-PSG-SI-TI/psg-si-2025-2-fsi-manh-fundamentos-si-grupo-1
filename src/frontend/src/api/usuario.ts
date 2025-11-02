@@ -16,14 +16,14 @@ export class ApiUsuario {
     })
   }
 
-  alterarSenha(senhaAntiga: string, senhaNova: string) {
+  alterarSenha(senhaAnterior: string, senhaNova: string) {
     return fetch(`${backend_path}/alterar-senha`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        senhaAntiga,
+        senhaAnterior,
         senhaNova,
       }),
     })
