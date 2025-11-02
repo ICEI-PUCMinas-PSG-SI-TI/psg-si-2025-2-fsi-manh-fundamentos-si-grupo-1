@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import NavigationMenu from './components/NavigationMenu.vue'
 import { useTemaStore } from './store/config/tema'
 import { computed } from 'vue'
+import ToastContainer from './components/ToastContainer.vue'
 
 const tema = useTemaStore()
 const route = useRoute()
@@ -18,5 +19,6 @@ const dataTema = computed(() => (isLogin.value ? '' : tema.isDarkModePreferred ?
   >
     <NavigationMenu class="flex h-full" v-if="!isLogin" />
     <RouterView />
+    <ToastContainer />
   </div>
 </template>

@@ -160,6 +160,7 @@ import { ref } from 'vue'
 import { ApiConfiguracoes } from '@/api/configuracoes'
 import { ApiCategorias, type Categorias } from '@/api/categorias'
 import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
+import { useNotificationStore } from '@/store/config/toast'
 
 const refConfig = ref({
   nomeCliente: '',
@@ -183,13 +184,15 @@ const configuracoes = new ApiConfiguracoes()
 const categorias = new ApiCategorias()
 const unidadesMedida = new ApiUnidadesMedida()
 
+const notificacoes = useNotificationStore()
+
 async function obterConfiguracoes() {
   const data = await configuracoes.obterTodos()
   if (data.ok) {
     refConfig.value = await data.json()
   } else {
     // TODO: mostrar toast
-    alert(data.statusText)
+    notificacoes.addNotification(data.statusText, true)
   }
 }
 
@@ -197,7 +200,7 @@ async function salvarConfiguracoes() {
   const res = await configuracoes.atualizar(refConfig.value)
   // TODO: mostrar toast
   // if (res.ok)
-  alert(res.statusText)
+  notificacoes.addNotification(res.statusText, true)
 }
 
 async function obterCategorias() {
@@ -206,7 +209,7 @@ async function obterCategorias() {
     refCategorias.value = await data.json()
   } else {
     // TODO: mostrar toast
-    alert(data.statusText)
+    notificacoes.addNotification(data.statusText, true)
   }
 }
 
@@ -215,7 +218,7 @@ async function adicionarCategoria() {
   if (res.ok) {
     obterCategorias()
   } else {
-    alert(res.statusText)
+    notificacoes.addNotification(res.statusText, true)
   }
 }
 
@@ -224,7 +227,7 @@ async function removerCategorias(id: string) {
   if (res.ok) {
     obterCategorias()
   } else {
-    alert(res.statusText)
+    notificacoes.addNotification(res.statusText, true)
   }
 }
 
@@ -233,8 +236,7 @@ async function obterUnidadesMedida() {
   if (data.ok) {
     refUnidadesMedida.value = await data.json()
   } else {
-    // TODO: mostrar toast
-    alert(data.statusText)
+    notificacoes.addNotification(data.statusText, true)
   }
 }
 
@@ -244,7 +246,7 @@ async function adicionarUnidadeMedida() {
   if (res.ok) {
     obterUnidadesMedida()
   } else {
-    alert(res.statusText)
+    notificacoes.addNotification(res.statusText, true)
   }
 }
 
@@ -253,7 +255,7 @@ async function removerUnidadeMedida(id: string) {
   if (res.ok) {
     obterUnidadesMedida()
   } else {
-    alert(res.statusText)
+    notificacoes.addNotification(res.statusText, true)
   }
 }
 
