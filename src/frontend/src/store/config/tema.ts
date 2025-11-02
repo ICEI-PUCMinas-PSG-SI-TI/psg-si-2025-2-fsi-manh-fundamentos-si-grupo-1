@@ -29,7 +29,7 @@ export const useTemaStore = defineStore('tema', {
     setUserDarkMode(isPreferred: boolean) {
       // TODO: Utilizar API do frontend para salvar informação
       this.isUserDarkModePrefered = isPreferred
-      localStorage.setItem(KEY_DARK_THEME, this.isUserDarkModePrefered.toString())
+      localStorage.setItem(CONFIG_KEY_DARK_THEME, this.isUserDarkModePrefered.toString())
     },
   },
 })

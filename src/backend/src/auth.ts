@@ -6,7 +6,7 @@ import {
 } from "express";
 import { ClientError } from "./error";
 import {
-  AutenticacaoServico,
+  ServicoAutenticacao,
   CredenciaisSchemaZ,
 } from "./services/servicoAutenticacao";
 import { error } from "./logging";
@@ -16,12 +16,33 @@ const authRouter = Router();
 
 const COOKIE_SESSION_TOKEN = "session_token";
 
-const servicoAutenticacao = new AutenticacaoServico();
+const servicoAutenticacao = new ServicoAutenticacao();
 
 // A aplicação ira suportar criação de novos logins apenas por administradores
 // POST /auth/login
 // POST /auth/logout
 
+/**
+ * Retorna informações do usuário da sessão de acordo com o token de sessão.
+ */
+async function sessao(req: SessionRequest, res: Response, next: NextFunction) {
+  try {
+    const _sessionToken = req._sessionToken;
+    if (!_sessionToken) throw new ClientError("Não autenticado!", 400);
+    else {
+      const sessao =
+        await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
+      res.send(sessao);
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Recebe login e senha e cria uma nova sessão retornando token e informações
+ * do usuário da sessão.
+ */
 async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const parsedCredenciais = CredenciaisSchemaZ.parse(req.body);
@@ -55,13 +76,10 @@ async function logout(req: SessionRequest, res: Response, next: NextFunction) {
   // this function will receive the token, invalidate, and redirect
   try {
     const _sessionToken = req._sessionToken;
-    if (_sessionToken) {
-      await servicoAutenticacao.logout(_sessionToken);
-      // limpar cookies
-      res.clearCookie(COOKIE_SESSION_TOKEN);
-    }
-    // redirecionar
-    res.redirect("/login");
+    // TODO: Limpar todos os cookies
+    res.clearCookie(COOKIE_SESSION_TOKEN);
+    if (_sessionToken) await servicoAutenticacao.logout(_sessionToken);
+    res.send();
   } catch (err) {
     next(err);
   }
@@ -75,38 +93,19 @@ async function logoutAll(
   // this function will receive the token, invalidate, and redirect
   try {
     const _sessionToken = req._sessionToken;
-    if (_sessionToken) {
-      await servicoAutenticacao.logoutAll(_sessionToken);
-      // limpar cookies
-      res.clearCookie(COOKIE_SESSION_TOKEN);
-    }
-    // redirecionar
-    res.redirect("/login");
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function validate(
-  req: SessionRequest,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const _sessionToken = req._sessionToken!;
-    const sessaoAtiva =
-      await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
-    if (!sessaoAtiva) throw new ClientError("Não autenticado!", 400);
-    res.send("Autenticado");
+    // TODO: Limpar todos os cookies
+    res.clearCookie(COOKIE_SESSION_TOKEN);
+    if (_sessionToken) await servicoAutenticacao.logoutAll(_sessionToken);
+    res.send();
   } catch (err) {
     next(err);
   }
 }
 
 authRouter
+  .get("/sessao", loadCookies, requireSession, sessao)
   .post("/login", login)
   .post("/logout", loadCookies, logout)
-  .post("/logout/all", loadCookies, logoutAll)
-  .post("/validate", loadCookies, requireSession, validate);
+  .post("/logout-all", loadCookies, logoutAll);
 
 export default authRouter;

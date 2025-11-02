@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/libsql";
-import { error, notice, warning } from "./logging";
+import { error, json, LogLevel, notice, warning } from "./logging";
 import { DrizzleQueryError, sql } from "drizzle-orm";
 import { lotesTable } from "./db/schema/lotes";
 import { categoriasTable } from "./db/schema/categorias";
@@ -56,13 +56,21 @@ export async function inicializarAdministrador() {
   const count = await servicoUsuarios.contar();
   if (count === 0) {
     await servicoUsuarios.inserir({
-      nome: "admin",
-      login: "admin",
-      password: "admin",
-      descricao: "admin",
+      nome: "Administrador",
+      login: "Administrador",
+      password: "Admin123-",
+      descricao: "Administrador",
       habilitado: true,
       nivelPermissoes: 0,
     });
+    warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada: ");
+    json(
+      {
+        login: "administrador",
+        senha: "administrador",
+      },
+      LogLevel.Warning,
+    );
   }
 }
 

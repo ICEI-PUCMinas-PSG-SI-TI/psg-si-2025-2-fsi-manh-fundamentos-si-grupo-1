@@ -1,5 +1,5 @@
 import type { SessionRequest } from "../../cookies";
-import { LoteConsultaSchema, LoteService } from "../../services/servicoLotes";
+import { LoteConsultaSchema, ServicoLotes } from "../../services/servicoLotes";
 import { Router, type NextFunction, type Response } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
@@ -7,7 +7,7 @@ import { InsertLoteSchemaZ } from "../../db/schema/lotes";
 
 const apiV1LotesRouter = Router();
 
-const lotes = new LoteService();
+const lotes = new ServicoLotes();
 
 // GET / { queryParams: SelectLoteSchema }
 // POST / { body: InsertLoteSchema }

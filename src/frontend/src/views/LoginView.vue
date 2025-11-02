@@ -73,6 +73,9 @@ import {
   CONFIG_KEY_NOME,
   CONFIG_KEY_PERMS,
 } from '@/services/storage'
+import { useNotificationStore } from '@/store/config/toast'
+
+const useNotifications = useNotificationStore()
 
 const refFormulario: Ref<{
   usuario: string
@@ -123,8 +126,10 @@ async function login() {
       localStorage.setItem(CONFIG_KEY_PERMS, data.nivelPermissoes.toString())
       localStorage.setItem(CONFIG_KEY_FOTO, data.foto)
       router.push('/dashboard')
-    } else {
+    } else if (res.status >= 400 && res.status < 500) {
       erro.value = 'Credenciais inválidas!'
+    } else {
+      useNotifications.addNotification(res.statusText, true)
     }
   }
 }

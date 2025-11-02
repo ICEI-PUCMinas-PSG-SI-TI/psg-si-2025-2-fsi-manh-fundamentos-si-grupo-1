@@ -109,7 +109,7 @@ const UserSessionInfoZ = z.object({
 type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
 
 // TODO: Check for timing attacks
-export class AutenticacaoServico {
+export class ServicoAutenticacao {
   async login(
     login: string,
     senha: string,
@@ -146,7 +146,29 @@ export class AutenticacaoServico {
     };
   }
 
-  async consultarSessao(sessionId: string): Promise<SelectSessaoSchema | null> {
+  async consultarSessaoPorToken(
+    token: string,
+  ): Promise<UserSessionInfo | null> {
+    const _token = parseToken(token);
+    if (!_token) return null;
+    // TODO: Unificar queries
+    const sessao = await repositorioSessoes.selecionarPorId(_token?.id);
+    if (!sessao) return null;
+    const usuario = await repositorioUsuarios.selecionarPorId(sessao.usuarioId);
+    if (!usuario) return null;
+    return {
+      id: usuario.id,
+      nome: usuario.nome,
+      login: usuario.login,
+      modoEscuro: usuario.modoEscuro,
+      nivelPermissoes: usuario.nivelPermissoes,
+      foto: usuario.foto as string,
+    };
+  }
+
+  async selecionarSessao(
+    sessionId: string,
+  ): Promise<SelectSessaoSchema | null> {
     const now = new Date();
 
     const sessao = await repositorioSessoes.selecionarPorId(sessionId);
@@ -164,12 +186,12 @@ export class AutenticacaoServico {
     return sessao;
   }
 
-  async consultarSessaoPorToken(
+  async selecionarSessaoPorToken(
     token: string,
   ): Promise<SelectSessaoSchema | null> {
     const _token = parseToken(token);
     if (!_token) return null;
-    return await this.consultarSessao(_token?.id);
+    return await this.selecionarSessao(_token?.id);
   }
 
   // NOTE: Aqui, todas as conexões serão validadas via hash do segredo.
@@ -208,3 +230,7 @@ export class AutenticacaoServico {
     return excRes > 0;
   }
 }
+
+const servicoAutenticacao = new ServicoAutenticacao();
+
+export default servicoAutenticacao;
