@@ -18,7 +18,7 @@ const dataTema = computed(() => (isLogin.value ? '' : tema.isDarkModePreferred ?
     :class="[isLogin ? 'flex justify-center items-center ' : 'flex flex-row']"
   >
     <NavigationMenu class="flex h-full" v-if="!isLogin" />
-    <RouterView />
+    <RouterView class="relative" />
     <ToastContainer />
   </div>
 </template>

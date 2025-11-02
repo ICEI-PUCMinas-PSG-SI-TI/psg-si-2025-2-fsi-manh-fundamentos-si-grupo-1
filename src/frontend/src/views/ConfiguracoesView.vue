@@ -1,57 +1,47 @@
 <template>
   <div class="flex flex-col w-full h-full p-4">
     <!-- Perfil do usuário -->
-    <CardComponent>
+    <CardComponent class="flex flex-col mb-4">
       <CardTitleBar title="Perfil do usuário" />
-
-      <div class="flex flex-col">
-        <div class="flex flex-col justify-center items-center mb-4">
-          <img
-            class="avatar rounded-full border"
-            width="100px"
-            height="100px"
-            src="../assets/profile.png"
-            alt=""
-          />
-          <fieldset class="fieldset">
-            <legend class="fieldset-legend">Escolha uma imagem</legend>
-            <input type="file" class="file-input" />
-            <label class="label">Tamanho máximo de 2MB</label>
-          </fieldset>
-        </div>
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center align-middle items-center mb-8"
-        >
-          <LabeledInput
-            class="floating-label justify-self-center w-full"
-            html-type="text"
-            html-place-holder="Login"
-            label-text="Login"
-          />
-          <LabeledInput
-            class="floating-label justify-self-center w-full"
-            html-type="text"
-            html-place-holder="Nome"
-            label-text="Nome"
-          />
-          <LabeledInput
-            class="floating-label justify-self-center w-full"
-            html-type="password"
-            html-place-holder="Senha"
-            label-text="Senha"
-          />
-          <LabeledInput
-            class="floating-label justify-self-center w-full"
-            html-type="password"
-            html-place-holder="Senha (Confirmação)"
-            label-text="Senha (Confirmação)"
-          />
-        </div>
-        <ButtonComponent>Salvar</ButtonComponent>
+      <div class="flex flex-col justify-center items-center">
+        <img
+          class="avatar rounded-full border"
+          width="100px"
+          height="100px"
+          src="../assets/profile.png"
+          alt=""
+        />
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Escolha uma imagem</legend>
+          <input type="file" class="file-input" />
+          <label class="label">Tamanho máximo de 2MB</label>
+        </fieldset>
+      </div>
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-x-4 justify-center align-middle items-center mb-2"
+      >
+        <LabeledInput
+          class="floating-label justify-self-center w-full"
+          html-type="text"
+          html-place-holder="Login"
+          label-text="Login"
+        />
+        <LabeledInput
+          class="floating-label justify-self-center w-full"
+          html-type="text"
+          html-place-holder="Nome"
+          label-text="Nome"
+        />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center align-middle items-center">
+        <ButtonComponent class="btn-accent">Salvar</ButtonComponent>
+        <ButtonComponent class="btn-warning" @click="showAlterarSenha = true">
+          Alterar Senha
+        </ButtonComponent>
       </div>
     </CardComponent>
     <!-- Configurações do sistema -->
-    <CardComponent>
+    <CardComponent class="mb-4">
       <CardTitleBar title="Configurações do sistema" />
       <div class="flex flex-col">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8 justify-between">
@@ -81,7 +71,7 @@
       </div>
     </CardComponent>
     <!-- Categorias -->
-    <CardComponent>
+    <CardComponent class="mb-4">
       <CardTitleBar title="Categorias" />
       <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full gap-4">
         <div class="flex flex-col w-full mb-4 gap-4 items-end xl:col-span-1">
@@ -92,7 +82,7 @@
             html-place-holder="Categoria"
             v-model="refNovaCategoria"
           />
-          <ButtonComponent class="w-full" @click="adicionarCategoria">Adicionar</ButtonComponent>
+          <ButtonComponent class="w-full" @click="adicionarCategoria"> Adicionar</ButtonComponent>
         </div>
         <div class="xl:col-span-2">
           <div
@@ -109,7 +99,7 @@
       </div>
     </CardComponent>
     <!-- Unidades de medida -->
-    <CardComponent>
+    <CardComponent class="mb-4">
       <CardTitleBar title="Unidades de medida" />
       <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full gap-4">
         <div class="xl:col-span-1">
@@ -127,9 +117,9 @@
             html-place-holder="Abreviação"
             v-model="refNovaUnidadeMedida.abreviacao"
           />
-          <ButtonComponent class="w-full" @click="adicionarUnidadeMedida"
-            >Adicionar</ButtonComponent
-          >
+          <ButtonComponent class="w-full" @click="adicionarUnidadeMedida">
+            Adicionar
+          </ButtonComponent>
         </div>
         <div class="xl:col-span-2">
           <div
@@ -147,6 +137,7 @@
         </div>
       </div>
     </CardComponent>
+    <AlterarSenha v-if="showAlterarSenha" v-model="showAlterarSenha" />
   </div>
 </template>
 
@@ -161,6 +152,7 @@ import { ApiConfiguracoes } from '@/api/configuracoes'
 import { ApiCategorias, type Categorias } from '@/api/categorias'
 import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
 import { useNotificationStore } from '@/store/config/toast'
+import AlterarSenha from '@/components/config/AlterarSenha.vue'
 
 const refConfig = ref({
   nomeCliente: '',
@@ -177,6 +169,8 @@ const refNovaUnidadeMedida = ref({
   nome: '',
   abreviacao: '',
 })
+
+const showAlterarSenha = ref(false)
 
 const refUnidadesMedida = ref([] as UnidadeMedida[])
 
