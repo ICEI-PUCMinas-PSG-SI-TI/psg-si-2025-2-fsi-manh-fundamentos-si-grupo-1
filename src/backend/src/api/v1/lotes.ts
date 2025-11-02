@@ -4,6 +4,7 @@ import { Router, type NextFunction, type Response } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
+import { error, json } from "../../logging";
 
 const apiV1LotesRouter = Router();
 
@@ -22,12 +23,12 @@ async function getLotes(
   next: NextFunction,
 ) {
   try {
-    if (req.query) {
-      const parsedQueryParams = LoteConsultaSchema.parse(req.query);
-      const consulta = await lotes.selecionarConsulta(parsedQueryParams);
+    if (Object.keys(req.query).length === 0) {
+      const consulta = await lotes.selecionarTodos();
       res.send(consulta);
     } else {
-      const consulta = await lotes.selecionarTodos();
+      const parsedQueryParams = LoteConsultaSchema.parse(req.query);
+      const consulta = await lotes.selecionarConsulta(parsedQueryParams);
       res.send(consulta);
     }
   } catch (err) {

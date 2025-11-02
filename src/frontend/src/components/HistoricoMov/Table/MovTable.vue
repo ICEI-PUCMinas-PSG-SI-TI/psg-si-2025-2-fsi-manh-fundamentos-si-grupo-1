@@ -1,5 +1,27 @@
 <script setup lang="ts">
+import { ApiMovimentacoes } from '@/api/movimentacoes'
 import MovTableRow from './MovTableRow.vue'
+import { ref, type Ref } from 'vue'
+import { useNotificationStore } from '@/store/config/toast'
+
+const noticicacoes = useNotificationStore()
+const movimentacoes = new ApiMovimentacoes()
+const refMovimentacoes: Ref<
+  {
+    id: string
+  }[]
+> = ref([])
+
+async function obterMovimentacoes() {
+  const res = await movimentacoes.obterTodos()
+  if (res.ok) {
+    refMovimentacoes.value = res.json()
+  } else {
+    noticicacoes.addNotification(res.statusText)
+  }
+}
+
+obterMovimentacoes()
 </script>
 
 <template>
@@ -25,7 +47,7 @@ import MovTableRow from './MovTableRow.vue'
         </tr>
       </thead>
       <tbody>
-        <MovTableRow v-for="n in 10" :key="n" />
+        <MovTableRow v-for="mov in refMovimentacoes" :key="mov.id" />
       </tbody>
       <!-- foot -->
       <tfoot>

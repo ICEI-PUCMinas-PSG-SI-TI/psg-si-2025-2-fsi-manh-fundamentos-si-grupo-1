@@ -11,8 +11,8 @@ export const TransacoesConsultaSchema = z.strictObject({
   loteId: z.uuid().optional(),
   pagina: z.coerce.number().int().gt(0).optional(),
   paginaTamanho: z.coerce.number().int().gt(0).optional(),
-  dataApos: z.coerce.date(),
-  dataAntes: z.coerce.date(),
+  dataApos: z.coerce.date().optional(),
+  dataAntes: z.coerce.date().optional(),
 });
 
 type TransacoesConsultaZ = z.infer<typeof TransacoesConsultaSchema>;
