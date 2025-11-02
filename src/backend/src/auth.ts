@@ -29,27 +29,24 @@ async function login(req: Request, res: Response, next: NextFunction) {
     // else, it will return the token
     const userAgent = req.headers["user-agent"] || "";
     const reqIp = req.ip || "";
-    const token = await servicoAutenticacao.login(
-      parsedCredenciais,
+    const infoSessao = await servicoAutenticacao.login(
+      parsedCredenciais.login,
+      parsedCredenciais.senha,
       userAgent,
       reqIp,
     );
-    if (token != null) {
-      res.cookie(COOKIE_SESSION_TOKEN, token, {
-        httpOnly: true,
-        // TODO: Use when http available or create a DEVELOPMENT env var
-        // secure: true,
-        // maxAge: 24hours
-        maxAge: 86400000,
-        path: "/",
-        sameSite: "lax",
-      });
-      res.redirect("/");
-    } else {
-      error("Não foi possível gerar o token.", { label: "Auth" });
-      throw new ClientError("Unauthorized", 401);
-    }
+    res.cookie(COOKIE_SESSION_TOKEN, infoSessao.token, {
+      httpOnly: true,
+      // TODO: Use when http available or create a DEVELOPMENT env var
+      // secure: true,
+      // maxAge: 24hours
+      maxAge: 86400000,
+      path: "/",
+      sameSite: "lax",
+    });
+    res.send(infoSessao.usuario);
   } catch (err) {
+    error("Não foi possível realizar o login.", { label: "Auth" });
     next(err);
   }
 }
