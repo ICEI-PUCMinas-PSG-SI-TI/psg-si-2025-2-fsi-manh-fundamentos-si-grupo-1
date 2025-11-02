@@ -76,11 +76,9 @@ async function logout(req: SessionRequest, res: Response, next: NextFunction) {
   // this function will receive the token, invalidate, and redirect
   try {
     const _sessionToken = req._sessionToken;
-    if (_sessionToken) {
-      await servicoAutenticacao.logout(_sessionToken);
-      // limpar cookies
-      res.clearCookie(COOKIE_SESSION_TOKEN);
-    }
+    // TODO: Limpar todos os cookies
+    res.clearCookie(COOKIE_SESSION_TOKEN);
+    if (_sessionToken) await servicoAutenticacao.logout(_sessionToken);
     res.send();
   } catch (err) {
     next(err);
@@ -95,11 +93,9 @@ async function logoutAll(
   // this function will receive the token, invalidate, and redirect
   try {
     const _sessionToken = req._sessionToken;
-    if (_sessionToken) {
-      await servicoAutenticacao.logoutAll(_sessionToken);
-      // limpar cookies
-      res.clearCookie(COOKIE_SESSION_TOKEN);
-    }
+    // TODO: Limpar todos os cookies
+    res.clearCookie(COOKIE_SESSION_TOKEN);
+    if (_sessionToken) await servicoAutenticacao.logoutAll(_sessionToken);
     res.send();
   } catch (err) {
     next(err);
@@ -110,6 +106,6 @@ authRouter
   .get("/sessao", loadCookies, requireSession, sessao)
   .post("/login", login)
   .post("/logout", loadCookies, logout)
-  .post("/logout/all", loadCookies, logoutAll);
+  .post("/logout-all", loadCookies, logoutAll);
 
 export default authRouter;

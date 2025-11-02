@@ -35,12 +35,18 @@
           v-model="refSessao.nome"
         />
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center align-middle items-center">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-center align-middle items-center"
+      >
         <ButtonComponent class="btn-accent" @click="alterarInformacoesUsuario">
           Salvar
         </ButtonComponent>
         <ButtonComponent class="btn-warning" @click="showAlterarSenha = true">
           Alterar Senha
+        </ButtonComponent>
+        <ButtonComponent class="btn-error" @click="deslogarSessao"> Deslogar </ButtonComponent>
+        <ButtonComponent class="btn-error" @click="deslogarSessaoTodas">
+          Deslogar de todas as sessões
         </ButtonComponent>
       </div>
     </CardComponent>
@@ -159,6 +165,8 @@ import { useNotificationStore } from '@/store/config/toast'
 import AlterarSenha from '@/components/config/AlterarSenha.vue'
 import { ApiAutenticacao } from '@/api/auth'
 import { ApiUsuario } from '@/api/usuario'
+import { limparConfiguracoes } from '@/services/storage'
+import router from '@/router'
 
 const refConfig = ref({
   nomeCliente: '',
@@ -287,6 +295,25 @@ async function removerUnidadeMedida(id: string) {
     notificacoes.addNotification('Informações excluídas.')
     obterUnidadesMedida()
   } else {
+    notificacoes.addNotification(res.statusText, true)
+  }
+}
+
+async function deslogarSessao() {
+  const res = await autenticacao.logout()
+  limparConfiguracoes()
+  router.push('/login')
+  if (!res.ok) {
+    notificacoes.addNotification(res.statusText, true)
+  }
+}
+
+async function deslogarSessaoTodas() {
+  // TODO: Confirmar primeiro
+  const res = await autenticacao.logoutAll()
+  limparConfiguracoes()
+  router.push('/login')
+  if (!res.ok) {
     notificacoes.addNotification(res.statusText, true)
   }
 }

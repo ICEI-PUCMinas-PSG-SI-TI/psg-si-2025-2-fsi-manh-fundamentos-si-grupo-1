@@ -22,4 +22,16 @@ export class ApiAutenticacao {
       method: 'GET',
     })
   }
+
+  logout() {
+    return fetch(`${backend_path}/logout`, {
+      method: 'POST',
+    })
+  }
+
+  logoutAll() {
+    return fetch(`${backend_path}/logout-all`, {
+      method: 'POST',
+    })
+  }
 }
