@@ -65,7 +65,14 @@ import z from 'zod'
 import { ApiAutenticacao } from '@/api/auth'
 import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
 import router from '@/router'
-import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
+import {
+  CONFIG_KEY_DARK_THEME,
+  CONFIG_KEY_FOTO,
+  CONFIG_KEY_ID,
+  CONFIG_KEY_LOGIN,
+  CONFIG_KEY_NOME,
+  CONFIG_KEY_PERMS,
+} from '@/services/storage'
 
 const refFormulario: Ref<{
   usuario: string
@@ -108,13 +115,13 @@ async function login() {
     if (res.ok) {
       const data = (await res.json()) as UserSessionInfo
       // TODO: Criar um serviço para armazenar informações
-      localStorage.setItem('TREM.id', data.id)
-      localStorage.setItem('TREM.nome', data.nome)
-      localStorage.setItem('TREM.login', data.login)
+      localStorage.setItem(CONFIG_KEY_ID, data.id)
+      localStorage.setItem(CONFIG_KEY_NOME, data.nome)
+      localStorage.setItem(CONFIG_KEY_LOGIN, data.login)
       // TODO: Realizar ligação entre configurações do frontend e backend
       localStorage.setItem(CONFIG_KEY_DARK_THEME, data.modoEscuro.toString())
-      localStorage.setItem('TREM.nivelPermissoes', data.nivelPermissoes.toString())
-      localStorage.setItem('TREM.foto', data.foto)
+      localStorage.setItem(CONFIG_KEY_PERMS, data.nivelPermissoes.toString())
+      localStorage.setItem(CONFIG_KEY_FOTO, data.foto)
       router.push('/dashboard')
     } else {
       erro.value = 'Credenciais inválidas!'
