@@ -19,7 +19,7 @@ type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
 
 const repositorioLotes = new RepositorioLotes();
 
-export class LoteService {
+export class ServicoLotes {
   async inserir(lote: InsertLoteSchema) {
     const res = await repositorioLotes.inserir(lote);
     if (res && res > 0) {

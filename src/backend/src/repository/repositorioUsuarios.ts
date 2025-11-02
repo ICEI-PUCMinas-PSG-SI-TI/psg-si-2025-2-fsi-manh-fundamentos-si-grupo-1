@@ -50,12 +50,14 @@ export class RepositorioUsuarios {
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectUsuarioSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      return await tx
+  selecionarPorId(id: string): Promise<SelectUsuarioSchema | null> {
+    return bancoDados.transaction(async (tx) => {
+      const res = await tx
         .select()
         .from(tabelaUsuarios)
         .where(eq(tabelaUsuarios.id, id));
+      if (res.length && res[0]) return res[0];
+      return null;
     });
   }
 

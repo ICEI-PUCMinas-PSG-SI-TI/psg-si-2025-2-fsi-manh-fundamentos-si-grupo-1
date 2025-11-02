@@ -6,7 +6,7 @@ import {
 } from "express";
 import { ClientError } from "./error";
 import {
-  AutenticacaoServico,
+  ServicoAutenticacao,
   CredenciaisSchemaZ,
 } from "./services/servicoAutenticacao";
 import { error } from "./logging";
@@ -16,7 +16,7 @@ const authRouter = Router();
 
 const COOKIE_SESSION_TOKEN = "session_token";
 
-const servicoAutenticacao = new AutenticacaoServico();
+const servicoAutenticacao = new ServicoAutenticacao();
 
 // A aplicação ira suportar criação de novos logins apenas por administradores
 // POST /auth/login

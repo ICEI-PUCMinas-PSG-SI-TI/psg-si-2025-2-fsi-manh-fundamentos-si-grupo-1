@@ -109,7 +109,7 @@ const UserSessionInfoZ = z.object({
 type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
 
 // TODO: Check for timing attacks
-export class AutenticacaoServico {
+export class ServicoAutenticacao {
   async login(
     login: string,
     senha: string,
@@ -155,14 +155,14 @@ export class AutenticacaoServico {
     const sessao = await repositorioSessoes.selecionarPorId(_token?.id);
     if (!sessao) return null;
     const usuario = await repositorioUsuarios.selecionarPorId(sessao.usuarioId);
-    if (!usuario || !usuario[0]) return null;
+    if (!usuario) return null;
     return {
-      id: usuario[0].id,
-      nome: usuario[0].nome,
-      login: usuario[0].login,
-      modoEscuro: usuario[0].modoEscuro,
-      nivelPermissoes: usuario[0].nivelPermissoes,
-      foto: usuario[0].foto as string,
+      id: usuario.id,
+      nome: usuario.nome,
+      login: usuario.login,
+      modoEscuro: usuario.modoEscuro,
+      nivelPermissoes: usuario.nivelPermissoes,
+      foto: usuario.foto as string,
     };
   }
 
@@ -230,3 +230,7 @@ export class AutenticacaoServico {
     return excRes > 0;
   }
 }
+
+const servicoAutenticacao = new ServicoAutenticacao();
+
+export default servicoAutenticacao;

@@ -1,10 +1,15 @@
-import type { SessionRequest } from "../../cookies";
+import {
+  parseSessionUser,
+  type SessionRequest,
+  type SessionUserRequest,
+} from "../../cookies";
 import { Router, type NextFunction, type Response } from "express";
 import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../services/servicoUsuarios";
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
+import z from "zod";
 
 const apiV1UsuariosRouter = Router();
 
@@ -37,6 +42,36 @@ async function postUsuario(
   }
 }
 
+// TODO: Adicionar mais regras
+const AlteracaoSenhaZ = z.strictObject({
+  senhaAnterior: z.string().min(8).max(64),
+  senhaNova: z.string().min(8).max(64),
+});
+
+async function alterarSenha(
+  req: SessionUserRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    if (!req.body) throw new ClientError("Bad Request", 400);
+    const usuario = req._usuario!;
+    const senhas = AlteracaoSenhaZ.parse(req.body);
+    const ok = await servicoUsuarios.alterarSenha(
+      senhas.senhaAnterior,
+      senhas.senhaNova,
+      usuario.id,
+    );
+    if (ok) {
+      res.send();
+    } else {
+      throw new ClientError("Unauthorized", 401);
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function getUsuarioId(
   req: SessionRequest,
   res: Response,
@@ -45,7 +80,7 @@ async function getUsuarioId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
-    if (consulta.length === 0) throw new ClientError("Not Found", 404);
+    if (!consulta) throw new ClientError("Not Found", 404);
     res.send(consulta);
   } catch (err) {
     next(err);
@@ -82,6 +117,7 @@ function notImplemented(
 apiV1UsuariosRouter
   .get("/", getUsuarios)
   .post("/", postUsuario)
+  .post("/alterar-senha", parseSessionUser, alterarSenha)
   .get("/:id", getUsuarioId)
   // TODO: Implementar PUT e PATCH para o endpoint de usuários.
   .put("/:id", notImplemented)
