@@ -171,4 +171,15 @@ export class AutenticacaoServico {
     const excRes = await repositorioSessoes.excluirPorId(_token.id);
     return excRes > 0;
   }
+
+  async logoutAll(token: string): Promise<boolean> {
+    const _token = parseToken(token);
+    if (!_token) return false;
+    const sessoes = await repositorioSessoes.selecionarPorId(_token.id);
+    if (!sessoes) return false;
+    const excRes = await repositorioSessoes.excluirPorUsuarioId(
+      sessoes.usuarioId,
+    );
+    return excRes > 0;
+  }
 }

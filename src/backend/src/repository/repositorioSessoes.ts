@@ -42,11 +42,23 @@ export class RepositorioSessoes {
     });
   }
 
+  // or .returning()
   async excluirPorId(id: string): Promise<number> {
     return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (await tx.delete(tabelaSessoes).where(eq(tabelaSessoes.id, id)))
-        .rowsAffected;
+      const resultSet = await tx
+        .delete(tabelaSessoes)
+        .where(eq(tabelaSessoes.id, id));
+      return resultSet.rowsAffected;
+    });
+  }
+
+  // or .returning()
+  async excluirPorUsuarioId(usuarioId: string): Promise<number> {
+    return await bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaSessoes)
+        .where(eq(tabelaSessoes.usuarioId, usuarioId));
+      return resultSet.rowsAffected;
     });
   }
 }
