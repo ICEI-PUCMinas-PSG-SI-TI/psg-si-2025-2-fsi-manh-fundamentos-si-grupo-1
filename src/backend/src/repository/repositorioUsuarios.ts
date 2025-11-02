@@ -1,4 +1,4 @@
-import { and, eq, type SQLWrapper } from "drizzle-orm";
+import { and, count, eq, type SQLWrapper } from "drizzle-orm";
 import bancoDados from "../db";
 import { usuariosTable as tabelaUsuarios } from "../db/schema/usuarios";
 import type {
@@ -115,5 +115,9 @@ export class RepositorioUsuarios {
       return (await tx.delete(tabelaUsuarios).where(eq(tabelaUsuarios.id, id)))
         .rowsAffected;
     });
+  }
+
+  contar() {
+    return bancoDados.select({ count: count() }).from(tabelaUsuarios);
   }
 }

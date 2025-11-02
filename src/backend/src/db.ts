@@ -9,6 +9,7 @@ import { sessoesTable } from "./db/schema/sessoes";
 import { transacoesTable } from "./db/schema/transacoes";
 import { unidadesMedidaTable } from "./db/schema/unidadesMedida";
 import { usuariosTable } from "./db/schema/usuarios";
+import servicoUsuarios from "./services/servicoUsuarios";
 
 export const baseDados = drizzle(process.env.DB_FILE_NAME!);
 
@@ -47,6 +48,22 @@ export async function verificarBancoDados(): Promise<boolean> {
     }
   }
   return true;
+}
+
+// Verifica se há usuários cadastrados no sistema, se não houver, inicializa um administrador
+// TODO: Inicializar apenas 1 vez, armazenar informação em configurações.
+export async function inicializarAdministrador() {
+  const count = await servicoUsuarios.contar();
+  if (count === 0) {
+    await servicoUsuarios.inserir({
+      nome: "admin",
+      login: "admin",
+      password: "admin",
+      descricao: "admin",
+      habilitado: true,
+      nivelPermissoes: 0,
+    });
+  }
 }
 
 export default baseDados;

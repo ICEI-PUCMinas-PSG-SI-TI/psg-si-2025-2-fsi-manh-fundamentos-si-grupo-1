@@ -33,7 +33,7 @@ class ServicoUsuarios {
       nome: usuario.nome,
       login: usuario.login,
       foto: usuario.foto,
-      descricaco: usuario.descricao,
+      descricao: usuario.descricao,
       habilitado: usuario.habilitado,
       nivelPermissoes: usuario.nivelPermissoes,
       hashedPassword: hashedPassword,
@@ -71,6 +71,12 @@ class ServicoUsuarios {
       label: "LoteService",
     });
     return res;
+  }
+
+  async contar() {
+    const res = await repositorioUsuarios.contar();
+    if (!res[0]) return 0;
+    return res[0].count;
   }
 }
 

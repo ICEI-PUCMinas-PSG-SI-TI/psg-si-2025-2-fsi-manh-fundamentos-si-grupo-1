@@ -9,7 +9,7 @@ import { error, info, middlewareHTTP } from "./logging";
 import chalk from "chalk";
 import { ClientError } from "./error";
 import z, { ZodError } from "zod";
-import { verificarBancoDados } from "./db";
+import { inicializarAdministrador, verificarBancoDados } from "./db";
 import cookieParser from "cookie-parser";
 import authRouter from "./auth";
 
@@ -19,6 +19,8 @@ console.info(chalk.bgBlueBright("psg-si-fundamentos-backend\n"));
 
 // Verifica se a base de dados está ok
 if (!(await verificarBancoDados())) process.exit();
+
+await inicializarAdministrador();
 
 const app = express();
 const port = 8080;
