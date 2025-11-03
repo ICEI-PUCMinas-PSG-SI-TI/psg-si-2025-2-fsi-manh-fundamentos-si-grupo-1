@@ -59,7 +59,7 @@ async function getLoteId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.selecionarPorId(params.id);
-    if (consulta.length === 0) throw new ClientError("", 404);
+    if (!consulta) throw new ClientError("", 404);
     res.send(consulta);
   } catch (err) {
     next(err);

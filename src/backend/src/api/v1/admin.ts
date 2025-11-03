@@ -5,7 +5,7 @@ import apiV1Faker from "./admin/faker";
 
 const apiV1AdminRouter = Router();
 
-apiV1AdminRouter.use(parseSessionUser, requireRoot, apiV1AdminUsuarios);
+apiV1AdminRouter.use(parseSessionUser, requireRoot);
 
 // {host}/api/v1/faker
 apiV1AdminRouter.use("/faker", apiV1Faker);

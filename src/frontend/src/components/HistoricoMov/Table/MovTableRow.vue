@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import MovTableProduct from './MovTableProduct.vue'
-import MovTableUser from './MovTableUser.vue'
+import { ref, watch, type Ref } from 'vue'
+import { ApiUsuario } from '@/api/usuario'
 
 const props = defineProps<{
   colUserId: string
@@ -23,6 +24,25 @@ const dataTime = computed(() =>
   data.value.toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
 )
 
+const redUsuarioId = ref(props.colUserId)
+const refUsuariodata: Ref<{
+  id?: string
+  nome?: string
+}> = ref({})
+
+const usuarios = new ApiUsuario()
+
+async function obterUsuario(id: string) {
+  const res = await usuarios.obter(id)
+  if (res.ok) {
+    refUsuariodata.value = await res.json()
+  }
+  // TODO: Criar campos padrão
+}
+
+watch(redUsuarioId, obterUsuario)
+obterUsuario(props.colUserId)
+
 // const isChecked = defineModel()
 </script>
 
@@ -40,7 +60,7 @@ const dataTime = computed(() =>
       <p>{{ dataTime }}</p>
     </td>
     <td>
-      <MovTableUser :user-id="colUserId" />
+      <p class="font-bold">{{ refUsuariodata.nome || 'N/A' }}</p>
     </td>
     <td>
       <MovTableProduct :product-id="colProductId" :lote-id="colLoteId" />

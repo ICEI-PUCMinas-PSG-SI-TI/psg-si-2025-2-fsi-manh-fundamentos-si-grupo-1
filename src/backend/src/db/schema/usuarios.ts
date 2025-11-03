@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import z from "zod";
 
 export const usuariosTable = sqliteTable("usuarios", {
@@ -55,6 +55,20 @@ export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
     id: true,
     updatedAt: true,
     createdAt: true,
+  })
+  .strict();
+
+export const SelectUsuarioInfoSchemaZ = createSelectSchema(usuariosTable, {
+  id: z.uuid(),
+  habilitado: z.boolean(),
+  modoEscuro: z.boolean(),
+  foto: z.base64().nullable(),
+})
+  .pick({
+    id: true,
+    foto: true,
+    nome: true,
+    descricao: true,
   })
   .strict();
 

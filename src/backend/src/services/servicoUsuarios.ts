@@ -1,6 +1,7 @@
 import z from "zod";
 import {
   InsertUsuarioSchemaZ,
+  SelectUsuarioInfoSchemaZ,
   type UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
 import { debug, error } from "../logging";
@@ -44,6 +45,21 @@ class ServicoUsuarios {
       debug(`Novo usuário criado!`, { label: "LoteService" });
     }
     return res;
+  }
+
+  async selecionarInfoPorId(
+    id: string,
+  ): Promise<z.infer<typeof SelectUsuarioInfoSchemaZ> | null> {
+    const res = await repositorioUsuarios.selecionarPorId(id);
+    if (!res) return null;
+    const parsedUsuario = SelectUsuarioInfoSchemaZ.parse({
+      id: res.id,
+      nome: res.nome,
+      descricao: res.descricao,
+      foto: res.foto,
+    });
+    debug(`Retornando usuário ${id}`, { label: "LoteService" });
+    return parsedUsuario;
   }
 
   async selecionarPorId(id: string) {

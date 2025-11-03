@@ -1,10 +1,14 @@
-import { parseSessionUser, type SessionUserRequest } from "../../cookies";
+import {
+  parseSessionUser,
+  type SessionRequest,
+  type SessionUserRequest,
+} from "../../cookies";
 import { Router, type NextFunction, type Response } from "express";
 import servicoUsuarios from "../../services/servicoUsuarios";
 import { ClientError } from "../../error";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
-import { PasswordZ } from "./objects";
+import { ParamsIdSchemaZ, PasswordZ } from "./objects";
 
 const apiV1UsuariosRouter = Router();
 
@@ -12,6 +16,21 @@ const AlteracaoSenhaZ = z.strictObject({
   senhaAnterior: PasswordZ,
   senhaNova: PasswordZ,
 });
+
+async function getUsuarioId(
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const params = ParamsIdSchemaZ.parse(req.params);
+    const consulta = await servicoUsuarios.selecionarInfoPorId(params.id);
+    if (!consulta) throw new ClientError("Not Found", 404);
+    res.send(consulta);
+  } catch (err) {
+    next(err);
+  }
+}
 
 async function alterarSenha(
   req: SessionUserRequest,
@@ -66,6 +85,7 @@ async function patchUsuario(
 
 apiV1UsuariosRouter
   .use(parseSessionUser)
+  .get("/:id", getUsuarioId)
   .post("/alterar-senha", alterarSenha)
   // TODO: Implementar PUT e PATCH para o endpoint de usuários.
   .patch("/", patchUsuario);
