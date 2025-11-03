@@ -55,19 +55,21 @@ export async function verificarBancoDados(): Promise<boolean> {
 export async function inicializarAdministrador() {
   const count = await servicoUsuarios.contar();
   if (count === 0) {
+    const login = "Administrador";
+    const senha = "Admin123-";
     await servicoUsuarios.inserir({
-      nome: "Administrador",
-      login: "Administrador",
-      password: "Admin123-",
-      descricao: "Administrador",
+      nome: login,
+      login: login,
+      password: senha,
+      descricao: login,
       habilitado: true,
       nivelPermissoes: 0,
     });
     warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada: ");
     json(
       {
-        login: "administrador",
-        senha: "administrador",
+        login,
+        senha,
       },
       LogLevel.Warning,
     );
