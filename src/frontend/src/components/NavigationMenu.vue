@@ -50,6 +50,7 @@ import DarkModeToggle from './DarkModeToggle.vue'
         </NavigationMenuItem>
       </RouterLink>
 
+      <!-- TODO: Funcionalidade não será implementada no momento (sprint 3)
       <NavigationMenuItemSeparator />
 
       <RouterLink to="/relatorio_1" v-slot="{ href, navigate, isActive }" custom>
@@ -72,6 +73,7 @@ import DarkModeToggle from './DarkModeToggle.vue'
           Relatório 3
         </NavigationMenuItem>
       </RouterLink>
+      -->
 
       <NavigationMenuItemSeparator />
 

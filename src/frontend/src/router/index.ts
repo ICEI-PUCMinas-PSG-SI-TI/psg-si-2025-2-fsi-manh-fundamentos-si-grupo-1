@@ -49,6 +49,8 @@ const router = createRouter({
         autenticacaoNecessaria: true,
       },
     },
+    // TODO: Funcionalidade não será implementada no momento (sprint 3)
+    /*
     {
       path: '/relatorio_1',
       component: NotImplementedView,
@@ -70,6 +72,7 @@ const router = createRouter({
         autenticacaoNecessaria: true,
       },
     },
+    */
     {
       path: '/usuarios',
       component: NotImplementedView,
