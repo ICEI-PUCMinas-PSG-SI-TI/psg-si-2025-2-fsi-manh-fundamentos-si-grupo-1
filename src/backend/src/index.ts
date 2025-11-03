@@ -7,11 +7,12 @@ import apiRouter from "./api";
 import "dotenv/config";
 import { error, info, middlewareHTTP } from "./logging";
 import chalk from "chalk";
-import { ClientError } from "./error";
+import { ClientError, HttpError } from "./error";
 import z, { ZodError } from "zod";
 import { inicializarAdministrador, verificarBancoDados } from "./db";
 import cookieParser from "cookie-parser";
 import authRouter from "./auth";
+import { DrizzleQueryError } from "drizzle-orm";
 
 z.config(z.locales.pt());
 
@@ -43,11 +44,14 @@ app.use("/api", apiRouter);
 // Obs: É importante que todos os métodos HTTP chamem uma próxima função para que o erro sejá manipulado
 app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
   if (err) {
-    if (err instanceof ClientError) {
+    if (err instanceof ClientError || err instanceof HttpError) {
       res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {
       error(err.message);
       res.status(400).send("Parâmetros inválidos!");
+    } else if (err instanceof DrizzleQueryError && err.cause instanceof Error) {
+      error(err.cause?.message, { label: "query" });
+      res.sendStatus(500);
     } else {
       if (err instanceof Error) error(err.message);
       res.sendStatus(500);

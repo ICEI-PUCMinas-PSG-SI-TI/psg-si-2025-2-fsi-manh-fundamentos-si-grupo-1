@@ -30,8 +30,9 @@ export class ServicoLotes {
 
   async selecionarPorId(id: string) {
     const res = await repositorioLotes.selecionarPorId(id);
+    if (res.length === 0) return null;
     debug(`Retornando lote ${id}`, { label: "LoteService" });
-    return res;
+    return res[0]!;
   }
 
   async selecionarConsulta(opts?: LoteConsultaZ) {
@@ -73,6 +74,11 @@ export class ServicoLotes {
     return res;
   }
 
+  // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
+  selecionarIdProdutosTodos() {
+    return repositorioLotes.selecionarIdProdutosTodos();
+  }
+
   async atualizar(id: string, lote: UpdateLoteSchema) {
     const res = await repositorioLotes.atualizarPorId(id, lote);
     debug(`Informações do lote ${id} atualizadas!`, {
@@ -88,4 +94,14 @@ export class ServicoLotes {
     });
     return res;
   }
+
+  async contar() {
+    const res = await repositorioLotes.contar();
+    if (!res[0]) return 0;
+    return res[0].count;
+  }
 }
+
+const servicoLotes = new ServicoLotes();
+
+export default servicoLotes;

@@ -1,5 +1,10 @@
 import { type SessionRequest, type SessionUserRequest } from "../../../cookies";
-import { Router, type NextFunction, type Response } from "express";
+import {
+  Router,
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../../services/servicoUsuarios";
@@ -10,11 +15,7 @@ import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
 
 const apiV1AdminUsuariosRouter = Router();
 
-async function getUsuarios(
-  req: SessionRequest,
-  res: Response,
-  next: NextFunction,
-) {
+async function getUsuarios(req: Request, res: Response, next: NextFunction) {
   try {
     const consulta = await servicoUsuarios.selecionarTodos();
     res.send(consulta);
@@ -121,8 +122,8 @@ async function patchUsuario(
 apiV1AdminUsuariosRouter
   .get("/", getUsuarios)
   .post("/", postUsuario)
-  .patch("/", patchUsuario)
-  .post("/:id/alterar-senha", alterarSenha)
+  .patch("/:id", patchUsuario)
+  .post("/alterar-senha/:id", alterarSenha)
   .get("/:id", getUsuarioId)
   .delete("/:id", excluirUsuarioId);
 

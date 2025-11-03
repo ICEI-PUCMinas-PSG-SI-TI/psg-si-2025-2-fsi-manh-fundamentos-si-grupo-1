@@ -97,6 +97,16 @@ export class RepositorioUsuarios {
     return new RepositorioLotesConsulta(queryBase);
   }
 
+  selecionarIdTodos(): Promise<{ id: string }[]> {
+    return bancoDados.transaction((tx) => {
+      return tx
+        .select({
+          id: tabelaUsuarios.id,
+        })
+        .from(tabelaUsuarios);
+    });
+  }
+
   async atualizarPorId(
     id: string,
     usuario: UpdateUsuarioSchema,

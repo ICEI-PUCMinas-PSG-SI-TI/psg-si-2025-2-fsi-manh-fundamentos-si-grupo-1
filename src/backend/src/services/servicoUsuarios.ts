@@ -1,6 +1,7 @@
 import z from "zod";
 import {
   InsertUsuarioSchemaZ,
+  SelectUsuarioInfoSchemaZ,
   type UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
 import { debug, error } from "../logging";
@@ -46,6 +47,21 @@ class ServicoUsuarios {
     return res;
   }
 
+  async selecionarInfoPorId(
+    id: string,
+  ): Promise<z.infer<typeof SelectUsuarioInfoSchemaZ> | null> {
+    const res = await repositorioUsuarios.selecionarPorId(id);
+    if (!res) return null;
+    const parsedUsuario = SelectUsuarioInfoSchemaZ.parse({
+      id: res.id,
+      nome: res.nome,
+      descricao: res.descricao,
+      foto: res.foto,
+    });
+    debug(`Retornando usuário ${id}`, { label: "LoteService" });
+    return parsedUsuario;
+  }
+
   async selecionarPorId(id: string) {
     const res = await repositorioUsuarios.selecionarPorId(id);
     debug(`Retornando usuário ${id}`, { label: "LoteService" });
@@ -56,6 +72,11 @@ class ServicoUsuarios {
     const res = await repositorioUsuarios.selecionarTodos();
     debug(`Retornando usuário`, { label: "LoteService" });
     return res;
+  }
+
+  // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
+  selecionarIdTodos() {
+    return repositorioUsuarios.selecionarIdTodos();
   }
 
   async atualizar(id: string, usuario: UpdateUsuarioSchema) {

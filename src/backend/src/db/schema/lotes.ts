@@ -4,13 +4,16 @@ import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import z from "zod";
+import { produtosTable } from "./produtos";
 
 export const lotesTable = sqliteTable("lotes", {
   id: text()
     .primaryKey()
     .notNull()
     .$defaultFn(() => genUUID()),
-  produtoId: text("produto_id").notNull(),
+  produtoId: text("produto_id")
+    .notNull()
+    .references(() => produtosTable.id),
   // Aqui poderia ser utilizado SQLITE(blob) e Uint8Array array, mas isso
   // dificulta exponencialmente a validação (zod), o retorno de dados e a
   // inserção de dados.

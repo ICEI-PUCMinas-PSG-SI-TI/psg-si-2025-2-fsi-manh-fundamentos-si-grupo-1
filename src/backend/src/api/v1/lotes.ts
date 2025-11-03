@@ -22,12 +22,12 @@ async function getLotes(
   next: NextFunction,
 ) {
   try {
-    if (req.query) {
-      const parsedQueryParams = LoteConsultaSchema.parse(req.query);
-      const consulta = await lotes.selecionarConsulta(parsedQueryParams);
+    if (Object.keys(req.query).length === 0) {
+      const consulta = await lotes.selecionarTodos();
       res.send(consulta);
     } else {
-      const consulta = await lotes.selecionarTodos();
+      const parsedQueryParams = LoteConsultaSchema.parse(req.query);
+      const consulta = await lotes.selecionarConsulta(parsedQueryParams);
       res.send(consulta);
     }
   } catch (err) {
@@ -59,7 +59,7 @@ async function getLoteId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.selecionarPorId(params.id);
-    if (consulta.length === 0) throw new ClientError("", 404);
+    if (!consulta) throw new ClientError("", 404);
     res.send(consulta);
   } catch (err) {
     next(err);
