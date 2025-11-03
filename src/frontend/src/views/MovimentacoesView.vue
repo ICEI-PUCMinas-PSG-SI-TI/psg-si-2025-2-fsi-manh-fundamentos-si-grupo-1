@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen p-4 overflow-y-auto">
+  <div class="flex flex-col h-screen w-screen p-4 overflow-y-auto">
     <div class="flex-shrink-0 p-2 mb-4">
       <h3 class="text-lg font-semibold mb-2">Filtrar por Data</h3>
       <div class="flex gap-2">
@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <div class="flex-1 card card-border bg-base-200">
+    <div class="flex card card-border bg-base-200 h-full w-full">
       <div class="card-body flex-col h-full gap-4">
         <h2 class="text-left text-4xl font-bold">Histórico de Transações</h2>
         <MovTable class="flex-1 overflow-y-auto" />

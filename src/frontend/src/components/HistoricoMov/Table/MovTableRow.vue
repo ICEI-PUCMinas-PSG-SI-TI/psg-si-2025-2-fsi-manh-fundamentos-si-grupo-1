@@ -1,18 +1,27 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import MovTableProduct from './MovTableProduct.vue'
 import MovTableUser from './MovTableUser.vue'
 
-defineProps([
-  'colUserId',
-  'colProductId',
-  'colLoteId',
-  'colData',
-  'colTipo',
-  'colQuantidade',
-  'colOrigem',
-  'colDestino',
-  'colObservacao',
-])
+const props = defineProps<{
+  colUserId: string
+  colProductId: string
+  colLoteId: string
+  colData: string
+  colTipo: string // TODO: Sem uso
+  colQuantidade: number
+  colOrigem: string
+  colDestino: string
+  colObservacao: string
+}>()
+
+const data = computed(() => new Date(props.colData))
+const dataDate = computed(() =>
+  data.value.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }),
+)
+const dataTime = computed(() =>
+  data.value.toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+)
 
 // const isChecked = defineModel()
 </script>
@@ -27,21 +36,21 @@ defineProps([
     </th>
     -->
     <td>
-      <p>02/11/2025</p>
-      <p>16:11</p>
+      <p>{{ dataDate }}</p>
+      <p>{{ dataTime }}</p>
     </td>
     <td>
-      <MovTableUser user-id="userId" />
+      <MovTableUser :user-id="colUserId" />
     </td>
     <td>
-      <MovTableProduct />
+      <MovTableProduct :product-id="colProductId" :lote-id="colLoteId" />
     </td>
-    <td>500</td>
-    <td>Belo Horizonte</td>
-    <td>São Paulo</td>
+    <td>{{ colQuantidade }}</td>
+    <td>{{ colOrigem }}</td>
+    <td>{{ colDestino }}</td>
     <!-- Limit to 80 characters-->
     <td class="">
-      Ustulo adhaero soleo amplexus aro acceptus. Statim accendo acidus suspendo officia.
+      {{ colObservacao.substring(0, 80) }}
     </td>
   </tr>
 </template>

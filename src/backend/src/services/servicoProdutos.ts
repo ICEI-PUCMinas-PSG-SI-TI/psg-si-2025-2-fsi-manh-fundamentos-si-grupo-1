@@ -13,6 +13,12 @@ export class ServicoProdutos {
     return res;
   }
 
+  async selecionarPorId(id: string) {
+    const res = await repositorioProdutos.selecionarPorId(id);
+    if (res.length === 0) return null;
+    return res[0]!;
+  }
+
   selecionarTodos() {
     return repositorioProdutos.selecionarTodos(0, 0);
   }

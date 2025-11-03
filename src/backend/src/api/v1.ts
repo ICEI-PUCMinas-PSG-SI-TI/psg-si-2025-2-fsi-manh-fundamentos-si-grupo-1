@@ -6,6 +6,7 @@ import apiV1Categorias from "./v1/categorias";
 import apiV1UnidadesMedida from "./v1/unidadesMedida";
 import apiV1Admin from "./v1/admin";
 import apiV1Transacoes from "./v1/transacoes";
+import apiV1Produtos from "./v1/produtos";
 
 const apiV1Router = Router();
 
@@ -26,6 +27,9 @@ apiV1Router.use("/unidades", apiV1UnidadesMedida);
 
 // {host}/api/v1/admin
 apiV1Router.use("/transacoes", apiV1Transacoes);
+
+// {host}/api/v1/produtos
+apiV1Router.use("/produtos", apiV1Produtos);
 
 // {host}/api/v1/admin
 apiV1Router.use("/admin", apiV1Admin);

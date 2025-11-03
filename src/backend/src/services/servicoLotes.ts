@@ -30,8 +30,9 @@ export class ServicoLotes {
 
   async selecionarPorId(id: string) {
     const res = await repositorioLotes.selecionarPorId(id);
+    if (res.length === 0) return null;
     debug(`Retornando lote ${id}`, { label: "LoteService" });
-    return res;
+    return res[0]!;
   }
 
   async selecionarConsulta(opts?: LoteConsultaZ) {

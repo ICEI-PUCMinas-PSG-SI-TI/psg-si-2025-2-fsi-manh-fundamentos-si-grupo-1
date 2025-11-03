@@ -9,13 +9,23 @@ const movimentacoes = new ApiMovimentacoes()
 const refMovimentacoes: Ref<
   {
     id: string
+    produtoId: string
+    usuarioId: string
+    loteId: string
+    motivo: string
+    quantidade: number
+    horario: string
+    localOrigem: string
+    localDestino: string
+    observacao: string
   }[]
 > = ref([])
 
 async function obterMovimentacoes() {
   const res = await movimentacoes.obterTodos()
   if (res.ok) {
-    refMovimentacoes.value = res.json()
+    const data = await res.json()
+    refMovimentacoes.value = data
   } else {
     noticicacoes.addNotification(res.statusText)
   }
@@ -47,7 +57,19 @@ obterMovimentacoes()
         </tr>
       </thead>
       <tbody>
-        <MovTableRow v-for="mov in refMovimentacoes" :key="mov.id" />
+        <MovTableRow
+          v-for="mov in refMovimentacoes"
+          :key="mov.id"
+          :col-data="mov.horario"
+          :col-lote-id="mov.loteId"
+          :col-user-id="mov.usuarioId"
+          :col-quantidade="mov.quantidade"
+          :col-tipo="mov.motivo"
+          :col-product-id="mov.produtoId"
+          :col-origem="mov.localOrigem"
+          :col-destino="mov.localDestino"
+          :col-observacao="mov.observacao"
+        />
       </tbody>
       <!-- foot -->
       <tfoot>
