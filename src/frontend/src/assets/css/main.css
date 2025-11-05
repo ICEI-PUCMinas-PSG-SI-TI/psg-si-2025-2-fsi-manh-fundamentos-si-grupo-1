@@ -11,6 +11,7 @@
   default: true;
   prefersdark: false;
   color-scheme: 'light';
+  --color-base-200: oklch(92% 0.006 264.531);
   --color-neutral: oklch(39% 0.095 152.535);
   --color-neutral-content: oklch(92% 0.004 286.32);
   --radius-selector: 0.5rem;
@@ -27,6 +28,7 @@
   default: false;
   prefersdark: true;
   color-scheme: 'dark';
+  --color-base-200: oklch(14% 0.004 49.25);
   --color-neutral: oklch(39% 0.095 152.535);
   --color-neutral-content: oklch(92% 0.004 286.32);
   --radius-selector: 0.5rem;

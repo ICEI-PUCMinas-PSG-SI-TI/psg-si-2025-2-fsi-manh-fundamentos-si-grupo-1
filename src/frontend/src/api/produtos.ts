@@ -25,4 +25,9 @@ export class ApiProdutos {
       params: params,
     })
   }
+  static obterTodos(): Promise<Response> {
+    return fetch(`${backend_path}`, {
+       method: 'GET',
+    })
+  }
 }
