@@ -60,7 +60,7 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
-  executarConsulta(): Promise<SelectProdutosSchema[]> {
+  executarConsulta(): Promise<SelectTransacoesSchema[]> {
     this._query.where(and(...this._whereAnd));
     return baseDados.transaction((tx) => {
       return tx.all(this._query.getSQL());

@@ -26,12 +26,12 @@ export const lotesTable = sqliteTable("lotes", {
   */
   lote: text().notNull(),
   quantidade: int().notNull().default(0),
-  validade: int({ mode: "timestamp" }),
+  validade: int({ mode: "timestamp_ms" }),
   // Default to current Unix epoch in seconds
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
 });

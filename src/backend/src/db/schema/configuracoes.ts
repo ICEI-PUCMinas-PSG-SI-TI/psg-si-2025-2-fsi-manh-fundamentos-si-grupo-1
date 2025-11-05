@@ -13,10 +13,10 @@ export const configuracoesTable = sqliteTable("configuracoes", {
   nomeCliente: text("nome_cliente"),
   cpfCnpj: text("cpf_cnpj"),
   endereco: text(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
 });

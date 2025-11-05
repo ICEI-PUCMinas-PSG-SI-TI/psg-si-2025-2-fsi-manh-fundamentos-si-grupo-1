@@ -24,16 +24,16 @@ export const transacoesTable = sqliteTable("transacoes", {
   // TODO: Utilizar enum?
   motivo: text(),
   quantidade: int().notNull(),
-  horario: int({ mode: "timestamp" })
+  horario: int({ mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
   localOrigem: text("local_origem"),
   localDestino: text("local_destino"),
   observacao: text(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
 });

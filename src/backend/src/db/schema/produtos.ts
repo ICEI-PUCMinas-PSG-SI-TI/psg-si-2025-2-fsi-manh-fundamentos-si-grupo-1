@@ -35,10 +35,10 @@ export const produtosTable = sqliteTable("produtos", {
     // TODO: use ENUM_PRODUTOS_STATUS
     enum: ["ATIVO", "INATIVO", "DESCONTINUADO", "BLOQUEADO"],
   }).notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
 });

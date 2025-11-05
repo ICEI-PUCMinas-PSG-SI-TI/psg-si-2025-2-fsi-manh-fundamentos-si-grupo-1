@@ -20,10 +20,10 @@ export const usuariosTable = sqliteTable("usuarios", {
   // TODO: Verificar se esse formato é o ideal para validar permissões
   nivelPermissoes: int("nivel_permissoes").notNull().default(3),
   foto: blob(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
 });

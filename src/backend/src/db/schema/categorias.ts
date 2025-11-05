@@ -11,7 +11,7 @@ export const categoriasTable = sqliteTable("categorias", {
     .notNull()
     .$defaultFn(() => genUUID()),
   nome: text().notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
 });

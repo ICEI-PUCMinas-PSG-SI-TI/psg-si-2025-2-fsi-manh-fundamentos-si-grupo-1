@@ -13,7 +13,7 @@ export const sessoesTable = sqliteTable("sessoes", {
     .references(() => usuariosTable.id),
   userAgent: text("user_agent"),
   ipAddress: text("ip_address").notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .default(sql`(unixepoch())`),
 });
