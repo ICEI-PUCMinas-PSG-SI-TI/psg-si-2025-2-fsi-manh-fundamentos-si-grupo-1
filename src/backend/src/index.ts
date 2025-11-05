@@ -13,6 +13,7 @@ import { inicializarAdministrador, verificarBancoDados } from "./db";
 import cookieParser from "cookie-parser";
 import authRouter from "./auth";
 import { DrizzleQueryError } from "drizzle-orm";
+import { addRequestId, type RequestId } from "./middlewares";
 
 z.config(z.locales.pt());
 
@@ -25,6 +26,8 @@ await inicializarAdministrador();
 
 const app = express();
 const port = 8080;
+
+app.use(addRequestId);
 
 // MAYBE: add request id?
 app.use(middlewareHTTP);
@@ -42,18 +45,19 @@ app.use("/api", apiRouter);
 
 // Manipulação de errors
 // Obs: É importante que todos os métodos HTTP chamem uma próxima função para que o erro sejá manipulado
-app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  const id = (req as RequestId)._id;
   if (err) {
     if (err instanceof ClientError || err instanceof HttpError) {
       res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {
-      error(err.message);
+      error(err.message, { reqId: id });
       res.status(400).send("Parâmetros inválidos!");
     } else if (err instanceof DrizzleQueryError && err.cause instanceof Error) {
-      error(err.cause?.message, { label: "query" });
+      error(err.cause?.message, { label: "query", reqId: id });
       res.sendStatus(500);
     } else {
-      if (err instanceof Error) error(err.message);
+      if (err instanceof Error) error(err.message, { reqId: id });
       res.sendStatus(500);
     }
   } else {

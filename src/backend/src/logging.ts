@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import type { NextFunction, Request, Response } from "express";
+import type { RequestId } from "./middlewares";
 
 const locale = process.env.LOCALE || "iso";
 
@@ -66,11 +67,13 @@ function colorLogLevel(level: LogLevel) {
   return text;
 }
 
-function log(
-  messsage: string,
-  level: LogLevel,
-  opts?: { excludeTimestamp?: boolean; label?: string },
-) {
+export type LogOpts = {
+  excludeTimestamp?: boolean;
+  label?: string;
+  reqId?: string;
+};
+
+function log(messsage: string, level: LogLevel, opts?: LogOpts) {
   if (level > logLevel) return;
   const messageArray: string[] = [];
   if (!opts?.excludeTimestamp)
@@ -88,50 +91,36 @@ function log(
     );
   messageArray.push(colorLogLevel(level));
   if (opts?.label?.length) messageArray.push(`[${opts.label}]`);
+  if (opts?.reqId?.length) messageArray.push(`{${opts.reqId}}`);
   messageArray.push(messsage);
   const finalMessage = messageArray.join(" ");
   console.info(finalMessage);
 }
 
-export function error(
-  messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string },
-) {
+export function error(messsage: string, opts?: LogOpts | object) {
   log(messsage, LogLevel.Error, opts);
 }
 
-export function warning(
-  messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string },
-) {
+export function warning(messsage: string, opts?: LogOpts | object) {
   log(messsage, LogLevel.Warning, opts);
 }
 
-export function notice(
-  messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string },
-) {
+export function notice(messsage: string, opts?: LogOpts | object) {
   log(messsage, LogLevel.Notice, opts);
 }
 
-export function info(
-  messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string },
-) {
+export function info(messsage: string, opts?: LogOpts | object) {
   log(messsage, LogLevel.Informational, opts);
 }
 
-export function debug(
-  messsage: string,
-  opts?: { excludeTimestamp?: boolean; label?: string },
-) {
+export function debug(messsage: string, opts?: LogOpts | object) {
   log(messsage, LogLevel.Debug, opts);
 }
 
 export function json(
   message: object,
   level: LogLevel,
-  opts?: { excludeTimestamp?: boolean; label?: string },
+  opts?: LogOpts | object,
 ) {
   const stringMessage = JSON.stringify(message, null, 2);
   log(stringMessage, level, opts);
@@ -161,7 +150,7 @@ export function middlewareHTTP(
       colorStatusCode(status),
       `${totalTime} ms`,
     ];
-    info(logging.join(" "), { label: "HTTP" });
+    info(logging.join(" "), { label: "HTTP", reqId: (req as RequestId)._id });
     // debug(`HTTP/${httpVersion} ${userAgent}`, { label: "HTTP" });
     // json(body, LogLevel.Debug);
   });
