@@ -15,7 +15,7 @@ export const LoteConsultaSchema = z.strictObject({
   lote: z.string().min(1).optional(),
 });
 
-type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
+export type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
 
 const repositorioLotes = new RepositorioLotes();
 
