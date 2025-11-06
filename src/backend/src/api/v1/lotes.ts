@@ -44,8 +44,8 @@ async function postLote(
     if (!req.body)
       throw new ClientError("Não há informações para serem inseridas!");
     const parsedBody = InsertLoteSchemaZ.parse(req.body);
-    await lotes.inserir(parsedBody);
-    res.send();
+const id = await lotes.inserir(parsedBody);
+    res.send(id);
   } catch (err) {
     next(err);
   }

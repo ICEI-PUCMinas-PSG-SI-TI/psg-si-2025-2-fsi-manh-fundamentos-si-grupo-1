@@ -71,9 +71,11 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 }
 
 export class RepositorioLotes {
-  async inserir(lote: InsertLoteSchema) {
-    return await baseDados.transaction(async (tx) => {
-      return (await tx.insert(lotesTable).values(lote)).lastInsertRowid;
+  inserir(lote: InsertLoteSchema) {
+    return baseDados.transaction((tx) => {
+      return tx.insert(lotesTable).values(lote).returning({
+        id: lotesTable.id,
+      });
     });
   }
 

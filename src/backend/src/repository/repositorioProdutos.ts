@@ -143,9 +143,10 @@ class RepositorioProdutosLotesConsulta<
 
 export class RepositorioProdutos {
   inserir(produto: InsertProdutosSchema) {
-    return baseDados.transaction(async (tx) => {
-      const resultSet = await tx.insert(tabelaProdutos).values(produto);
-      return resultSet.lastInsertRowid;
+    return baseDados.transaction((tx) => {
+      return tx.insert(tabelaProdutos).values(produto).returning({
+        id: tabelaProdutos.id,
+      });
     });
   }
 

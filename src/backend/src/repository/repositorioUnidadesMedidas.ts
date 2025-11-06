@@ -9,10 +9,11 @@ import {
 } from "../db/schema/unidadesMedida";
 
 export class RepositorioUnidadesMedida {
-  async inserir(unidadeMedida: InsertUnidadesMedidaSchema) {
-    return await bancoDados.transaction(async (tx) => {
-      return (await tx.insert(unidadesMedidaTable).values(unidadeMedida))
-        .lastInsertRowid;
+  inserir(unidadeMedida: InsertUnidadesMedidaSchema) {
+    return bancoDados.transaction((tx) => {
+      return tx.insert(unidadesMedidaTable).values(unidadeMedida).returning({
+        id: unidadesMedidaTable.id,
+      });
     });
   }
 

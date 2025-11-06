@@ -70,9 +70,10 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
 
 export class RepositorioTransacoes {
   inserir(transacao: InsertTransacoesSchema) {
-    return bancoDados.transaction(async (tx) => {
-      const resultSet = await tx.insert(tabelaTransacoes).values(transacao);
-      return resultSet.lastInsertRowid;
+    return bancoDados.transaction((tx) => {
+      return tx.insert(tabelaTransacoes).values(transacao).returning({
+        id: tabelaTransacoes.id,
+      });
     });
   }
 

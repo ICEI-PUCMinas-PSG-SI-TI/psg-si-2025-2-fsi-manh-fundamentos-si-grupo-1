@@ -7,8 +7,8 @@ import {
 import { debug, error } from "../logging";
 import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { compare, hash } from "bcrypt";
-import { ClientError } from "../error";
-import { PasswordZ } from "../api/v1/objects";
+import { ClientError, HttpError } from "../error";
+import { PasswordZ, type UuidResult } from "../api/v1/objects";
 
 const repositorioUsuarios = new RepositorioUsuarios();
 
@@ -23,9 +23,8 @@ export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
 type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
 
 class ServicoUsuarios {
-  async inserir(usuario: InsertUsuarioSchemaReq) {
-    const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
-    const hashedPassword: string = await hash(usuario.password, rounds);
+  async inserir(usuario: InsertUsuarioSchemaReq): Promise<UuidResult> {
+        const hashedPassword = await hashSenha(usuario.password);
     // Verifica se login já existe
     const _usuario = await repositorioUsuarios.selecionarPorLogin(
       usuario.login,
@@ -41,10 +40,9 @@ class ServicoUsuarios {
       hashedPassword: hashedPassword,
     });
     const res = await repositorioUsuarios.inserir(insertUsuario);
-    if (res && res > 0) {
-      debug(`Novo usuário criado!`, { label: "LoteService" });
-    }
-    return res;
+    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+      debug(`Novo usuário criado!`, { label: "UsuarioServ" });
+        return res[0];
   }
 
   async selecionarInfoPorId(

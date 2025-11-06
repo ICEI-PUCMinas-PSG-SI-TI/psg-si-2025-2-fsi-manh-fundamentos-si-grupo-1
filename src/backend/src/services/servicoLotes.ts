@@ -2,6 +2,8 @@ import z from "zod";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/repositorioLotes";
 import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
+import { HttpError } from "../error";
+import type { UuidResult } from "../api/v1/objects";
 
 export const LoteConsultaSchema = z.strictObject({
   id: z.uuid().optional(),
@@ -20,12 +22,11 @@ export type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
 const repositorioLotes = new RepositorioLotes();
 
 export class ServicoLotes {
-  async inserir(lote: InsertLoteSchema) {
+  async inserir(lote: InsertLoteSchema): Promise<UuidResult> {
     const res = await repositorioLotes.inserir(lote);
-    if (res && res > 0) {
-      debug(`Novo lote criado!`, { label: "LoteService" });
-    }
-    return res;
+    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    debug(`Novo lote criado!`, { label: "LoteService" });
+    return res[0];
   }
 
   async selecionarPorId(id: string) {

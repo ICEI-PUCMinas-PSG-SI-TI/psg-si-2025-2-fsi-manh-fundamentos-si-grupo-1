@@ -8,9 +8,11 @@ import {
 import bancoDados from "../db";
 
 export class RepositorioSessoes {
-  async inserir(sessao: InsertSessaoSchema) {
-    return await bancoDados.transaction(async (tx) => {
-      return (await tx.insert(tabelaSessoes).values(sessao)).lastInsertRowid;
+  inserir(sessao: InsertSessaoSchema) {
+    return bancoDados.transaction((tx) => {
+      return tx.insert(tabelaSessoes).values(sessao).returning({
+        id: tabelaSessoes.id,
+      });
     });
   }
 

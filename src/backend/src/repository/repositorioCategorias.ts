@@ -7,10 +7,11 @@ import {
 } from "../db/schema/categorias";
 
 export class RepositorioCategorias {
-  async inserir(categoria: InsertCategoriaSchema) {
-    return await baseDados.transaction(async (tx) => {
-      return (await tx.insert(categoriasTable).values(categoria))
-        .lastInsertRowid;
+  inserir(categoria: InsertCategoriaSchema) {
+    return baseDados.transaction((tx) => {
+      return tx.insert(categoriasTable).values(categoria).returning({
+        id: categoriasTable.id,
+      });
     });
   }
 

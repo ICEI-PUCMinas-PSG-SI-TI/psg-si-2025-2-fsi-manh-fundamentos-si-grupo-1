@@ -78,3 +78,9 @@ export {
     ParamsInserirEntityZ
 } from "./src/services/servicoUsuarios";
 */
+
+export {
+  type UuidResult,
+  ParamsIdSchemaZ,
+  PasswordZ,
+} from "./src/api/v1/objects";

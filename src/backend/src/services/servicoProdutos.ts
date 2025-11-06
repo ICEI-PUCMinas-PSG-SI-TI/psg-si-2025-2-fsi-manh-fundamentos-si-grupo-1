@@ -1,16 +1,17 @@
 import { debug } from "../logging";
 import { RepositorioProdutos } from "../repository/repositorioProdutos";
 import type { InsertProdutosSchema } from "../db/schema/produtos";
+import { HttpError } from "../error";
+import type { UuidResult } from "../api/v1/objects";
 
 const repositorioProdutos = new RepositorioProdutos();
 
 export class ServicoProdutos {
-  async inserir(produto: InsertProdutosSchema) {
+  async inserir(produto: InsertProdutosSchema): Promise<UuidResult> {
     const res = await repositorioProdutos.inserir(produto);
-    if (res && res > 0) {
-      debug(`Novo produto criada!`, { label: "ServProdutos" });
-    }
-    return res;
+    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    debug(`Novo produto criada!`, { label: "ServProdutos" });
+    return res[0];
   }
 
   async selecionarPorId(id: string) {

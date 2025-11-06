@@ -2,6 +2,8 @@ import z from "zod";
 import { RepositorioTransacoes } from "../repository/repositorioTransacoes";
 import { debug } from "../logging";
 import type { InsertTransacoesSchema } from "../db/schema/transacoes";
+import { HttpError } from "../error";
+import type { UuidResult } from "../api/v1/objects";
 
 const repositorioTransacoes = new RepositorioTransacoes();
 
@@ -19,12 +21,11 @@ export const TransacoesConsultaSchema = z.strictObject({
 type TransacoesConsultaZ = z.infer<typeof TransacoesConsultaSchema>;
 
 export class ServicoTransacoes {
-  async inserir(transacao: InsertTransacoesSchema) {
+  async inserir(transacao: InsertTransacoesSchema): Promise<UuidResult> {
     const res = await repositorioTransacoes.inserir(transacao);
-    if (res && res > 0) {
-      debug(`Nova transação criada!`, { label: "ServTransacoes" });
-    }
-    return res;
+    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    debug(`Nova transação criada!`, { label: "ServTransacoes" });
+    return res[0];
   }
 
   async selecionarConsulta(opts?: TransacoesConsultaZ) {

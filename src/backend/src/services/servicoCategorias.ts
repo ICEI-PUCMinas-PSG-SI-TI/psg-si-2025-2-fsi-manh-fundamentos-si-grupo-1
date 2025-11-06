@@ -1,12 +1,16 @@
+import type { UuidResult } from "../api/v1/objects";
 import type { InsertCategoriaSchema } from "../db/schema/categorias";
+import { HttpError } from "../error";
 import { RepositorioCategorias } from "../repository/repositorioCategorias";
 
 const repositorioCategorias = new RepositorioCategorias();
 
 class ServicoCategorias {
   // TODO: Verificar se categoria já existe ou colocar nome como "unico"
-  inserir(categoria: InsertCategoriaSchema) {
-    return repositorioCategorias.inserir(categoria);
+  async inserir(categoria: InsertCategoriaSchema): Promise<UuidResult> {
+    const res = await repositorioCategorias.inserir(categoria);
+    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    return res[0];
   }
 
   selecionarPorId(id: string) {

@@ -45,8 +45,10 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 
 export class RepositorioUsuarios {
   async inserir(usuario: InsertUsuarioSchema) {
-    return await bancoDados.transaction(async (tx) => {
-      return (await tx.insert(tabelaUsuarios).values(usuario)).lastInsertRowid;
+    return await bancoDados.transaction((tx) => {
+      return tx.insert(tabelaUsuarios).values(usuario).returning({
+        id: tabelaUsuarios.id,
+      });
     });
   }
 
