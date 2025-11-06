@@ -51,7 +51,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof ClientError || err instanceof HttpError) {
       res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {
-      error(err.message, { reqId: id });
+      const errMessage = z.prettifyError(err);
+      error(errMessage, { reqId: id });
       res.status(400).send("Parâmetros inválidos!");
     } else if (err instanceof DrizzleQueryError && err.cause instanceof Error) {
       error(err.cause?.message, { label: "query", reqId: id });

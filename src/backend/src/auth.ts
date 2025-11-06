@@ -11,6 +11,7 @@ import {
 } from "./services/servicoAutenticacao";
 import { error } from "./logging";
 import { loadCookies, requireSession, type SessionRequest } from "./cookies";
+import { noBody, requireBody } from "./middlewares";
 
 const authRouter = Router();
 
@@ -29,11 +30,9 @@ async function sessao(req: SessionRequest, res: Response, next: NextFunction) {
   try {
     const _sessionToken = req._sessionToken;
     if (!_sessionToken) throw new ClientError("Não autenticado!", 400);
-    else {
-      const sessao =
-        await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
-      res.send(sessao);
-    }
+    const sessao =
+      await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
+    res.send(sessao);
   } catch (err) {
     next(err);
   }
@@ -103,8 +102,8 @@ async function logoutAll(
 }
 
 authRouter
-  .get("/sessao", loadCookies, requireSession, sessao)
-  .post("/login", login)
+  .get("/sessao", loadCookies, requireSession, noBody, sessao)
+  .post("/login", requireBody, login)
   .post("/logout", loadCookies, logout)
   .post("/logout-all", loadCookies, logoutAll);
 

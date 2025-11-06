@@ -24,18 +24,28 @@ export function addRequestId(req: Request, _res: Response, next: NextFunction) {
   next();
 }
 
+export function noBody(
+  req: SessionRequest,
+  _res: Response,
+  next: NextFunction,
+) {
+  if (req.body) {
+    error("Invalid request with body.", { reqId: (req as RequestId)._id });
+    next(new ClientError("Bad Request"));
+  } else {
+    next();
+  }
+}
+
 export function requireBody(
   req: SessionRequest,
   _res: Response,
   next: NextFunction,
 ) {
-  try {
-    if (!req.body) {
-      error("No body", { reqId: "r34234" });
-      throw new ClientError("Bad Request");
-    }
+  if (!req.body) {
+    error("No body.", { reqId: (req as RequestId)._id });
+    next(new ClientError("Bad Request"));
+  } else {
     next();
-  } catch (err) {
-    next(err);
   }
 }
