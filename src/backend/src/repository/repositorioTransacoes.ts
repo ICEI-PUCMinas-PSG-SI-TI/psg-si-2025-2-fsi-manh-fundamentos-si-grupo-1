@@ -12,7 +12,6 @@ import {
   type SQLiteSelectQueryBuilder,
 } from "drizzle-orm/sqlite-core";
 import type { SQL } from "bun";
-import type { SelectProdutosSchema } from "../db/schema/produtos";
 
 class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
   _query: T;

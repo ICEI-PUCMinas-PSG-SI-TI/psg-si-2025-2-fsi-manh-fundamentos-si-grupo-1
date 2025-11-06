@@ -7,7 +7,7 @@ import {
 import { debug, error } from "../logging";
 import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { compare, hash } from "bcrypt";
-import { ClientError, HttpError } from "../error";
+import { ClientError } from "../error";
 import { PasswordZ, type UuidResult } from "../api/v1/objects";
 
 const repositorioUsuarios = new RepositorioUsuarios();
@@ -22,9 +22,14 @@ export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
 
 type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
 
+function hashSenha(senha: string): Promise<string> {
+  const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
+  return hash(senha, rounds);
+}
+
 class ServicoUsuarios {
   async inserir(usuario: InsertUsuarioSchemaReq): Promise<UuidResult> {
-        const hashedPassword = await hashSenha(usuario.password);
+    const hashedPassword = await hashSenha(usuario.password);
     // Verifica se login já existe
     const _usuario = await repositorioUsuarios.selecionarPorLogin(
       usuario.login,
@@ -40,9 +45,9 @@ class ServicoUsuarios {
       hashedPassword: hashedPassword,
     });
     const res = await repositorioUsuarios.inserir(insertUsuario);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
-      debug(`Novo usuário criado!`, { label: "UsuarioServ" });
-        return res[0];
+    if (res.length !== 1 || !res[0]) throw new ClientError("", 500);
+    debug(`Novo usuário criado!`, { label: "UsuarioServ" });
+    return res[0];
   }
 
   async selecionarInfoPorId(
@@ -56,19 +61,19 @@ class ServicoUsuarios {
       descricao: res.descricao,
       foto: res.foto,
     });
-    debug(`Retornando usuário ${id}`, { label: "LoteService" });
+    debug(`Retornando usuário ${id}`, { label: "UsuarioServ" });
     return parsedUsuario;
   }
 
   async selecionarPorId(id: string) {
     const res = await repositorioUsuarios.selecionarPorId(id);
-    debug(`Retornando usuário ${id}`, { label: "LoteService" });
+    debug(`Retornando usuário ${id}`, { label: "UsuarioServ" });
     return res;
   }
 
   async selecionarTodos() {
     const res = await repositorioUsuarios.selecionarTodos();
-    debug(`Retornando usuário`, { label: "LoteService" });
+    debug(`Retornando usuário`, { label: "UsuarioServ" });
     return res;
   }
 
@@ -80,7 +85,7 @@ class ServicoUsuarios {
   async atualizar(id: string, usuario: UpdateUsuarioSchema) {
     const res = await repositorioUsuarios.atualizarPorId(id, usuario);
     debug(`Informações do usuário ${id} atualizadas!`, {
-      label: "LoteService",
+      label: "UsuarioServ",
     });
     return res;
   }
@@ -88,7 +93,7 @@ class ServicoUsuarios {
   async excluirPorId(id: string) {
     const res = await repositorioUsuarios.excluirPorId(id);
     debug(`Informações do usuário ${id} excluidas!`, {
-      label: "LoteService",
+      label: "UsuarioServ",
     });
     return res;
   }
@@ -105,8 +110,7 @@ class ServicoUsuarios {
 
   async substituirSenha(usuarioId: string, senha: string) {
     // Realizar hash da nova senha
-    const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
-    const hashedPassword: string = await hash(senha, rounds);
+    const hashedPassword = await hashSenha(senha);
     // Atualizar a senha
     const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
       hashedPassword,
@@ -133,15 +137,7 @@ class ServicoUsuarios {
       error("A senha informada não confere.", { label: "Auth" });
       throw new ClientError("Unauthorized", 401);
     }
-    // Realizar hash da nova senha
-    const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
-    const hashedPassword: string = await hash(senhaNova, rounds);
-    // Atualizar a senha
-    const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
-      hashedPassword,
-    });
-    // TODO: Verificar necessidade de invalidar sessões
-    return updates === 1;
+    return this.substituirSenha(usuarioId, senhaNova);
   }
 }
 

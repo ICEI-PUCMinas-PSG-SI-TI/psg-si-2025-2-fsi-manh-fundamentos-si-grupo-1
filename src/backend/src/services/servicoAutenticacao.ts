@@ -93,8 +93,8 @@ function parseToken(token: string): Token | null {
   };
 }
 
-const ONE_DAY = 60 * 60 * 24;
-const SESSION_EXPIRES_IN_SECONDS = ONE_DAY;
+const ONE_DAY = 60 * 60 * 24 * 1000;
+const SESSION_EXPIRES_IN_MSECONDS = ONE_DAY;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const UserSessionInfoZ = z.object({
@@ -170,14 +170,12 @@ export class ServicoAutenticacao {
     sessionId: string,
   ): Promise<SelectSessaoSchema | null> {
     const now = new Date();
-
     const sessao = await repositorioSessoes.selecionarPorId(sessionId);
     if (!sessao) return null;
-
     // Check expiration
     if (
       now.getTime() - sessao.createdAt.getTime() >=
-      SESSION_EXPIRES_IN_SECONDS * 1000
+      SESSION_EXPIRES_IN_MSECONDS
     ) {
       await repositorioSessoes.excluirPorId(sessionId);
       return null;
@@ -210,6 +208,7 @@ export class ServicoAutenticacao {
     return true;
   }
 
+  // TODO: Verificar se o segredo confere?
   async logout(token: string): Promise<boolean> {
     const _token = parseToken(token);
     if (!_token) return false;
