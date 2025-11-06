@@ -1,16 +1,13 @@
 import z from 'zod'
+import { fetchW } from './fetchWrapper'
 
-// TODO: Alterar 'localhost' para ENV
-const backend_uri = 'http://localhost:5173'
-const backend_path = `${backend_uri}/api/v1/produtos`
+const endpoint_path = `/api/v1/produtos`
 
 const ParamIdSchemaZ = z.uuid()
 
 export class ApiProdutos {
-  obter(id: string): Promise<Response> {
+  obter(id: string) {
     const _id = ParamIdSchemaZ.parse(id)
-    return fetch(`${backend_path}/${_id}`, {
-      method: 'GET',
-    })
+    return fetchW(`${endpoint_path}/${_id}`)
   }
 }

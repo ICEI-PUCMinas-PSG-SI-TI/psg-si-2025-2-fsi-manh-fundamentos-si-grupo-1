@@ -12,4 +12,6 @@ app.use(pinia)
 
 app.mount('#app')
 
-
+// Permite a utilização do pinia fora de componentes
+import { useNotificationStore } from './store/config/toast'
+export const notificacoes = useNotificationStore()

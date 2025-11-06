@@ -35,8 +35,6 @@ async function alterarSenha() {
       if (res.ok) {
         notifications.addNotification('Senha alterada com sucesso.')
         visivel.value = false
-      } else {
-        notifications.addNotification(res.statusText)
       }
     }
   } catch (err) {

@@ -97,7 +97,7 @@
         <div class="xl:col-span-2">
           <p
             class="flex size-full text-center m-auto justify-center items-center"
-            v-if="refUnidadesMedida.length === 0"
+            v-if="refCategorias.length === 0"
           >
             Não há categorias.
           </p>
@@ -169,8 +169,8 @@ import CardTitleBar from '@/components/Card/CardTitleBar.vue'
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import LabeledInput from '@/components/LabeledInput.vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { ref } from 'vue'
-import { ApiConfiguracoes } from '@/api/configuracoes'
+import { ref, type Ref } from 'vue'
+import { ApiConfiguracoes, type ConfiguracoesReceber } from '@/api/configuracoes'
 import { ApiCategorias, type Categorias } from '@/api/categorias'
 import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
 import { useNotificationStore } from '@/store/config/toast'
@@ -180,7 +180,7 @@ import { ApiUsuario } from '@/api/usuario'
 import { limparConfiguracoes } from '@/services/storage'
 import router from '@/router'
 
-const refConfig = ref({
+const refConfig: Ref<ConfiguracoesReceber> = ref({
   nomeCliente: '',
   cpfCnpj: '',
   endereco: '',
@@ -215,12 +215,9 @@ const notificacoes = useNotificationStore()
 
 async function obterSessao() {
   const data = await autenticacao.sessao()
-  if (data.ok) {
-    const jotaSon = await data.json()
-    refSessao.value.login = jotaSon.login
-    refSessao.value.nome = jotaSon.nome
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refSessao.value.login = data.responseBody.login
+    refSessao.value.nome = data.responseBody.nome
   }
 }
 
@@ -229,17 +226,13 @@ async function alterarInformacoesUsuario() {
   if (req.ok) {
     notificacoes.addNotification('Informações alteradas.')
     obterSessao()
-  } else {
-    notificacoes.addNotification(req.statusText, true)
   }
 }
 
 async function obterConfiguracoes() {
   const data = await configuracoes.obterTodos()
-  if (data.ok) {
-    refConfig.value = await data.json()
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refConfig.value = data.responseBody
   }
 }
 
@@ -247,17 +240,13 @@ async function salvarConfiguracoes() {
   const res = await configuracoes.atualizar(refConfig.value)
   if (res.ok) {
     notificacoes.addNotification('Informações alteradas.')
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
 async function obterCategorias() {
   const data = await categorias.obterTodos()
-  if (data.ok) {
-    refCategorias.value = await data.json()
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refCategorias.value = data.responseBody
   }
 }
 
@@ -266,8 +255,6 @@ async function adicionarCategoria() {
   if (res.ok) {
     notificacoes.addNotification('Informações adicionadas.')
     obterCategorias()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
@@ -276,17 +263,13 @@ async function removerCategorias(id: string) {
   if (res.ok) {
     notificacoes.addNotification('Informações excluídas.')
     obterCategorias()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
 async function obterUnidadesMedida() {
   const data = await unidadesMedida.obterTodos()
-  if (data.ok) {
-    refUnidadesMedida.value = await data.json()
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refUnidadesMedida.value = data.responseBody
   }
 }
 
@@ -296,8 +279,6 @@ async function adicionarUnidadeMedida() {
   if (res.ok) {
     notificacoes.addNotification('Informações adicionadas.')
     obterUnidadesMedida()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
@@ -306,28 +287,20 @@ async function removerUnidadeMedida(id: string) {
   if (res.ok) {
     notificacoes.addNotification('Informações excluídas.')
     obterUnidadesMedida()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
 async function deslogarSessao() {
-  const res = await autenticacao.logout()
+  await autenticacao.logout()
   limparConfiguracoes()
   router.push('/login')
-  if (!res.ok) {
-    notificacoes.addNotification(res.statusText, true)
-  }
 }
 
 async function deslogarSessaoTodas() {
   // TODO: Confirmar primeiro
-  const res = await autenticacao.logoutAll()
+  await autenticacao.logoutAll()
   limparConfiguracoes()
   router.push('/login')
-  if (!res.ok) {
-    notificacoes.addNotification(res.statusText, true)
-  }
 }
 
 obterSessao()

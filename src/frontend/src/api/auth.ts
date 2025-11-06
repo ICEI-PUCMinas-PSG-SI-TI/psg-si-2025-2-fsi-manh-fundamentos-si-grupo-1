@@ -1,37 +1,34 @@
-const backend_url = 'http://localhost:5173'
-const backend_path = `${backend_url}/auth`
+import { fetchW, HttpMethods } from './fetchWrapper'
 
+const endpoint_path = `/auth`
+
+// TODO: Adicionar tipagem de retorno
 export class ApiAutenticacao {
-  // TODO: Adicionar tipagem de retorno
   login(login: string, senha: string) {
-    return fetch(`${backend_path}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    return fetchW(`${endpoint_path}/login`, {
+      method: HttpMethods.Post,
+      body: {
         login,
         senha,
-      }),
+      },
     })
   }
 
-  // TODO: Adicionar tipagem de retorno
   sessao() {
-    return fetch(`${backend_path}/sessao`, {
-      method: 'GET',
+    return fetchW<{ nome: string; login: string }>(`${endpoint_path}/sessao`, {
+      method: HttpMethods.Get,
     })
   }
 
   logout() {
-    return fetch(`${backend_path}/logout`, {
-      method: 'POST',
+    return fetchW(`${endpoint_path}/logout`, {
+      method: HttpMethods.Post,
     })
   }
 
   logoutAll() {
-    return fetch(`${backend_path}/logout-all`, {
-      method: 'POST',
+    return fetchW(`${endpoint_path}/logout-all`, {
+      method: HttpMethods.Post,
     })
   }
 }

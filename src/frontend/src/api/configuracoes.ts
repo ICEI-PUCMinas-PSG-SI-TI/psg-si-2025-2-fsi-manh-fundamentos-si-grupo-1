@@ -1,8 +1,7 @@
 import z from 'zod'
+import { fetchW, HttpMethods } from './fetchWrapper'
 
-// TODO: Alterar 'localhost' para ENV
-const backend_uri = 'http://localhost:5173'
-const backend_path = `${backend_uri}/api/v1/configuracoes`
+const endpoint_path = `/api/v1/configuracoes`
 
 // TODO: Criar biblioteca compartilhada e re-utilizar tipos
 const ConfiguracoesEnvioZ = z.object({
@@ -13,35 +12,26 @@ const ConfiguracoesEnvioZ = z.object({
 
 export type ConfiguracoesEnvioSchema = z.infer<typeof ConfiguracoesEnvioZ>
 
-type ConfiguracoesReceber = {
-  id: string
+export type ConfiguracoesReceber = {
+  id?: string
   nomeCliente: string | null
   cpfCnpj: string | null
   endereco: string | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-interface RespostaApi extends Response {
-  data?: ConfiguracoesReceber | null
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export class ApiConfiguracoes {
-  obterTodos(): Promise<RespostaApi> {
-    return fetch(backend_path, {
-      method: 'GET',
-    })
+  obterTodos() {
+    return fetchW<ConfiguracoesReceber>(endpoint_path)
   }
 
   // TODO: Como retornar status? 400, 500, ...
   atualizar(opts: ConfiguracoesEnvioSchema) {
-    const obj = ConfiguracoesEnvioZ.parse(opts)
-    return fetch(backend_path, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(obj),
+    const bodyContent = ConfiguracoesEnvioZ.parse(opts)
+    return fetchW(endpoint_path, {
+      method: HttpMethods.Patch,
+      body: bodyContent,
     })
   }
 }

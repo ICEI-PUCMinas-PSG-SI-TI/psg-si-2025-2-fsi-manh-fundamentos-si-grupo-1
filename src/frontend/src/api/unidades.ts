@@ -1,8 +1,7 @@
 import z from 'zod'
+import { fetchW, HttpMethods } from './fetchWrapper'
 
-// TODO: Alterar 'localhost' para ENV
-const backend_uri = 'http://localhost:5173'
-const backend_path = `${backend_uri}/api/v1/unidades`
+const endpoint_path = `/api/v1/unidades`
 
 const ParamIdSchemaZ = z.uuid()
 
@@ -18,33 +17,25 @@ export type UnidadeMedida = {
 }
 
 export class ApiUnidadesMedida {
-  obterTodos(): Promise<Response> {
-    return fetch(backend_path, {
-      method: 'GET',
-    })
+  obterTodos() {
+    return fetchW<UnidadeMedida[]>(endpoint_path)
   }
 
   criar(nome: string, abreviacao: string) {
-    const unidade = UnidadeMedidaEnvioZ.parse({
+    const bodyContent = UnidadeMedidaEnvioZ.parse({
       nome,
       abreviacao,
     })
-    return fetch(backend_path, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(unidade),
+    return fetchW(endpoint_path, {
+      method: HttpMethods.Post,
+      body: bodyContent,
     })
   }
 
   excluir(id: string) {
     const uuid = ParamIdSchemaZ.parse(id)
-    return fetch(`${backend_path}/${uuid}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    return fetchW(`${endpoint_path}/${uuid}`, {
+      method: HttpMethods.Delete,
     })
   }
 }
