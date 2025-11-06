@@ -4,6 +4,7 @@ import { Router, type NextFunction, type Response } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
+import { requireBody } from "../../middlewares";
 
 const apiV1LotesRouter = Router();
 
@@ -41,10 +42,8 @@ async function postLote(
   next: NextFunction,
 ) {
   try {
-    if (!req.body)
-      throw new ClientError("Não há informações para serem inseridas!");
     const parsedBody = InsertLoteSchemaZ.parse(req.body);
-const id = await lotes.inserir(parsedBody);
+    const id = await lotes.inserir(parsedBody);
     res.send(id);
   } catch (err) {
     next(err);
@@ -95,7 +94,7 @@ function notImplemented(
 
 apiV1LotesRouter
   .get("/", getLotes)
-  .post("/", postLote)
+  .post("/", requireBody, postLote)
   .get("/:id", getLoteId)
   // TODO: Implementar PUT e PATCH para o endpoint de lotes.
   .put("/:id", notImplemented)

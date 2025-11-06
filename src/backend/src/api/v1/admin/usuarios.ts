@@ -12,6 +12,7 @@ import { ClientError } from "../../../error";
 import { ParamsIdSchemaZ, PasswordZ } from "../objects";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
+import { requireBody } from "../../../middlewares";
 
 const apiV1AdminUsuariosRouter = Router();
 
@@ -30,8 +31,6 @@ async function postUsuario(
   next: NextFunction,
 ) {
   try {
-    if (!req.body)
-      throw new ClientError("Não há informações para serem inseridas!");
     const parsedBody = InsertUsuarioSchemaReqZ.parse(req.body);
     await servicoUsuarios.inserir(parsedBody);
     res.send();
@@ -50,7 +49,6 @@ async function alterarSenha(
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new ClientError("Bad Request", 400);
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = AdmAlteracaoSenhaZ.parse(req.body);
     const ok = await servicoUsuarios.substituirSenha(
@@ -105,7 +103,6 @@ async function patchUsuario(
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new Error("Not implemented");
     const updateFields = AdmUpdateUsuarioEndpointSchema.parse(req.body);
     const usuario = req._usuario!;
     const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
@@ -121,9 +118,9 @@ async function patchUsuario(
 
 apiV1AdminUsuariosRouter
   .get("/", getUsuarios)
-  .post("/", postUsuario)
-  .patch("/:id", patchUsuario)
-  .post("/alterar-senha/:id", alterarSenha)
+  .post("/", requireBody, postUsuario)
+  .patch("/:id", requireBody, patchUsuario)
+  .post("/alterar-senha/:id", requireBody, alterarSenha)
   .get("/:id", getUsuarioId)
   .delete("/:id", excluirUsuarioId);
 

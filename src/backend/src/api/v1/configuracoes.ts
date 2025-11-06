@@ -1,6 +1,6 @@
 import type { SessionRequest } from "../../cookies";
 import { UpdateConfiguracaoSchemaZ } from "../../db/schema/configuracoes";
-import { ClientError } from "../../error";
+import { requireBody } from "../../middlewares";
 import servicoConfiguracoes from "../../services/servicoConfiguracoes";
 import { Router, type NextFunction, type Response } from "express";
 
@@ -25,7 +25,6 @@ async function patchConfiguracoes(
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new ClientError("Bad Request");
     const parsedBody = UpdateConfiguracaoSchemaZ.parse(req.body);
     await servicoConfiguracoes.atualizar(parsedBody);
     res.send();
@@ -37,6 +36,6 @@ async function patchConfiguracoes(
 apiV1ConfiguracoesRouter
   .get("/", getConfiguracoes)
   .put("/", patchConfiguracoes)
-  .patch("/", patchConfiguracoes);
+  .patch("/", requireBody, patchConfiguracoes);
 
 export default apiV1ConfiguracoesRouter;

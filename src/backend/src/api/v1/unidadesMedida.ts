@@ -3,7 +3,7 @@ import { Router, type NextFunction, type Response } from "express";
 import { ParamsIdSchemaZ } from "./objects";
 import servicoUnidadesMedida from "../../services/servicoUnidadesMedida";
 import { InsertUnidadesMedidasSchemaZ } from "../../db/schema/unidadesMedida";
-import { ClientError } from "../../error";
+import { requireBody } from "../../middlewares";
 
 const apiV1UnidadesMedida = Router();
 
@@ -26,7 +26,6 @@ async function postUnidadeMedida(
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new ClientError("Bad Request");
     const unidadeMedida = InsertUnidadesMedidasSchemaZ.parse(req.body);
     await servicoUnidadesMedida.inserir(unidadeMedida);
     res.send();
@@ -69,7 +68,7 @@ async function deleteUnidadeMedida(
 
 apiV1UnidadesMedida
   .get("/", getUnidadesMedida)
-  .post("/", postUnidadeMedida)
+  .post("/", requireBody, postUnidadeMedida)
   .get("/:id", getUnidadeMedida)
   .delete("/:id", deleteUnidadeMedida);
 

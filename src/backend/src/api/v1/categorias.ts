@@ -26,9 +26,8 @@ async function postCategoria(
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new ClientError("Bad Request");
     const categoria = InsertCategoriaSchemaZ.parse(req.body);
-const id = await servicoCategorias.inserir(categoria);
+    const id = await servicoCategorias.inserir(categoria);
     res.send(id);
   } catch (err) {
     next(err);
@@ -67,7 +66,7 @@ async function deleteCategorias(
 
 apiV1CategoriasRouter
   .get("/", getCategorias)
-  .post("/", postCategoria)
+  .post("/", requireBody, postCategoria)
   .get("/:id", getCategoria)
   .delete("/:id", deleteCategorias);
 
