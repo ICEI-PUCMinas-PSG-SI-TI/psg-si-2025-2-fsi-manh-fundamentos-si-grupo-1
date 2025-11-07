@@ -2,7 +2,6 @@
 import {
   ArchiveBoxIcon,
   ArrowsUpDownIcon,
-  ChartBarIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
   PresentationChartBarIcon,

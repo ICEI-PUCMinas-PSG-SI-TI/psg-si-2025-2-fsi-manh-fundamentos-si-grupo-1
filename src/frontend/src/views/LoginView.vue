@@ -115,8 +115,8 @@ async function login() {
     erro.value = credenciais.error.issues[0].message
   } else {
     const res = await autenticacao.login(credenciais.data.usuario, credenciais.data.senha)
-    if (res.ok) {
-      const data = (await res.json()) as UserSessionInfo
+    if (res.ok && res.responseBody) {
+      const data = res.responseBody as UserSessionInfo
       // TODO: Criar um serviço para armazenar informações
       localStorage.setItem(CONFIG_KEY_ID, data.id)
       localStorage.setItem(CONFIG_KEY_NOME, data.nome)
@@ -126,7 +126,7 @@ async function login() {
       localStorage.setItem(CONFIG_KEY_PERMS, data.nivelPermissoes.toString())
       localStorage.setItem(CONFIG_KEY_FOTO, data.foto)
       router.push('/dashboard')
-    } else if (res.status >= 400 && res.status < 500) {
+    } else if (res.resStatus >= 400 && res.resStatus < 500) {
       erro.value = 'Credenciais inválidas!'
     } else {
       useNotifications.addNotification(res.statusText, true)

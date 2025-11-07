@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export type Notification = {
   id: number
   message: string
-  timeout: number
+  timeout: NodeJS.Timeout
   dismissed: boolean
   isError: boolean
 }

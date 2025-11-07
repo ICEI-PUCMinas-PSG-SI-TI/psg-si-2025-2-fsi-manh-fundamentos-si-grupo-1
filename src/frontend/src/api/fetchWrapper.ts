@@ -24,10 +24,14 @@ export async function fetchW<T>(
     method?: string
     body?: string | object
     params?: SearchParams[]
+    muteNotifications?: boolean
   },
 ): Promise<{
+  // TODO: retornar resposta de uma vez?
   ok: boolean
   responseBody?: T
+  resStatus: number
+  statusText: string
 }> {
   const url = new URL(backend_url)
   url.pathname = path
@@ -56,9 +60,19 @@ export async function fetchW<T>(
       return {
         ok: true,
         responseBody: data,
+        resStatus: response.status,
+        statusText: response.statusText,
+      }
+    } else {
+      if (!opts?.muteNotifications) {
+        notificacoes.addNotification(response.statusText, true)
+      }
+      return {
+        ok: false,
+        resStatus: response.status,
+        statusText: response.statusText,
       }
     }
-    notificacoes.addNotification(response.statusText, true)
   } catch (err) {
     if (err instanceof Error) {
       notificacoes.addNotification(err.message, true)
@@ -66,5 +80,5 @@ export async function fetchW<T>(
       console.error(err)
     }
   }
-  return { ok: false }
+  return { ok: false, resStatus: -1, statusText: '' }
 }

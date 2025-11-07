@@ -34,8 +34,8 @@ const usuarios = new ApiUsuario()
 
 async function obterUsuario(id: string) {
   const res = await usuarios.obter(id)
-  if (res.ok) {
-    refUsuariodata.value = await res.json()
+  if (res.ok && res.responseBody) {
+    refUsuariodata.value = res.responseBody
   }
   // TODO: Criar campos padrão
 }

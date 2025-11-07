@@ -2,9 +2,7 @@
 import { ApiMovimentacoes } from '@/api/movimentacoes'
 import MovTableRow from './MovTableRow.vue'
 import { ref, type Ref } from 'vue'
-import { useNotificationStore } from '@/store/config/toast'
 
-const noticicacoes = useNotificationStore()
 const movimentacoes = new ApiMovimentacoes()
 const refMovimentacoes: Ref<
   {
@@ -23,11 +21,8 @@ const refMovimentacoes: Ref<
 
 async function obterMovimentacoes() {
   const res = await movimentacoes.obterTodos()
-  if (res.ok) {
-    const data = await res.json()
-    refMovimentacoes.value = data
-  } else {
-    noticicacoes.addNotification(res.statusText)
+  if (res.ok && res.responseBody) {
+    refMovimentacoes.value = res.responseBody as []
   }
 }
 
