@@ -14,7 +14,7 @@ export const LoteConsultaSchema = z.strictObject({
   quantidadeMax: z.coerce.number().optional(),
   validadeAte: z.iso.datetime().optional(),
   validadeApos: z.iso.datetime().optional(),
-  lote: z.string().min(1).optional(),
+  codigo: z.string().min(1).optional(),
 });
 
 export type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
@@ -45,8 +45,8 @@ export class ServicoLotes {
       if (opts.produtoId) {
         query = query.comProdutoId(opts.produtoId);
       }
-      if (opts.lote) {
-        query = query.comLote(opts.lote);
+      if (opts.codigo) {
+        query = query.comCodigo(opts.codigo);
       }
       query = query.comPaginacao(opts.pagina, opts.paginaTamanho);
       if (opts.validadeApos) {

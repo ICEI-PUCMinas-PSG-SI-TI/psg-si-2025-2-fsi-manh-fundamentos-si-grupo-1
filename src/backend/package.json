@@ -24,7 +24,7 @@
     "prettier": "^3.6.2",
     "typescript-eslint": "^8.46.3"
   },
-  "module": "src/index.ts",
+  "exports": "./index.ts",
   "name": "psg-si-backend",
   "peerDependencies": {
     "typescript": "^5.9.3"
@@ -34,10 +34,10 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "dev": "bun --watch src/index.ts",
+    "dev": "bun --watch src/server.ts",
+    "format": "prettier --write './src/**/*.ts' --config ./.prettierrc.toml",
     "lint": "eslint .",
-    "type-check": "tsc --noEmit",
-    "prettier": "prettier --write './src/**/*.ts' --config ./.prettierrc.toml"
+    "type-check": "tsc --noEmit"
   },
   "type": "module"
 }

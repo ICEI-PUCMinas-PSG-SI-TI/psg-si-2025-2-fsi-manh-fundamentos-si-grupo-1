@@ -38,11 +38,6 @@ coverage
 # Other
 mockup.json
 
-# -> Backend
-
-node_modules/
-mockup.json
-
 # dependencies (bun install)
 node_modules
 
@@ -81,3 +76,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # backend
 *.db
 drizzle/
+
+# Use bun.lock
+package-lock.json

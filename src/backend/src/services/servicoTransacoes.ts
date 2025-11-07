@@ -7,18 +7,21 @@ import type { UuidResult } from "../api/v1/objects";
 
 const repositorioTransacoes = new RepositorioTransacoes();
 
-export const TransacoesConsultaSchema = z.strictObject({
+export const ParamsConsultaTransacoesZ = z.strictObject({
   id: z.uuid().optional(),
   produtoId: z.uuid().optional(),
   usuarioId: z.uuid().optional(),
   loteId: z.uuid().optional(),
+  // corce: os parametros são recebidos como string
   pagina: z.coerce.number().int().gt(0).optional(),
   paginaTamanho: z.coerce.number().int().gt(0).optional(),
   dataApos: z.coerce.date().optional(),
   dataAntes: z.coerce.date().optional(),
 });
 
-type TransacoesConsultaZ = z.infer<typeof TransacoesConsultaSchema>;
+export type ParamsConsultaTransacoes = z.infer<
+  typeof ParamsConsultaTransacoesZ
+>;
 
 export class ServicoTransacoes {
   async inserir(transacao: InsertTransacoesSchema): Promise<UuidResult> {
@@ -28,7 +31,7 @@ export class ServicoTransacoes {
     return res[0];
   }
 
-  async selecionarConsulta(opts?: TransacoesConsultaZ) {
+  async selecionarConsulta(opts?: ParamsConsultaTransacoes) {
     let query = repositorioTransacoes.selecionarQuery();
     if (opts) {
       if (opts.id) {

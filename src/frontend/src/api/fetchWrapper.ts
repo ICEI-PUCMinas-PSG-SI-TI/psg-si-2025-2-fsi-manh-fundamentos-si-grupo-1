@@ -13,17 +13,12 @@ export enum HttpMethods {
 // TODO: Alterar 'localhost' para ENV
 const backend_url = 'http://localhost:5173'
 
-export type SearchParams = {
-  name: string
-  value: string
-}
-
 export async function fetchW<T>(
   path: string,
   opts?: {
     method?: string
     body?: string | object
-    params?: SearchParams[]
+    params?: object
     muteNotifications?: boolean
   },
 ): Promise<{
@@ -38,7 +33,11 @@ export async function fetchW<T>(
   let _body = undefined
   let _headers = undefined
   if (opts) {
-    if (opts.params) opts.params.forEach((p) => url.searchParams.append(p.name, p.value))
+    if (opts.params) {
+      Object.entries(opts.params).forEach((k) => {
+        url.searchParams.append(k[0], k[1].toString())
+      })
+    }
     if (typeof opts.body === 'string') {
       _body = opts.body
     } else if (typeof opts.body === 'object') {

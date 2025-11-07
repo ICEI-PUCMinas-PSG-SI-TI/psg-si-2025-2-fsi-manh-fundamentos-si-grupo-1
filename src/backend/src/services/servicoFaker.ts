@@ -155,7 +155,7 @@ export class ServicoFaker {
       if (!produto) throw new Error();
       await servicoLotes.inserir({
         produtoId: produto.id,
-        lote: fakerLote(),
+        codigo: fakerLote(),
         quantidade: faker.number.int({ min: 1000, max: 10000000 }),
         validade: faker.date.future({ years: 1 }),
       });

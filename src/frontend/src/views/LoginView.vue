@@ -126,6 +126,7 @@ async function login() {
       localStorage.setItem(CONFIG_KEY_PERMS, data.nivelPermissoes.toString())
       localStorage.setItem(CONFIG_KEY_FOTO, data.foto)
       router.push('/dashboard')
+      // TODO: Verificar como ocultar errors das requests
     } else if (res.resStatus >= 400 && res.resStatus < 500) {
       erro.value = 'Credenciais inválidas!'
     } else {

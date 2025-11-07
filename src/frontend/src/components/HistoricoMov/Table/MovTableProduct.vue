@@ -31,7 +31,7 @@ async function obterLote(id: string) {
   // TODO: Criar campos padrão
 }
 async function obterProduto(id: string) {
-  const res = await produtos.obter(id)
+  const res = await produtos.obterPorId(id)
   if (res.ok && res.responseBody) {
     refProductData.value = res.responseBody
   }

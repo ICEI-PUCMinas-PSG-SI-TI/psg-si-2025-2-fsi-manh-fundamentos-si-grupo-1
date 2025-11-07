@@ -25,7 +25,7 @@ if (!(await verificarBancoDados())) process.exit();
 await inicializarAdministrador();
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 app.use(addRequestId);
 

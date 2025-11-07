@@ -57,8 +57,8 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
-  comLote(lote: string) {
-    this._where.push(like(lotesTable.lote, `%${lote}%`));
+  comCodigo(lote: string) {
+    this._where.push(like(lotesTable.codigo, `%${lote}%`));
     return this;
   }
 

@@ -24,7 +24,7 @@ export const lotesTable = sqliteTable("lotes", {
     .$defaultFn(() => parse(genUUID())),
   produto_id: uuid().primaryKey().notNull(),
   */
-  lote: text().notNull(),
+  codigo: text().notNull(),
   quantidade: int().notNull().default(0),
   validade: int({ mode: "timestamp_ms" }),
   // Default to current Unix epoch in seconds
