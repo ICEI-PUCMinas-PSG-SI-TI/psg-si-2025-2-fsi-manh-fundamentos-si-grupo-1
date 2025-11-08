@@ -5,6 +5,13 @@ import { v4 as genUUID } from "uuid";
 import z from "zod";
 import { unidadesMedidaTable } from "./unidadesMedida";
 
+export enum StatusProduto {
+  Ativo = "ATIVO",
+  Inativo = "INATIVO",
+  Descontinuado = "DESCONTINUADO",
+  Bloqueado = "BLOQUEADO",
+}
+
 export const produtosTable = sqliteTable("produtos", {
   id: text()
     .primaryKey()
@@ -33,7 +40,12 @@ export const produtosTable = sqliteTable("produtos", {
   imagem: blob(),
   status: text({
     // TODO: use ENUM_PRODUTOS_STATUS
-    enum: ["ATIVO", "INATIVO", "DESCONTINUADO", "BLOQUEADO"],
+    enum: [
+      StatusProduto.Ativo,
+      StatusProduto.Inativo,
+      StatusProduto.Descontinuado,
+      StatusProduto.Bloqueado,
+    ],
   }).notNull(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
@@ -64,7 +76,12 @@ export const UpdateProdutosSchemaZ = z.strictObject({
   quantidadeMaxima: z.int().optional(),
   localizacao: z.string().optional(),
   imagem: z.base64().optional(),
-  status: z.enum(["ATIVO", "INATIVO", "DESCONTINUADO", "BLOQUEADO"]),
+  status: z.enum([
+    StatusProduto.Ativo,
+    StatusProduto.Inativo,
+    StatusProduto.Descontinuado,
+    StatusProduto.Bloqueado,
+  ]),
 });
 
 // Os campos de inserção podem ser inferidos. Alguns deles podem ser adicionalmente validados como UUID e omitidos.

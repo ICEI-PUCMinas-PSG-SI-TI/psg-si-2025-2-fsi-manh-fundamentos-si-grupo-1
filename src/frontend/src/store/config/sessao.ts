@@ -2,6 +2,7 @@ import { ApiAutenticacao } from '@/api/auth'
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 import type { UserSessionInfo } from '../../../../backend'
+import { Permissoes } from '../../../../backend/src/db/schema/permissoes'
 
 const autenticacao = new ApiAutenticacao()
 
@@ -10,22 +11,26 @@ const refUserInfo: Ref<UserSessionInfo | null> = ref(null)
 
 async function isUserLoggedIn(): Promise<boolean> {
   const res = await autenticacao.sessao()
-  return res.ok
+  if (res.ok) {
+    if (res.responseBody) refUserInfo.value = res.responseBody
+    return true
+  }
+  return false
 }
 
 export const useSessaoStore = defineStore('sessao', {
   state: () => ({ isLoggedIn: false }),
   getters: {
-    async getUserInfo(): Promise<UserSessionInfo | null> {
-      if (this.isLoggedIn) {
-        return refUserInfo.value
-      } else {
-        await isUserLoggedIn()
-        return refUserInfo.value
-      }
+    getUserInfo(): UserSessionInfo | null {
+      return refUserInfo.value
     },
   },
   actions: {
+    possuiPermissao(permissao: Permissoes): boolean {
+      return permissao === Permissoes.Administrador && refUserInfo.value?.nivelPermissoes === 0
+        ? true
+        : !!refUserInfo.value?.permissoes.includes(permissao)
+    },
     logout() {
       refUserInfo.value = null
       this.isLoggedIn = false

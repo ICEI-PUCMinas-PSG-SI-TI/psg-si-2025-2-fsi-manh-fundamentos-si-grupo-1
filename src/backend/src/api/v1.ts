@@ -7,6 +7,9 @@ import apiV1UnidadesMedida from "./v1/unidadesMedida";
 import apiV1Admin from "./v1/admin";
 import apiV1Transacoes from "./v1/transacoes";
 import apiV1Produtos from "./v1/produtos";
+import apiV1Permissoes from "./v1/permissoes";
+import { mdwPermissoes } from "../middlewares";
+import { Permissoes } from "../db/schema/permissoes";
 
 const apiV1Router = Router();
 
@@ -28,10 +31,22 @@ apiV1Router.use("/unidades", apiV1UnidadesMedida);
 // {host}/api/v1/admin
 apiV1Router.use("/transacoes", apiV1Transacoes);
 
-// {host}/api/v1/produtos
+// {host}/papi/v1/produtos
 apiV1Router.use("/produtos", apiV1Produtos);
 
 // {host}/api/v1/admin
-apiV1Router.use("/admin", apiV1Admin);
+// TODO: Verificar se usuário tem permissões de alterar permissões
+apiV1Router.use(
+  "/permissoes",
+  mdwPermissoes(Permissoes.Administrador, Permissoes.Desenvolvedor),
+  apiV1Permissoes,
+);
+
+// {host}/api/v1/admin
+apiV1Router.use(
+  "/admin",
+  mdwPermissoes(Permissoes.Administrador, Permissoes.Desenvolvedor),
+  apiV1Admin,
+);
 
 export default apiV1Router;

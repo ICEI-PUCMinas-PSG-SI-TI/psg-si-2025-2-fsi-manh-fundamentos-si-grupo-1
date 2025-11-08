@@ -6,6 +6,8 @@ import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-ro
 import NotImplementedView from '@/views/NotImplementedView.vue'
 import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
 import { sessao } from '@/main'
+import { Permissoes } from '../../../backend/src/db/schema/permissoes'
+import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,7 +26,7 @@ const router = createRouter({
       path: '/dashboard',
       component: DashboardView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
@@ -33,7 +35,7 @@ const router = createRouter({
       path: '/operacoes',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
@@ -42,7 +44,7 @@ const router = createRouter({
       path: '/movimentacoes',
       component: MovimentacoesView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
@@ -50,7 +52,7 @@ const router = createRouter({
       path: '/produtos',
       component: ExampleView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     // TODO: Funcionalidade não será implementada no momento (sprint 3)
@@ -59,21 +61,21 @@ const router = createRouter({
       path: '/relatorio_1',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
       path: '/relatorio_2',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
       path: '/relatorio_3',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     */
@@ -82,7 +84,8 @@ const router = createRouter({
       path: '/usuarios',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
+        requerPermissoes: [[Permissoes.Administrador], [Permissoes.Desenvolvedor]],
       },
     },
     {
@@ -90,7 +93,16 @@ const router = createRouter({
       path: '/configuracoes',
       component: ConfiguracoesView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
+      },
+    },
+    {
+      name: 'desenvolvedor',
+      path: '/desenvolvedor',
+      component: DesenvolvedorView,
+      meta: {
+        requerAutenticacao: true,
+        requerPermissoes: [[Permissoes.Desenvolvedor]],
       },
     },
   ],
@@ -99,7 +111,7 @@ const router = createRouter({
 // TODO: Invalidar rotas em caso de erros 401
 router.beforeEach((to, from, next: NavigationGuardNext) => {
   // TODO: Realizar autenticação mais elegante
-  if (to.matched.some((record) => record.meta.autenticacaoNecessaria)) {
+  if (to.matched.some((record) => record.meta.requerPermissoes)) {
     if (sessao.isLoggedIn) {
       next()
     } else {
@@ -108,6 +120,30 @@ router.beforeEach((to, from, next: NavigationGuardNext) => {
       } else {
         next({ name: 'login' })
       }
+    }
+  } else {
+    next()
+  }
+})
+
+router.beforeEach((to, from, next: NavigationGuardNext) => {
+  // TODO: Realizar autenticação mais elegante
+  if (to.matched.some((record) => record.meta.requerPermissoes)) {
+    const permissoes = to.meta.requerPermissoes
+    // Permissoes[][] -> [Or][And]
+    let permitido = false
+    if (Array.isArray(permissoes) && permissoes.length !== 0) {
+      permitido = (permissoes as Permissoes[][]).reduce(
+        (okOr, permsAnd) =>
+          okOr ||
+          permsAnd.reduce((okAnd, needPerm) => okAnd && sessao.possuiPermissao(needPerm), true),
+        permitido,
+      )
+    }
+    if (permitido) {
+      next()
+    } else {
+      next({ name: 'dashboard' })
     }
   } else {
     next()

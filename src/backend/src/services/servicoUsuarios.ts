@@ -9,6 +9,8 @@ import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { compare, hash } from "bcrypt";
 import { ClientError } from "../error";
 import { PasswordZ, type UuidResult } from "../api/v1/objects";
+import { Permissoes } from "../db/schema/permissoes";
+import servicoPermissoes from "./servicoPermissoes";
 
 const repositorioUsuarios = new RepositorioUsuarios();
 
@@ -28,7 +30,12 @@ function hashSenha(senha: string): Promise<string> {
 }
 
 class ServicoUsuarios {
-  async inserir(usuario: InsertUsuarioSchemaReq): Promise<UuidResult> {
+  async inserir(
+    usuario: InsertUsuarioSchemaReq,
+    opts?: {
+      cargos?: Permissoes[];
+    },
+  ): Promise<UuidResult> {
     const hashedPassword = await hashSenha(usuario.password);
     // Verifica se login já existe
     const _usuario = await repositorioUsuarios.selecionarPorLogin(
@@ -46,6 +53,12 @@ class ServicoUsuarios {
     });
     const res = await repositorioUsuarios.inserir(insertUsuario);
     if (res.length !== 1 || !res[0]) throw new ClientError("", 500);
+    if (opts?.cargos) {
+      await servicoPermissoes.adicionarPermissoesUsuario(
+        res[0].id,
+        ...opts.cargos,
+      );
+    }
     debug(`Novo usuário criado!`, { label: "UsuarioServ" });
     return res[0];
   }

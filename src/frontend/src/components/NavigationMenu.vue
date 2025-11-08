@@ -11,7 +11,13 @@ import NavigationMenuItem from './NavigationMenuItem.vue'
 import LogoMenuItem from './LogoMenuItem.vue'
 import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
 import DarkModeToggle from './DarkModeToggle.vue'
-// import TemaToggle from './TemaToggle.vue'
+import { useSessaoStore } from '@/store/config/sessao'
+import { computed } from 'vue'
+import { Permissoes } from '../../../backend/src/db/schema/permissoes'
+
+const useSessao = useSessaoStore()
+const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador))
+const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor))
 </script>
 
 <template>
@@ -76,10 +82,17 @@ import DarkModeToggle from './DarkModeToggle.vue'
 
       <NavigationMenuItemSeparator />
 
-      <RouterLink to="/usuarios" v-slot="{ href, navigate, isActive }" custom>
+      <RouterLink v-if="ehAdm || ehDev" to="/usuarios" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
           <UsersIcon class="m-2" />
           Usuários
+        </NavigationMenuItem>
+      </RouterLink>
+
+      <RouterLink v-if="ehDev" to="/desenvolvedor" v-slot="{ href, navigate, isActive }" custom>
+        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
+          <UsersIcon class="m-2" />
+          Desenvolvedor
         </NavigationMenuItem>
       </RouterLink>
 

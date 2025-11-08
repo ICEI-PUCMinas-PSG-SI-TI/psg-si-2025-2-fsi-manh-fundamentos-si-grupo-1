@@ -5,16 +5,19 @@ import {
   type Response,
 } from "express";
 import apiV1AdminUsuarios from "./admin/usuarios";
-import { mdwAdministrador } from "../../middlewares";
 import apiV1Faker from "./admin/faker";
 import servicoAutenticacao from "../../services/servicoAutenticacao";
+import { Permissoes } from "../../db/schema/permissoes";
+import { mdwPermissoes } from "../../middlewares";
 
 const apiV1AdminRouter = Router();
 
-apiV1AdminRouter.use(mdwAdministrador);
-
 // {host}/api/v1/faker
-apiV1AdminRouter.use("/faker", apiV1Faker);
+apiV1AdminRouter.use(
+  "/faker",
+  mdwPermissoes(Permissoes.Desenvolvedor),
+  apiV1Faker,
+);
 
 // {host}/api/v1/admin/usuarios
 apiV1AdminRouter.use("/usuarios", apiV1AdminUsuarios);

@@ -17,7 +17,9 @@ export const usuariosTable = sqliteTable("usuarios", {
   descricao: text(),
   habilitado: int({ mode: "boolean" }).notNull().default(false),
   modoEscuro: int("modo_escuro", { mode: "boolean" }).notNull().default(false),
-  // TODO: Verificar se esse formato é o ideal para validar permissões
+  /**
+   * @deprecated Utilizar a tabela de permissões
+   */
   nivelPermissoes: int("nivel_permissoes").notNull().default(3),
   foto: blob(),
   createdAt: int("created_at", { mode: "timestamp_ms" })

@@ -10,6 +10,7 @@ import { transacoesTable } from "./db/schema/transacoes";
 import { unidadesMedidaTable } from "./db/schema/unidadesMedida";
 import { usuariosTable } from "./db/schema/usuarios";
 import servicoUsuarios from "./services/servicoUsuarios";
+import { Permissoes } from "./db/schema/permissoes";
 
 export const baseDados = drizzle(process.env.DB_FILE_NAME!);
 
@@ -57,14 +58,17 @@ export async function inicializarAdministrador() {
   if (count === 0) {
     const login = "Administrador";
     const senha = "Admin123-";
-    await servicoUsuarios.inserir({
-      nome: login,
-      login: login,
-      password: senha,
-      descricao: login,
-      habilitado: true,
-      nivelPermissoes: 0,
-    });
+    await servicoUsuarios.inserir(
+      {
+        nome: login,
+        login: login,
+        password: senha,
+        descricao: login,
+        habilitado: true,
+        nivelPermissoes: 0,
+      },
+      { cargos: [Permissoes.Administrador] },
+    );
     warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada: ");
     json(
       {

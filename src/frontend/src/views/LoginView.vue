@@ -68,7 +68,6 @@ import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
 import { useNotificationStore } from '@/store/config/toast'
 import { useSessaoStore } from '@/store/config/sessao'
 import { useRoute, useRouter } from 'vue-router'
-import type { UserSessionInfo } from '../../../backend'
 const route = useRoute()
 const router = useRouter()
 
@@ -101,14 +100,14 @@ async function login() {
   } else {
     const res = await autenticacao.login(credenciais.data.usuario, credenciais.data.senha)
     if (res.ok && res.responseBody) {
-      const data = res.responseBody as UserSessionInfo
+      const data = res.responseBody
       // TODO: Realizar ligação entre configurações do frontend e backend
       localStorage.setItem(CONFIG_KEY_DARK_THEME, data.modoEscuro.toString())
       useSessao.checkLogin()
     } else if (res.resStatus >= 400 && res.resStatus < 500) {
       erro.value = 'Credenciais inválidas!'
     } else {
-      useNotifications.addNotification(res.statusText, true)
+      useNotifications.addNotification(res.statusText, { isError: true })
     }
   }
 }
