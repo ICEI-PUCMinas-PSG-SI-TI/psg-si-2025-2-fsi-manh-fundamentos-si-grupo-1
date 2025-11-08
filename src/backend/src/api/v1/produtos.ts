@@ -1,5 +1,5 @@
 import { Router, type NextFunction, type Response } from "express";
-import type { SessionRequest } from "../../cookies";
+import type { ExtendedRequest } from "../../middlewares";
 import servicoProdutos from "../../services/servicoProdutos";
 import { ParamsIdSchemaZ } from "./objects";
 import { ClientError } from "../../error";
@@ -7,7 +7,7 @@ import { ClientError } from "../../error";
 const apiV1ProdutosRouter = Router();
 
 async function getProdutos(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -20,7 +20,7 @@ async function getProdutos(
 }
 
 async function getProdutoId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {

@@ -1,15 +1,11 @@
-import {
-  parseSessionUser,
-  type SessionRequest,
-  type SessionUserRequest,
-} from "../../cookies";
+import { type ExtendedRequest } from "../../middlewares";
 import { Router, type NextFunction, type Response } from "express";
 import servicoUsuarios from "../../services/servicoUsuarios";
 import { ClientError } from "../../error";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
 import { ParamsIdSchemaZ, PasswordZ } from "./objects";
-import { requireBody } from "../../middlewares";
+import { mdwRequerBody } from "../../middlewares";
 
 const apiV1UsuariosRouter = Router();
 
@@ -19,7 +15,7 @@ const AlteracaoSenhaZ = z.strictObject({
 });
 
 async function getUsuarioId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -34,7 +30,7 @@ async function getUsuarioId(
 }
 
 async function alterarSenha(
-  req: SessionUserRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -64,7 +60,7 @@ const UpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.pick({
 }).strict();
 
 async function patchUsuario(
-  req: SessionUserRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -83,10 +79,9 @@ async function patchUsuario(
 }
 
 apiV1UsuariosRouter
-  .use(parseSessionUser)
   .get("/:id", getUsuarioId)
-  .post("/alterar-senha", requireBody, alterarSenha)
+  .post("/alterar-senha", mdwRequerBody, alterarSenha)
   // TODO: Implementar PUT e PATCH para o endpoint de usuários.
-  .patch("/", requireBody, patchUsuario);
+  .patch("/", mdwRequerBody, patchUsuario);
 
 export default apiV1UsuariosRouter;

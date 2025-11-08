@@ -1,5 +1,5 @@
 import { Router, type NextFunction, type Response } from "express";
-import type { SessionRequest } from "../../cookies";
+import type { ExtendedRequest } from "../../middlewares";
 import servicoTransacoes, {
   ParamsConsultaTransacoesZ,
 } from "../../services/servicoTransacoes";
@@ -7,7 +7,7 @@ import servicoTransacoes, {
 const apiV1TransacoesRouter = Router();
 
 async function getTransacoes(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {

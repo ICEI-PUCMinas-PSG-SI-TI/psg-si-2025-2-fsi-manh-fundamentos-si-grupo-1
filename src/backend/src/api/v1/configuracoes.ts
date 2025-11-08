@@ -1,13 +1,13 @@
-import type { SessionRequest } from "../../cookies";
+import type { ExtendedRequest } from "../../middlewares";
 import { UpdateConfiguracaoSchemaZ } from "../../db/schema/configuracoes";
-import { requireBody } from "../../middlewares";
+import { mdwRequerBody } from "../../middlewares";
 import servicoConfiguracoes from "../../services/servicoConfiguracoes";
 import { Router, type NextFunction, type Response } from "express";
 
 const apiV1ConfiguracoesRouter = Router();
 
 async function getConfiguracoes(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -20,7 +20,7 @@ async function getConfiguracoes(
 }
 
 async function patchConfiguracoes(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -36,6 +36,6 @@ async function patchConfiguracoes(
 apiV1ConfiguracoesRouter
   .get("/", getConfiguracoes)
   .put("/", patchConfiguracoes)
-  .patch("/", requireBody, patchConfiguracoes);
+  .patch("/", mdwRequerBody, patchConfiguracoes);
 
 export default apiV1ConfiguracoesRouter;

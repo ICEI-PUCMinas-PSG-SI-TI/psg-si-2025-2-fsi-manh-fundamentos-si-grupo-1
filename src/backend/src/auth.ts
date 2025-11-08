@@ -10,12 +10,16 @@ import {
   CredenciaisSchemaZ,
 } from "./services/servicoAutenticacao";
 import { error } from "./logging";
-import { loadCookies, requireSession, type SessionRequest } from "./cookies";
-import { noBody, requireBody } from "./middlewares";
+import {
+  mdwLoadSessionCookies,
+  mdwAutenticacao,
+  type ExtendedRequest,
+} from "./middlewares";
+import { mdwSemBody, mdwRequerBody } from "./middlewares";
 
 const authRouter = Router();
 
-const COOKIE_SESSION_TOKEN = "session_token";
+export const COOKIE_SESSION_TOKEN = "session_token";
 
 const servicoAutenticacao = new ServicoAutenticacao();
 
@@ -26,10 +30,10 @@ const servicoAutenticacao = new ServicoAutenticacao();
 /**
  * Retorna informações do usuário da sessão de acordo com o token de sessão.
  */
-async function sessao(req: SessionRequest, res: Response, next: NextFunction) {
+async function sessao(req: ExtendedRequest, res: Response, next: NextFunction) {
   try {
     const _sessionToken = req._sessionToken;
-    if (!_sessionToken) throw new ClientError("Não autenticado!", 400);
+    if (!_sessionToken) throw new ClientError("Não autenticado!", 401);
     const sessao =
       await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
     res.send(sessao);
@@ -71,7 +75,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function logout(req: SessionRequest, res: Response, next: NextFunction) {
+async function logout(req: ExtendedRequest, res: Response, next: NextFunction) {
   // this function will receive the token, invalidate, and redirect
   try {
     const _sessionToken = req._sessionToken;
@@ -85,7 +89,7 @@ async function logout(req: SessionRequest, res: Response, next: NextFunction) {
 }
 
 async function logoutAll(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -102,9 +106,9 @@ async function logoutAll(
 }
 
 authRouter
-  .get("/sessao", loadCookies, requireSession, noBody, sessao)
-  .post("/login", requireBody, login)
-  .post("/logout", loadCookies, logout)
-  .post("/logout-all", loadCookies, logoutAll);
+  .get("/sessao", mdwAutenticacao, mdwSemBody, sessao)
+  .post("/login", mdwRequerBody, login)
+  .post("/logout", mdwLoadSessionCookies, logout)
+  .post("/logout-all", mdwLoadSessionCookies, logoutAll);
 
 export default authRouter;

@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import type { NextFunction, Request, Response } from "express";
-import type { RequestId } from "./middlewares";
+import type { NextFunction, Response } from "express";
+import type { ExtendedRequest } from "./middlewares";
 
 const locale = process.env.LOCALE || "iso";
 
@@ -127,7 +127,7 @@ export function json(
 }
 
 export function middlewareHTTP(
-  req: Request,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -150,7 +150,10 @@ export function middlewareHTTP(
       colorStatusCode(status),
       `${totalTime} ms`,
     ];
-    info(logging.join(" "), { label: "HTTP", reqId: (req as RequestId)._id });
+    info(logging.join(" "), {
+      label: "HTTP",
+      reqId: req._requestId,
+    });
     // debug(`HTTP/${httpVersion} ${userAgent}`, { label: "HTTP" });
     // json(body, LogLevel.Debug);
   });

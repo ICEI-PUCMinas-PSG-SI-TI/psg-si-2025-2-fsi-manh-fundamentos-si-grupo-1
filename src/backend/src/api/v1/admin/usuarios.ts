@@ -1,4 +1,4 @@
-import { type SessionRequest, type SessionUserRequest } from "../../../cookies";
+import { type ExtendedRequest } from "../../../middlewares";
 import {
   Router,
   type NextFunction,
@@ -12,7 +12,7 @@ import { ClientError } from "../../../error";
 import { ParamsIdSchemaZ, PasswordZ } from "../objects";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
-import { requireBody } from "../../../middlewares";
+import { mdwRequerBody } from "../../../middlewares";
 
 const apiV1AdminUsuariosRouter = Router();
 
@@ -26,7 +26,7 @@ async function getUsuarios(req: Request, res: Response, next: NextFunction) {
 }
 
 async function postUsuario(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -44,7 +44,7 @@ const AdmAlteracaoSenhaZ = z.strictObject({
 });
 
 async function alterarSenha(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -66,7 +66,7 @@ async function alterarSenha(
 }
 
 async function getUsuarioId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -81,7 +81,7 @@ async function getUsuarioId(
 }
 
 async function excluirUsuarioId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -98,7 +98,7 @@ async function excluirUsuarioId(
 const AdmUpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.pick({}).strict();
 
 async function patchUsuario(
-  req: SessionUserRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -118,9 +118,9 @@ async function patchUsuario(
 
 apiV1AdminUsuariosRouter
   .get("/", getUsuarios)
-  .post("/", requireBody, postUsuario)
-  .patch("/:id", requireBody, patchUsuario)
-  .post("/alterar-senha/:id", requireBody, alterarSenha)
+  .post("/", mdwRequerBody, postUsuario)
+  .patch("/:id", mdwRequerBody, patchUsuario)
+  .post("/alterar-senha/:id", mdwRequerBody, alterarSenha)
   .get("/:id", getUsuarioId)
   .delete("/:id", excluirUsuarioId);
 

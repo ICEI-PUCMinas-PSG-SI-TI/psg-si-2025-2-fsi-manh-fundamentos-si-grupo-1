@@ -3,7 +3,7 @@ import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { RepositorioSessoes } from "../repository/repositorioSessoes";
 import { ClientError } from "../error";
 import { compare } from "bcrypt";
-import { error, warning } from "../logging";
+import { debug, error, warning } from "../logging";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
@@ -61,7 +61,7 @@ async function criarSessao(
   const secret = generateSecureRandomString();
   const secretHash = await hashSecret(secret);
   const token = `${id}.${secret}`;
-
+  debug(token, { label: "TokenGen" });
   await repositorioSessoes.inserir({
     id,
     secretHash: Buffer.from(secretHash),
@@ -106,7 +106,7 @@ const UserSessionInfoZ = z.object({
   foto: z.base64(),
 });
 
-type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
+export type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
 
 // TODO: Check for timing attacks
 export class ServicoAutenticacao {
@@ -146,16 +146,30 @@ export class ServicoAutenticacao {
     };
   }
 
+  // TODO: Unificar queries
   async consultarSessaoPorToken(
     token: string,
   ): Promise<UserSessionInfo | null> {
+    const isValidSession = await servicoAutenticacao.validarSessao(token);
+    if (!isValidSession) {
+      warning("Sessão inválida", {
+        label: "Session",
+      });
+      return null;
+    }
     const _token = parseToken(token);
     if (!_token) return null;
-    // TODO: Unificar queries
+    // TODO: validarSessao: Promise<SelectSessao>
     const sessao = await repositorioSessoes.selecionarPorId(_token?.id);
-    if (!sessao) return null;
+    if (!sessao) {
+      error("Sessão não encontrada.", { label: "AuthServ" });
+      return null;
+    }
     const usuario = await repositorioUsuarios.selecionarPorId(sessao.usuarioId);
-    if (!usuario) return null;
+    if (!usuario) {
+      error("Usuário não encontrado.", { label: "AuthServ" });
+      return null;
+    }
     return {
       id: usuario.id,
       nome: usuario.nome,
@@ -181,7 +195,6 @@ export class ServicoAutenticacao {
       await repositorioSessoes.excluirPorId(sessionId);
       return null;
     }
-
     return sessao;
   }
 
@@ -228,6 +241,11 @@ export class ServicoAutenticacao {
       sessoes.usuarioId,
     );
     return excRes > 0;
+  }
+
+  async invalidarSessoes(): Promise<boolean> {
+    const res = await repositorioSessoes.limparSessoes();
+    return res > 0;
   }
 }
 

@@ -1,10 +1,10 @@
-import type { SessionRequest } from "../../cookies";
+import type { ExtendedRequest } from "../../middlewares";
 import { LoteConsultaSchema, ServicoLotes } from "../../services/servicoLotes";
 import { Router, type NextFunction, type Response } from "express";
 import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
-import { requireBody } from "../../middlewares";
+import { mdwRequerBody } from "../../middlewares";
 
 const apiV1LotesRouter = Router();
 
@@ -18,7 +18,7 @@ const lotes = new ServicoLotes();
 // DELETE /:id
 
 async function getLotes(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -37,7 +37,7 @@ async function getLotes(
 }
 
 async function postLote(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -51,7 +51,7 @@ async function postLote(
 }
 
 async function getLoteId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -66,7 +66,7 @@ async function getLoteId(
 }
 
 async function excluirLoteId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -81,7 +81,7 @@ async function excluirLoteId(
 }
 
 function notImplemented(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -94,7 +94,7 @@ function notImplemented(
 
 apiV1LotesRouter
   .get("/", getLotes)
-  .post("/", requireBody, postLote)
+  .post("/", mdwRequerBody, postLote)
   .get("/:id", getLoteId)
   // TODO: Implementar PUT e PATCH para o endpoint de lotes.
   .put("/:id", notImplemented)

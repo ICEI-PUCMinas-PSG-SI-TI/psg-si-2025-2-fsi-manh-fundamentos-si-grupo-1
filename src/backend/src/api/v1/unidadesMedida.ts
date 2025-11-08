@@ -1,14 +1,14 @@
-import type { SessionRequest } from "../../cookies";
+import type { ExtendedRequest } from "../../middlewares";
 import { Router, type NextFunction, type Response } from "express";
 import { ParamsIdSchemaZ } from "./objects";
 import servicoUnidadesMedida from "../../services/servicoUnidadesMedida";
 import { InsertUnidadesMedidasSchemaZ } from "../../db/schema/unidadesMedida";
-import { requireBody } from "../../middlewares";
+import { mdwRequerBody } from "../../middlewares";
 
 const apiV1UnidadesMedida = Router();
 
 async function getUnidadesMedida(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -21,7 +21,7 @@ async function getUnidadesMedida(
 }
 
 async function postUnidadeMedida(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -35,7 +35,7 @@ async function postUnidadeMedida(
 }
 
 async function getUnidadeMedida(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -52,7 +52,7 @@ async function getUnidadeMedida(
 }
 
 async function deleteUnidadeMedida(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -68,7 +68,7 @@ async function deleteUnidadeMedida(
 
 apiV1UnidadesMedida
   .get("/", getUnidadesMedida)
-  .post("/", requireBody, postUnidadeMedida)
+  .post("/", mdwRequerBody, postUnidadeMedida)
   .get("/:id", getUnidadeMedida)
   .delete("/:id", deleteUnidadeMedida);
 

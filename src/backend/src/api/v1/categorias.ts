@@ -2,13 +2,13 @@ import { Router, type NextFunction, type Response } from "express";
 import { ParamsIdSchemaZ } from "./objects";
 import servicoCategorias from "../../services/servicoCategorias";
 import { InsertCategoriaSchemaZ } from "../../db/schema/categorias";
-import type { SessionRequest } from "../../cookies";
-import { requireBody } from "../../middlewares";
+import type { ExtendedRequest } from "../../middlewares";
+import { mdwRequerBody } from "../../middlewares";
 
 const apiV1CategoriasRouter = Router();
 
 async function getCategorias(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -21,7 +21,7 @@ async function getCategorias(
 }
 
 async function postCategoria(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -35,7 +35,7 @@ async function postCategoria(
 }
 
 async function getCategoria(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -50,7 +50,7 @@ async function getCategoria(
 }
 
 async function deleteCategorias(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -66,7 +66,7 @@ async function deleteCategorias(
 
 apiV1CategoriasRouter
   .get("/", getCategorias)
-  .post("/", requireBody, postCategoria)
+  .post("/", mdwRequerBody, postCategoria)
   .get("/:id", getCategoria)
   .delete("/:id", deleteCategorias);
 

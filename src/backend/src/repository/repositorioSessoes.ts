@@ -63,4 +63,9 @@ export class RepositorioSessoes {
       return resultSet.rowsAffected;
     });
   }
+
+  async limparSessoes(): Promise<number> {
+    const resultSet = await bancoDados.delete(tabelaSessoes);
+    return resultSet.rowsAffected;
+  }
 }
