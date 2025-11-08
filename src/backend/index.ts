@@ -10,3 +10,5 @@ export type { ParamsConsultaTransacoes } from "./src/services/servicoTransacoes"
 export type { UuidResult } from "./src/api/v1/objects";
 
 export type { UserSessionInfo } from "./src/services/servicoAutenticacao";
+
+export type { ParamsInserirConfiguracoes } from "./src/services/servicoConfiguracoes";

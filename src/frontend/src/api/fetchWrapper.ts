@@ -55,7 +55,8 @@ export async function fetchW<T>(
     })
     if (response.ok) {
       let data: T | undefined = undefined
-      if (response.body) data = await response.json()
+      if (response.headers.get('Content-Type')?.startsWith('application/json'))
+        data = await response.json()
       return {
         ok: true,
         responseBody: data,
@@ -64,7 +65,7 @@ export async function fetchW<T>(
       }
     } else {
       if (!opts?.muteNotifications) {
-        notificacoes.addNotification(response.statusText, true)
+        notificacoes.addNotification(response.statusText, { isError: true })
       }
       return {
         ok: false,
@@ -74,7 +75,7 @@ export async function fetchW<T>(
     }
   } catch (err) {
     if (err instanceof Error) {
-      notificacoes.addNotification(err.message, true)
+      notificacoes.addNotification(err.message, { isError: true, title: 'Request Error' })
     } else {
       console.error(err)
     }

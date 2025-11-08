@@ -1,37 +1,19 @@
-import z from 'zod'
 import { fetchW, HttpMethods } from './fetchWrapper'
+import type { ParamsInserirConfiguracoes } from '../../../backend'
+import type { SelectConfiguracaoSchema } from '../../../backend/src/db/schema/configuracoes'
 
 const endpoint_path = `/api/v1/configuracoes`
 
-// TODO: Criar biblioteca compartilhada e re-utilizar tipos
-const ConfiguracoesEnvioZ = z.object({
-  nomeCliente: z.string().nullish(),
-  cpfCnpj: z.string().nullish(),
-  endereco: z.string().nullish(),
-})
-
-export type ConfiguracoesEnvioSchema = z.infer<typeof ConfiguracoesEnvioZ>
-
-export type ConfiguracoesReceber = {
-  id?: string
-  nomeCliente: string | null
-  cpfCnpj: string | null
-  endereco: string | null
-  createdAt?: Date
-  updatedAt?: Date
-}
-
 export class ApiConfiguracoes {
   obterTodos() {
-    return fetchW<ConfiguracoesReceber>(endpoint_path)
+    return fetchW<SelectConfiguracaoSchema>(endpoint_path)
   }
 
   // TODO: Como retornar status? 400, 500, ...
-  atualizar(opts: ConfiguracoesEnvioSchema) {
-    const bodyContent = ConfiguracoesEnvioZ.parse(opts)
+  atualizar(opts: ParamsInserirConfiguracoes) {
     return fetchW(endpoint_path, {
       method: HttpMethods.Patch,
-      body: bodyContent,
+      body: opts,
     })
   }
 }

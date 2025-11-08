@@ -26,6 +26,10 @@ export const useSessaoStore = defineStore('sessao', {
     },
   },
   actions: {
+    logout() {
+      refUserInfo.value = null
+      this.isLoggedIn = false
+    },
     async checkLogin() {
       this.isLoggedIn = await isUserLoggedIn()
     },

@@ -170,7 +170,7 @@ import ButtonComponent from '@/components/ButtonComponent.vue'
 import LabeledInput from '@/components/LabeledInput.vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ref, type Ref } from 'vue'
-import { ApiConfiguracoes, type ConfiguracoesReceber } from '@/api/configuracoes'
+import { ApiConfiguracoes } from '@/api/configuracoes'
 import { ApiCategorias, type Categorias } from '@/api/categorias'
 import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
 import { useNotificationStore } from '@/store/config/toast'
@@ -179,8 +179,10 @@ import { ApiAutenticacao } from '@/api/auth'
 import { ApiUsuario } from '@/api/usuario'
 import { limparConfiguracoes } from '@/services/storage'
 import router from '@/router'
+import type { SelectConfiguracaoSchema } from '../../../backend/src/db/schema/configuracoes'
+import { useSessaoStore } from '@/store/config/sessao'
 
-const refConfig: Ref<ConfiguracoesReceber> = ref({
+const refConfig: Ref<Partial<SelectConfiguracaoSchema>> = ref({
   nomeCliente: '',
   cpfCnpj: '',
   endereco: '',
@@ -214,6 +216,7 @@ const usuario = new ApiUsuario()
 const notificacoes = useNotificationStore()
 
 async function obterSessao() {
+  // TODO: Criar serviço e armazenar informações
   const data = await autenticacao.sessao()
   if (data.ok && data.responseBody) {
     refSessao.value.login = data.responseBody.login
@@ -237,7 +240,11 @@ async function obterConfiguracoes() {
 }
 
 async function salvarConfiguracoes() {
-  const res = await configuracoes.atualizar(refConfig.value)
+  const res = await configuracoes.atualizar({
+    nomeCliente: refConfig.value.nomeCliente,
+    cpfCnpj: refConfig.value.cpfCnpj,
+    endereco: refConfig.value.endereco,
+  })
   if (res.ok) {
     notificacoes.addNotification('Informações alteradas.')
   }
@@ -253,7 +260,7 @@ async function obterCategorias() {
 async function adicionarCategoria() {
   const res = await categorias.criar(refNovaCategoria.value)
   if (res.ok) {
-    notificacoes.addNotification('Informações adicionadas.')
+    notificacoes.addNotification('Informações adicionadas.', { time: 3000 })
     obterCategorias()
   }
 }
@@ -261,7 +268,7 @@ async function adicionarCategoria() {
 async function removerCategorias(id: string) {
   const res = await categorias.excluir(id)
   if (res.ok) {
-    notificacoes.addNotification('Informações excluídas.')
+    notificacoes.addNotification('Informações excluídas.', { time: 3000 })
     obterCategorias()
   }
 }
@@ -277,7 +284,7 @@ async function adicionarUnidadeMedida() {
   const { nome, abreviacao } = refNovaUnidadeMedida.value
   const res = await unidadesMedida.criar(nome, abreviacao)
   if (res.ok) {
-    notificacoes.addNotification('Informações adicionadas.')
+    notificacoes.addNotification('Informações adicionadas.', { time: 3000 })
     obterUnidadesMedida()
   }
 }
@@ -285,13 +292,16 @@ async function adicionarUnidadeMedida() {
 async function removerUnidadeMedida(id: string) {
   const res = await unidadesMedida.excluir(id)
   if (res.ok) {
-    notificacoes.addNotification('Informações excluídas.')
+    notificacoes.addNotification('Informações excluídas.', { time: 3000 })
     obterUnidadesMedida()
   }
 }
 
+const useSessao = useSessaoStore()
+
 async function deslogarSessao() {
   await autenticacao.logout()
+  useSessao.logout()
   limparConfiguracoes()
   router.push('/login')
 }
@@ -299,6 +309,7 @@ async function deslogarSessao() {
 async function deslogarSessaoTodas() {
   // TODO: Confirmar primeiro
   await autenticacao.logoutAll()
+  useSessao.logout()
   limparConfiguracoes()
   router.push('/login')
 }

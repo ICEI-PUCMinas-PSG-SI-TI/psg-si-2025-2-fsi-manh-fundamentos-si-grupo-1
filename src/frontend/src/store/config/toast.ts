@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 export type Notification = {
   id: number
+  title?: string
   message: string
   timeout: NodeJS.Timeout
   dismissed: boolean
@@ -20,16 +21,24 @@ export const useNotificationStore = defineStore('toast', {
         if (this.notificationList[i].id === _id) this.notificationList.splice(i, 1)
       }
     },
-    addNotification(message: string, isError: boolean = false, time: number = 5000) {
+    addNotification(
+      message: string,
+      opts?: {
+        isError?: true
+        time?: number
+        title?: string
+      },
+    ) {
       const _id = id
       this.notificationList.push({
         id: _id,
+        title: opts?.title,
         message,
         timeout: setTimeout(() => {
           this.dismissNotification(_id)
-        }, time),
+        }, opts?.time || 5000),
         dismissed: false,
-        isError,
+        isError: opts?.isError || false,
       })
       id++
     },
