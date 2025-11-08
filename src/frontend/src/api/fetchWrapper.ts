@@ -19,7 +19,7 @@ export async function fetchW<T>(
     method?: string
     body?: string | object
     params?: object
-    muteNotifications?: boolean
+    muteNotifications?: true
   },
 ): Promise<{
   // TODO: retornar resposta de uma vez?

@@ -7,7 +7,7 @@ import ToastContainer from './components/ToastContainer.vue'
 
 const tema = useTemaStore()
 const route = useRoute()
-const isLogin = computed(() => route.path.startsWith('/login'))
+const isLogin = computed(() => route.name === 'login')
 const dataTema = computed(() => (isLogin.value ? '' : tema.isDarkModePreferred ? 'dark' : 'light'))
 </script>
 

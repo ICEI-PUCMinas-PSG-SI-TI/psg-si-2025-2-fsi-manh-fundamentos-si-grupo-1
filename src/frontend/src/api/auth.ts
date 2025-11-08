@@ -17,6 +17,7 @@ export class ApiAutenticacao {
   sessao() {
     return fetchW<{ nome: string; login: string }>(`${endpoint_path}/sessao`, {
       method: HttpMethods.Get,
+      muteNotifications: true,
     })
   }
 
