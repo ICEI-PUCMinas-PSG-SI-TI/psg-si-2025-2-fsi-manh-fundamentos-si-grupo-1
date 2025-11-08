@@ -5,11 +5,15 @@ import { ClientError } from "../error";
 import { compare } from "bcrypt";
 import { debug, error, warning } from "../logging";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
+import { Permissoes } from "../db/schema/permissoes";
+import { RepositorioPermissoes } from "../repository/repositorioPermissoes";
+import servicoPermissoes from "./servicoPermissoes";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
 
 const repositorioUsuarios = new RepositorioUsuarios();
 const repositorioSessoes = new RepositorioSessoes();
+const repositorioPermissoes = new RepositorioPermissoes();
 
 export const CredenciaisSchemaZ = z.strictObject({
   login: z.string(),
@@ -17,6 +21,19 @@ export const CredenciaisSchemaZ = z.strictObject({
 });
 
 export type CredenciaisSchema = z.infer<typeof CredenciaisSchemaZ>;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const UserSessionInfoZ = z.object({
+  id: z.string(),
+  nome: z.string(),
+  login: z.string(),
+  modoEscuro: z.boolean(),
+  nivelPermissoes: z.number(),
+  foto: z.base64(),
+  permissoes: z.array(z.enum(Permissoes)),
+});
+
+export type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
 
 export function generateSecureRandomString(): string {
   // Human readable alphabet (a-z, 0-9)
@@ -96,18 +113,6 @@ function parseToken(token: string): Token | null {
 const ONE_DAY = 60 * 60 * 24 * 1000;
 const SESSION_EXPIRES_IN_MSECONDS = ONE_DAY;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UserSessionInfoZ = z.object({
-  id: z.string(),
-  nome: z.string(),
-  login: z.string(),
-  modoEscuro: z.boolean(),
-  nivelPermissoes: z.number(),
-  foto: z.base64(),
-});
-
-export type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
-
 // TODO: Check for timing attacks
 export class ServicoAutenticacao {
   async login(
@@ -133,6 +138,7 @@ export class ServicoAutenticacao {
       throw new ClientError("Unauthorized", 401);
     }
     const token = await criarSessao(usuario.id, userAgent, ipAddress);
+    const perms = await servicoPermissoes.selecionarPermissoes(usuario.id);
     return {
       token,
       usuario: {
@@ -142,6 +148,7 @@ export class ServicoAutenticacao {
         modoEscuro: usuario.modoEscuro,
         nivelPermissoes: usuario.nivelPermissoes,
         foto: usuario.foto as string,
+        permissoes: perms,
       },
     };
   }
@@ -170,6 +177,7 @@ export class ServicoAutenticacao {
       error("Usuário não encontrado.", { label: "AuthServ" });
       return null;
     }
+    const perms = await servicoPermissoes.selecionarPermissoes(usuario.id);
     return {
       id: usuario.id,
       nome: usuario.nome,
@@ -177,6 +185,7 @@ export class ServicoAutenticacao {
       modoEscuro: usuario.modoEscuro,
       nivelPermissoes: usuario.nivelPermissoes,
       foto: usuario.foto as string,
+      permissoes: perms,
     };
   }
 

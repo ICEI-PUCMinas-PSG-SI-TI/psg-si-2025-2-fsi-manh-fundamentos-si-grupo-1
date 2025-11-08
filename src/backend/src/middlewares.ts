@@ -5,6 +5,8 @@ import servicoAutenticacao, {
   type UserSessionInfo,
 } from "./services/servicoAutenticacao";
 import { COOKIE_SESSION_TOKEN } from "./auth";
+import servicoPermissoes from "./services/servicoPermissoes";
+import { Permissoes } from "./db/schema/permissoes";
 
 export type Cookies = {
   tokenSessao?: string;
@@ -87,14 +89,21 @@ export async function mdwAutenticacao(
   }
 }
 
-export function mdwAdministrador(
+export async function mdwAdministrador(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
 ) {
   try {
     const usuario = req._usuario;
-    if (!usuario || usuario.nivelPermissoes !== 0)
+    if (
+      !usuario ||
+      (usuario.nivelPermissoes !== 0 &&
+        !(await servicoPermissoes.consultar(
+          usuario.id,
+          Permissoes.Administrador,
+        )))
+    )
       throw new ClientError("Unauthorized", 401);
     next();
   } catch (err) {
