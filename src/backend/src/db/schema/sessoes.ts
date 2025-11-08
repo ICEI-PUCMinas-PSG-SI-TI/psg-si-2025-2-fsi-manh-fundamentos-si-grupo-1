@@ -15,7 +15,7 @@ export const sessoesTable = sqliteTable("sessoes", {
   ipAddress: text("ip_address").notNull(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(unixepoch()*1000)`),
 });
 
 export const InsertSessaoSchemaZ = createInsertSchema(sessoesTable, {

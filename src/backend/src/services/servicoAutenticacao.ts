@@ -3,7 +3,7 @@ import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { RepositorioSessoes } from "../repository/repositorioSessoes";
 import { ClientError } from "../error";
 import { compare } from "bcrypt";
-import { error } from "../logging";
+import { error, warning } from "../logging";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
@@ -177,6 +177,7 @@ export class ServicoAutenticacao {
       now.getTime() - sessao.createdAt.getTime() >=
       SESSION_EXPIRES_IN_MSECONDS
     ) {
+      warning(`Sessão expirada: ${sessionId}`, { label: "AuthServ" });
       await repositorioSessoes.excluirPorId(sessionId);
       return null;
     }
