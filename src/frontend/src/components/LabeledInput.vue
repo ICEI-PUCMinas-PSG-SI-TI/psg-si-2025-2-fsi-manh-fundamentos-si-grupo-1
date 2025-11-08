@@ -1,6 +1,6 @@
 <template>
   <fieldset class="fieldset">
-    <legend class="fieldset-legend mx-1">{{ labelText }}</legend>
+    <legend v-if="labelText" class="fieldset-legend mx-1">{{ labelText }}</legend>
     <input
       :type="htmlType"
       class="input input-md focus:outline-offset-0 w-full"

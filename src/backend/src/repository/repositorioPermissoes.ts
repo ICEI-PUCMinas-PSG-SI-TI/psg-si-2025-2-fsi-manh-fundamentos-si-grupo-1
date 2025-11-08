@@ -8,9 +8,9 @@ import {
 } from "../db/schema/permissoes";
 
 export class RepositorioPermissoes {
-  inserir(perms: InsertPermissoesSchema) {
+  inserir(...perms: InsertPermissoesSchema[]) {
     return baseDados.transaction((tx) => {
-      return tx.insert(permissoesTable).values(perms);
+      return tx.insert(permissoesTable).values(perms).onConflictDoNothing();
     });
   }
 

@@ -67,7 +67,7 @@ export async function inicializarAdministrador() {
         habilitado: true,
         nivelPermissoes: 0,
       },
-      { cargo: Permissoes.Administrador },
+      { cargos: [Permissoes.Administrador] },
     );
     warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada: ");
     json(

@@ -22,6 +22,22 @@ export class ServicoPermissoes {
     const perms: Permissoes[] = res.map((p) => p.cargo);
     return perms;
   }
+
+  // TODO: Verificar se usuário existe
+  adicionarPermissoesUsuario(usuarioId: string, ...perms: Permissoes[]) {
+    const valores = perms.map((c) => ({
+      usuarioId: usuarioId,
+      cargo: c,
+    }));
+    return repositorioPermissoes.inserir(...valores);
+  }
+
+  // TODO: Verificar se usuário existe
+  async removerPermissoesUsuario(usuarioId: string, ...perms: Permissoes[]) {
+    for (let i = 0; i < perms.length; i++) {
+      await repositorioPermissoes.excluir(usuarioId, perms[i]!);
+    }
+  }
 }
 
 const servicoPermissoes = new ServicoPermissoes();

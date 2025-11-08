@@ -17,6 +17,7 @@ import { Permissoes } from '../../../backend/src/db/schema/permissoes'
 
 const useSessao = useSessaoStore()
 const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador))
+const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor))
 </script>
 
 <template>
@@ -81,10 +82,17 @@ const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador)
 
       <NavigationMenuItemSeparator />
 
-      <RouterLink v-if="ehAdm" to="/usuarios" v-slot="{ href, navigate, isActive }" custom>
+      <RouterLink v-if="ehAdm || ehDev" to="/usuarios" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
           <UsersIcon class="m-2" />
           Usuários
+        </NavigationMenuItem>
+      </RouterLink>
+
+      <RouterLink v-if="ehDev" to="/desenvolvedor" v-slot="{ href, navigate, isActive }" custom>
+        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
+          <UsersIcon class="m-2" />
+          Desenvolvedor
         </NavigationMenuItem>
       </RouterLink>
 

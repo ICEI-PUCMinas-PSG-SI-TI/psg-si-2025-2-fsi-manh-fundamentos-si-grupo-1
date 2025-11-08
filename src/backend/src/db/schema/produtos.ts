@@ -5,7 +5,7 @@ import { v4 as genUUID } from "uuid";
 import z from "zod";
 import { unidadesMedidaTable } from "./unidadesMedida";
 
-enum StatusProduto {
+export enum StatusProduto {
   Ativo = "ATIVO",
   Inativo = "INATIVO",
   Descontinuado = "DESCONTINUADO",

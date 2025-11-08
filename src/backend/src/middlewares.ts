@@ -5,7 +5,6 @@ import servicoAutenticacao, {
   type UserSessionInfo,
 } from "./services/servicoAutenticacao";
 import { COOKIE_SESSION_TOKEN } from "./auth";
-import servicoPermissoes from "./services/servicoPermissoes";
 import { Permissoes } from "./db/schema/permissoes";
 
 export type Cookies = {
@@ -19,7 +18,6 @@ export interface ExtendedRequest extends Request {
   _sessionToken?: string;
   _usuario?: UserSessionInfo;
   _requestId?: string;
-  _body?: unknown;
   _cookies?: Cookies;
 }
 
@@ -89,26 +87,23 @@ export async function mdwAutenticacao(
   }
 }
 
-export async function mdwAdministrador(
-  req: ExtendedRequest,
-  _res: Response,
-  next: NextFunction,
-) {
-  try {
-    const usuario = req._usuario;
-    if (
-      !usuario ||
-      (usuario.nivelPermissoes !== 0 &&
-        !(await servicoPermissoes.consultar(
-          usuario.id,
-          Permissoes.Administrador,
-        )))
-    )
-      throw new ClientError("Unauthorized", 401);
-    next();
-  } catch (err) {
-    next(err);
-  }
+export function mdwPermissoes(...perms: Permissoes[]) {
+  return (req: ExtendedRequest, _res: Response, next: NextFunction) => {
+    try {
+      const usuario = req._usuario;
+      let permitido = false;
+      if (usuario) {
+        permitido = perms.reduce(
+          (ok, perm) => ok || usuario.permissoes.includes(perm),
+          permitido,
+        );
+      }
+      if (!permitido) throw new ClientError("Unauthorized", 401);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export function mdwRequestId(

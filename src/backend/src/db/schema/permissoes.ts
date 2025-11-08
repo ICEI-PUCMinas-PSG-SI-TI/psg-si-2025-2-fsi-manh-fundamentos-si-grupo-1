@@ -1,5 +1,4 @@
 import { sqliteTable, text, int, primaryKey } from "drizzle-orm/sqlite-core";
-import { v4 as genUUID } from "uuid";
 import { usuariosTable } from "./usuarios";
 import { sql, type InferSelectModel } from "drizzle-orm";
 import z from "zod";

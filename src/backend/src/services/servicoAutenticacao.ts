@@ -6,14 +6,12 @@ import { compare } from "bcrypt";
 import { debug, error, warning } from "../logging";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
 import { Permissoes } from "../db/schema/permissoes";
-import { RepositorioPermissoes } from "../repository/repositorioPermissoes";
 import servicoPermissoes from "./servicoPermissoes";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
 
 const repositorioUsuarios = new RepositorioUsuarios();
 const repositorioSessoes = new RepositorioSessoes();
-const repositorioPermissoes = new RepositorioPermissoes();
 
 export const CredenciaisSchemaZ = z.strictObject({
   login: z.string(),
