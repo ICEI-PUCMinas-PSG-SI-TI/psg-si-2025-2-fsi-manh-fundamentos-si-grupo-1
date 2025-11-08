@@ -11,7 +11,11 @@ import NavigationMenuItem from './NavigationMenuItem.vue'
 import LogoMenuItem from './LogoMenuItem.vue'
 import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
 import DarkModeToggle from './DarkModeToggle.vue'
-// import TemaToggle from './TemaToggle.vue'
+import { useSessaoStore } from '@/store/config/sessao'
+import { computed } from 'vue'
+
+const useSessao = useSessaoStore()
+const ehAdm = computed(() => useSessao.getUserInfo?.nivelPermissoes === 0)
 </script>
 
 <template>
@@ -76,7 +80,7 @@ import DarkModeToggle from './DarkModeToggle.vue'
 
       <NavigationMenuItemSeparator />
 
-      <RouterLink to="/usuarios" v-slot="{ href, navigate, isActive }" custom>
+      <RouterLink v-if="ehAdm" to="/usuarios" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
           <UsersIcon class="m-2" />
           Usuários

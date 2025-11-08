@@ -24,7 +24,7 @@ const router = createRouter({
       path: '/dashboard',
       component: DashboardView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
@@ -33,7 +33,7 @@ const router = createRouter({
       path: '/operacoes',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
@@ -42,7 +42,7 @@ const router = createRouter({
       path: '/movimentacoes',
       component: MovimentacoesView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
@@ -50,7 +50,7 @@ const router = createRouter({
       path: '/produtos',
       component: ExampleView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     // TODO: Funcionalidade não será implementada no momento (sprint 3)
@@ -59,21 +59,21 @@ const router = createRouter({
       path: '/relatorio_1',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
       path: '/relatorio_2',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     {
       path: '/relatorio_3',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
     */
@@ -82,7 +82,8 @@ const router = createRouter({
       path: '/usuarios',
       component: NotImplementedView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
+        requerAdmin: true,
       },
     },
     {
@@ -90,7 +91,7 @@ const router = createRouter({
       path: '/configuracoes',
       component: ConfiguracoesView,
       meta: {
-        autenticacaoNecessaria: true,
+        requerAutenticacao: true,
       },
     },
   ],
@@ -99,7 +100,7 @@ const router = createRouter({
 // TODO: Invalidar rotas em caso de erros 401
 router.beforeEach((to, from, next: NavigationGuardNext) => {
   // TODO: Realizar autenticação mais elegante
-  if (to.matched.some((record) => record.meta.autenticacaoNecessaria)) {
+  if (to.matched.some((record) => record.meta.requerAutenticacao)) {
     if (sessao.isLoggedIn) {
       next()
     } else {
@@ -108,6 +109,19 @@ router.beforeEach((to, from, next: NavigationGuardNext) => {
       } else {
         next({ name: 'login' })
       }
+    }
+  } else {
+    next()
+  }
+})
+
+router.beforeEach((to, from, next: NavigationGuardNext) => {
+  // TODO: Realizar autenticação mais elegante
+  if (to.matched.some((record) => record.meta.requerAdmin)) {
+    if (sessao.getUserInfo?.nivelPermissoes === 0) {
+      next()
+    } else {
+      next({ name: 'dashboard' })
     }
   } else {
     next()

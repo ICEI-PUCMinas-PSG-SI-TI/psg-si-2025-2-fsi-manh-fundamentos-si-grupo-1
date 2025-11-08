@@ -10,19 +10,18 @@ const refUserInfo: Ref<UserSessionInfo | null> = ref(null)
 
 async function isUserLoggedIn(): Promise<boolean> {
   const res = await autenticacao.sessao()
-  return res.ok
+  if (res.ok) {
+    if (res.responseBody) refUserInfo.value = res.responseBody
+    return true
+  }
+  return false
 }
 
 export const useSessaoStore = defineStore('sessao', {
   state: () => ({ isLoggedIn: false }),
   getters: {
-    async getUserInfo(): Promise<UserSessionInfo | null> {
-      if (this.isLoggedIn) {
-        return refUserInfo.value
-      } else {
-        await isUserLoggedIn()
-        return refUserInfo.value
-      }
+    getUserInfo(): UserSessionInfo | null {
+      return refUserInfo.value
     },
   },
   actions: {
