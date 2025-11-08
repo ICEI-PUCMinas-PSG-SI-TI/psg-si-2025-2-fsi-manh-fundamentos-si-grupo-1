@@ -91,17 +91,17 @@
         <div class="m-auto">
           <div class="flex flex-col items-end gap-4">
             <button
-              class="btn bg-green-600 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              class="text-white btn bg-green-600 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
             >
               Confirmar
             </button>
             <button
-              class="btn bg-blue-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              class="text-white btn bg-blue-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
             >
               Alterar
             </button>
             <button
-              class="btn bg-red-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              class="text-white btn bg-red-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
             >
               Cancelar
             </button>
