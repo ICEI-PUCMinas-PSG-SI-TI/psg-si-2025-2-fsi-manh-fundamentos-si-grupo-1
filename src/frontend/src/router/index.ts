@@ -6,6 +6,7 @@ import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-ro
 import NotImplementedView from '@/views/NotImplementedView.vue'
 import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
 import { sessao } from '@/main'
+import { Permissoes } from '../../../backend/src/db/schema/permissoes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,7 +119,7 @@ router.beforeEach((to, from, next: NavigationGuardNext) => {
 router.beforeEach((to, from, next: NavigationGuardNext) => {
   // TODO: Realizar autenticação mais elegante
   if (to.matched.some((record) => record.meta.requerAdmin)) {
-    if (sessao.getUserInfo?.nivelPermissoes === 0) {
+    if (sessao.possuiPermissao(Permissoes.Administrador)) {
       next()
     } else {
       next({ name: 'dashboard' })

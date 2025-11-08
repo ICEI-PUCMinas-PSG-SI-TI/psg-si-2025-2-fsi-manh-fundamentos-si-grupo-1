@@ -13,9 +13,10 @@ import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
 import DarkModeToggle from './DarkModeToggle.vue'
 import { useSessaoStore } from '@/store/config/sessao'
 import { computed } from 'vue'
+import { Permissoes } from '../../../backend/src/db/schema/permissoes'
 
 const useSessao = useSessaoStore()
-const ehAdm = computed(() => useSessao.getUserInfo?.nivelPermissoes === 0)
+const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador))
 </script>
 
 <template>

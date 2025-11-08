@@ -2,6 +2,7 @@ import { ApiAutenticacao } from '@/api/auth'
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
 import type { UserSessionInfo } from '../../../../backend'
+import { Permissoes } from '../../../../backend/src/db/schema/permissoes'
 
 const autenticacao = new ApiAutenticacao()
 
@@ -25,6 +26,11 @@ export const useSessaoStore = defineStore('sessao', {
     },
   },
   actions: {
+    possuiPermissao(permissao: Permissoes): boolean {
+      return permissao === Permissoes.Administrador && refUserInfo.value?.nivelPermissoes === 0
+        ? true
+        : !!refUserInfo.value?.permissoes.includes(permissao)
+    },
     logout() {
       refUserInfo.value = null
       this.isLoggedIn = false
