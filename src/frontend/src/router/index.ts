@@ -1,5 +1,5 @@
 import DashboardView from '@/views/DashboardView.vue'
-import ExampleView from '@/views/NotImplementedView.vue'
+import ProdutosView from '@/views/ProdutosView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MovimentacoesView from '@/views/MovimentacoesView.vue'
 import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-router'
@@ -51,7 +51,7 @@ const router = createRouter({
     {
       name: 'produtos',
       path: '/produtos',
-      component: ExampleView,
+      component: ProdutosView,
       meta: {
         requerAutenticacao: true,
       },
