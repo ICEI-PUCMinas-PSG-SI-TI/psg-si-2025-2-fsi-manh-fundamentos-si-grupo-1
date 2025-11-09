@@ -61,13 +61,13 @@
 <script setup lang="ts">
 import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
 import { ref, type Ref } from 'vue'
-import z from 'zod'
 import { ApiAutenticacao } from '@/api/auth'
 import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
 import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
 import { useNotificationStore } from '@/store/config/toast'
 import { useSessaoStore } from '@/store/config/sessao'
 import { useRoute, useRouter } from 'vue-router'
+import { CrecenciaisZ } from '@/services/objects'
 const route = useRoute()
 const router = useRouter()
 
@@ -82,14 +82,6 @@ const refFormulario: Ref<{
 })
 const erro = ref('')
 const mostrarSenha = ref(false)
-
-const CrecenciaisZ = z.object({
-  usuario: z.string().nonempty({ error: 'Digite um usuário válido.' }),
-  senha: z
-    .string()
-    .min(8, { error: 'A senha é inválida.' })
-    .max(64, { error: 'A senha é nválida.' }),
-})
 
 const autenticacao = new ApiAutenticacao()
 

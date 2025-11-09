@@ -8,6 +8,7 @@ import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
 import { sessao } from '@/main'
 import { Permissoes } from '../../../backend/src/db/schema/permissoes'
 import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
+import CadastroUsuariosView from '@/views/CadastroUsuariosView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -82,11 +83,11 @@ const router = createRouter({
     {
       name: 'usuarios',
       path: '/usuarios',
-      component: NotImplementedView,
       meta: {
         requerAutenticacao: true,
         requerPermissoes: [[Permissoes.Administrador], [Permissoes.Desenvolvedor]],
       },
+      component: CadastroUsuariosView,
     },
     {
       name: 'configuracoes',

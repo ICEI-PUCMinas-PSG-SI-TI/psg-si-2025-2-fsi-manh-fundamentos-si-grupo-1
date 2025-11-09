@@ -1,7 +1,7 @@
 import z from "zod";
 import {
   InsertUsuarioSchemaZ,
-  SelectUsuarioInfoSchemaZ,
+  type SelectUsuarioInfoSchema,
   type UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
 import { debug, error } from "../logging";
@@ -22,7 +22,7 @@ export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
   password: PasswordZ,
 });
 
-type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
+export type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
 
 function hashSenha(senha: string): Promise<string> {
   const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
@@ -63,19 +63,32 @@ class ServicoUsuarios {
     return res[0];
   }
 
-  async selecionarInfoPorId(
+  async listarUnicoPublico(
     id: string,
-  ): Promise<z.infer<typeof SelectUsuarioInfoSchemaZ> | null> {
+  ): Promise<SelectUsuarioInfoSchema | null> {
     const res = await repositorioUsuarios.selecionarPorId(id);
     if (!res) return null;
-    const parsedUsuario = SelectUsuarioInfoSchemaZ.parse({
+    return {
       id: res.id,
       nome: res.nome,
       descricao: res.descricao,
-      foto: res.foto,
-    });
-    debug(`Retornando usuário ${id}`, { label: "UsuarioServ" });
-    return parsedUsuario;
+      foto: res.foto as string | null,
+    };
+  }
+
+  /** Listar seleciona apenas as informações públicas */
+  async listarTodosPerfil() {
+    const res = await repositorioUsuarios.selecionarTodos(0, 0);
+    const usuarios = res.map((u) => ({
+      id: u.id,
+      nome: u.nome,
+      login: u.login,
+      descricao: u.descricao,
+      habilitado: u.habilitado,
+      modoEscuro: u.modoEscuro,
+      foto: u.foto,
+    }));
+    return usuarios;
   }
 
   async selecionarPorId(id: string) {
@@ -85,9 +98,9 @@ class ServicoUsuarios {
   }
 
   async selecionarTodos() {
-    const res = await repositorioUsuarios.selecionarTodos();
+    const usuarios = await repositorioUsuarios.selecionarTodos(0, 0);
     debug(`Retornando usuário`, { label: "UsuarioServ" });
-    return res;
+    return usuarios;
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js

@@ -14,20 +14,6 @@ const ParamsPatchPermissoesZ = z.object({
 
 export type ParamsPatchPermissoes = z.infer<typeof ParamsPatchPermissoesZ>;
 
-async function verPermissoes(
-  req: ExtendedRequest,
-  res: Response,
-  next: NextFunction,
-) {
-  try {
-    const params = ParamsIdSchemaZ.parse(req.params);
-    const permissoes = await servicoPermissoes.selecionarPermissoes(params.id);
-    res.send(permissoes);
-  } catch (err) {
-    next(err);
-  }
-}
-
 async function addPermissoes(
   req: ExtendedRequest,
   res: Response,
@@ -62,9 +48,81 @@ async function delPermissoes(
   }
 }
 
+async function verPermissoesId(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const params = ParamsIdSchemaZ.parse(req.params);
+    const permissoes = await servicoPermissoes.selecionarPermissoes(params.id);
+    res.send(permissoes);
+  } catch (err) {
+    next(err);
+  }
+}
+
+const PermsPermissoesArrayZ = z.array(z.enum(Permissoes));
+
+async function addPermissoesId(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const params = ParamsIdSchemaZ.parse(req.params);
+    const parsedBody = PermsPermissoesArrayZ.parse(req.body);
+    await servicoPermissoes.adicionarPermissoesUsuario(
+      params.id,
+      ...parsedBody,
+    );
+    res.send();
+  } catch (err) {
+    next(err);
+  }
+}
+async function setPermissoesId(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const params = ParamsIdSchemaZ.parse(req.params);
+    const parsedBody = PermsPermissoesArrayZ.parse(req.body);
+    await servicoPermissoes.removerTodasPermissoes(params.id);
+    await servicoPermissoes.adicionarPermissoesUsuario(
+      params.id,
+      ...parsedBody,
+    );
+    res.send();
+  } catch (err) {
+    next(err);
+  }
+}
+async function delPermissoesId(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const params = ParamsIdSchemaZ.parse(req.params);
+    const parsedBody = PermsPermissoesArrayZ.parse(req.body);
+    await servicoPermissoes.removerPermissoesUsuario(params.id, ...parsedBody);
+    res.send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Deprecated
 apiV1PermissoesRouter
-  .get("/ver/:id", verPermissoes)
   .patch("/add", mdwRequerBody, addPermissoes)
   .patch("/remove", mdwRequerBody, delPermissoes);
+
+apiV1PermissoesRouter
+  .get("/ver/:id", verPermissoesId)
+  .post("/add/:id", mdwRequerBody, addPermissoesId)
+  .patch("/set/:id", mdwRequerBody, setPermissoesId)
+  .patch("/remove/:id", mdwRequerBody, delPermissoesId);
 
 export default apiV1PermissoesRouter;

@@ -38,6 +38,10 @@ export class ServicoPermissoes {
       await repositorioPermissoes.excluir(usuarioId, perms[i]!);
     }
   }
+
+  removerTodasPermissoes(usuarioId: string) {
+    return repositorioPermissoes.excluirPermissoes(usuarioId);
+  }
 }
 
 const servicoPermissoes = new ServicoPermissoes();

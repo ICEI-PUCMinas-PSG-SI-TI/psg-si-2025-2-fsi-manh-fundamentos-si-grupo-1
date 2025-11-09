@@ -5,8 +5,8 @@ const endpoint_path = `/api/v1/usuarios`
 
 const ParamIdSchemaZ = z.uuid()
 
-export class ApiUsuario {
-  obter(id: string) {
+export class ApiPerfil {
+  obterPorId(id: string) {
     const _id = ParamIdSchemaZ.parse(id)
     return fetchW(`${endpoint_path}/${_id}`)
   }
