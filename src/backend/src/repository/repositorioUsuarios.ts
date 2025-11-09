@@ -1,6 +1,6 @@
 import { and, count, eq, type SQLWrapper } from "drizzle-orm";
 import bancoDados from "../db";
-import { usuariosTable as tabelaUsuarios } from "../db/schema/usuarios";
+import { tabelaUsuarios } from "../db/schema/usuarios";
 import type {
   InsertUsuarioSchema,
   SelectUsuarioSchema,
@@ -45,8 +45,10 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 
 export class RepositorioUsuarios {
   async inserir(usuario: InsertUsuarioSchema) {
-    return await bancoDados.transaction(async (tx) => {
-      return (await tx.insert(tabelaUsuarios).values(usuario)).lastInsertRowid;
+    return await bancoDados.transaction((tx) => {
+      return tx.insert(tabelaUsuarios).values(usuario).returning({
+        id: tabelaUsuarios.id,
+      });
     });
   }
 

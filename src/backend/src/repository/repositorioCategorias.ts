@@ -1,16 +1,17 @@
 import { eq, like } from "drizzle-orm";
 import baseDados from "../db";
 import {
-  categoriasTable as categoriasTable,
+  tabelaCategorias,
   type InsertCategoriaSchema,
   type SelectCategoriaSchema,
 } from "../db/schema/categorias";
 
 export class RepositorioCategorias {
-  async inserir(categoria: InsertCategoriaSchema) {
-    return await baseDados.transaction(async (tx) => {
-      return (await tx.insert(categoriasTable).values(categoria))
-        .lastInsertRowid;
+  inserir(categoria: InsertCategoriaSchema) {
+    return baseDados.transaction((tx) => {
+      return tx.insert(tabelaCategorias).values(categoria).returning({
+        id: tabelaCategorias.id,
+      });
     });
   }
 
@@ -18,8 +19,8 @@ export class RepositorioCategorias {
     return await baseDados.transaction(async (tx) => {
       return await tx
         .select()
-        .from(categoriasTable)
-        .where(eq(categoriasTable.id, id));
+        .from(tabelaCategorias)
+        .where(eq(tabelaCategorias.id, id));
     });
   }
 
@@ -31,11 +32,11 @@ export class RepositorioCategorias {
       if (page >= 1 && pageSize >= 1) {
         return await tx
           .select()
-          .from(categoriasTable)
+          .from(tabelaCategorias)
           .limit(pageSize)
           .offset((page - 1) * pageSize);
       } else {
-        return await tx.select().from(categoriasTable);
+        return await tx.select().from(tabelaCategorias);
       }
     });
   }
@@ -44,8 +45,8 @@ export class RepositorioCategorias {
     return await baseDados.transaction(async (tx) => {
       return await tx
         .select()
-        .from(categoriasTable)
-        .where(like(categoriasTable.nome, `%${nome}%`));
+        .from(tabelaCategorias)
+        .where(like(tabelaCategorias.nome, `%${nome}%`));
     });
   }
 
@@ -53,7 +54,7 @@ export class RepositorioCategorias {
     return await baseDados.transaction(async (tx) => {
       // or .returning()
       return (
-        await tx.delete(categoriasTable).where(eq(categoriasTable.id, id))
+        await tx.delete(tabelaCategorias).where(eq(tabelaCategorias.id, id))
       ).rowsAffected;
     });
   }

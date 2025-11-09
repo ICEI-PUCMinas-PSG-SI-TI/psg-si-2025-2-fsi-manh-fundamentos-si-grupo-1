@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 // TODO: View if system has any type of "light", "dark", "other"
 function isSystemDarkModePreferred() {
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
 function isUserDarkModePrefered() {
@@ -15,8 +15,8 @@ function isUserDarkModePrefered() {
 // INFO: Se o usuário alterar o tema uma única vez, a configuração fica dessincronizada com o sistema
 export const useTemaStore = defineStore('tema', {
   state: () => ({
-    isSystemDarkModePreferred: isSystemDarkModePreferred() as boolean,
-    isUserDarkModePrefered: isUserDarkModePrefered() as boolean | null,
+    isSystemDarkModePreferred: isSystemDarkModePreferred(),
+    isUserDarkModePrefered: isUserDarkModePrefered(),
   }),
   getters: {
     isDarkModePreferred: (state) => {

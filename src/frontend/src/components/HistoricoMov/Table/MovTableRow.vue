@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import MovTableProduct from './MovTableProduct.vue'
 import { ref, watch, type Ref } from 'vue'
-import { ApiUsuario } from '@/api/usuario'
+import { ApiPerfil } from '@/api/perfil'
 
 const props = defineProps<{
   colUserId: string
@@ -30,12 +30,12 @@ const refUsuariodata: Ref<{
   nome?: string
 }> = ref({})
 
-const usuarios = new ApiUsuario()
+const usuarios = new ApiPerfil()
 
 async function obterUsuario(id: string) {
-  const res = await usuarios.obter(id)
-  if (res.ok) {
-    refUsuariodata.value = await res.json()
+  const res = await usuarios.obterPorId(id)
+  if (res.ok && res.responseBody) {
+    refUsuariodata.value = res.responseBody
   }
   // TODO: Criar campos padrão
 }

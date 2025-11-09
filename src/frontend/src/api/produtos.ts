@@ -1,16 +1,28 @@
 import z from 'zod'
+import { fetchW, HttpMethods } from './fetchWrapper'
+import type { UuidResult, ParamsConsultaProdutos, ParamsInserirProdutos } from '../../../backend'
+import type { SelectProdutosSchema } from '../../../backend/src/db/schema/produtos'
 
-// TODO: Alterar 'localhost' para ENV
-const backend_uri = 'http://localhost:5173'
-const backend_path = `${backend_uri}/api/v1/produtos`
+const endpoint_path = `/api/v1/produtos`
 
 const ParamIdSchemaZ = z.uuid()
 
 export class ApiProdutos {
-  obter(id: string): Promise<Response> {
+  criar(opts: ParamsInserirProdutos) {
+    return fetchW<UuidResult>(endpoint_path, {
+      method: HttpMethods.Post,
+      body: opts,
+    })
+  }
+
+  obterPorId(id: string) {
     const _id = ParamIdSchemaZ.parse(id)
-    return fetch(`${backend_path}/${_id}`, {
-      method: 'GET',
+    return fetchW(`${endpoint_path}/${_id}`)
+  }
+
+  obterTodos(params: ParamsConsultaProdutos) {
+    return fetchW<SelectProdutosSchema>(endpoint_path, {
+      params: params,
     })
   }
 }

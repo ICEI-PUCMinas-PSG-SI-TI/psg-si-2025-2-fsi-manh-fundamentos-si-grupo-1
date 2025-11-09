@@ -1,11 +1,12 @@
-// TODO: Alterar 'localhost' para ENV
-const backend_uri = 'http://localhost:5173'
-const backend_path = `${backend_uri}/api/v1/transacoes`
+import type { ParamsConsultaTransacoes } from '../../../backend'
+import { fetchW } from './fetchWrapper'
+
+const endpoint_path = `/api/v1/transacoes`
 
 export class ApiMovimentacoes {
-  obterTodos(): Promise<Response> {
-    return fetch(backend_path, {
-      method: 'GET',
+  obterTodos(params?: ParamsConsultaTransacoes) {
+    return fetchW(endpoint_path, {
+      params: params,
     })
   }
 }

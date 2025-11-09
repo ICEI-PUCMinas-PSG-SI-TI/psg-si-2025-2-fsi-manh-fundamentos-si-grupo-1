@@ -2,7 +2,7 @@ import "dotenv/config";
 import { and, eq, type SQLWrapper } from "drizzle-orm";
 import bancoDados, { baseDados } from "../db";
 import {
-  transacoesTable as tabelaTransacoes,
+  tabelaTransacoes,
   type InsertTransacoesSchema,
   type SelectTransacoesSchema,
   type UpdateTransacoesSchema,
@@ -12,7 +12,6 @@ import {
   type SQLiteSelectQueryBuilder,
 } from "drizzle-orm/sqlite-core";
 import type { SQL } from "bun";
-import type { SelectProdutosSchema } from "../db/schema/produtos";
 
 class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
   _query: T;
@@ -60,7 +59,7 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
-  executarConsulta(): Promise<SelectProdutosSchema[]> {
+  executarConsulta(): Promise<SelectTransacoesSchema[]> {
     this._query.where(and(...this._whereAnd));
     return baseDados.transaction((tx) => {
       return tx.all(this._query.getSQL());
@@ -70,9 +69,10 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
 
 export class RepositorioTransacoes {
   inserir(transacao: InsertTransacoesSchema) {
-    return bancoDados.transaction(async (tx) => {
-      const resultSet = await tx.insert(tabelaTransacoes).values(transacao);
-      return resultSet.lastInsertRowid;
+    return bancoDados.transaction((tx) => {
+      return tx.insert(tabelaTransacoes).values(transacao).returning({
+        id: tabelaTransacoes.id,
+      });
     });
   }
 

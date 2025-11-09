@@ -6,6 +6,8 @@ import { HttpError } from "../error";
 import servicoTransacoes from "./servicoTransacoes";
 import servicoUsuarios from "./servicoUsuarios";
 import servicoUnidadesMedida from "./servicoUnidadesMedida";
+import { StatusProduto } from "../db/schema/produtos";
+import { warning } from "../logging";
 
 function fakerLocal() {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;
@@ -26,12 +28,12 @@ function fakerDimensoes() {
   ].join("");
 }
 
-function fakerImageURL() {
-  return `https://picsum.photos/seed/${faker.number.int({
-    min: 1,
-    max: 1000,
-  })}/200/300`;
+/*
+function fakerImage() {
+  // faker.image.urlPicsumPhotos({ width: 200, height: 200 }),
+  return faker.image.dataUri({ type: "svg-base64", width: 200, height: 200 });
 }
+*/
 
 function escolherAleatorios<T>(quant: number, valores: T[]): T[] {
   const _filtro: T[] = [];
@@ -139,11 +141,11 @@ export class ServicoFaker {
         quantidadeMinima: faker.number.int({ min: 10000, max: 100000 }),
         quantidadeMaxima: faker.number.int({ min: 100001, max: 10000000 }),
         localizacao: fakerLocal(),
-        imagem: fakerImageURL(),
-        // TODO: use ENUM_PRODUTOS_STATUS
-        status: "ATIVO",
+        // imagem: fakerImage(),
+        status: StatusProduto.Ativo,
       });
     }
+    warning(`Criado ${quant} produtos.`, { label: "Faker" });
   }
 
   async criarLotes(quant: number, canRecurse: boolean) {
@@ -155,11 +157,12 @@ export class ServicoFaker {
       if (!produto) throw new Error();
       await servicoLotes.inserir({
         produtoId: produto.id,
-        lote: fakerLote(),
+        codigo: fakerLote(),
         quantidade: faker.number.int({ min: 1000, max: 10000000 }),
         validade: faker.date.future({ years: 1 }),
       });
     }
+    warning(`Criado ${quant} lotes.`, { label: "Faker" });
   }
 
   async criarTransacoes(quant: number, canRecurse: boolean) {
@@ -183,6 +186,7 @@ export class ServicoFaker {
         motivo: faker.number.int({ min: 0, max: 9 }).toString(),
       });
     }
+    warning(`Criado ${quant} transações.`, { label: "Faker" });
   }
   async criarUsuarios(quant: number) {
     for (let i = 0; i < quant; i++) {
@@ -194,9 +198,10 @@ export class ServicoFaker {
         habilitado: faker.datatype.boolean(),
         // modoEscuro: faker.datatype.boolean(),
         nivelPermissoes: faker.number.int({ min: 0, max: 3 }),
-        foto: fakerImageURL(),
+        // foto: fakerImage(),
       });
     }
+    warning(`Criado ${quant} usuários.`, { label: "Faker" });
   }
 
   async criarUnidadesMedida(quant: number) {
@@ -208,6 +213,7 @@ export class ServicoFaker {
         abreviacao: unit.symbol,
       });
     }
+    warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
   }
 }
 

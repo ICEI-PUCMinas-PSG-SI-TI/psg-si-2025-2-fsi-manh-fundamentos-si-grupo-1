@@ -97,7 +97,7 @@
         <div class="xl:col-span-2">
           <p
             class="flex size-full text-center m-auto justify-center items-center"
-            v-if="refUnidadesMedida.length === 0"
+            v-if="refCategorias.length === 0"
           >
             Não há categorias.
           </p>
@@ -169,18 +169,20 @@ import CardTitleBar from '@/components/Card/CardTitleBar.vue'
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import LabeledInput from '@/components/LabeledInput.vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { ApiConfiguracoes } from '@/api/configuracoes'
 import { ApiCategorias, type Categorias } from '@/api/categorias'
 import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
 import { useNotificationStore } from '@/store/config/toast'
 import AlterarSenha from '@/components/config/AlterarSenha.vue'
 import { ApiAutenticacao } from '@/api/auth'
-import { ApiUsuario } from '@/api/usuario'
+import { ApiPerfil } from '@/api/perfil'
 import { limparConfiguracoes } from '@/services/storage'
 import router from '@/router'
+import type { SelectConfiguracaoSchema } from '../../../backend/src/db/schema/configuracoes'
+import { useSessaoStore } from '@/store/config/sessao'
 
-const refConfig = ref({
+const refConfig: Ref<Partial<SelectConfiguracaoSchema>> = ref({
   nomeCliente: '',
   cpfCnpj: '',
   endereco: '',
@@ -209,18 +211,16 @@ const configuracoes = new ApiConfiguracoes()
 const categorias = new ApiCategorias()
 const unidadesMedida = new ApiUnidadesMedida()
 const autenticacao = new ApiAutenticacao()
-const usuario = new ApiUsuario()
+const usuario = new ApiPerfil()
 
 const notificacoes = useNotificationStore()
 
 async function obterSessao() {
+  // TODO: Criar serviço e armazenar informações
   const data = await autenticacao.sessao()
-  if (data.ok) {
-    const jotaSon = await data.json()
-    refSessao.value.login = jotaSon.login
-    refSessao.value.nome = jotaSon.nome
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refSessao.value.login = data.responseBody.login
+    refSessao.value.nome = data.responseBody.nome
   }
 }
 
@@ -229,64 +229,54 @@ async function alterarInformacoesUsuario() {
   if (req.ok) {
     notificacoes.addNotification('Informações alteradas.')
     obterSessao()
-  } else {
-    notificacoes.addNotification(req.statusText, true)
   }
 }
 
 async function obterConfiguracoes() {
   const data = await configuracoes.obterTodos()
-  if (data.ok) {
-    refConfig.value = await data.json()
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refConfig.value = data.responseBody
   }
 }
 
 async function salvarConfiguracoes() {
-  const res = await configuracoes.atualizar(refConfig.value)
+  const res = await configuracoes.atualizar({
+    nomeCliente: refConfig.value.nomeCliente,
+    cpfCnpj: refConfig.value.cpfCnpj,
+    endereco: refConfig.value.endereco,
+  })
   if (res.ok) {
     notificacoes.addNotification('Informações alteradas.')
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
 async function obterCategorias() {
   const data = await categorias.obterTodos()
-  if (data.ok) {
-    refCategorias.value = await data.json()
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refCategorias.value = data.responseBody
   }
 }
 
 async function adicionarCategoria() {
   const res = await categorias.criar(refNovaCategoria.value)
   if (res.ok) {
-    notificacoes.addNotification('Informações adicionadas.')
+    notificacoes.addNotification('Informações adicionadas.', { time: 3000 })
     obterCategorias()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
 async function removerCategorias(id: string) {
   const res = await categorias.excluir(id)
   if (res.ok) {
-    notificacoes.addNotification('Informações excluídas.')
+    notificacoes.addNotification('Informações excluídas.', { time: 3000 })
     obterCategorias()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
 async function obterUnidadesMedida() {
   const data = await unidadesMedida.obterTodos()
-  if (data.ok) {
-    refUnidadesMedida.value = await data.json()
-  } else {
-    notificacoes.addNotification(data.statusText, true)
+  if (data.ok && data.responseBody) {
+    refUnidadesMedida.value = data.responseBody
   }
 }
 
@@ -294,40 +284,34 @@ async function adicionarUnidadeMedida() {
   const { nome, abreviacao } = refNovaUnidadeMedida.value
   const res = await unidadesMedida.criar(nome, abreviacao)
   if (res.ok) {
-    notificacoes.addNotification('Informações adicionadas.')
+    notificacoes.addNotification('Informações adicionadas.', { time: 3000 })
     obterUnidadesMedida()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
 async function removerUnidadeMedida(id: string) {
   const res = await unidadesMedida.excluir(id)
   if (res.ok) {
-    notificacoes.addNotification('Informações excluídas.')
+    notificacoes.addNotification('Informações excluídas.', { time: 3000 })
     obterUnidadesMedida()
-  } else {
-    notificacoes.addNotification(res.statusText, true)
   }
 }
 
+const useSessao = useSessaoStore()
+
 async function deslogarSessao() {
-  const res = await autenticacao.logout()
+  await autenticacao.logout()
+  useSessao.logout()
   limparConfiguracoes()
   router.push('/login')
-  if (!res.ok) {
-    notificacoes.addNotification(res.statusText, true)
-  }
 }
 
 async function deslogarSessaoTodas() {
   // TODO: Confirmar primeiro
-  const res = await autenticacao.logoutAll()
+  await autenticacao.logoutAll()
+  useSessao.logout()
   limparConfiguracoes()
   router.push('/login')
-  if (!res.ok) {
-    notificacoes.addNotification(res.statusText, true)
-  }
 }
 
 obterSessao()

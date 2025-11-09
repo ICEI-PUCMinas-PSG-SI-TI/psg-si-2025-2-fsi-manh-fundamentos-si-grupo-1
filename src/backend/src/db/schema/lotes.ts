@@ -4,16 +4,16 @@ import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import z from "zod";
-import { produtosTable } from "./produtos";
+import { tabelaProdutos } from "./produtos";
 
-export const lotesTable = sqliteTable("lotes", {
+export const tabelaLotes = sqliteTable("lotes", {
   id: text()
     .primaryKey()
     .notNull()
     .$defaultFn(() => genUUID()),
   produtoId: text("produto_id")
     .notNull()
-    .references(() => produtosTable.id),
+    .references(() => tabelaProdutos.id),
   // Aqui poderia ser utilizado SQLITE(blob) e Uint8Array array, mas isso
   // dificulta exponencialmente a validação (zod), o retorno de dados e a
   // inserção de dados.
@@ -24,16 +24,16 @@ export const lotesTable = sqliteTable("lotes", {
     .$defaultFn(() => parse(genUUID())),
   produto_id: uuid().primaryKey().notNull(),
   */
-  lote: text().notNull(),
+  codigo: text().notNull(),
   quantidade: int().notNull().default(0),
-  validade: int({ mode: "timestamp" }),
+  validade: int({ mode: "timestamp_ms" }),
   // Default to current Unix epoch in seconds
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+    .default(sql`(unixepoch()*1000)`),
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(unixepoch()*1000)`),
 });
 
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
@@ -45,7 +45,7 @@ export const UpdateLoteSchemaZ = z.strictObject({
   validade: z.coerce.date().optional(),
 });
 
-export const InsertLoteSchemaZ = createInsertSchema(lotesTable, {
+export const InsertLoteSchemaZ = createInsertSchema(tabelaLotes, {
   id: z.uuid().optional(),
   produtoId: z.uuid(),
 })
@@ -55,6 +55,6 @@ export const InsertLoteSchemaZ = createInsertSchema(lotesTable, {
   })
   .strict();
 
-export type SelectLoteSchema = InferSelectModel<typeof lotesTable>;
+export type SelectLoteSchema = InferSelectModel<typeof tabelaLotes>;
 export type UpdateLoteSchema = z.infer<typeof UpdateLoteSchemaZ>;
 export type InsertLoteSchema = z.infer<typeof InsertLoteSchemaZ>;

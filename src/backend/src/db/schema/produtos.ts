@@ -3,9 +3,16 @@ import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
-import { unidadesMedidaTable } from "./unidadesMedida";
+import { tabelaUnidadesMedida } from "./unidadesMedida";
 
-export const produtosTable = sqliteTable("produtos", {
+export enum StatusProduto {
+  Ativo = "ATIVO",
+  Inativo = "INATIVO",
+  Descontinuado = "DESCONTINUADO",
+  Bloqueado = "BLOQUEADO",
+}
+
+export const tabelaProdutos = sqliteTable("produtos", {
   id: text()
     .primaryKey()
     .notNull()
@@ -26,21 +33,26 @@ export const produtosTable = sqliteTable("produtos", {
   precoPromocao: int("preco_promocao"),
   quantidadeUnidadeMedida: text("quantidade_unidade_medida")
     .notNull()
-    .references(() => unidadesMedidaTable.id),
+    .references(() => tabelaUnidadesMedida.id),
   quantidadeMinima: int("quantidade_minima"),
   quantidadeMaxima: int("quantidade_maxima"),
   localizacao: text(),
   imagem: blob(),
   status: text({
     // TODO: use ENUM_PRODUTOS_STATUS
-    enum: ["ATIVO", "INATIVO", "DESCONTINUADO", "BLOQUEADO"],
+    enum: [
+      StatusProduto.Ativo,
+      StatusProduto.Inativo,
+      StatusProduto.Descontinuado,
+      StatusProduto.Bloqueado,
+    ],
   }).notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+    .default(sql`(unixepoch()*1000)`),
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(unixepoch()*1000)`),
 });
 
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
@@ -64,11 +76,16 @@ export const UpdateProdutosSchemaZ = z.strictObject({
   quantidadeMaxima: z.int().optional(),
   localizacao: z.string().optional(),
   imagem: z.base64().optional(),
-  status: z.enum(["ATIVO", "INATIVO", "DESCONTINUADO", "BLOQUEADO"]),
+  status: z.enum([
+    StatusProduto.Ativo,
+    StatusProduto.Inativo,
+    StatusProduto.Descontinuado,
+    StatusProduto.Bloqueado,
+  ]),
 });
 
 // Os campos de inserção podem ser inferidos. Alguns deles podem ser adicionalmente validados como UUID e omitidos.
-export const InsertProdutosSchemaZ = createInsertSchema(produtosTable, {
+export const InsertProdutosSchemaZ = createInsertSchema(tabelaProdutos, {
   id: z.uuid().optional(),
   imagem: z.base64().optional(),
 })
@@ -78,6 +95,6 @@ export const InsertProdutosSchemaZ = createInsertSchema(produtosTable, {
   })
   .strict();
 
-export type SelectProdutosSchema = InferSelectModel<typeof produtosTable>;
+export type SelectProdutosSchema = InferSelectModel<typeof tabelaProdutos>;
 export type UpdateProdutosSchema = z.infer<typeof UpdateProdutosSchemaZ>;
 export type InsertProdutosSchema = z.infer<typeof InsertProdutosSchemaZ>;

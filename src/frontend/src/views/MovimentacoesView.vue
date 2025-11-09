@@ -52,6 +52,7 @@ interface Transacao {
 }
 
 /* === Formatações === */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatarData(dataISO: string): string {
   const data = new Date(dataISO)
   return data.toLocaleString('pt-BR', {
@@ -92,6 +93,7 @@ const transacoesFiltradas = computed(() => {
   })
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const transacoesPaginas = computed(() => {
   const inicio = (paginaAtual.value - 1) * itensPorPagina
   return transacoesFiltradas.value.slice(inicio, inicio + itensPorPagina)

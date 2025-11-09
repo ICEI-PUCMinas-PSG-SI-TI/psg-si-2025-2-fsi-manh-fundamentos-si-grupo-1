@@ -61,19 +61,15 @@
 <script setup lang="ts">
 import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
 import { ref, type Ref } from 'vue'
-import z from 'zod'
 import { ApiAutenticacao } from '@/api/auth'
 import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
-import router from '@/router'
-import {
-  CONFIG_KEY_DARK_THEME,
-  CONFIG_KEY_FOTO,
-  CONFIG_KEY_ID,
-  CONFIG_KEY_LOGIN,
-  CONFIG_KEY_NOME,
-  CONFIG_KEY_PERMS,
-} from '@/services/storage'
+import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
 import { useNotificationStore } from '@/store/config/toast'
+import { useSessaoStore } from '@/store/config/sessao'
+import { useRoute, useRouter } from 'vue-router'
+import { CrecenciaisZ } from '@/services/objects'
+const route = useRoute()
+const router = useRouter()
 
 const useNotifications = useNotificationStore()
 
@@ -87,27 +83,7 @@ const refFormulario: Ref<{
 const erro = ref('')
 const mostrarSenha = ref(false)
 
-const CrecenciaisZ = z.object({
-  usuario: z.string().nonempty({ error: 'Digite um usuário válido.' }),
-  senha: z
-    .string()
-    .min(8, { error: 'A senha é inválida.' })
-    .max(64, { error: 'A senha é nválida.' }),
-})
-
 const autenticacao = new ApiAutenticacao()
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UserSessionInfoZ = z.object({
-  id: z.string(),
-  nome: z.string(),
-  login: z.string(),
-  modoEscuro: z.boolean(),
-  nivelPermissoes: z.number(),
-  foto: z.base64(),
-})
-
-type UserSessionInfo = z.infer<typeof UserSessionInfoZ>
 
 async function login() {
   const credenciais = CrecenciaisZ.safeParse(refFormulario.value)
@@ -115,22 +91,27 @@ async function login() {
     erro.value = credenciais.error.issues[0].message
   } else {
     const res = await autenticacao.login(credenciais.data.usuario, credenciais.data.senha)
-    if (res.ok) {
-      const data = (await res.json()) as UserSessionInfo
-      // TODO: Criar um serviço para armazenar informações
-      localStorage.setItem(CONFIG_KEY_ID, data.id)
-      localStorage.setItem(CONFIG_KEY_NOME, data.nome)
-      localStorage.setItem(CONFIG_KEY_LOGIN, data.login)
+    if (res.ok && res.responseBody) {
+      const data = res.responseBody
       // TODO: Realizar ligação entre configurações do frontend e backend
       localStorage.setItem(CONFIG_KEY_DARK_THEME, data.modoEscuro.toString())
-      localStorage.setItem(CONFIG_KEY_PERMS, data.nivelPermissoes.toString())
-      localStorage.setItem(CONFIG_KEY_FOTO, data.foto)
-      router.push('/dashboard')
-    } else if (res.status >= 400 && res.status < 500) {
+      useSessao.checkLogin()
+    } else if (res.resStatus >= 400 && res.resStatus < 500) {
       erro.value = 'Credenciais inválidas!'
     } else {
-      useNotifications.addNotification(res.statusText, true)
+      useNotifications.addNotification(res.statusText, { isError: true })
     }
   }
 }
+
+const useSessao = useSessaoStore()
+useSessao.$subscribe((_, state) => {
+  if (state.isLoggedIn) {
+    if (typeof route.query.nextPage === 'string' && router.hasRoute(route.query.nextPage)) {
+      router.push(route.query.nextPage)
+    } else {
+      router.push({ name: 'dashboard' })
+    }
+  }
+})
 </script>

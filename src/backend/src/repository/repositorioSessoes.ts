@@ -1,16 +1,18 @@
 import "dotenv/config";
 import { eq } from "drizzle-orm";
 import {
-  sessoesTable as tabelaSessoes,
+  tabelaSessoes,
   type InsertSessaoSchema,
   type SelectSessaoSchema,
 } from "../db/schema/sessoes";
 import bancoDados from "../db";
 
 export class RepositorioSessoes {
-  async inserir(sessao: InsertSessaoSchema) {
-    return await bancoDados.transaction(async (tx) => {
-      return (await tx.insert(tabelaSessoes).values(sessao)).lastInsertRowid;
+  inserir(sessao: InsertSessaoSchema) {
+    return bancoDados.transaction((tx) => {
+      return tx.insert(tabelaSessoes).values(sessao).returning({
+        id: tabelaSessoes.id,
+      });
     });
   }
 
@@ -60,5 +62,10 @@ export class RepositorioSessoes {
         .where(eq(tabelaSessoes.usuarioId, usuarioId));
       return resultSet.rowsAffected;
     });
+  }
+
+  async limparSessoes(): Promise<number> {
+    const resultSet = await bancoDados.delete(tabelaSessoes);
+    return resultSet.rowsAffected;
   }
 }

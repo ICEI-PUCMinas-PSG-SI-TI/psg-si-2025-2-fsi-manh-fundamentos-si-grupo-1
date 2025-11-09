@@ -2,6 +2,8 @@ import z from "zod";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/repositorioLotes";
 import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
+import { HttpError } from "../error";
+import type { UuidResult } from "../api/v1/objects";
 
 export const LoteConsultaSchema = z.strictObject({
   id: z.uuid().optional(),
@@ -12,20 +14,19 @@ export const LoteConsultaSchema = z.strictObject({
   quantidadeMax: z.coerce.number().optional(),
   validadeAte: z.iso.datetime().optional(),
   validadeApos: z.iso.datetime().optional(),
-  lote: z.string().min(1).optional(),
+  codigo: z.string().min(1).optional(),
 });
 
-type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
+export type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
 
 const repositorioLotes = new RepositorioLotes();
 
 export class ServicoLotes {
-  async inserir(lote: InsertLoteSchema) {
+  async inserir(lote: InsertLoteSchema): Promise<UuidResult> {
     const res = await repositorioLotes.inserir(lote);
-    if (res && res > 0) {
-      debug(`Novo lote criado!`, { label: "LoteService" });
-    }
-    return res;
+    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    debug(`Novo lote criado!`, { label: "LoteService" });
+    return res[0];
   }
 
   async selecionarPorId(id: string) {
@@ -44,8 +45,8 @@ export class ServicoLotes {
       if (opts.produtoId) {
         query = query.comProdutoId(opts.produtoId);
       }
-      if (opts.lote) {
-        query = query.comLote(opts.lote);
+      if (opts.codigo) {
+        query = query.comCodigo(opts.codigo);
       }
       query = query.comPaginacao(opts.pagina, opts.paginaTamanho);
       if (opts.validadeApos) {

@@ -1,14 +1,16 @@
 import z from "zod";
 import {
   InsertUsuarioSchemaZ,
-  SelectUsuarioInfoSchemaZ,
+  type SelectUsuarioInfoSchema,
   type UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
 import { debug, error } from "../logging";
 import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { compare, hash } from "bcrypt";
 import { ClientError } from "../error";
-import { PasswordZ } from "../api/v1/objects";
+import { PasswordZ, type UuidResult } from "../api/v1/objects";
+import { Permissoes } from "../db/schema/permissoes";
+import servicoPermissoes from "./servicoPermissoes";
 
 const repositorioUsuarios = new RepositorioUsuarios();
 
@@ -20,12 +22,21 @@ export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
   password: PasswordZ,
 });
 
-type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
+export type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
+
+function hashSenha(senha: string): Promise<string> {
+  const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
+  return hash(senha, rounds);
+}
 
 class ServicoUsuarios {
-  async inserir(usuario: InsertUsuarioSchemaReq) {
-    const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
-    const hashedPassword: string = await hash(usuario.password, rounds);
+  async inserir(
+    usuario: InsertUsuarioSchemaReq,
+    opts?: {
+      cargos?: Permissoes[];
+    },
+  ): Promise<UuidResult> {
+    const hashedPassword = await hashSenha(usuario.password);
     // Verifica se login já existe
     const _usuario = await repositorioUsuarios.selecionarPorLogin(
       usuario.login,
@@ -41,37 +52,55 @@ class ServicoUsuarios {
       hashedPassword: hashedPassword,
     });
     const res = await repositorioUsuarios.inserir(insertUsuario);
-    if (res && res > 0) {
-      debug(`Novo usuário criado!`, { label: "LoteService" });
+    if (res.length !== 1 || !res[0]) throw new ClientError("", 500);
+    if (opts?.cargos) {
+      await servicoPermissoes.adicionarPermissoesUsuario(
+        res[0].id,
+        ...opts.cargos,
+      );
     }
-    return res;
+    debug(`Novo usuário criado!`, { label: "UsuarioServ" });
+    return res[0];
   }
 
-  async selecionarInfoPorId(
+  async listarUnicoPublico(
     id: string,
-  ): Promise<z.infer<typeof SelectUsuarioInfoSchemaZ> | null> {
+  ): Promise<SelectUsuarioInfoSchema | null> {
     const res = await repositorioUsuarios.selecionarPorId(id);
     if (!res) return null;
-    const parsedUsuario = SelectUsuarioInfoSchemaZ.parse({
+    return {
       id: res.id,
       nome: res.nome,
       descricao: res.descricao,
-      foto: res.foto,
-    });
-    debug(`Retornando usuário ${id}`, { label: "LoteService" });
-    return parsedUsuario;
+      foto: res.foto as string | null,
+    };
+  }
+
+  /** Listar seleciona apenas as informações públicas */
+  async listarTodosPerfil() {
+    const res = await repositorioUsuarios.selecionarTodos(0, 0);
+    const usuarios = res.map((u) => ({
+      id: u.id,
+      nome: u.nome,
+      login: u.login,
+      descricao: u.descricao,
+      habilitado: u.habilitado,
+      modoEscuro: u.modoEscuro,
+      foto: u.foto,
+    }));
+    return usuarios;
   }
 
   async selecionarPorId(id: string) {
     const res = await repositorioUsuarios.selecionarPorId(id);
-    debug(`Retornando usuário ${id}`, { label: "LoteService" });
+    debug(`Retornando usuário ${id}`, { label: "UsuarioServ" });
     return res;
   }
 
   async selecionarTodos() {
-    const res = await repositorioUsuarios.selecionarTodos();
-    debug(`Retornando usuário`, { label: "LoteService" });
-    return res;
+    const usuarios = await repositorioUsuarios.selecionarTodos(0, 0);
+    debug(`Retornando usuário`, { label: "UsuarioServ" });
+    return usuarios;
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
@@ -82,7 +111,7 @@ class ServicoUsuarios {
   async atualizar(id: string, usuario: UpdateUsuarioSchema) {
     const res = await repositorioUsuarios.atualizarPorId(id, usuario);
     debug(`Informações do usuário ${id} atualizadas!`, {
-      label: "LoteService",
+      label: "UsuarioServ",
     });
     return res;
   }
@@ -90,7 +119,7 @@ class ServicoUsuarios {
   async excluirPorId(id: string) {
     const res = await repositorioUsuarios.excluirPorId(id);
     debug(`Informações do usuário ${id} excluidas!`, {
-      label: "LoteService",
+      label: "UsuarioServ",
     });
     return res;
   }
@@ -107,8 +136,7 @@ class ServicoUsuarios {
 
   async substituirSenha(usuarioId: string, senha: string) {
     // Realizar hash da nova senha
-    const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
-    const hashedPassword: string = await hash(senha, rounds);
+    const hashedPassword = await hashSenha(senha);
     // Atualizar a senha
     const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
       hashedPassword,
@@ -135,15 +163,7 @@ class ServicoUsuarios {
       error("A senha informada não confere.", { label: "Auth" });
       throw new ClientError("Unauthorized", 401);
     }
-    // Realizar hash da nova senha
-    const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
-    const hashedPassword: string = await hash(senhaNova, rounds);
-    // Atualizar a senha
-    const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
-      hashedPassword,
-    });
-    // TODO: Verificar necessidade de invalidar sessões
-    return updates === 1;
+    return this.substituirSenha(usuarioId, senhaNova);
   }
 }
 

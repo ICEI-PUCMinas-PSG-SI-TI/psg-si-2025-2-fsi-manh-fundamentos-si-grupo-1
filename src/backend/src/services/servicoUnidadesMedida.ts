@@ -1,11 +1,19 @@
+import type { UuidResult } from "../api/v1/objects";
 import type { InsertUnidadesMedidaSchema } from "../db/schema/unidadesMedida";
-import { RepositorioUnidadesMedida } from "../repository/repositorioUnidadesMedidas";
+import { HttpError } from "../error";
+import { debug } from "../logging";
+import { RepositorioUnidadesMedida } from "../repository/repositorioUnidadesMedida";
 
 const repositorioUnidadesMedida = new RepositorioUnidadesMedida();
 
 class ServicoUnidadesMedida {
-  inserir(unidadesMedida: InsertUnidadesMedidaSchema) {
-    return repositorioUnidadesMedida.inserir(unidadesMedida);
+  async inserir(
+    unidadesMedida: InsertUnidadesMedidaSchema,
+  ): Promise<UuidResult> {
+    const res = await repositorioUnidadesMedida.inserir(unidadesMedida);
+    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    debug(`Nova unidade de medida criada!`, { label: "UnidadesMedidaServico" });
+    return res[0];
   }
 
   selecionarPorId(id: string) {

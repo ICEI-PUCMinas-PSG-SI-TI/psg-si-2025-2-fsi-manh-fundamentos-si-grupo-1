@@ -6,25 +6,25 @@
     "chalk": "^5.6.2",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.44.6",
+    "drizzle-orm": "^0.44.7",
     "drizzle-zod": "^0.8.3",
     "express": "^5.1.0",
     "uuid": "^13.0.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@eslint/js": "^9.37.0",
+    "@eslint/js": "^9.39.1",
     "@types/bcrypt": "^6.0.0",
     "@types/bun": "latest",
-    "@types/cookie-parser": "^1.4.9",
-    "@types/express": "^5.0.3",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.5",
     "@types/uuid": "^11.0.0",
-    "drizzle-kit": "^0.31.5",
-    "eslint": "^9.37.0",
+    "drizzle-kit": "^0.31.6",
+    "eslint": "^9.39.1",
     "prettier": "^3.6.2",
-    "typescript-eslint": "^8.46.1"
+    "typescript-eslint": "^8.46.3"
   },
-  "module": "src/index.ts",
+  "exports": "./index.ts",
   "name": "psg-si-backend",
   "peerDependencies": {
     "typescript": "^5.9.3"
@@ -34,10 +34,10 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "dev": "bun --watch src/index.ts",
+    "dev": "bun --watch src/server.ts",
+    "format": "prettier --write './src/**/*.ts' --config ./.prettierrc.toml",
     "lint": "eslint .",
-    "type-check": "tsc --noEmit",
-    "prettier": "prettier --write './src/**/*.ts' --config ./.prettierrc.toml"
+    "type-check": "tsc --noEmit"
   },
   "type": "module"
 }

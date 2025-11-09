@@ -4,7 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
 
-export const configuracoesTable = sqliteTable("configuracoes", {
+export const tabelaConfiguracoes = sqliteTable("configuracoes", {
   // TODO: Generate always the same id for config?
   id: text()
     .primaryKey()
@@ -13,12 +13,12 @@ export const configuracoesTable = sqliteTable("configuracoes", {
   nomeCliente: text("nome_cliente"),
   cpfCnpj: text("cpf_cnpj"),
   endereco: text(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+    .default(sql`(unixepoch()*1000)`),
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(unixepoch()*1000)`),
 });
 
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
@@ -31,7 +31,7 @@ export const UpdateConfiguracaoSchemaZ = z.strictObject({
 });
 
 export const InsertConfiguracaoSchemaZ = createInsertSchema(
-  configuracoesTable,
+  tabelaConfiguracoes,
   {
     id: z.uuid().optional(),
     // TODO(!scope): Validar cpf/cnpj?
@@ -44,7 +44,7 @@ export const InsertConfiguracaoSchemaZ = createInsertSchema(
   .strict();
 
 export type SelectConfiguracaoSchema = InferSelectModel<
-  typeof configuracoesTable
+  typeof tabelaConfiguracoes
 >;
 export type UpdateConfiguracaoSchema = z.infer<
   typeof UpdateConfiguracaoSchemaZ

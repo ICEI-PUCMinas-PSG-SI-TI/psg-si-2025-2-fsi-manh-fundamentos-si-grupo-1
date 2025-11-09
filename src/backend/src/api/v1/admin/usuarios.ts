@@ -1,4 +1,4 @@
-import { type SessionRequest, type SessionUserRequest } from "../../../cookies";
+import { type ExtendedRequest } from "../../../middlewares";
 import {
   Router,
   type NextFunction,
@@ -8,16 +8,16 @@ import {
 import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../../services/servicoUsuarios";
-import { ClientError } from "../../../error";
 import { ParamsIdSchemaZ, PasswordZ } from "../objects";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
+import { mdwRequerBody } from "../../../middlewares";
 
 const apiV1AdminUsuariosRouter = Router();
 
 async function getUsuarios(req: Request, res: Response, next: NextFunction) {
   try {
-    const consulta = await servicoUsuarios.selecionarTodos();
+    const consulta = await servicoUsuarios.listarTodosPerfil();
     res.send(consulta);
   } catch (err) {
     next(err);
@@ -25,16 +25,15 @@ async function getUsuarios(req: Request, res: Response, next: NextFunction) {
 }
 
 async function postUsuario(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    if (!req.body)
-      throw new ClientError("Não há informações para serem inseridas!");
     const parsedBody = InsertUsuarioSchemaReqZ.parse(req.body);
-    await servicoUsuarios.inserir(parsedBody);
-    res.send();
+    const uuid = await servicoUsuarios.inserir(parsedBody);
+    if (uuid) res.send(uuid);
+    else res.send(500);
   } catch (err) {
     next(err);
   }
@@ -45,75 +44,68 @@ const AdmAlteracaoSenhaZ = z.strictObject({
 });
 
 async function alterarSenha(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new ClientError("Bad Request", 400);
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = AdmAlteracaoSenhaZ.parse(req.body);
     const ok = await servicoUsuarios.substituirSenha(
       params.id,
       parsedBody.senha,
     );
-    if (ok) {
-      res.send();
-    } else {
-      throw new ClientError("Unauthorized", 401);
-    }
+    if (ok) res.send();
+    else res.sendStatus(401);
   } catch (err) {
     next(err);
   }
 }
 
 async function getUsuarioId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
-    if (!consulta) throw new ClientError("Not Found", 404);
-    res.send(consulta);
+    if (consulta) res.send(consulta);
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }
 }
 
 async function excluirUsuarioId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await servicoUsuarios.excluirPorId(params.id);
-    if (consulta === 0) throw new ClientError("", 404);
-    res.send(consulta);
+    const alteracoes = await servicoUsuarios.excluirPorId(params.id);
+    if (alteracoes > 0) res.send(alteracoes);
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }
 }
 
-const AdmUpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.pick({}).strict();
+const AdmUpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.strict();
 
+// TODO: Handle password change
 async function patchUsuario(
-  req: SessionUserRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new Error("Not implemented");
     const updateFields = AdmUpdateUsuarioEndpointSchema.parse(req.body);
-    const usuario = req._usuario!;
-    const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
-    if (updates === 1) {
-      res.send();
-    } else {
-      throw new ClientError("Bad Request", 400);
-    }
+    const params = ParamsIdSchemaZ.parse(req.params);
+    const alteracoes = await servicoUsuarios.atualizar(params.id, updateFields);
+    if (alteracoes > 0) res.send();
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }
@@ -121,9 +113,9 @@ async function patchUsuario(
 
 apiV1AdminUsuariosRouter
   .get("/", getUsuarios)
-  .post("/", postUsuario)
-  .patch("/:id", patchUsuario)
-  .post("/alterar-senha/:id", alterarSenha)
+  .post("/", mdwRequerBody, postUsuario)
+  .patch("/:id", mdwRequerBody, patchUsuario)
+  .post("/alterar-senha/:id", mdwRequerBody, alterarSenha)
   .get("/:id", getUsuarioId)
   .delete("/:id", excluirUsuarioId);
 

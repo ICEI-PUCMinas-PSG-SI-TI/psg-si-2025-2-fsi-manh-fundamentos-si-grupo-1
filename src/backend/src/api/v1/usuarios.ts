@@ -1,14 +1,10 @@
-import {
-  parseSessionUser,
-  type SessionRequest,
-  type SessionUserRequest,
-} from "../../cookies";
+import { type ExtendedRequest } from "../../middlewares";
 import { Router, type NextFunction, type Response } from "express";
 import servicoUsuarios from "../../services/servicoUsuarios";
-import { ClientError } from "../../error";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
 import { ParamsIdSchemaZ, PasswordZ } from "./objects";
+import { mdwRequerBody } from "../../middlewares";
 
 const apiV1UsuariosRouter = Router();
 
@@ -18,27 +14,26 @@ const AlteracaoSenhaZ = z.strictObject({
 });
 
 async function getUsuarioId(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await servicoUsuarios.selecionarInfoPorId(params.id);
-    if (!consulta) throw new ClientError("Not Found", 404);
-    res.send(consulta);
+    const consulta = await servicoUsuarios.listarUnicoPublico(params.id);
+    if (consulta) res.send(consulta);
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }
 }
 
 async function alterarSenha(
-  req: SessionUserRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new ClientError("Bad Request", 400);
     const usuario = req._usuario!;
     const senhas = AlteracaoSenhaZ.parse(req.body);
     const ok = await servicoUsuarios.alterarSenha(
@@ -46,11 +41,8 @@ async function alterarSenha(
       senhas.senhaNova,
       usuario.id,
     );
-    if (ok) {
-      res.send();
-    } else {
-      throw new ClientError("Unauthorized", 401);
-    }
+    if (ok) res.send();
+    else res.sendStatus(401);
   } catch (err) {
     next(err);
   }
@@ -64,30 +56,25 @@ const UpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.pick({
 }).strict();
 
 async function patchUsuario(
-  req: SessionUserRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new Error("Not implemented");
     const updateFields = UpdateUsuarioEndpointSchema.parse(req.body);
     const usuario = req._usuario!;
     const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
-    if (updates === 1) {
-      res.send();
-    } else {
-      throw new ClientError("Bad Request", 400);
-    }
+    if (updates > 0) res.send();
+    else res.sendStatus(400);
   } catch (err) {
     next(err);
   }
 }
 
 apiV1UsuariosRouter
-  .use(parseSessionUser)
   .get("/:id", getUsuarioId)
-  .post("/alterar-senha", alterarSenha)
+  .post("/alterar-senha", mdwRequerBody, alterarSenha)
   // TODO: Implementar PUT e PATCH para o endpoint de usuários.
-  .patch("/", patchUsuario);
+  .patch("/", mdwRequerBody, patchUsuario);
 
 export default apiV1UsuariosRouter;

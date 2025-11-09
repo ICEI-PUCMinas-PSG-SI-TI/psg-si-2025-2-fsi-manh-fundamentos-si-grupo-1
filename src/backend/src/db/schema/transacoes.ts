@@ -3,39 +3,39 @@ import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
-import { produtosTable } from "./produtos";
-import { usuariosTable } from "./usuarios";
-import { lotesTable } from "./lotes";
+import { tabelaProdutos } from "./produtos";
+import { tabelaUsuarios } from "./usuarios";
+import { tabelaLotes } from "./lotes";
 
-export const transacoesTable = sqliteTable("transacoes", {
+export const tabelaTransacoes = sqliteTable("transacoes", {
   id: text()
     .primaryKey()
     .notNull()
     .$defaultFn(() => genUUID()),
   produtoId: text("produto_id")
     .notNull()
-    .references(() => produtosTable.id),
+    .references(() => tabelaProdutos.id),
   usuarioId: text("usuario_id")
     .notNull()
-    .references(() => usuariosTable.id),
+    .references(() => tabelaUsuarios.id),
   loteId: text("lote_id")
     .notNull()
-    .references(() => lotesTable.id),
+    .references(() => tabelaLotes.id),
   // TODO: Utilizar enum?
   motivo: text(),
   quantidade: int().notNull(),
-  horario: int({ mode: "timestamp" })
+  horario: int({ mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(unixepoch()*1000)`),
   localOrigem: text("local_origem"),
   localDestino: text("local_destino"),
   observacao: text(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+    .default(sql`(unixepoch()*1000)`),
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(unixepoch()*1000)`),
 });
 
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
@@ -54,7 +54,7 @@ export const UpdateTransacoesSchemaZ = z.strictObject({
 });
 
 // Os campos de inserção podem ser inferidos. Alguns deles podem ser adicionalmente validados como UUID e omitidos.
-export const InsertTransacoesSchemaZ = createInsertSchema(transacoesTable, {
+export const InsertTransacoesSchemaZ = createInsertSchema(tabelaTransacoes, {
   id: z.uuid().optional(),
   produtoId: z.uuid(),
   usuarioId: z.uuid(),
@@ -67,6 +67,6 @@ export const InsertTransacoesSchemaZ = createInsertSchema(transacoesTable, {
   })
   .strict();
 
-export type SelectTransacoesSchema = InferSelectModel<typeof transacoesTable>;
+export type SelectTransacoesSchema = InferSelectModel<typeof tabelaTransacoes>;
 export type UpdateTransacoesSchema = z.infer<typeof UpdateTransacoesSchemaZ>;
 export type InsertTransacoesSchema = z.infer<typeof InsertTransacoesSchemaZ>;

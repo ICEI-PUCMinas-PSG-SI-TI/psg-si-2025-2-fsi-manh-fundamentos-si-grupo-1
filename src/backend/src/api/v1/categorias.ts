@@ -2,13 +2,13 @@ import { Router, type NextFunction, type Response } from "express";
 import { ParamsIdSchemaZ } from "./objects";
 import servicoCategorias from "../../services/servicoCategorias";
 import { InsertCategoriaSchemaZ } from "../../db/schema/categorias";
-import { ClientError } from "../../error";
-import type { SessionRequest } from "../../cookies";
+import type { ExtendedRequest } from "../../middlewares";
+import { mdwRequerBody } from "../../middlewares";
 
 const apiV1CategoriasRouter = Router();
 
 async function getCategorias(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -21,22 +21,21 @@ async function getCategorias(
 }
 
 async function postCategoria(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    if (!req.body) throw new ClientError("Bad Request");
     const categoria = InsertCategoriaSchemaZ.parse(req.body);
-    await servicoCategorias.inserir(categoria);
-    res.send();
+    const id = await servicoCategorias.inserir(categoria);
+    res.send(id);
   } catch (err) {
     next(err);
   }
 }
 
 async function getCategoria(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -51,7 +50,7 @@ async function getCategoria(
 }
 
 async function deleteCategorias(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -67,7 +66,7 @@ async function deleteCategorias(
 
 apiV1CategoriasRouter
   .get("/", getCategorias)
-  .post("/", postCategoria)
+  .post("/", mdwRequerBody, postCategoria)
   .get("/:id", getCategoria)
   .delete("/:id", deleteCategorias);
 

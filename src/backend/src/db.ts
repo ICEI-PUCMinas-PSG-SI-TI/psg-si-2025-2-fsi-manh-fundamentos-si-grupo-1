@@ -1,15 +1,16 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { error, json, LogLevel, notice, warning } from "./logging";
 import { DrizzleQueryError, sql } from "drizzle-orm";
-import { lotesTable } from "./db/schema/lotes";
-import { categoriasTable } from "./db/schema/categorias";
-import { configuracoesTable } from "./db/schema/configuracoes";
-import { produtosTable } from "./db/schema/produtos";
-import { sessoesTable } from "./db/schema/sessoes";
-import { transacoesTable } from "./db/schema/transacoes";
-import { unidadesMedidaTable } from "./db/schema/unidadesMedida";
-import { usuariosTable } from "./db/schema/usuarios";
+import { tabelaLotes } from "./db/schema/lotes";
+import { tabelaCategorias } from "./db/schema/categorias";
+import { tabelaConfiguracoes } from "./db/schema/configuracoes";
+import { tabelaProdutos } from "./db/schema/produtos";
+import { tabelaSessoes } from "./db/schema/sessoes";
+import { tabelaTransacoes } from "./db/schema/transacoes";
+import { tabelaUnidadesMedida } from "./db/schema/unidadesMedida";
+import { tabelaUsuarios } from "./db/schema/usuarios";
 import servicoUsuarios from "./services/servicoUsuarios";
+import { Permissoes, tabelaPermissoes } from "./db/schema/permissoes";
 
 export const baseDados = drizzle(process.env.DB_FILE_NAME!);
 
@@ -18,14 +19,15 @@ export async function verificarBancoDados(): Promise<boolean> {
   warning("Verificando conexão a base de dados...", { label: "db" });
   try {
     const tables = [
-      categoriasTable,
-      configuracoesTable,
-      lotesTable,
-      produtosTable,
-      sessoesTable,
-      transacoesTable,
-      unidadesMedidaTable,
-      usuariosTable,
+      tabelaCategorias,
+      tabelaConfiguracoes,
+      tabelaLotes,
+      tabelaPermissoes,
+      tabelaProdutos,
+      tabelaSessoes,
+      tabelaTransacoes,
+      tabelaUnidadesMedida,
+      tabelaUsuarios,
     ];
     for (let i = 0; i < tables.length; i++) {
       await baseDados
@@ -57,14 +59,17 @@ export async function inicializarAdministrador() {
   if (count === 0) {
     const login = "Administrador";
     const senha = "Admin123-";
-    await servicoUsuarios.inserir({
-      nome: login,
-      login: login,
-      password: senha,
-      descricao: login,
-      habilitado: true,
-      nivelPermissoes: 0,
-    });
+    await servicoUsuarios.inserir(
+      {
+        nome: login,
+        login: login,
+        password: senha,
+        descricao: login,
+        habilitado: true,
+        nivelPermissoes: 0,
+      },
+      { cargos: [Permissoes.Administrador] },
+    );
     warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada: ");
     json(
       {

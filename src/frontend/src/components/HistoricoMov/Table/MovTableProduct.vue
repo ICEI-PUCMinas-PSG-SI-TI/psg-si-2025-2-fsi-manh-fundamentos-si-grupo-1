@@ -25,17 +25,15 @@ const lotes = new ApiLotes()
 
 async function obterLote(id: string) {
   const res = await lotes.obter(id)
-  if (res.ok) {
-    refLoteData.value = await res.json()
+  if (res.ok && res.responseBody) {
+    refLoteData.value = res.responseBody
   }
   // TODO: Criar campos padrão
 }
 async function obterProduto(id: string) {
-  const res = await produtos.obter(id)
-  if (res.ok) {
-    const data = await res.json()
-    console.log(data)
-    refProductData.value = data
+  const res = await produtos.obterPorId(id)
+  if (res.ok && res.responseBody) {
+    refProductData.value = res.responseBody
   }
   // TODO: Criar campos padrão
 }

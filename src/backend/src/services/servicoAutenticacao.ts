@@ -3,8 +3,10 @@ import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { RepositorioSessoes } from "../repository/repositorioSessoes";
 import { ClientError } from "../error";
 import { compare } from "bcrypt";
-import { error } from "../logging";
+import { debug, error, warning } from "../logging";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
+import { Permissoes } from "../db/schema/permissoes";
+import servicoPermissoes from "./servicoPermissoes";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
 
@@ -17,6 +19,19 @@ export const CredenciaisSchemaZ = z.strictObject({
 });
 
 export type CredenciaisSchema = z.infer<typeof CredenciaisSchemaZ>;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const UserSessionInfoZ = z.object({
+  id: z.string(),
+  nome: z.string(),
+  login: z.string(),
+  modoEscuro: z.boolean(),
+  nivelPermissoes: z.number(),
+  foto: z.base64(),
+  permissoes: z.array(z.enum(Permissoes)),
+});
+
+export type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
 
 export function generateSecureRandomString(): string {
   // Human readable alphabet (a-z, 0-9)
@@ -61,7 +76,7 @@ async function criarSessao(
   const secret = generateSecureRandomString();
   const secretHash = await hashSecret(secret);
   const token = `${id}.${secret}`;
-
+  debug(token, { label: "TokenGen" });
   await repositorioSessoes.inserir({
     id,
     secretHash: Buffer.from(secretHash),
@@ -93,20 +108,8 @@ function parseToken(token: string): Token | null {
   };
 }
 
-const ONE_DAY = 60 * 60 * 24;
-const SESSION_EXPIRES_IN_SECONDS = ONE_DAY;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UserSessionInfoZ = z.object({
-  id: z.string(),
-  nome: z.string(),
-  login: z.string(),
-  modoEscuro: z.boolean(),
-  nivelPermissoes: z.number(),
-  foto: z.base64(),
-});
-
-type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
+const ONE_DAY = 60 * 60 * 24 * 1000;
+const SESSION_EXPIRES_IN_MSECONDS = ONE_DAY;
 
 // TODO: Check for timing attacks
 export class ServicoAutenticacao {
@@ -133,6 +136,7 @@ export class ServicoAutenticacao {
       throw new ClientError("Unauthorized", 401);
     }
     const token = await criarSessao(usuario.id, userAgent, ipAddress);
+    const perms = await servicoPermissoes.selecionarPermissoes(usuario.id);
     return {
       token,
       usuario: {
@@ -142,20 +146,36 @@ export class ServicoAutenticacao {
         modoEscuro: usuario.modoEscuro,
         nivelPermissoes: usuario.nivelPermissoes,
         foto: usuario.foto as string,
+        permissoes: perms,
       },
     };
   }
 
+  // TODO: Unificar queries
   async consultarSessaoPorToken(
     token: string,
   ): Promise<UserSessionInfo | null> {
+    const isValidSession = await servicoAutenticacao.validarSessao(token);
+    if (!isValidSession) {
+      warning("Sessão inválida", {
+        label: "Session",
+      });
+      return null;
+    }
     const _token = parseToken(token);
     if (!_token) return null;
-    // TODO: Unificar queries
+    // TODO: validarSessao: Promise<SelectSessao>
     const sessao = await repositorioSessoes.selecionarPorId(_token?.id);
-    if (!sessao) return null;
+    if (!sessao) {
+      error("Sessão não encontrada.", { label: "AuthServ" });
+      return null;
+    }
     const usuario = await repositorioUsuarios.selecionarPorId(sessao.usuarioId);
-    if (!usuario) return null;
+    if (!usuario) {
+      error("Usuário não encontrado.", { label: "AuthServ" });
+      return null;
+    }
+    const perms = await servicoPermissoes.selecionarPermissoes(usuario.id);
     return {
       id: usuario.id,
       nome: usuario.nome,
@@ -163,6 +183,7 @@ export class ServicoAutenticacao {
       modoEscuro: usuario.modoEscuro,
       nivelPermissoes: usuario.nivelPermissoes,
       foto: usuario.foto as string,
+      permissoes: perms,
     };
   }
 
@@ -170,19 +191,17 @@ export class ServicoAutenticacao {
     sessionId: string,
   ): Promise<SelectSessaoSchema | null> {
     const now = new Date();
-
     const sessao = await repositorioSessoes.selecionarPorId(sessionId);
     if (!sessao) return null;
-
     // Check expiration
     if (
       now.getTime() - sessao.createdAt.getTime() >=
-      SESSION_EXPIRES_IN_SECONDS * 1000
+      SESSION_EXPIRES_IN_MSECONDS
     ) {
+      warning(`Sessão expirada: ${sessionId}`, { label: "AuthServ" });
       await repositorioSessoes.excluirPorId(sessionId);
       return null;
     }
-
     return sessao;
   }
 
@@ -210,6 +229,7 @@ export class ServicoAutenticacao {
     return true;
   }
 
+  // TODO: Verificar se o segredo confere?
   async logout(token: string): Promise<boolean> {
     const _token = parseToken(token);
     if (!_token) return false;
@@ -228,6 +248,11 @@ export class ServicoAutenticacao {
       sessoes.usuarioId,
     );
     return excRes > 0;
+  }
+
+  async invalidarSessoes(): Promise<boolean> {
+    const res = await repositorioSessoes.limparSessoes();
+    return res > 0;
   }
 }
 

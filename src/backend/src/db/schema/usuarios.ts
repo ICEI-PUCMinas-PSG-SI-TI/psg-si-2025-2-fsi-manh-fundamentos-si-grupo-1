@@ -5,7 +5,7 @@ import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import z from "zod";
 
-export const usuariosTable = sqliteTable("usuarios", {
+export const tabelaUsuarios = sqliteTable("usuarios", {
   id: text()
     .primaryKey()
     .notNull()
@@ -15,17 +15,19 @@ export const usuariosTable = sqliteTable("usuarios", {
   login: text().notNull().unique(),
   hashedPassword: text("hashed_password").notNull(),
   descricao: text(),
-  habilitado: int({ mode: "boolean" }).notNull().default(false),
+  habilitado: int({ mode: "boolean" }).notNull().default(true),
   modoEscuro: int("modo_escuro", { mode: "boolean" }).notNull().default(false),
-  // TODO: Verificar se esse formato é o ideal para validar permissões
+  /**
+   * @deprecated Utilizar a tabela de permissões
+   */
   nivelPermissoes: int("nivel_permissoes").notNull().default(3),
   foto: blob(),
-  createdAt: int("created_at", { mode: "timestamp" })
+  createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
-  updatedAt: int("updated_at", { mode: "timestamp" })
+    .default(sql`(unixepoch()*1000)`),
+  updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(unixepoch()*1000)`),
 });
 
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
@@ -43,7 +45,7 @@ export const UpdateUsuarioSchemaZ = z.strictObject({
   nivelPermissoes: z.int().min(0).max(3).optional(),
 });
 
-export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
+export const InsertUsuarioSchemaZ = createInsertSchema(tabelaUsuarios, {
   id: z.uuid().optional(),
   habilitado: z.boolean().optional(),
   modoEscuro: z.boolean().optional(),
@@ -58,7 +60,7 @@ export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
   })
   .strict();
 
-export const SelectUsuarioInfoSchemaZ = createSelectSchema(usuariosTable, {
+export const SelectUsuarioInfoSchemaZ = createSelectSchema(tabelaUsuarios, {
   id: z.uuid(),
   habilitado: z.boolean(),
   modoEscuro: z.boolean(),
@@ -72,6 +74,7 @@ export const SelectUsuarioInfoSchemaZ = createSelectSchema(usuariosTable, {
   })
   .strict();
 
-export type SelectUsuarioSchema = InferSelectModel<typeof usuariosTable>;
+export type SelectUsuarioSchema = InferSelectModel<typeof tabelaUsuarios>;
 export type UpdateUsuarioSchema = z.infer<typeof UpdateUsuarioSchemaZ>;
 export type InsertUsuarioSchema = z.infer<typeof InsertUsuarioSchemaZ>;
+export type SelectUsuarioInfoSchema = z.infer<typeof SelectUsuarioInfoSchemaZ>;

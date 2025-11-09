@@ -2,17 +2,18 @@ import "dotenv/config";
 import { count, eq } from "drizzle-orm";
 import bancoDados from "../db";
 import {
-  unidadesMedidaTable,
+  tabelaUnidadesMedida,
   type InsertUnidadesMedidaSchema,
   type SelectUnidadesMedidaSchema,
   type UpdateUnidadesMedidaSchema,
 } from "../db/schema/unidadesMedida";
 
 export class RepositorioUnidadesMedida {
-  async inserir(unidadeMedida: InsertUnidadesMedidaSchema) {
-    return await bancoDados.transaction(async (tx) => {
-      return (await tx.insert(unidadesMedidaTable).values(unidadeMedida))
-        .lastInsertRowid;
+  inserir(unidadeMedida: InsertUnidadesMedidaSchema) {
+    return bancoDados.transaction((tx) => {
+      return tx.insert(tabelaUnidadesMedida).values(unidadeMedida).returning({
+        id: tabelaUnidadesMedida.id,
+      });
     });
   }
 
@@ -20,8 +21,8 @@ export class RepositorioUnidadesMedida {
     return await bancoDados.transaction(async (tx) => {
       return await tx
         .select()
-        .from(unidadesMedidaTable)
-        .where(eq(unidadesMedidaTable.id, id));
+        .from(tabelaUnidadesMedida)
+        .where(eq(tabelaUnidadesMedida.id, id));
     });
   }
 
@@ -33,11 +34,11 @@ export class RepositorioUnidadesMedida {
       if (page >= 1 && pageSize >= 1) {
         return await tx
           .select()
-          .from(unidadesMedidaTable)
+          .from(tabelaUnidadesMedida)
           .limit(pageSize)
           .offset((page - 1) * pageSize);
       } else {
-        return await tx.select().from(unidadesMedidaTable);
+        return await tx.select().from(tabelaUnidadesMedida);
       }
     });
   }
@@ -46,9 +47,9 @@ export class RepositorioUnidadesMedida {
     return bancoDados.transaction((tx) => {
       return tx
         .select({
-          id: unidadesMedidaTable.id,
+          id: tabelaUnidadesMedida.id,
         })
-        .from(unidadesMedidaTable);
+        .from(tabelaUnidadesMedida);
     });
   }
 
@@ -59,9 +60,9 @@ export class RepositorioUnidadesMedida {
     return await bancoDados.transaction(async (tx) => {
       return (
         await tx
-          .update(unidadesMedidaTable)
+          .update(tabelaUnidadesMedida)
           .set(unidadeMedida)
-          .where(eq(unidadesMedidaTable.id, id))
+          .where(eq(tabelaUnidadesMedida.id, id))
       ).rowsAffected;
     });
   }
@@ -71,13 +72,13 @@ export class RepositorioUnidadesMedida {
       // or .returning()
       return (
         await tx
-          .delete(unidadesMedidaTable)
-          .where(eq(unidadesMedidaTable.id, id))
+          .delete(tabelaUnidadesMedida)
+          .where(eq(tabelaUnidadesMedida.id, id))
       ).rowsAffected;
     });
   }
 
   contar() {
-    return bancoDados.select({ count: count() }).from(unidadesMedidaTable);
+    return bancoDados.select({ count: count() }).from(tabelaUnidadesMedida);
   }
 }

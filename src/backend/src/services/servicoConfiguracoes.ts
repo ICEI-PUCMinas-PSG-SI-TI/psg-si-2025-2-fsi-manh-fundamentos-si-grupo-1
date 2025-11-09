@@ -1,5 +1,7 @@
+import z from "zod";
 import {
   UpdateConfiguracaoSchemaZ,
+  type SelectConfiguracaoSchema,
   type UpdateConfiguracaoSchema,
 } from "../db/schema/configuracoes";
 import { RepositorioConfiguracoes } from "../repository/repositorioConfiguracoes";
@@ -8,6 +10,16 @@ const repositorioConfiguracoes = new RepositorioConfiguracoes();
 
 // Por enquanto haverá apenas 1 configuração padrão
 const defaultUuid = "00000000-0000-0000-0000-000000000000";
+
+export const ParamsInserirConfiguracoesZ = UpdateConfiguracaoSchemaZ.pick({
+  nomeCliente: true,
+  cpfCnpj: true,
+  endereco: true,
+});
+
+export type ParamsInserirConfiguracoes = z.infer<
+  typeof ParamsInserirConfiguracoesZ
+>;
 
 /**
  * Essa função garante que o único registro de configurações na base de dados existe
@@ -21,7 +33,7 @@ async function inicializar() {
 }
 
 class ServicoConfiguracoes {
-  async selecionar() {
+  async selecionar(): Promise<SelectConfiguracaoSchema | null> {
     await inicializar();
     return repositorioConfiguracoes.selecionarPorId(defaultUuid);
   }

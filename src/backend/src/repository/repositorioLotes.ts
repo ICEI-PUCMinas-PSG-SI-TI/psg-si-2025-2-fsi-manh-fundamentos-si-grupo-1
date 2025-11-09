@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { and, count, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
-import { lotesTable } from "../db/schema/lotes";
+import { tabelaLotes } from "../db/schema/lotes";
 import baseDados from "../db";
 import {
   QueryBuilder,
@@ -28,37 +28,37 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   }
 
   comId(id: string) {
-    this._where.push(eq(lotesTable.id, id));
+    this._where.push(eq(tabelaLotes.id, id));
     return this;
   }
 
   comProdutoId(id: string) {
-    this._where.push(eq(lotesTable.produtoId, id));
+    this._where.push(eq(tabelaLotes.produtoId, id));
     return this;
   }
 
   comValidadeMaiorIgualQue(data: Date) {
-    this._where.push(gte(lotesTable.validade, data));
+    this._where.push(gte(tabelaLotes.validade, data));
     return this;
   }
 
   comValidadeMenorIgualQue(data: Date) {
-    this._where.push(lte(lotesTable.validade, data));
+    this._where.push(lte(tabelaLotes.validade, data));
     return this;
   }
 
   comQuantidadeMaiorIgualQue(valor: number) {
-    this._where.push(gte(lotesTable.quantidade, valor));
+    this._where.push(gte(tabelaLotes.quantidade, valor));
     return this;
   }
 
   comQuantidadeMenorIgualQue(valor: number) {
-    this._where.push(lte(lotesTable.quantidade, valor));
+    this._where.push(lte(tabelaLotes.quantidade, valor));
     return this;
   }
 
-  comLote(lote: string) {
-    this._where.push(like(lotesTable.lote, `%${lote}%`));
+  comCodigo(lote: string) {
+    this._where.push(like(tabelaLotes.codigo, `%${lote}%`));
     return this;
   }
 
@@ -71,15 +71,17 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 }
 
 export class RepositorioLotes {
-  async inserir(lote: InsertLoteSchema) {
-    return await baseDados.transaction(async (tx) => {
-      return (await tx.insert(lotesTable).values(lote)).lastInsertRowid;
+  inserir(lote: InsertLoteSchema) {
+    return baseDados.transaction((tx) => {
+      return tx.insert(tabelaLotes).values(lote).returning({
+        id: tabelaLotes.id,
+      });
     });
   }
 
   async selecionarPorId(id: string): Promise<SelectLoteSchema[]> {
     return await baseDados.transaction(async (tx) => {
-      return await tx.select().from(lotesTable).where(eq(lotesTable.id, id));
+      return await tx.select().from(tabelaLotes).where(eq(tabelaLotes.id, id));
     });
   }
 
@@ -91,17 +93,17 @@ export class RepositorioLotes {
       if (page >= 1 && pageSize >= 1) {
         return await tx
           .select()
-          .from(lotesTable)
+          .from(tabelaLotes)
           .limit(pageSize)
           .offset((page - 1) * pageSize);
       } else {
-        return await tx.select().from(lotesTable);
+        return await tx.select().from(tabelaLotes);
       }
     });
   }
 
   selecionarQuery() {
-    const queryBase = new QueryBuilder().select().from(lotesTable).$dynamic();
+    const queryBase = new QueryBuilder().select().from(tabelaLotes).$dynamic();
     return new RepositorioLotesConsulta(queryBase);
   }
 
@@ -109,17 +111,17 @@ export class RepositorioLotes {
     return baseDados.transaction((tx) => {
       return tx
         .select({
-          id: lotesTable.id,
-          produtoId: lotesTable.produtoId,
+          id: tabelaLotes.id,
+          produtoId: tabelaLotes.produtoId,
         })
-        .from(lotesTable);
+        .from(tabelaLotes);
     });
   }
 
   async atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
     return await baseDados.transaction(async (tx) => {
       return (
-        await tx.update(lotesTable).set(lote).where(eq(lotesTable.id, id))
+        await tx.update(tabelaLotes).set(lote).where(eq(tabelaLotes.id, id))
       ).rowsAffected;
     });
   }
@@ -127,12 +129,12 @@ export class RepositorioLotes {
   async excluirPorId(id: string) {
     return await baseDados.transaction(async (tx) => {
       // or .returning()
-      return (await tx.delete(lotesTable).where(eq(lotesTable.id, id)))
+      return (await tx.delete(tabelaLotes).where(eq(tabelaLotes.id, id)))
         .rowsAffected;
     });
   }
 
   contar() {
-    return baseDados.select({ count: count() }).from(lotesTable);
+    return baseDados.select({ count: count() }).from(tabelaLotes);
   }
 }

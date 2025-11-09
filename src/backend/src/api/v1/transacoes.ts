@@ -1,13 +1,13 @@
 import { Router, type NextFunction, type Response } from "express";
-import type { SessionRequest } from "../../cookies";
+import type { ExtendedRequest } from "../../middlewares";
 import servicoTransacoes, {
-  TransacoesConsultaSchema,
+  ParamsConsultaTransacoesZ,
 } from "../../services/servicoTransacoes";
 
 const apiV1TransacoesRouter = Router();
 
 async function getTransacoes(
-  req: SessionRequest,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ) {
@@ -15,12 +15,11 @@ async function getTransacoes(
     if (Object.keys(req.query).length === 0) {
       const consulta = await servicoTransacoes.selecionarTodos();
       res.send(consulta);
-    } else {
-      const parsedQueryParams = TransacoesConsultaSchema.parse(req.query);
-      const consulta =
-        await servicoTransacoes.selecionarConsulta(parsedQueryParams);
-      res.send(consulta);
     }
+    const parsedQueryParams = ParamsConsultaTransacoesZ.parse(req.query);
+    const consulta =
+      await servicoTransacoes.selecionarConsulta(parsedQueryParams);
+    res.send(consulta);
   } catch (err) {
     next(err);
   }
