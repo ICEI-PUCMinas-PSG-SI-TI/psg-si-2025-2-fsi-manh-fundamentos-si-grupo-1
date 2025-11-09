@@ -1,6 +1,8 @@
 import { Router, type NextFunction, type Response } from "express";
 import type { ExtendedRequest } from "../../middlewares";
-import servicoProdutos from "../../services/servicoProdutos";
+import servicoProdutos, {
+  ParamsConsultaProdutosZ,
+} from "../../services/servicoProdutos";
 import { ParamsIdSchemaZ } from "./objects";
 import { ClientError } from "../../error";
 
@@ -12,8 +14,14 @@ async function getProdutos(
   next: NextFunction,
 ) {
   try {
-    const consulta = await servicoProdutos.selecionarTodos();
-    res.send(consulta);
+    if (Object.keys(req.query).length === 0) {
+      const consulta = await servicoProdutos.selecionarTodos();
+      res.send(consulta);
+    } else {
+      const parsedBody = ParamsConsultaProdutosZ.parse(req.query);
+      const consulta = await servicoProdutos.selecionarConsulta(parsedBody);
+      res.send(consulta);
+    }
   } catch (err) {
     next(err);
   }

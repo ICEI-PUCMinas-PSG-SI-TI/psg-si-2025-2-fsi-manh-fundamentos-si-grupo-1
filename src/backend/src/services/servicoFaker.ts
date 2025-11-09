@@ -8,6 +8,7 @@ import servicoUsuarios from "./servicoUsuarios";
 import servicoUnidadesMedida from "./servicoUnidadesMedida";
 import { StatusProduto } from "../db/schema/produtos";
 import { warning } from "../logging";
+import servicoCategorias from "./servicoCategorias";
 
 function fakerLocal() {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;
@@ -118,10 +119,31 @@ async function escolherLotes(
   return escolherAleatorios(quant, lotes);
 }
 
+async function escolherCategorias(
+  canRecurse: boolean,
+  quant: number,
+): Promise<{ id: string }[]> {
+  let quantCategorias = await servicoCategorias.contar();
+  if (quantCategorias === 0) {
+    if (canRecurse) await servicoFaker.criarLotes(quant, canRecurse);
+    else throw new HttpError("No relational data found", 400);
+  }
+  quantCategorias = await servicoCategorias.contar();
+  if (quantCategorias === 0)
+    throw new HttpError("Can't create relational data", 400);
+  const categorias = await servicoCategorias.selecionarTodos();
+  if (!categorias || categorias.length === 0)
+    throw new HttpError("Can't retrieve relational data", 400);
+  return escolherAleatorios(quant, categorias);
+}
+
 export class ServicoFaker {
   async criarProdutos(quant: number, canRecurse: boolean) {
     const unidades = await escolherUnidadesMedida(canRecurse, quant);
     if (!unidades || !unidades.length) throw new Error();
+
+    const categorias = await escolherCategorias(canRecurse, quant);
+    if (!categorias || !categorias.length) throw new Error();
 
     for (let i = 0; i < quant; i++) {
       await servicoProdutos.inserir({
@@ -130,6 +152,7 @@ export class ServicoFaker {
         codigoBarra: fakerLote(),
         descricao: fakerPT_BR.commerce.productDescription(),
         categoria: fakerPT_BR.commerce.department(),
+        categoriaId: categorias[i]!.id,
         marca: fakerPT_BR.company.name(),
         fornecedor: fakerPT_BR.company.name(),
         dimensoes: fakerDimensoes(),
@@ -208,9 +231,18 @@ export class ServicoFaker {
     for (let i = 0; i < quant; i++) {
       const unit = faker.science.unit();
       await servicoUnidadesMedida.inserir({
-        id: faker.string.uuid(),
         nome: unit.name,
         abreviacao: unit.symbol,
+      });
+    }
+    warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
+  }
+
+  async criarCategorias(quant: number) {
+    for (let i = 0; i < quant; i++) {
+      const unit = faker.science.unit();
+      await servicoCategorias.inserir({
+        nome: unit.name,
       });
     }
     warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });

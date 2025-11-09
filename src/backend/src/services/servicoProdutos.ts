@@ -46,6 +46,7 @@ export const ParamsConsultaProdutosZ = z.strictObject({
   pesoMin: z.coerce.number().int().gt(0).optional(),
   pesoMax: z.coerce.number().int().gt(0).optional(),
   texto: z.string().min(1).optional(),
+  categoria: z.uuid().optional(),
 });
 
 export type ParamsConsultaProdutos = z.infer<typeof ParamsConsultaProdutosZ>;
@@ -65,7 +66,7 @@ export class ServicoProdutos {
   }
 
   async selecionarConsulta(opts: ParamsConsultaProdutos) {
-    let query = repositorioProdutos.selecionarQuery();
+    let query = repositorioProdutos.selecionarQueryComLotes();
     if (opts) {
       if (opts.id) {
         query = query.comId(opts.id);
@@ -94,6 +95,9 @@ export class ServicoProdutos {
       }
       if (opts.pesoMax) {
         query = query.comPesoMenorIgualQue(opts.pesoMax);
+      }
+      if (opts.categoria) {
+        query = query.comCategoria(opts.categoria);
       }
       if (opts.texto) {
         query = query.comTexto(opts.texto);

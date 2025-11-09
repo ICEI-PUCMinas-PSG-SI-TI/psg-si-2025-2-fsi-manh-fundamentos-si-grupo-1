@@ -88,6 +88,11 @@ class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
+  comCategoria(categoria: string) {
+    this._whereAnd.push(eq(tabelaProdutos.categoria, categoria));
+    return this;
+  }
+
   comTexto(texto: string) {
     const _texto = `%${texto}%`;
     this._whereOr.push(
