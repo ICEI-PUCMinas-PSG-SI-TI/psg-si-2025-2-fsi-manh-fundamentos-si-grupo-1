@@ -2,7 +2,7 @@ import "dotenv/config";
 import { and, eq, type SQLWrapper } from "drizzle-orm";
 import bancoDados, { baseDados } from "../db";
 import {
-  transacoesTable as tabelaTransacoes,
+  tabelaTransacoes,
   type InsertTransacoesSchema,
   type SelectTransacoesSchema,
   type UpdateTransacoesSchema,

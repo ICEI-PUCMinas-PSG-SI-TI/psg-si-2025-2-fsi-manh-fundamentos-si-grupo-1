@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import baseDados from "../db";
 import {
   Permissoes,
-  permissoesTable,
+  tabelaPermissoes,
   type InsertPermissoesSchema,
   type SelectPermissoesSchema,
 } from "../db/schema/permissoes";
@@ -10,7 +10,7 @@ import {
 export class RepositorioPermissoes {
   inserir(...perms: InsertPermissoesSchema[]) {
     return baseDados.transaction((tx) => {
-      return tx.insert(permissoesTable).values(perms).onConflictDoNothing();
+      return tx.insert(tabelaPermissoes).values(perms).onConflictDoNothing();
     });
   }
 
@@ -22,11 +22,11 @@ export class RepositorioPermissoes {
       if (page >= 1 && pageSize >= 1) {
         return tx
           .select()
-          .from(permissoesTable)
+          .from(tabelaPermissoes)
           .limit(pageSize)
           .offset((page - 1) * pageSize);
       } else {
-        return tx.select().from(permissoesTable);
+        return tx.select().from(tabelaPermissoes);
       }
     });
   }
@@ -38,11 +38,11 @@ export class RepositorioPermissoes {
     return baseDados.transaction((tx) => {
       return tx
         .select()
-        .from(permissoesTable)
+        .from(tabelaPermissoes)
         .where(
           and(
-            eq(permissoesTable.usuarioId, userId),
-            eq(permissoesTable.cargo, cargo),
+            eq(tabelaPermissoes.usuarioId, userId),
+            eq(tabelaPermissoes.cargo, cargo),
           ),
         );
     });
@@ -54,8 +54,8 @@ export class RepositorioPermissoes {
     return baseDados.transaction((tx) => {
       return tx
         .select()
-        .from(permissoesTable)
-        .where(eq(permissoesTable.usuarioId, userId));
+        .from(tabelaPermissoes)
+        .where(eq(tabelaPermissoes.usuarioId, userId));
     });
   }
 
@@ -65,19 +65,19 @@ export class RepositorioPermissoes {
     return baseDados.transaction((tx) => {
       return tx
         .select()
-        .from(permissoesTable)
-        .where(eq(permissoesTable.cargo, cargo));
+        .from(tabelaPermissoes)
+        .where(eq(tabelaPermissoes.cargo, cargo));
     });
   }
 
   async excluir(userId: string, cargo: Permissoes) {
     return await baseDados.transaction(async (tx) => {
       const resultSet = await tx
-        .delete(permissoesTable)
+        .delete(tabelaPermissoes)
         .where(
           and(
-            eq(permissoesTable.usuarioId, userId),
-            eq(permissoesTable.cargo, cargo),
+            eq(tabelaPermissoes.usuarioId, userId),
+            eq(tabelaPermissoes.cargo, cargo),
           ),
         );
       return resultSet.rowsAffected;

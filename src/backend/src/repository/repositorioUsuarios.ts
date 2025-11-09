@@ -1,6 +1,6 @@
 import { and, count, eq, type SQLWrapper } from "drizzle-orm";
 import bancoDados from "../db";
-import { usuariosTable as tabelaUsuarios } from "../db/schema/usuarios";
+import { tabelaUsuarios } from "../db/schema/usuarios";
 import type {
   InsertUsuarioSchema,
   SelectUsuarioSchema,

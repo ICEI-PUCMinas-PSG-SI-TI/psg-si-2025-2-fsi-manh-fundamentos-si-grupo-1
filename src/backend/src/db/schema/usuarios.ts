@@ -5,7 +5,7 @@ import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import z from "zod";
 
-export const usuariosTable = sqliteTable("usuarios", {
+export const tabelaUsuarios = sqliteTable("usuarios", {
   id: text()
     .primaryKey()
     .notNull()
@@ -45,7 +45,7 @@ export const UpdateUsuarioSchemaZ = z.strictObject({
   nivelPermissoes: z.int().min(0).max(3).optional(),
 });
 
-export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
+export const InsertUsuarioSchemaZ = createInsertSchema(tabelaUsuarios, {
   id: z.uuid().optional(),
   habilitado: z.boolean().optional(),
   modoEscuro: z.boolean().optional(),
@@ -60,7 +60,7 @@ export const InsertUsuarioSchemaZ = createInsertSchema(usuariosTable, {
   })
   .strict();
 
-export const SelectUsuarioInfoSchemaZ = createSelectSchema(usuariosTable, {
+export const SelectUsuarioInfoSchemaZ = createSelectSchema(tabelaUsuarios, {
   id: z.uuid(),
   habilitado: z.boolean(),
   modoEscuro: z.boolean(),
@@ -74,6 +74,6 @@ export const SelectUsuarioInfoSchemaZ = createSelectSchema(usuariosTable, {
   })
   .strict();
 
-export type SelectUsuarioSchema = InferSelectModel<typeof usuariosTable>;
+export type SelectUsuarioSchema = InferSelectModel<typeof tabelaUsuarios>;
 export type UpdateUsuarioSchema = z.infer<typeof UpdateUsuarioSchemaZ>;
 export type InsertUsuarioSchema = z.infer<typeof InsertUsuarioSchemaZ>;

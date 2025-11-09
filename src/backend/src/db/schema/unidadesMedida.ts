@@ -4,7 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
 
-export const unidadesMedidaTable = sqliteTable("unidades_medida", {
+export const tabelaUnidadesMedida = sqliteTable("unidades_medida", {
   id: text()
     .primaryKey()
     .notNull()
@@ -28,7 +28,7 @@ export const UpdateUnidadesMedidasSchemaZ = z.strictObject({
 });
 
 export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
-  unidadesMedidaTable,
+  tabelaUnidadesMedida,
   {
     id: z.uuid().optional(),
     nome: z.string().min(1).max(128),
@@ -42,7 +42,7 @@ export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
   .strict();
 
 export type SelectUnidadesMedidaSchema = InferSelectModel<
-  typeof unidadesMedidaTable
+  typeof tabelaUnidadesMedida
 >;
 export type UpdateUnidadesMedidaSchema = z.infer<
   typeof UpdateUnidadesMedidasSchemaZ

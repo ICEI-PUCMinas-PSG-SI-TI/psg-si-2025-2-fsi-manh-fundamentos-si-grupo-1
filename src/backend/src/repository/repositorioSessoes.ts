@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { eq } from "drizzle-orm";
 import {
-  sessoesTable as tabelaSessoes,
+  tabelaSessoes,
   type InsertSessaoSchema,
   type SelectSessaoSchema,
 } from "../db/schema/sessoes";

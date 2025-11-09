@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import baseDados from "../db";
 import {
-  configuracoesTable,
+  tabelaConfiguracoes,
   type InsertConfiguracaoSchema,
   type SelectConfiguracaoSchema,
   type UpdateConfiguracaoSchema,
@@ -12,7 +12,7 @@ export class RepositorioConfiguracoes {
     configuracoes: InsertConfiguracaoSchema,
   ): Promise<SelectConfiguracaoSchema[]> {
     return baseDados.transaction((tx) => {
-      return tx.insert(configuracoesTable).values(configuracoes).returning();
+      return tx.insert(tabelaConfiguracoes).values(configuracoes).returning();
     });
   }
 
@@ -20,8 +20,8 @@ export class RepositorioConfiguracoes {
     return baseDados.transaction(async (tx) => {
       const res = await tx
         .select()
-        .from(configuracoesTable)
-        .where(eq(configuracoesTable.id, id));
+        .from(tabelaConfiguracoes)
+        .where(eq(tabelaConfiguracoes.id, id));
       if (res.length === 1) return res[0]!;
       return null;
     });
@@ -35,11 +35,11 @@ export class RepositorioConfiguracoes {
       if (page >= 1 && pageSize >= 1) {
         return tx
           .select()
-          .from(configuracoesTable)
+          .from(tabelaConfiguracoes)
           .limit(pageSize)
           .offset((page - 1) * pageSize);
       } else {
-        return tx.select().from(configuracoesTable);
+        return tx.select().from(tabelaConfiguracoes);
       }
     });
   }
@@ -50,9 +50,9 @@ export class RepositorioConfiguracoes {
   ): Promise<number> {
     return baseDados.transaction(async (tx) => {
       const resultSet = await tx
-        .update(configuracoesTable)
+        .update(tabelaConfiguracoes)
         .set(configuracoes)
-        .where(eq(configuracoesTable.id, id));
+        .where(eq(tabelaConfiguracoes.id, id));
       return resultSet.rowsAffected;
     });
   }
@@ -61,8 +61,8 @@ export class RepositorioConfiguracoes {
   excluirPorId(id: string) {
     return baseDados.transaction(async (tx) => {
       const resultSet = await tx
-        .delete(configuracoesTable)
-        .where(eq(configuracoesTable.id, id));
+        .delete(tabelaConfiguracoes)
+        .where(eq(tabelaConfiguracoes.id, id));
       return resultSet.rowsAffected;
     });
   }

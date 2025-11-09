@@ -19,13 +19,12 @@ import {
   type SQLiteSelectQueryBuilder,
 } from "drizzle-orm/sqlite-core";
 import {
-  produtosTable,
-  produtosTable as tabelaProdutos,
+  tabelaProdutos,
   type InsertProdutosSchema,
   type SelectProdutosSchema,
   type UpdateProdutosSchema,
 } from "../db/schema/produtos";
-import { lotesTable } from "../db/schema/lotes";
+import { tabelaLotes } from "../db/schema/lotes";
 
 // TODO(!scope): Prevent calling where functions more than 1 time
 class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
@@ -177,7 +176,7 @@ export class RepositorioProdutos {
     return baseDados.transaction((tx) => {
       return tx
         .select({
-          id: produtosTable.id,
+          id: tabelaProdutos.id,
         })
         .from(tabelaProdutos);
     });
@@ -195,14 +194,14 @@ export class RepositorioProdutos {
     const queryBase = new QueryBuilder()
       .select({
         ...getTableColumns(tabelaProdutos),
-        quantidade: sql<number>`sum(${lotesTable.quantidade})`.as(
+        quantidade: sql<number>`sum(${tabelaLotes.quantidade})`.as(
           "quantidade_total",
         ),
       })
       .from(tabelaProdutos)
-      .leftJoin(lotesTable, eq(produtosTable.id, lotesTable.produtoId))
-      .groupBy(produtosTable.id)
-      .orderBy(asc(produtosTable.id))
+      .leftJoin(tabelaLotes, eq(tabelaProdutos.id, tabelaLotes.produtoId))
+      .groupBy(tabelaProdutos.id)
+      .orderBy(asc(tabelaProdutos.id))
       .$dynamic();
     return new RepositorioProdutosLotesConsulta(queryBase);
   }

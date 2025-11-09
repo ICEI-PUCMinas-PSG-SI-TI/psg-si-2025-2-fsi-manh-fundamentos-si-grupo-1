@@ -4,7 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
 
-export const configuracoesTable = sqliteTable("configuracoes", {
+export const tabelaConfiguracoes = sqliteTable("configuracoes", {
   // TODO: Generate always the same id for config?
   id: text()
     .primaryKey()
@@ -31,7 +31,7 @@ export const UpdateConfiguracaoSchemaZ = z.strictObject({
 });
 
 export const InsertConfiguracaoSchemaZ = createInsertSchema(
-  configuracoesTable,
+  tabelaConfiguracoes,
   {
     id: z.uuid().optional(),
     // TODO(!scope): Validar cpf/cnpj?
@@ -44,7 +44,7 @@ export const InsertConfiguracaoSchemaZ = createInsertSchema(
   .strict();
 
 export type SelectConfiguracaoSchema = InferSelectModel<
-  typeof configuracoesTable
+  typeof tabelaConfiguracoes
 >;
 export type UpdateConfiguracaoSchema = z.infer<
   typeof UpdateConfiguracaoSchemaZ

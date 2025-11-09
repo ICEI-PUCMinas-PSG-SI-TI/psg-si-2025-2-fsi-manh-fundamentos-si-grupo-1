@@ -1,5 +1,5 @@
 import { sqliteTable, text, int, primaryKey } from "drizzle-orm/sqlite-core";
-import { usuariosTable } from "./usuarios";
+import { tabelaUsuarios } from "./usuarios";
 import { sql, type InferSelectModel } from "drizzle-orm";
 import z from "zod";
 import { createInsertSchema } from "drizzle-zod";
@@ -12,12 +12,12 @@ export enum Permissoes {
   Consulta = "CONSULTA",
 }
 
-export const permissoesTable = sqliteTable(
+export const tabelaPermissoes = sqliteTable(
   "permissoes",
   {
     usuarioId: text("user_id")
       .notNull()
-      .references(() => usuariosTable.id),
+      .references(() => tabelaUsuarios.id),
     cargo: text({
       enum: [
         Permissoes.Administrador,
@@ -40,7 +40,7 @@ export const permissoesTable = sqliteTable(
   }),
 );
 
-export const InsertPermissoesSchemaZ = createInsertSchema(permissoesTable, {
+export const InsertPermissoesSchemaZ = createInsertSchema(tabelaPermissoes, {
   usuarioId: z.uuid(),
 })
   .omit({
@@ -49,5 +49,5 @@ export const InsertPermissoesSchemaZ = createInsertSchema(permissoesTable, {
   })
   .strict();
 
-export type SelectPermissoesSchema = InferSelectModel<typeof permissoesTable>;
+export type SelectPermissoesSchema = InferSelectModel<typeof tabelaPermissoes>;
 export type InsertPermissoesSchema = z.infer<typeof InsertPermissoesSchemaZ>;

@@ -2,7 +2,7 @@ import type { UuidResult } from "../api/v1/objects";
 import type { InsertUnidadesMedidaSchema } from "../db/schema/unidadesMedida";
 import { HttpError } from "../error";
 import { debug } from "../logging";
-import { RepositorioUnidadesMedida } from "../repository/repositorioUnidadesMedidas";
+import { RepositorioUnidadesMedida } from "../repository/repositorioUnidadesMedida";
 
 const repositorioUnidadesMedida = new RepositorioUnidadesMedida();
 
