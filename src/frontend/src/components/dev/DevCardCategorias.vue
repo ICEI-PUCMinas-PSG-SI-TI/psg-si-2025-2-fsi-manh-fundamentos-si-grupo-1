@@ -9,9 +9,9 @@ const quant = ref(10)
 const recurse = ref(false)
 
 async function gerar() {
-  const res = await apiFaker.criarLotes(recurse.value, quant.value)
+  const res = await apiFaker.criarCategorias(recurse.value, quant.value)
   if (res.ok) {
-    notificacoes.addNotification('Lotes criadas com sucesso!', { time: 3000 })
+    notificacoes.addNotification('Categorias criadas com sucesso!', { time: 3000 })
   }
 }
 
@@ -33,7 +33,7 @@ function show() {
     <div class="card-body">
       <div class="flex flex-col p-2 gap-2">
         <div class="font-semibold text-xl mb-4">Lotes</div>
-        <strong>Criar lotes com dados aleatórios</strong>
+        <strong>Criar categorias com dados aleatórios</strong>
         <LabeledInput html-type="number" html-place-holder="Quantidade" v-model="quant" />
         <div class="flex flex-row items-center">
           <input type="checkbox" v-model="recurse" class="checkbox checkbox-md me-2" />
@@ -41,7 +41,7 @@ function show() {
         </div>
         <ButtonComponent class="btn-success" @click="gerar"> Gerar </ButtonComponent>
         <hr />
-        <p><strong>Deletar todos os lotes.</strong></p>
+        <p><strong>Deletar todos as categorias.</strong></p>
         <p>
           Observação: Isso também ira deletar outras informações associadas as {entidades}
           deletadas.
@@ -50,7 +50,7 @@ function show() {
           Deletar
         </ButtonComponent>
         <hr />
-        <p><strong>Deletar lotes por ID</strong></p>
+        <p><strong>Deletar categorias por ID</strong></p>
         <p>
           Observação: Isso também ira deletar outras informações associadas as {entidades}
           deletadas.
@@ -61,7 +61,7 @@ function show() {
         <p><strong>Outros</strong></p>
         <!-- TODO: Inserir pagina e paginaTamanho -->
         <ButtonComponent class="btn-primary btn-disabled" @click="show">
-          Mostrar lotes no console
+          Mostrar categorias no console
         </ButtonComponent>
       </div>
     </div>

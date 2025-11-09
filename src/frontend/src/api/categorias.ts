@@ -1,6 +1,7 @@
 import z from 'zod'
 import { fetchW, HttpMethods as HttpMethods } from './fetchWrapper'
 import type { UuidResult } from '../../../backend'
+import type { SelectCategoriaSchema } from '../../../backend/src/db/schema/categorias'
 
 const endpoint_path = `/api/v1/categorias`
 
@@ -15,7 +16,7 @@ export type Categorias = {
 
 export class ApiCategorias {
   obterTodos() {
-    return fetchW<Categorias[]>(endpoint_path)
+    return fetchW<SelectCategoriaSchema[]>(endpoint_path)
   }
 
   criar(nome: string) {

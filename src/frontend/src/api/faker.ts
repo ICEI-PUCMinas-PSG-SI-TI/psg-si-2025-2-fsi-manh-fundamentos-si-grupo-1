@@ -52,6 +52,16 @@ export class ApiFaker {
       },
     })
   }
+
+  criarCategorias(canRecurse: boolean = false, quant: number = 10) {
+    return fetchW(endpoint_path('categorias'), {
+      method: HttpMethods.Post,
+      body: {
+        canRecurse,
+        quant,
+      },
+    })
+  }
 }
 
 const apiFaker = new ApiFaker()
