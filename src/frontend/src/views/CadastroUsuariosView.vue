@@ -6,85 +6,90 @@
     <div class="bg-base-200 p-6 rounded-2xl mb-8">
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!--Primeira coluna-->
-        <div class="flex flex-col gap-4 h-full">
-          <div class="flex flex-col items-center mt-10">
+        <div class="flex flex-col gap-4 h-full justify-end-safe">
+          <h1 class="text-2xl">{{ editando ? 'Editando usuário' : 'Novo usuário' }}</h1>
+          <p v-if="editando">{{ refFields.id }}</p>
+          <div class="flex flex-col items-center mt-8">
             <img
               src="https://img.daisyui.com/images/profile/demo/3@94.webp"
               alt="avatar"
               class="w-30 h-30 rounded-full"
             />
           </div>
-          <div class="flex flex-col justify-between mt-auto">
-            <label class="block text-sm opacity-80">Login</label>
-            <input type="text" class="input input-bordered w-full" placeholder="login" />
-          </div>
+          <LabeledInput
+            html-place-holder="login"
+            html-type="text"
+            label-text="login"
+            v-model="refFields.login"
+          />
         </div>
 
         <!-- Coluna Inputs -->
         <div class="flex flex-col gap-4">
-          <div class="flex items-center row-3 gap-4">
-            <div class="flex-1">
-              <label class="block text-sm opacity-80">Nome do usuário</label>
-              <input type="text" class="input input-bordered w-full" placeholder="nome" />
-            </div>
-          </div>
+          <LabeledInput
+            html-place-holder="Nome de usuário"
+            html-type="text"
+            label-text="Nome de usuário"
+            v-model="refFields.nome"
+          />
           <div class="mt-auto">
             <label class="block text-sm opacity-80">Informações adicionais</label>
             <textarea
               class="textarea textarea-bordered w-full"
               placeholder="Ex: Gestor de estoque"
-            ></textarea>
-          </div>
-
-          <div></div>
-
-          <div class="mt-auto">
-            <label class="block text-sm opacity-80">Senha</label>
-            <input
-              type="password"
-              class="input input-bordered w-full"
-              placeholder="Insira uma nova senha"
+              v-model="refFields.descricao"
             />
           </div>
+          <LabeledInput
+            html-place-holder="Insira uma nova senha"
+            html-type="password"
+            label-text="Senha"
+            v-model="refFields.senha"
+          />
         </div>
 
         <!-- Coluna Permissões -->
-        <div class="">
+        <div class="flex flex-col h-full justify-center">
           <h2 class="text-xl font-semibold mb-4 flex flex-col items-center">Permissões</h2>
           <div class="flex flex-col gap-1">
-            <label
-              ><input type="checkbox" v-model="permissoes.admin" @change="aoMarcarAdmin" />
-              Administrador</label
-            >
-            <p class="text-sm opacity-70 mb-2">Acesso total ao sistema.</p>
-
-            <label :class="permissoes.admin ? 'text-gray-400' : ''"
-              ><input type="checkbox" v-model="permissoes.cadastro" :disabled="permissoes.admin" />
-              Cadastro</label
-            >
-            <p :class="permissoes.admin ? 'text-gray-400 text-sm' : 'text-sm opacity-70'">
-              Permite cadastrar produtos.
-            </p>
-
-            <label :class="permissoes.admin ? 'text-gray-400' : ''"
-              ><input
-                type="checkbox"
-                v-model="permissoes.movimentacoes"
-                :disabled="permissoes.admin"
+            <label class="flex flex-row justify-start items-center">
+              <input
+                type="radio"
+                v-model="permissoes"
+                name="radio-1"
+                class="radio me-2"
+                checked="true"
+                :value="Permissoes.Administrador"
               />
-              Movimentações</label
-            >
-            <p :class="permissoes.admin ? 'text-gray-400 text-sm' : 'text-sm opacity-70'">
-              Permite realizar movimentações.
+              Administrador
+            </label>
+            <p class="text-sm mb-2">Acesso total ao sistema.</p>
+
+            <label class="flex flex-row justify-start items-center">
+              <input
+                type="radio"
+                v-model="permissoes"
+                name="radio-1"
+                class="radio me-2"
+                :value="Permissoes.Operacional"
+              />
+              Operacional
+            </label>
+            <p class="text-sm mb-2">
+              Permite realizar movimentações, visualizar e cadastrar produtos.
             </p>
 
-            <label :class="permissoes.admin ? 'text-gray-400' : ''"
-              ><input type="checkbox" v-model="permissoes.consulta" :disabled="permissoes.admin" />
-              Consulta</label
-            >
-            <p :class="permissoes.admin ? 'text-gray-400 text-sm' : 'text-sm opacity-70'">
-              Apenas visualiza informações.
-            </p>
+            <label class="flex flex-row justify-start items-center">
+              <input
+                type="radio"
+                v-model="permissoes"
+                name="radio-1"
+                class="radio me-2"
+                :value="Permissoes.Consulta"
+              />
+              Consulta
+            </label>
+            <p class="text-sm">Permite apenas visualizar informações de produtos.</p>
           </div>
         </div>
         <!--Coluna 4-->
@@ -92,16 +97,13 @@
           <div class="flex flex-col items-end gap-4">
             <button
               class="text-white btn bg-green-600 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              @click="confirmar"
             >
               Confirmar
             </button>
             <button
-              class="text-white btn bg-blue-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
-            >
-              Alterar
-            </button>
-            <button
               class="text-white btn bg-red-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              @click="limparCampos"
             >
               Cancelar
             </button>
@@ -112,131 +114,157 @@
 
     <!-- Lista de usuários -->
     <div class="flex flex-col gap-4 w-full">
-      <!-- Card 1 -->
-      <div class="flex items-center justify-between bg-base-200 rounded-2xl p-3 shadow">
-        <div class="flex items-center gap-3">
-          <div class="avatar">
-            <div class="rounded-full w-12 h-12">
-              <img src="https://img.daisyui.com/images/profile/demo/2@94.webp" alt="Avatar" />
-            </div>
-          </div>
-          <div>
-            <p class="font-bold">Funcionário 01</p>
-            <p class="text-sm text-gray-500">Gestor de estoque</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-10">
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <pencil-icon class="w-6 h-6"></pencil-icon>
-          </button>
-          <button class="hover:scale-105 transition-transform">
-            <input type="checkbox"  class="toggle scale-85" />
-          </button>
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <trash-icon class="w-6 h-6"></trash-icon>
-          </button>
-        </div>
-      </div>
-      <!-- Card 2 -->
-      <div class="flex items-center justify-between bg-base-200 rounded-2xl p-3 shadow">
-        <div class="flex items-center gap-3">
-          <div class="avatar">
-            <div class="rounded-full w-12 h-12">
-              <img src="https://img.daisyui.com/images/profile/demo/1@94.webp" alt="Avatar" />
-            </div>
-          </div>
-          <div>
-            <p class="font-bold ">Funcionário 02</p>
-            <p class="text-sm text-gray-500">Gestor de estoque</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-10">
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <pencil-icon class="w-6 h-6"></pencil-icon>
-          </button>
-          <button class="hover:scale-105 transition-transform">
-            <input type="checkbox"  class="toggle scale-85" />
-          </button>
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <trash-icon class="w-6 h-6"></trash-icon>
-          </button>
-        </div>
-      </div>
-      <!-- Card 3 -->
-      <div class="flex items-center justify-between bg-base-200 rounded-2xl p-3 shadow">
-        <div class="flex items-center gap-3">
-          <div class="avatar">
-            <div class="rounded-full w-12 h-12">
-              <img src="https://img.daisyui.com/images/profile/demo/4@94.webp" alt="Avatar" />
-            </div>
-          </div>
-          <div>
-            <p class="font-bold">Funcionário 03</p>
-            <p class="text-sm text-gray-500">Gestor de estoque</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-10">
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <pencil-icon class="w-6 h-6"></pencil-icon>
-          </button>
-          <button class="hover:scale-105 transition-transform">
-            <input type="checkbox"  class="toggle scale-85" />
-          </button>
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <trash-icon class="w-6 h-6"></trash-icon>
-          </button>
-        </div>
-      </div>
-      <!-- Card 4 -->
-      <div class="flex items-center justify-between bg-base-200 rounded-2xl p-3 shadow">
-        <div class="flex items-center gap-3">
-          <div class="avatar">
-            <div class="rounded-full w-12 h-12">
-              <img src="https://img.daisyui.com/images/profile/demo/5@94.webp" alt="Avatar" />
-            </div>
-          </div>
-          <div>
-            <p class="font-bold">Funcionário 04</p>
-            <p class="text-sm text-gray-500">Gestor de estoque</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-10">
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <pencil-icon class="w-6 h-6"></pencil-icon>
-          </button>
-          <button class="hover:scale-105 transition-transform">
-            <input type="checkbox"  class="toggle scale-85" />
-          </button>
-          <button class="hover:scale-110 transition-transform cursor-pointer">
-            <trash-icon class="w-6 h-6"></trash-icon>
-          </button>
-        </div>
-      </div>
-
+      <InfoUsuario
+        :nome="usuario.nome"
+        :login="usuario.login"
+        v-for="usuario in refUsuarios"
+        :key="usuario.id"
+        :habilitado="usuario.habilitado"
+        v-on:desabilitar="(s: boolean) => desabilitar(usuario, s)"
+        v-on:editar="editar(usuario)"
+        v-on:excluir="excluir"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { ref, type Ref } from 'vue'
 
-const permissoes = ref({
-  admin: false,
-  cadastro: false,
-  movimentacoes: false,
-  consulta: false,
+import InfoUsuario from '@/components/CadastroUsuario/InfoUsuario.vue'
+import LabeledInput from '@/components/LabeledInput.vue'
+import type { SelectUsuarioSchema } from '../../../backend/src/db/schema/usuarios'
+import { ApiUsuario } from '@/api/usuarios'
+import { Permissoes } from '../../../backend/src/db/schema/permissoes'
+import { ApiPermissoes } from '@/api/permissoes'
+import { notificacoes } from '@/main'
+import { CrecenciaisZ } from '@/services/objects'
+
+// TODO: Não exportar senhas para o frontend
+const refUsuarios: Ref<SelectUsuarioSchema[] | null> = ref(null)
+const editando: Ref<boolean> = ref(false)
+const permissoes: Ref<Permissoes> = ref(Permissoes.Consulta)
+
+type UsuarioStore = {
+  id?: string
+  login: string
+  nome: string
+  descricao: string | null
+  senha: string
+}
+
+const refFields: Ref<UsuarioStore> = ref({
+  id: undefined,
+  login: '',
+  nome: '',
+  descricao: '',
+  senha: '',
 })
 
-function aoMarcarAdmin() {
-  if (permissoes.value.admin) {
-    permissoes.value.cadastro = false
-    permissoes.value.movimentacoes = false
-    permissoes.value.consulta = false
+const apiUsuario = new ApiUsuario()
+const apiPermissoes = new ApiPermissoes()
+
+function excluir() {
+  alert('No momento não é permitido excluir usuários.')
+}
+
+async function desabilitar(usuario: SelectUsuarioSchema, status: boolean) {
+  const res = await apiUsuario.atualizar(usuario.id, { habilitado: status })
+  if (res.ok) {
+    if (status) {
+      notificacoes.addNotification('Usuário habilitado.')
+    } else {
+      notificacoes.addNotification('Usuário desabilitado.')
+    }
   }
 }
+
+async function editar(usuario: SelectUsuarioSchema) {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  editando.value = true
+  refFields.value.id = usuario.id
+  refFields.value.login = usuario.login
+  refFields.value.nome = usuario.nome
+  refFields.value.descricao = usuario.descricao
+  // TODO: Carregar permissões do usuário
+  const res = await apiPermissoes.visualizar(usuario.id)
+  if (res.ok && res.responseBody) {
+    if (res.responseBody.includes(Permissoes.Administrador))
+      permissoes.value = Permissoes.Administrador
+    else if (res.responseBody.includes(Permissoes.Operacional))
+      permissoes.value = Permissoes.Operacional
+    else if (res.responseBody.includes(Permissoes.Consulta)) permissoes.value = Permissoes.Consulta
+  }
+}
+
+async function confirmar() {
+  if (!editando.value) {
+    const credenciais = CrecenciaisZ.safeParse({
+      usuario: refFields.value.login,
+      senha: refFields.value.senha,
+    })
+    if (!credenciais.data) {
+      const error = credenciais.error.issues[0].message
+      notificacoes.addNotification(error, { isError: true })
+      return
+    }
+    const res = await apiUsuario.criar({
+      login: refFields.value.login,
+      nome: refFields.value.nome,
+      descricao: refFields.value.descricao,
+      password: credenciais.data.senha,
+    })
+    if (!res.ok || !res.responseBody) return
+    const res2 = await apiPermissoes.definir(res.responseBody.id, [permissoes.value])
+    if (res2.ok) {
+      notificacoes.addNotification('Usuário e permissões configurados com sucesso.')
+      limparCampos()
+      obterUsuarios()
+    }
+  } else {
+    const credenciais = CrecenciaisZ.safeParse({
+      usuario: refFields.value.login,
+      senha: refFields.value.senha,
+    })
+    if (!credenciais.data) {
+      const error = credenciais.error.issues[0].message
+      notificacoes.addNotification(error, { isError: true })
+      return
+    }
+    const res = await apiUsuario.atualizar(refFields.value.id!, {
+      login: refFields.value.login,
+      nome: refFields.value.nome,
+      descricao: refFields.value.descricao || '',
+    })
+    if (!res.ok) return
+    // TODO: Atualizar senha opcional?
+    const res2 = await apiUsuario.alterarSenha(refFields.value.id!, refFields.value.senha)
+    if (!res2.ok) return
+    // TODO: Atualizar senha opcional?
+    const res3 = await apiPermissoes.definir(refFields.value.id!, [permissoes.value])
+    if (!res3.ok) return
+    notificacoes.addNotification('Usuário e permissões atualizados com sucesso.')
+    limparCampos()
+    obterUsuarios()
+  }
+}
+
+function limparCampos() {
+  refFields.value.id = undefined
+  refFields.value.login = ''
+  refFields.value.nome = ''
+  refFields.value.descricao = ''
+  refFields.value.senha = ''
+  editando.value = false
+  permissoes.value = Permissoes.Consulta
+}
+
+async function obterUsuarios() {
+  const res = await apiUsuario.obter()
+  if (res.ok && res.responseBody) {
+    refUsuarios.value = res.responseBody
+  }
+}
+
+obterUsuarios()
 </script>

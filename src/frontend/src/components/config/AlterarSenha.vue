@@ -4,7 +4,7 @@ import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { ApiUsuario } from '@/api/usuario'
+import { ApiPerfil } from '@/api/perfil'
 import { PasswordZ } from '@/services/objects'
 import { useNotificationStore } from '@/store/config/toast'
 import { ZodError } from 'zod'
@@ -19,7 +19,7 @@ const senhas = ref({
   confirmacao: '',
 })
 
-const usuario = new ApiUsuario()
+const usuario = new ApiPerfil()
 
 const notifications = useNotificationStore()
 

@@ -15,7 +15,7 @@ export const tabelaUsuarios = sqliteTable("usuarios", {
   login: text().notNull().unique(),
   hashedPassword: text("hashed_password").notNull(),
   descricao: text(),
-  habilitado: int({ mode: "boolean" }).notNull().default(false),
+  habilitado: int({ mode: "boolean" }).notNull().default(true),
   modoEscuro: int("modo_escuro", { mode: "boolean" }).notNull().default(false),
   /**
    * @deprecated Utilizar a tabela de permissões
@@ -77,3 +77,4 @@ export const SelectUsuarioInfoSchemaZ = createSelectSchema(tabelaUsuarios, {
 export type SelectUsuarioSchema = InferSelectModel<typeof tabelaUsuarios>;
 export type UpdateUsuarioSchema = z.infer<typeof UpdateUsuarioSchemaZ>;
 export type InsertUsuarioSchema = z.infer<typeof InsertUsuarioSchemaZ>;
+export type SelectUsuarioInfoSchema = z.infer<typeof SelectUsuarioInfoSchemaZ>;

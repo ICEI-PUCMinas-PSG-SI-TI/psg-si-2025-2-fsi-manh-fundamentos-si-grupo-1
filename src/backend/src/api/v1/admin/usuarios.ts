@@ -8,7 +8,6 @@ import {
 import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../../services/servicoUsuarios";
-import { ClientError } from "../../../error";
 import { ParamsIdSchemaZ, PasswordZ } from "../objects";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
@@ -18,7 +17,7 @@ const apiV1AdminUsuariosRouter = Router();
 
 async function getUsuarios(req: Request, res: Response, next: NextFunction) {
   try {
-    const consulta = await servicoUsuarios.selecionarTodos();
+    const consulta = await servicoUsuarios.listarTodosPerfil();
     res.send(consulta);
   } catch (err) {
     next(err);
@@ -32,8 +31,9 @@ async function postUsuario(
 ) {
   try {
     const parsedBody = InsertUsuarioSchemaReqZ.parse(req.body);
-    await servicoUsuarios.inserir(parsedBody);
-    res.send();
+    const uuid = await servicoUsuarios.inserir(parsedBody);
+    if (uuid) res.send(uuid);
+    else res.send(500);
   } catch (err) {
     next(err);
   }
@@ -55,11 +55,8 @@ async function alterarSenha(
       params.id,
       parsedBody.senha,
     );
-    if (ok) {
-      res.send();
-    } else {
-      throw new ClientError("Unauthorized", 401);
-    }
+    if (ok) res.send();
+    else res.sendStatus(401);
   } catch (err) {
     next(err);
   }
@@ -73,8 +70,8 @@ async function getUsuarioId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
-    if (!consulta) throw new ClientError("Not Found", 404);
-    res.send(consulta);
+    if (consulta) res.send(consulta);
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }
@@ -87,16 +84,17 @@ async function excluirUsuarioId(
 ) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await servicoUsuarios.excluirPorId(params.id);
-    if (consulta === 0) throw new ClientError("", 404);
-    res.send(consulta);
+    const alteracoes = await servicoUsuarios.excluirPorId(params.id);
+    if (alteracoes > 0) res.send(alteracoes);
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }
 }
 
-const AdmUpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.pick({}).strict();
+const AdmUpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.strict();
 
+// TODO: Handle password change
 async function patchUsuario(
   req: ExtendedRequest,
   res: Response,
@@ -104,13 +102,10 @@ async function patchUsuario(
 ) {
   try {
     const updateFields = AdmUpdateUsuarioEndpointSchema.parse(req.body);
-    const usuario = req._usuario!;
-    const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
-    if (updates === 1) {
-      res.send();
-    } else {
-      throw new ClientError("Bad Request", 400);
-    }
+    const params = ParamsIdSchemaZ.parse(req.params);
+    const alteracoes = await servicoUsuarios.atualizar(params.id, updateFields);
+    if (alteracoes > 0) res.send();
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }

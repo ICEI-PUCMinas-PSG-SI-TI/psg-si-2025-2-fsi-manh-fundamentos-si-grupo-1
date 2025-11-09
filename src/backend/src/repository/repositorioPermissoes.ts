@@ -83,4 +83,13 @@ export class RepositorioPermissoes {
       return resultSet.rowsAffected;
     });
   }
+
+  excluirPermissoes(userId: string) {
+    return baseDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaPermissoes)
+        .where(eq(tabelaPermissoes.usuarioId, userId));
+      return resultSet.rowsAffected;
+    });
+  }
 }

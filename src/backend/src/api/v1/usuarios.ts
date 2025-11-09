@@ -1,7 +1,6 @@
 import { type ExtendedRequest } from "../../middlewares";
 import { Router, type NextFunction, type Response } from "express";
 import servicoUsuarios from "../../services/servicoUsuarios";
-import { ClientError } from "../../error";
 import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
 import { ParamsIdSchemaZ, PasswordZ } from "./objects";
@@ -21,9 +20,9 @@ async function getUsuarioId(
 ) {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await servicoUsuarios.selecionarInfoPorId(params.id);
-    if (!consulta) throw new ClientError("Not Found", 404);
-    res.send(consulta);
+    const consulta = await servicoUsuarios.listarUnicoPublico(params.id);
+    if (consulta) res.send(consulta);
+    else res.sendStatus(404);
   } catch (err) {
     next(err);
   }
@@ -42,11 +41,8 @@ async function alterarSenha(
       senhas.senhaNova,
       usuario.id,
     );
-    if (ok) {
-      res.send();
-    } else {
-      throw new ClientError("Unauthorized", 401);
-    }
+    if (ok) res.send();
+    else res.sendStatus(401);
   } catch (err) {
     next(err);
   }
@@ -68,11 +64,8 @@ async function patchUsuario(
     const updateFields = UpdateUsuarioEndpointSchema.parse(req.body);
     const usuario = req._usuario!;
     const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
-    if (updates === 1) {
-      res.send();
-    } else {
-      throw new ClientError("Bad Request", 400);
-    }
+    if (updates > 0) res.send();
+    else res.sendStatus(400);
   } catch (err) {
     next(err);
   }

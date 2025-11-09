@@ -176,7 +176,7 @@ import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
 import { useNotificationStore } from '@/store/config/toast'
 import AlterarSenha from '@/components/config/AlterarSenha.vue'
 import { ApiAutenticacao } from '@/api/auth'
-import { ApiUsuario } from '@/api/usuario'
+import { ApiPerfil } from '@/api/perfil'
 import { limparConfiguracoes } from '@/services/storage'
 import router from '@/router'
 import type { SelectConfiguracaoSchema } from '../../../backend/src/db/schema/configuracoes'
@@ -211,7 +211,7 @@ const configuracoes = new ApiConfiguracoes()
 const categorias = new ApiCategorias()
 const unidadesMedida = new ApiUnidadesMedida()
 const autenticacao = new ApiAutenticacao()
-const usuario = new ApiUsuario()
+const usuario = new ApiPerfil()
 
 const notificacoes = useNotificationStore()
 
