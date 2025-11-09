@@ -8,9 +8,11 @@ const autenticacao = new ApiAutenticacao()
 
 // TODO: Armazenar informações separadamente?
 const refUserInfo: Ref<UserSessionInfo | null> = ref(null)
+const refDidFetch = ref(false)
 
 async function isUserLoggedIn(): Promise<boolean> {
   const res = await autenticacao.sessao()
+  refDidFetch.value = true
   if (res.ok) {
     if (res.responseBody) refUserInfo.value = res.responseBody
     return true
@@ -19,7 +21,7 @@ async function isUserLoggedIn(): Promise<boolean> {
 }
 
 export const useSessaoStore = defineStore('sessao', {
-  state: () => ({ isLoggedIn: false }),
+  state: () => ({ isLoggedIn: false, didFetch: refDidFetch }),
   getters: {
     getUserInfo(): UserSessionInfo | null {
       return refUserInfo.value

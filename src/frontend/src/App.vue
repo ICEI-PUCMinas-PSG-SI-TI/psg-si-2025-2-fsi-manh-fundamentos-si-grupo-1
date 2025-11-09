@@ -7,17 +7,19 @@ import ToastContainer from './components/ToastContainer.vue'
 
 const tema = useTemaStore()
 const route = useRoute()
-const isLogin = computed(() => route.name === 'login')
-const dataTema = computed(() => (isLogin.value ? '' : tema.isDarkModePreferred ? 'dark' : 'light'))
+const showMenu = computed(() => route.name !== 'login' && route.name !== 'loading')
+const dataTema = computed(() =>
+  showMenu.value ? (tema.isDarkModePreferred ? 'dark' : 'light') : '',
+)
 </script>
 
 <template>
   <div
     :data-theme="dataTema"
     class="size-full"
-    :class="[isLogin ? 'flex justify-center items-center ' : 'flex flex-row']"
+    :class="[showMenu ? 'flex flex-row' : 'flex justify-center items-center ']"
   >
-    <NavigationMenu class="flex h-full" v-if="!isLogin" />
+    <NavigationMenu class="flex h-full" v-if="showMenu" />
     <RouterView class="relative" />
     <ToastContainer />
   </div>

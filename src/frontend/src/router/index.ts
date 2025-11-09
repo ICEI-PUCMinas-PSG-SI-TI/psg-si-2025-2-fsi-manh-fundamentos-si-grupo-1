@@ -9,6 +9,7 @@ import { sessao } from '@/main'
 import { Permissoes } from '../../../backend/src/db/schema/permissoes'
 import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
 import CadastroUsuariosView from '@/views/CadastroUsuariosView.vue'
+import LoadingView from '@/views/LoadingView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +17,11 @@ const router = createRouter({
     {
       path: '/',
       redirect: '/dashboard',
+    },
+    {
+      name: 'loading',
+      path: '/loading',
+      component: LoadingView,
     },
     {
       name: 'login',
@@ -117,9 +123,9 @@ router.beforeEach((to, from, next: NavigationGuardNext) => {
       next()
     } else {
       if (to.name) {
-        next({ name: 'login', query: { nextPage: to.name.toString() } })
+        next({ name: 'loading', query: { nextPage: to.name.toString() } })
       } else {
-        next({ name: 'login' })
+        next({ name: 'loading' })
       }
     }
   } else {

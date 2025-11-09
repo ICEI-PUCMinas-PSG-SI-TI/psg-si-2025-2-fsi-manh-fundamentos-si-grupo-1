@@ -16,4 +16,8 @@ export class ApiConfiguracoes {
       body: opts,
     })
   }
+
+  ping() {
+    return fetchW('/ping')
+  }
 }
