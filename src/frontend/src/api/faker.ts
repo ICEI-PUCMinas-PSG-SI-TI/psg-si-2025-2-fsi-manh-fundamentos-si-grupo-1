@@ -1,6 +1,8 @@
 import { fetchW, HttpMethods } from './fetchWrapper'
 
-const endpoint_path = (entidade: string) => `/api/v1/admin/faker/${entidade}`
+const endpoint_path = (
+  entidade: 'movimentacoes' | 'lotes' | 'produtos' | 'usuarios' | 'unidades-medida' | 'categorias',
+) => `/api/v1/dev/faker/${entidade}`
 
 export class ApiFaker {
   criarMovimentacoes(canRecurse: boolean = false, quant: number = 10) {

@@ -10,6 +10,7 @@ import apiV1Produtos from "./v1/produtos";
 import apiV1Permissoes from "./v1/permissoes";
 import { mdwPermissoes } from "../middlewares";
 import { Permissoes } from "../db/enums/permissoes";
+import apiV1Dev from "./v1/dev";
 
 const apiV1Router = Router();
 
@@ -48,5 +49,7 @@ apiV1Router.use(
   mdwPermissoes(Permissoes.Administrador, Permissoes.Desenvolvedor),
   apiV1Admin,
 );
+
+apiV1Router.use("/dev", mdwPermissoes(Permissoes.Desenvolvedor), apiV1Dev);
 
 export default apiV1Router;
