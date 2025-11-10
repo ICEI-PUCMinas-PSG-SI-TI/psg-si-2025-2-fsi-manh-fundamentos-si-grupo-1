@@ -13,15 +13,6 @@
         >
           + PRODUTO
         </button>
-        <!--
-        <button
-          v-if="selected"
-          @click="editSelected"
-          class="bg-green-800 text-white px-4 py-2 rounded-full hover:bg-green-700"
-        >
-          EDITAR SELECIONADO
-        </button>
-        -->
       </div>
     </div>
 
@@ -39,7 +30,7 @@
         <label class="text-sm text-gray-600">Filtrar categoria:</label>
         <select v-model="categoriaFilter" class="border px-2 py-1 rounded">
           <option value="">Todas</option>
-          <option v-for="c in categorias" :key="c.id" :value="c.nome">{{ c }}</option>
+          <option v-for="c in categorias" :key="c.id" :value="c.id">{{ c.nome }}</option>
         </select>
       </div>
     </div>
@@ -53,7 +44,7 @@
             <th class="text-left p-2">NOME DO PRODUTO</th>
             <th class="text-left p-2">CATEGORIA</th>
             <th class="text-left p-2">QUANTIDADE</th>
-            <th class="text-left p-2">PREÇO</th>
+            <th class="text-left p-2">PREÇO CUSTO</th>
             <th class="p-2 justify-center">AÇÕES</th>
           </tr>
         </thead>
@@ -134,6 +125,7 @@ import { ApiProdutos } from '@/api/produtos'
 import { ApiCategorias } from '@/api/categorias'
 import type { SelectProdutosSchema } from '../../../backend/src/db/schema/produtos'
 import type { SelectCategoriaSchema } from '../../../backend/src/db/schema/categorias'
+import { notificacoes } from '@/main'
 
 const search = ref('')
 const categoriaFilter = ref('')
@@ -155,18 +147,6 @@ const form: Ref<{
 } | null> = ref(null)
 
 const categorias: Ref<SelectCategoriaSchema[]> = ref([])
-/*
-const filteredProducts = computed(() => {
-  return refProdutos.value.filter((p) => {
-    const termo = search.value.trim().toLowerCase()
-    const matchNome = termo === '' || p.nome.toLowerCase().includes(termo)
-    const matchCategoria = categoriaFilter.value === '' || p.categoria === categoriaFilter.value
-    return matchNome && matchCategoria
-  })
-})
-*/
-
-const form: Ref<Produto | null> = ref(null)
 
 function criarProduto() {
   // modalMode.value = 'create'
@@ -183,7 +163,7 @@ function visualizarProduto(p: SelectProdutosSchema) {
 
 function remover(p: SelectProdutosSchema) {
   // TODO: Devido a dependencias.
-  alert('No momento não é permitido a exclusão de produtos!')
+  notificacoes.addNotification('No momento não é permitido a exclusão de produtos!', { time: 3000 })
   /*
   if (!confirm(`Remover "${p.nome}"?`)) return
   refProdutos.value = refProdutos.value.filter((x) => x.id !== p.id)
@@ -209,8 +189,11 @@ function save() {
   showModal.value = false
 }
 
-watch([search, categoriaFilter], () => {
-  obterProdutos()
+let searchInterval: NodeJS.Timeout | null = null
+watch(categoriaFilter, () => obterProdutos())
+watch(search, () => {
+  if (searchInterval) clearTimeout(searchInterval)
+  searchInterval = setTimeout(obterProdutos, 500)
 })
 
 const apiProdutos = new ApiProdutos()

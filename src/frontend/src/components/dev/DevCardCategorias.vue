@@ -32,7 +32,7 @@ function show() {
   <div class="card bg-base-100 border-2 border-base-300">
     <div class="card-body">
       <div class="flex flex-col p-2 gap-2">
-        <div class="font-semibold text-xl mb-4">Lotes</div>
+        <div class="font-semibold text-xl mb-4">Categorias</div>
         <strong>Criar categorias com dados aleatórios</strong>
         <LabeledInput html-type="number" html-place-holder="Quantidade" v-model="quant" />
         <div class="flex flex-row items-center">

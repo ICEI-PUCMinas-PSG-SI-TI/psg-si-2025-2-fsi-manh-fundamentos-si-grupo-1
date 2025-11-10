@@ -166,7 +166,7 @@ const apiPermissoes = new ApiPermissoes()
 
 function excluir() {
   // TODO: Devido a dependencias.
-  alert('No momento não é permitido excluir usuários.')
+  notificacoes.addNotification('No momento não é permitido excluir usuários.')
 }
 
 async function desabilitar(usuario: SelectUsuarioSchema, status: boolean) {

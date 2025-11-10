@@ -96,6 +96,7 @@ class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
   comTexto(texto: string) {
     const _texto = `%${texto}%`;
     this._whereOr.push(
+      like(tabelaProdutos.nome, _texto),
       like(tabelaProdutos.sku, _texto),
       like(tabelaProdutos.codigoBarra, _texto),
       like(tabelaProdutos.descricao, _texto),

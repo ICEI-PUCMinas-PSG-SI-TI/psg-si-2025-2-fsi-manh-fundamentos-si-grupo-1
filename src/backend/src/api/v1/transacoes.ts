@@ -15,11 +15,12 @@ async function getTransacoes(
     if (Object.keys(req.query).length === 0) {
       const consulta = await servicoTransacoes.selecionarTodos();
       res.send(consulta);
+    } else {
+      const parsedQueryParams = ParamsConsultaTransacoesZ.parse(req.query);
+      const consulta =
+        await servicoTransacoes.selecionarConsulta(parsedQueryParams);
+      res.send(consulta);
     }
-    const parsedQueryParams = ParamsConsultaTransacoesZ.parse(req.query);
-    const consulta =
-      await servicoTransacoes.selecionarConsulta(parsedQueryParams);
-    res.send(consulta);
   } catch (err) {
     next(err);
   }

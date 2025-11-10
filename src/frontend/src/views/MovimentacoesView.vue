@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-screen w-screen p-4 overflow-y-auto">
-    <div class="flex-shrink-0 p-2 mb-4">
+    <div class="shrink-0 p-2 mb-4">
       <h3 class="text-lg font-semibold mb-2">Filtrar por Data</h3>
       <div class="flex gap-2">
         <input type="date" v-model="dataInicio" class="input input-bordered" />
@@ -36,7 +36,8 @@
 
 <script setup lang="ts">
 import MovTable from '@/components/HistoricoMov/Table/MovTable.vue'
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed } from 'vue'
+// import { onMounted } from 'vue'
 
 interface Transacao {
   id: string
@@ -65,6 +66,7 @@ function formatarData(dataISO: string): string {
 }
 
 const transacoes = ref<Transacao[]>([])
+/*
 onMounted(async () => {
   try {
     const response = await fetch('http://localhost:3000/transacoes')
@@ -73,7 +75,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Erro ao buscar transações:', error)
   }
-})
+})*/
 
 const paginaAtual = ref(1)
 const itensPorPagina = 5

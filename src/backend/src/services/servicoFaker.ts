@@ -125,7 +125,7 @@ async function escolherCategorias(
 ): Promise<{ id: string }[]> {
   let quantCategorias = await servicoCategorias.contar();
   if (quantCategorias === 0) {
-    if (canRecurse) await servicoFaker.criarLotes(quant, canRecurse);
+    if (canRecurse) await servicoFaker.criarCategorias(quant);
     else throw new HttpError("No relational data found", 400);
   }
   quantCategorias = await servicoCategorias.contar();
@@ -240,9 +240,8 @@ export class ServicoFaker {
 
   async criarCategorias(quant: number) {
     for (let i = 0; i < quant; i++) {
-      const unit = faker.science.unit();
       await servicoCategorias.inserir({
-        nome: unit.name,
+        nome: faker.commerce.department(),
       });
     }
     warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
