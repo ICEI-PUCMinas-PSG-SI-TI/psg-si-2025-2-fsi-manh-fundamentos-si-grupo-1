@@ -11,7 +11,8 @@ export enum HttpMethods {
 }
 
 // TODO: Alterar 'localhost' para ENV
-const backend_url = 'http://localhost:5173'
+// const backend_url = 'http://localhost:5173'
+const backend_url = `http://${window.location.host}`
 
 export async function fetchW<T>(
   path: string,

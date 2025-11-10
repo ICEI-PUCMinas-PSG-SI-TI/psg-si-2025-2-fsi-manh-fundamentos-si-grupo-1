@@ -7,7 +7,9 @@ import ToastContainer from './components/ToastContainer.vue'
 
 const tema = useTemaStore()
 const route = useRoute()
-const showMenu = computed(() => route.name !== 'login' && route.name !== 'loading')
+const showMenu = computed(
+  () => route.name !== 'login' && route.name !== 'loading' && route.name !== '404',
+)
 const dataTema = computed(() =>
   showMenu.value ? (tema.isDarkModePreferred ? 'dark' : 'light') : '',
 )

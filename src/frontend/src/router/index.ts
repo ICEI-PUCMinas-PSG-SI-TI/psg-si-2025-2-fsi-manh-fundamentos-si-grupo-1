@@ -10,11 +10,13 @@ import { Permissoes } from '../../../backend/src/db/schema/permissoes'
 import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
 import CadastroUsuariosView from '@/views/CadastroUsuariosView.vue'
 import LoadingView from '@/views/LoadingView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      name: 'start',
       path: '/',
       redirect: '/dashboard',
     },
@@ -111,6 +113,12 @@ const router = createRouter({
         requerAutenticacao: true,
         requerPermissoes: [[Permissoes.Desenvolvedor]],
       },
+    },
+    {
+      // Matches any path not previously matched
+      path: '/:pathMatch(.*)*',
+      name: '404',
+      component: NotFoundView,
     },
   ],
 })
