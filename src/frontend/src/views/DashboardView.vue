@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white p-8">
+  <div class="min-h-screen w-screen bg-white p-8">
     <!-- Título -->
     <h1 class="text-3xl font-bold mb-8">DASHBOARD</h1>
 
@@ -40,12 +40,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="mov in movimentacoes" :key="mov.id" class="border-b hover:bg-gray-100">
-            <td class="p-2">{{ mov.produto }}</td>
-            <td class="p-2" :class="mov.tipo === 'Entrada' ? 'text-green-700' : 'text-red-700'">
-              {{ mov.tipo }}
+          <tr v-for="mov in refMov" :key="mov.id" class="border-b hover:bg-gray-100">
+            <td class="p-2">{{ mov.produtoId }}</td>
+            <td class="p-2" :class="mov.motivo === 'Entrada' ? 'text-green-700' : 'text-red-700'">
+              {{ mov.motivo }}
             </td>
-            <td class="p-2">{{ mov.data }}</td>
+            <td class="p-2">{{ new Date(mov.horario).toLocaleDateString() }}</td>
             <td class="p-2">{{ mov.quantidade }}</td>
           </tr>
         </tbody>
@@ -54,28 +54,52 @@
   </div>
 </template>
 
-<script setup>
-import { onMounted, ref } from "vue";
-import Chart from "chart.js/auto";
+<script setup lang="ts">
+import { onMounted, ref, type Ref } from 'vue'
+import Chart from 'chart.js/auto'
+import { ApiMovimentacoes } from '@/api/movimentacoes'
 
-const movimentacoes = ref([
-  { id: 1, produto: "Produto A", tipo: "Entrada", data: "02/11/2025", quantidade: 5 },
-  { id: 2, produto: "Produto B", tipo: "Saída", data: "03/11/2025", quantidade: 3 },
-  { id: 3, produto: "Produto C", tipo: "Entrada", data: "05/11/2025", quantidade: 8 },
-]);
+//
+
+const apiMovimentacoes = new ApiMovimentacoes()
+const refMov: Ref<
+  {
+    id: string
+    produtoId: string
+    usuarioId: string
+    loteId: string
+    motivo: string
+    quantidade: number
+    horario: string
+    localOrigem: string
+    localDestino: string
+    observacao: string
+  }[]
+> = ref([])
+
+async function obterMovimentacoes() {
+  const res = await apiMovimentacoes.obterTodos()
+  if (res.ok && res.responseBody) {
+    refMov.value = res.responseBody as []
+  }
+}
+
+obterMovimentacoes()
+
+//
 
 onMounted(() => {
-  const ctx = document.getElementById("graficoMovimentacoes").getContext("2d");
+  const ctx = document.getElementById('graficoMovimentacoes').getContext('2d')
   new Chart(ctx, {
-    type: "line",
+    type: 'line',
     data: {
-      labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
+      labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
       datasets: [
         {
-          label: "Movimentações",
+          label: 'Movimentações',
           data: [5, 8, 6, 9, 7, 4, 9],
-          borderColor: "rgba(16, 185, 129, 1)", // verde
-          backgroundColor: "rgba(16, 185, 129, 0.1)",
+          borderColor: 'rgba(16, 185, 129, 1)', // verde
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
           borderWidth: 2,
           tension: 0.3,
         },
@@ -95,12 +119,12 @@ onMounted(() => {
         legend: { display: false },
       },
     },
-  });
-});
+  })
+})
 </script>
 
 <style scoped>
 body {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 </style>
