@@ -193,7 +193,7 @@ let searchInterval: NodeJS.Timeout | null = null
 watch(categoriaFilter, () => obterProdutos())
 watch(search, () => {
   if (searchInterval) clearTimeout(searchInterval)
-  searchInterval = setTimeout(obterProdutos, 500)
+  searchInterval = setTimeout(obterProdutos, 200)
 })
 
 const apiProdutos = new ApiProdutos()

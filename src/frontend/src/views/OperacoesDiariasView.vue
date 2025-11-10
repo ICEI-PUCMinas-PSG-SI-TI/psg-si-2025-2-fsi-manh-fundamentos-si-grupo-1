@@ -1,36 +1,25 @@
 <template>
   <div class="w-full min-h-screen">
     <h1 class="m-15 mt-7 text-6xl font-bold">Operações Diárias</h1>
-    <div class="bg-base-200 m-15 pt-2 pb-1 rounded-2xl overflow-auto flex flex-col h-[83vh]">
+    <div class="bg-base-200 m-12 pt-2 pb-1 rounded-2xl overflow-auto flex flex-col h-[83vh]">
       <!--Compras, vendas e filtrar por data-->
-      <div class="flex gap-15 m-6">
+      <div class="flex flex-row gap-8 m-6">
         <button
-          @click="
-            botaoAtivoC = true;
-            botaoAtivoV = false;
-            carregarMovimentacoesDoDia()
-          "
-          class="flex flex-1 bg-stone-700 p-4 rounded-lg items-center gap-2 cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
+          @click="ativarCompra"
+          class="flex bg-stone-700 p-4 rounded-lg items-center cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
           :class="botaoAtivoC === true ? 'scale-104' : ''"
         >
           <ShoppingCartIcon
             class="w-15"
             :class="botaoAtivoC === true ? 'text-green-500' : 'text-white'"
-          ></ShoppingCartIcon>
-          <span
-            class="text-2xl ml-6"
-            :class="botaoAtivoC === true ? 'text-green-500' : 'text-white'"
-          >
+          />
+          <span class="ml-6" :class="botaoAtivoC === true ? 'text-green-500' : 'text-white'">
             Compras
           </span>
         </button>
         <button
-          @click="
-            botaoAtivoC = false;
-            botaoAtivoV = true;
-            carregarMovimentacoesDoDia()
-          "
-          class="flex flex-1 h-40 bg-stone-700 p-4 rounded-lg items-center gap-2 cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
+          @click="ativarVenda"
+          class="flex bg-stone-700 p-4 rounded-lg items-center cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
           :class="botaoAtivoV === true ? 'scale-104' : ''"
         >
           <ShoppingBagIcon
@@ -38,19 +27,18 @@
             :class="botaoAtivoV === true ? 'text-green-500' : 'text-white'"
           >
           </ShoppingBagIcon>
-          <span
-            class="text-2xl ml-6"
-            :class="botaoAtivoV === true ? 'text-green-500 ' : 'text-white'"
+          <span class="text ml-6" :class="botaoAtivoV === true ? 'text-green-500 ' : 'text-white'"
             >Vendas</span
           >
         </button>
+
         <div class="flex flex-col bg-stone-700 p-4 rounded-lg flex-1 items-center justify-center">
-          <span class="text-2xl font-medium mb-4 text-white">Filtrar por data</span>
+          <span class="text font-medium mb-4 text-white">Filtrar por data</span>
           <input
             type="date"
             v-model="dataSelecionada"
             @change="carregarMovimentacoesDoDia"
-            class=" input input-bordered w-70  px-2 rounded-lg"
+            class="input input-bordered w-70 px-2 rounded-lg"
           />
         </div>
       </div>
@@ -90,13 +78,20 @@
             </thead>
             <tbody>
               <tr v-for="i in movimentacoes" :key="i.id" class="text-xl text-white">
-                <td class="py-2">{{ new Date(i.horario).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) }}</td>
+                <td class="py-2">
+                  {{
+                    new Date(i.horario).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  }}
+                </td>
                 <td class="py-2">{{ i.tipo === 1 ? 'Compra' : 'Venda' }}</td>
                 <td class="py-2">
                   <MovTableProduct :product-id="i.produtoId" :lote-id="i.loteId" />
                 </td>
                 <td class="py-2">{{ i.quantidade }}</td>
-                <td class="py-2">{{ i.usuario_id }}</td>
+                <td class="py-2">{{ i.usuarioId }}</td>
               </tr>
               <tr v-if="movimentacoes.length === 0">
                 <td colspan="5" class="py-4 text-center text-white">
@@ -113,19 +108,38 @@
 </template>
 
 <script setup lang="ts">
-import { ApiMovimentacoes } from '@/api/movimentacoes';
-import MovTableProduct from '@/components/HistoricoMov/Table/MovTableProduct.vue';
-import { ShoppingCartIcon, ShoppingBagIcon, MagnifyingGlassIcon, PlusIcon} from '@heroicons/vue/24/outline'
-import { onMounted, ref } from 'vue';
-import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue';
-import { ApiProdutos } from '@/api/produtos';
+import { ApiMovimentacoes } from '@/api/movimentacoes'
+import MovTableProduct from '@/components/HistoricoMov/Table/MovTableProduct.vue'
+import {
+  ShoppingCartIcon,
+  ShoppingBagIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+} from '@heroicons/vue/24/outline'
+import { onMounted, ref } from 'vue'
+import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
+import { ApiProdutos } from '@/api/produtos'
+import { ApiUsuario } from '@/api/usuarios'
+import { ApiPerfil } from '@/api/perfil'
 
 const produtosCache = ref<Record<string, string>>({})
 
-async function carregarProdutos(){
+function ativarCompra() {
+  botaoAtivoC.value = true
+  botaoAtivoV.value = false
+  carregarMovimentacoesDoDia()
+}
+
+function ativarVenda() {
+  botaoAtivoC.value = false
+  botaoAtivoV.value = true
+  carregarMovimentacoesDoDia()
+}
+
+async function carregarProdutos() {
   const res = await ApiProdutos.obterTodos()
   const lista = await res.json()
-  lista.forEach((p:{id:string, nome:string})=>{
+  lista.forEach((p: { id: string; nome: string }) => {
     produtosCache.value[p.id] = p.nome
   })
 }
@@ -133,10 +147,19 @@ async function carregarProdutos(){
 const botaoAtivoC = ref<boolean>(true)
 const botaoAtivoV = ref<boolean>(false)
 
-interface Movimentacao{
+const apiUsuarios = new ApiPerfil()
+
+async function getUsuariosId(usuarioId: string) {
+  const res = await apiUsuarios.obterPorId(usuarioId)
+  if (res.ok && res.responseBody) {
+    return res.responseBody
+  }
+}
+
+interface Movimentacao {
   id: string
   produtoId: string
-  usuario_id: string
+  usuarioId: string
   loteId: string
   tipo: number
   quantidade: number
@@ -148,41 +171,41 @@ interface Movimentacao{
 
 const api = new ApiMovimentacoes()
 const movimentacoes = ref<Movimentacao[]>([])
-const dataSelecionada = ref<string>(formatarDataLocalParaInput(new Date()));
-const produtoFiltro = ref<string | null>("")
-
+const dataSelecionada = ref<string>(formatarDataLocalParaInput(new Date()))
+const produtoFiltro = ref<string | null>('')
 
 async function carregarMovimentacoesDoDia() {
-  const resp  = await api.obterTodos()
+  const res = await api.obterTodos()
   /* const resp = await api.obterPorData(dataSelecionada.value) */
-  const dados = await resp.json() as Movimentacao[]
+  if (res.ok && res.responseBody) {
+    const dados = res.responseBody as Movimentacao[]
 
-
-  let filtradas = dados.filter(i =>
-    (botaoAtivoC.value && i.tipo === 1) ||
-    (botaoAtivoV.value && i.tipo != 1)
-  )
-
-  if(produtoFiltro.value && produtoFiltro.value.trim() !== "") {
-    const filtroLower = produtoFiltro.value.toLowerCase()
-    filtradas = filtradas.filter(i =>
-      (produtosCache.value[i.produtoId] || '').toLowerCase().includes(filtroLower)
+    let filtradas = dados.filter(
+      (i) => (botaoAtivoC.value && i.tipo === 1) || (botaoAtivoV.value && i.tipo != 1),
     )
-  }
-   movimentacoes.value = filtradas
 
+    if (produtoFiltro.value && produtoFiltro.value.trim() !== '') {
+      const filtroLower = produtoFiltro.value.toLowerCase()
+      filtradas = filtradas.filter((i) =>
+        (produtosCache.value[i.produtoId] || '').toLowerCase().includes(filtroLower),
+      )
+    }
+    movimentacoes.value = filtradas
+  }
 }
 
 onMounted(async () => {
-  await carregarProdutos()          // carrega o id → nome
+  await carregarProdutos() // carrega o id → nome
   await carregarMovimentacoesDoDia() // carrega as movimentações já filtrando pelo tipo e nome
 })
 
+ativarVenda()
+
 function formatarDataLocalParaInput(date: Date) {
-  const ano = date.getFullYear();
-  const mes = String(date.getMonth() + 1).padStart(2, "0");
-  const dia = String(date.getDate()).padStart(2, "0");
-  return `${ano}-${mes}-${dia}`;
+  const ano = date.getFullYear()
+  const mes = String(date.getMonth() + 1).padStart(2, '0')
+  const dia = String(date.getDate()).padStart(2, '0')
+  return `${ano}-${mes}-${dia}`
 }
 
 const novaMovimentacao = ref<boolean>(false)
