@@ -3,7 +3,6 @@ import PesquisaProdutosView from '@/views/PesquisaProdutosView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MovimentacoesView from '@/views/MovimentacoesView.vue'
 import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-router'
-import NotImplementedView from '@/views/NotImplementedView.vue'
 import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
 import { sessao } from '@/main'
 import { Permissoes } from '../../../backend/src/db/schema/permissoes'
@@ -11,6 +10,7 @@ import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
 import CadastroUsuariosView from '@/views/CadastroUsuariosView.vue'
 import LoadingView from '@/views/LoadingView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import OperacoesDiariasView from '@/views/OperacoesDiariasView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,7 +42,7 @@ const router = createRouter({
       // Página de controle de estoque (registra entradas e saidas).
       name: 'operacoes',
       path: '/operacoes',
-      component: NotImplementedView,
+      component: OperacoesDiariasView,
       meta: {
         requerAutenticacao: true,
       },

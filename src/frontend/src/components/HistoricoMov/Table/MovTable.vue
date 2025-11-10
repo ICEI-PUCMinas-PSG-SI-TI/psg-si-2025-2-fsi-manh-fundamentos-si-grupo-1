@@ -32,16 +32,8 @@ obterMovimentacoes()
 <template>
   <div class="overflow-x-auto">
     <table class="table">
-      <!-- head -->
       <thead>
         <tr>
-          <!--
-          <th>
-            <label>
-              <input type="checkbox" class="checkbox" />
-            </label>
-          </th>
-          -->
           <th>Data</th>
           <th>Usuário</th>
           <th>Produto</th>
@@ -56,29 +48,16 @@ obterMovimentacoes()
           v-for="mov in refMovimentacoes"
           :key="mov.id"
           :col-data="mov.horario"
-          :col-lote-id="mov.loteId"
           :col-user-id="mov.usuarioId"
+          :col-product-id="mov.produtoId"
+          :col-lote-id="mov.loteId"
           :col-quantidade="mov.quantidade"
           :col-tipo="mov.motivo"
-          :col-product-id="mov.produtoId"
           :col-origem="mov.localOrigem"
           :col-destino="mov.localDestino"
           :col-observacao="mov.observacao"
         />
       </tbody>
-      <!-- foot -->
-      <tfoot>
-        <tr>
-          <th>Data</th>
-          <th>Usuário</th>
-          <th>Produto</th>
-          <th>Quant.</th>
-          <th>Origem</th>
-          <th>Destino</th>
-          <!-- TODO: Aumentar tamanho do campo caso haja texto -->
-          <th>Observação</th>
-        </tr>
-      </tfoot>
     </table>
   </div>
 </template>
