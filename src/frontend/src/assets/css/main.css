@@ -3,6 +3,7 @@
   themes:
     light --default,
     dark --prefersdark;
+  exclude: properties;
 }
 /* https://daisyui.com/theme-generator */
 @plugin "daisyui/theme" {
