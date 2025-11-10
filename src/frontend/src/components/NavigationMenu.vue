@@ -33,6 +33,13 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
         </NavigationMenuItem>
       </RouterLink>
 
+      <RouterLink to="/informacoes_produtos" v-slot="{ href, navigate, isActive }" custom>
+        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
+          <ArrowsUpDownIcon class="m-2" />
+          Informações Produtos 
+        </NavigationMenuItem>
+      </RouterLink>
+
       <RouterLink to="/movimentacoes" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
           <ClipboardDocumentListIcon class="m-2" />
