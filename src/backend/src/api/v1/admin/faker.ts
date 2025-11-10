@@ -77,11 +77,27 @@ async function criarUnidadesMedida(
   }
 }
 
+async function criarCategorias(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const parsedBody = FakerParamsZ.parse(req.body);
+    const { quant } = parsedBody;
+    await servicoFaker.criarCategorias(quant);
+    res.send();
+  } catch (err) {
+    next(err);
+  }
+}
+
 apiV1FakerRouter
   .post("/produtos", criarProdutos)
   .post("/lotes", criarLotes)
   .post("/movimentacoes", criarTransacoes)
   .post("/usuarios", criarUsuarios)
-  .post("/unidades-medida", criarUnidadesMedida);
+  .post("/unidades-medida", criarUnidadesMedida)
+  .post("/categorias", criarCategorias);
 
 export default apiV1FakerRouter;

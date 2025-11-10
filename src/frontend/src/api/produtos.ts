@@ -20,8 +20,8 @@ export class ApiProdutos {
     return fetchW(`${endpoint_path}/${_id}`)
   }
 
-  obterTodos(params: ParamsConsultaProdutos) {
-    return fetchW<SelectProdutosSchema>(endpoint_path, {
+  obterTodos(params?: ParamsConsultaProdutos) {
+    return fetchW<SelectProdutosSchema[]>(endpoint_path, {
       params: params,
     })
   }

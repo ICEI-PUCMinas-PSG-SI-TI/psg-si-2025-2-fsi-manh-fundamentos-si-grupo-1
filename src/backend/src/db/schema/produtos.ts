@@ -4,6 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
 import z from "zod";
 import { tabelaUnidadesMedida } from "./unidadesMedida";
+import { tabelaCategorias } from "./categorias";
 
 export enum StatusProduto {
   Ativo = "ATIVO",
@@ -24,6 +25,7 @@ export const tabelaProdutos = sqliteTable("produtos", {
   // TODO: Futuramente criar uma outra tabela de relação produto x categoria e
   // remover campo
   categoria: text(),
+  categoriaId: text().references(() => tabelaCategorias.id),
   marca: text(),
   fornecedor: text(),
   dimensoes: text(),

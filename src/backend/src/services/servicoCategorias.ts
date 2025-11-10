@@ -25,6 +25,12 @@ class ServicoCategorias {
   excluirPorId(id: string) {
     return repositorioCategorias.excluirPorId(id);
   }
+
+  async contar() {
+    const res = await repositorioCategorias.contar();
+    if (!res[0]) return 0;
+    return res[0].count;
+  }
 }
 
 const servicoCategorias = new ServicoCategorias();

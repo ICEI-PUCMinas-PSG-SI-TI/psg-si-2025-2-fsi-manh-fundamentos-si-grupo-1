@@ -165,6 +165,7 @@ const apiUsuario = new ApiUsuario()
 const apiPermissoes = new ApiPermissoes()
 
 function excluir() {
+  // TODO: Devido a dependencias.
   alert('No momento não é permitido excluir usuários.')
 }
 

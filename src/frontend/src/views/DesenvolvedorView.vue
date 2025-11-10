@@ -5,6 +5,7 @@ import DevCardProdutos from '@/components/dev/DevCardProdutos.vue'
 import DevCardUnidadesMedida from '@/components/dev/DevCardUnidadesMedida.vue'
 import DevCardUsuarios from '@/components/dev/DevCardUsuarios.vue'
 import DevCardMovimentacoes from '@/components/dev/DevCardMovimentacoes.vue'
+import DevCardCategorias from '@/components/dev/DevCardCategorias.vue'
 </script>
 
 <template>
@@ -32,6 +33,7 @@ import DevCardMovimentacoes from '@/components/dev/DevCardMovimentacoes.vue'
       <DevCardUsuarios />
       <DevCardLotes />
       <DevCardUnidadesMedida />
+      <DevCardCategorias />
     </div>
   </div>
 </template>

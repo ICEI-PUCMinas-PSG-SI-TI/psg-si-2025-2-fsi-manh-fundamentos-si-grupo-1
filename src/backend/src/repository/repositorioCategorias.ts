@@ -1,4 +1,4 @@
-import { eq, like } from "drizzle-orm";
+import { eq, like, count } from "drizzle-orm";
 import baseDados from "../db";
 import {
   tabelaCategorias,
@@ -57,5 +57,9 @@ export class RepositorioCategorias {
         await tx.delete(tabelaCategorias).where(eq(tabelaCategorias.id, id))
       ).rowsAffected;
     });
+  }
+
+  contar() {
+    return baseDados.select({ count: count() }).from(tabelaCategorias);
   }
 }
