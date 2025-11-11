@@ -1,0 +1,32 @@
+# Entidade/Tabela que guarda parâmetros e preferências do sistema.
+
+# Por enquanto, será armazeado apenas um valor nessa tabela devido ao deploy
+# de unica instancia, futuramente, seria interessante criar organizações e
+# permitir o gerenciador de multiplos clientes/empresas
+
+[[fields]]
+field = "id"
+sqlite.type = "BLOB"
+description = "O identificador único das configurações (UUID)."
+example = "758bbbb9-5b11-43d0-86e6-2fe701e00cc4"
+
+[[fields]]
+name = "nome"
+sqlite.type = "TEXT"
+description = "Nome do usuário/cliente/empresa"
+example = "Logistica do João"
+
+[[fields]]
+name = "cnpj"
+type = "TEXT"
+description = "chave da configuração"
+example = "35.015.937/0001-15"
+
+[[fields]]
+name = "endereco"
+type = "TEXT"
+description = "Endereço do usuário/cliente/empresa"
+example = "Rua Marieta Pederneiras Vampre, 914 - São Paulo, SP"
+
+# TODO: db_schema
+# 1. Adicionar moedas (BRL, USD, ...) e outros tipos de formatação (ex: . vs ,)

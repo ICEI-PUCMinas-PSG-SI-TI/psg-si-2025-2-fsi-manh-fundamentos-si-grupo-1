@@ -1,0 +1,49 @@
+# Entidade/Tabela que registra os lotes de produtos recebidos ou produzidos.
+
+[[fields]]
+field = "id"
+sqlite.type = "TEXT"
+description = "O identificador único do lote (UUID)."
+example = "758bbbb9-5b11-43d0-86e6-2fe701e00cc4"
+
+[[fields]]
+field = "produto_id"
+sqlite.type = "TEXT"
+description = "O identificador único do produto (UUID)."
+example = "758bbbb9-5b11-43d0-86e6-2fe701e00cc4"
+
+[[fields]]
+field = "lote"
+sqlite.type = "TEXT"
+description = "Identificador do lote do produto."
+example = "0123456789"
+
+[[fields]]
+# Valores de quantidade serão armazenados em int (padding de 4 caracteres)
+# Ou seja, se um produto tem 100 unidades/gramas ... = 3000000
+field = "quantidade"
+sqlite.type = "INTEGER"
+description = "Quantidade do produto, a unidade de medida é definida na estrutura produto.toml"
+example = 1000000
+
+[[fields]]
+field = "validade"
+sqlite.type = "DATE"
+description = "Data de validade do produto (ISO8601)"
+example = "2018-09-15"
+
+[[fields]]
+field = "created_at"
+sqlite.type = "DATE"
+description = "Data de criação do registro"
+example = "2018-09-15"
+
+[[fields]]
+field = "updated_at"
+sqlite.type = "integer"
+description = "Data da última atualização do registro"
+example = "2018-09-15"
+
+# TODO: db_schema
+# 1. Verificar a possibilidade de armazenar informações como cor, tensão, ...
+# 2. Verificar a necessidade de armazenar: preco_custo_lote, data_entrada, localizacao, nota_fiscal_entrada

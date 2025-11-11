@@ -1,18 +1,12 @@
 # 5. Projeto da Solução
 
-<span style="color:red">Pré-requisitos:</span>
-[Planejamento do Projeto](4-Planejamento-Projeto.md)
-
 ## 5.1 Tecnologias Utilizadas
-
-> Liste todas as tecnologias utilizadas no projeto, com justificativas breves para cada escolha.  
-> Este quadro deve ser atualizado sempre que novas ferramentas forem adicionadas ou substituídas.
 
 | Categoria             | Tecnologia/Ferramenta | Justificativa de uso |
 |-----------------------|------------------------|----------------------|
-| Linguagem             | JavaScript             | Implementação das funcionalidades do front-end. |
-| Framework Front-end   | React.js               | Criação de interfaces dinâmicas e reutilizáveis. |
-| Banco de Dados        | MySQL                  | Armazenamento e gerenciamento de dados. |
+| Linguagem             | TypeScript (Bun/Node.Js)             | Implementação das funcionalidades do front-end e back-end. |
+| Framework Front-end   | Vue.js               | Criação de interfaces dinâmicas e reutilizáveis. |
+| Banco de Dados        | SQLite + DrizzleORM                  | Armazenamento e gerenciamento de dados. |
 | Ferramenta de Design  | Figma                  | Criação de protótipos e wireframes. |
 | IDE                   | VS Code                | Ambiente principal de desenvolvimento. |
 
@@ -40,21 +34,24 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 #### 5.3.1 Tela principal do sistema
 
 **Descrição:** Apresenta visão geral das funcionalidades e acessos principais.  
-[`Tela principal do sistema`](images/)
+![`Tela principal do sistema`](images/operacoes_trem.jpeg.jpg)
+
 
 ---
 
 #### 5.3.2 Tela de login
 
 **Descrição:** Permite acesso de usuários registrados.  
-[`Tela de login`](images/)
+![`Tela de login`](images/login_trem.png)
+
 
 ---
 
 #### 5.3.3 Tela de cadastro de produto
 
 **Descrição:** Formulário para inserir novos produtos no estoque.  
-[`Tela de cadastro`](images/)
+![`Tela de cadastro`](images/produtos_trem.png)
+
 
 ---
 
@@ -68,3 +65,8 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 3. Descrever brevemente as funcionalidades implementadas ou mudanças feitas desde a última atualização.
 
 📌 **Objetivo**: Esta seção deve permitir que o professor visualize rapidamente **o que já foi entregue, o que está em andamento e o que ainda falta desenvolver**, garantindo acompanhamento eficaz do projeto.
+
+
+
+
+

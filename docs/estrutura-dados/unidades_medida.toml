@@ -1,0 +1,19 @@
+# Entidade/Tabela que define as unidades de quantificação dos produtos.
+
+[[fields]]
+field = "id"
+sqlite.type = "BLOB"
+description = "O identificador único da unidade de medida (UUID)."
+example = "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+
+[[fields]]
+field = "nome"
+sqlite.type = "TEXT"
+description = "O nome completo da unidade de medida."
+example = "Quilograma"
+
+[[fields]]
+field = "abreviacao"
+sqlite.type = "TEXT"
+description = "A abreviação ou símbolo da unidade de medida."
+example = "kg"
