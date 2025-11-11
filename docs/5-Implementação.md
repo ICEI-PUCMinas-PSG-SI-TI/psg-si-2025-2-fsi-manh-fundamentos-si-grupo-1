@@ -34,21 +34,24 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 #### 5.3.1 Tela principal do sistema
 
 **Descrição:** Apresenta visão geral das funcionalidades e acessos principais.  
-[`Tela principal do sistema`](images/operacoes_trem.png)
+[`Tela principal do sistema`]
+(images/operacoes_trem.jpeg.png)
 
 ---
 
 #### 5.3.2 Tela de login
 
 **Descrição:** Permite acesso de usuários registrados.  
-[`Tela de login`](images/login_trem.png)
+[`Tela de login`]
+(images/login_trem.png)
 
 ---
 
 #### 5.3.3 Tela de cadastro de produto
 
 **Descrição:** Formulário para inserir novos produtos no estoque.  
-[`Tela de cadastro`](images/produtos_trem.png)
+[`Tela de cadastro`]
+(images/produtos_trem.png)
 
 ---
 
@@ -62,4 +65,5 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 3. Descrever brevemente as funcionalidades implementadas ou mudanças feitas desde a última atualização.
 
 📌 **Objetivo**: Esta seção deve permitir que o professor visualize rapidamente **o que já foi entregue, o que está em andamento e o que ainda falta desenvolver**, garantindo acompanhamento eficaz do projeto.
+
 
