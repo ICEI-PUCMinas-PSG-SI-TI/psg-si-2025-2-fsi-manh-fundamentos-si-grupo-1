@@ -1,18 +1,12 @@
 # 5. Projeto da Solução
 
-<span style="color:red">Pré-requisitos:</span>
-[Planejamento do Projeto](4-Planejamento-Projeto.md)
-
 ## 5.1 Tecnologias Utilizadas
-
-> Liste todas as tecnologias utilizadas no projeto, com justificativas breves para cada escolha.  
-> Este quadro deve ser atualizado sempre que novas ferramentas forem adicionadas ou substituídas.
 
 | Categoria             | Tecnologia/Ferramenta | Justificativa de uso |
 |-----------------------|------------------------|----------------------|
-| Linguagem             | JavaScript             | Implementação das funcionalidades do front-end. |
-| Framework Front-end   | React.js               | Criação de interfaces dinâmicas e reutilizáveis. |
-| Banco de Dados        | MySQL                  | Armazenamento e gerenciamento de dados. |
+| Linguagem             | TypeScript (Bun/Node.Js)             | Implementação das funcionalidades do front-end e back-end. |
+| Framework Front-end   | Vue.js               | Criação de interfaces dinâmicas e reutilizáveis. |
+| Banco de Dados        | SQLite + DrizzleORM                  | Armazenamento e gerenciamento de dados. |
 | Ferramenta de Design  | Figma                  | Criação de protótipos e wireframes. |
 | IDE                   | VS Code                | Ambiente principal de desenvolvimento. |
 
