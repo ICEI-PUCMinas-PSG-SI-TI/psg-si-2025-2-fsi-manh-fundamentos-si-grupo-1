@@ -34,7 +34,7 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 #### 5.3.1 Tela principal do sistema
 
 **Descrição:** Apresenta visão geral das funcionalidades e acessos principais.  
-[`Tela principal do sistema`](images/operacoes_trem.jpeg.png)
+[`Tela principal do sistema`](images/operacoes_trem.jpeg.jpg)
 
 
 ---
@@ -65,6 +65,7 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 3. Descrever brevemente as funcionalidades implementadas ou mudanças feitas desde a última atualização.
 
 📌 **Objetivo**: Esta seção deve permitir que o professor visualize rapidamente **o que já foi entregue, o que está em andamento e o que ainda falta desenvolver**, garantindo acompanhamento eficaz do projeto.
+
 
 
 
