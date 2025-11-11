@@ -161,7 +161,7 @@ function visualizarProduto(p: SelectProdutosSchema) {
   alert('Redirect to produtos/' + p.id)
 }
 
-function remover(p: SelectProdutosSchema) {
+function remover(_p: SelectProdutosSchema) {
   // TODO: Devido a dependencias.
   notificacoes.addNotification('No momento não é permitido a exclusão de produtos!', { time: 3000 })
   /*

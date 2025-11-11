@@ -89,8 +89,9 @@ obterMovimentacoes()
 //
 
 onMounted(() => {
-  const ctx = document.getElementById('graficoMovimentacoes').getContext('2d')
-  new Chart(ctx, {
+  const graf = document.getElementById('graficoMovimentacoes')! as HTMLCanvasElement
+  const ctx = graf.getContext('2d')
+  new Chart(ctx!, {
     type: 'line',
     data: {
       labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],

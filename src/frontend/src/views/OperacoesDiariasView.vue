@@ -119,8 +119,6 @@ import {
 import { onMounted, ref } from 'vue'
 import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
 import { ApiProdutos } from '@/api/produtos'
-import { ApiUsuario } from '@/api/usuarios'
-import { ApiPerfil } from '@/api/perfil'
 
 const produtosCache = ref<Record<string, string>>({})
 
@@ -136,25 +134,19 @@ function ativarVenda() {
   carregarMovimentacoesDoDia()
 }
 
+const apiProdutos = new ApiProdutos()
 async function carregarProdutos() {
-  const res = await ApiProdutos.obterTodos()
-  const lista = await res.json()
-  lista.forEach((p: { id: string; nome: string }) => {
-    produtosCache.value[p.id] = p.nome
-  })
+  const res = await apiProdutos.obterTodos()
+  if (res.ok && res.responseBody) {
+    const lista = res.responseBody
+    lista.forEach((p: { id: string; nome: string }) => {
+      produtosCache.value[p.id] = p.nome
+    })
+  }
 }
 
 const botaoAtivoC = ref<boolean>(true)
 const botaoAtivoV = ref<boolean>(false)
-
-const apiUsuarios = new ApiPerfil()
-
-async function getUsuariosId(usuarioId: string) {
-  const res = await apiUsuarios.obterPorId(usuarioId)
-  if (res.ok && res.responseBody) {
-    return res.responseBody
-  }
-}
 
 interface Movimentacao {
   id: string
@@ -179,7 +171,6 @@ async function carregarMovimentacoesDoDia() {
   /* const resp = await api.obterPorData(dataSelecionada.value) */
   if (res.ok && res.responseBody) {
     const dados = res.responseBody as Movimentacao[]
-
     let filtradas = dados.filter(
       (i) => (botaoAtivoC.value && i.tipo === 1) || (botaoAtivoV.value && i.tipo != 1),
     )

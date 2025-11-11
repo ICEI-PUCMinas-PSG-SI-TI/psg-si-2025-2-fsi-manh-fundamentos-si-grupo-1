@@ -124,7 +124,7 @@ const router = createRouter({
 })
 
 // TODO: Invalidar rotas em caso de erros 401
-router.beforeEach((to, from, next: NavigationGuardNext) => {
+router.beforeEach((to, _from, next: NavigationGuardNext) => {
   // TODO: Realizar autenticação mais elegante
   if (to.matched.some((record) => record.meta.requerAutenticacao)) {
     if (sessao.isLoggedIn) {
@@ -141,7 +141,7 @@ router.beforeEach((to, from, next: NavigationGuardNext) => {
   }
 })
 
-router.beforeEach((to, from, next: NavigationGuardNext) => {
+router.beforeEach((to, _from, next: NavigationGuardNext) => {
   // TODO: Realizar autenticação mais elegante
   if (to.matched.some((record) => record.meta.requerPermissoes)) {
     const permissoes = to.meta.requerPermissoes
