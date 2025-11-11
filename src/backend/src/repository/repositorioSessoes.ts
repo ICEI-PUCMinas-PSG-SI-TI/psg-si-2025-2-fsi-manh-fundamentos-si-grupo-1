@@ -6,9 +6,10 @@ import {
   type SelectSessaoSchema,
 } from "../db/schema/sessoes";
 import bancoDados from "../db";
+import type { RefRegistro } from "./common";
 
 export class RepositorioSessoes {
-  inserir(sessao: InsertSessaoSchema) {
+  inserir(sessao: InsertSessaoSchema): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaSessoes).values(sessao).returning({
         id: tabelaSessoes.id,

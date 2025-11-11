@@ -8,9 +8,13 @@ import {
 import { Permissoes } from "../db/enums/permissoes";
 
 export class RepositorioPermissoes {
-  inserir(...perms: InsertPermissoesSchema[]) {
-    return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaPermissoes).values(perms).onConflictDoNothing();
+  inserir(...perms: InsertPermissoesSchema[]): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const res = await tx
+        .insert(tabelaPermissoes)
+        .values(perms)
+        .onConflictDoNothing();
+      return res.rowsAffected;
     });
   }
 
@@ -62,8 +66,8 @@ export class RepositorioPermissoes {
       .where(eq(tabelaPermissoes.cargo, cargo));
   }
 
-  async excluir(userId: string, cargo: Permissoes) {
-    return await bancoDados.transaction(async (tx) => {
+  excluir(userId: string, cargo: Permissoes): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaPermissoes)
         .where(
@@ -76,7 +80,7 @@ export class RepositorioPermissoes {
     });
   }
 
-  excluirPermissoes(userId: string) {
+  excluirPermissoes(userId: string): Promise<number> {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaPermissoes)

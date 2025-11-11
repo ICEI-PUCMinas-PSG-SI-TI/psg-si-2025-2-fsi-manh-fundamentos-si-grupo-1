@@ -54,7 +54,7 @@ export class RepositorioConfiguracoes {
   }
 
   // or .returning()
-  excluirPorId(id: string) {
+  excluirPorId(id: string): Promise<number> {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaConfiguracoes)

@@ -53,5 +53,11 @@ export default defineConfig(
         ],
       },
     },
+    {
+      files: ["**/repository/*.ts"],
+      rules: {
+        "@typescript-eslint/explicit-function-return-type": "warn",
+      },
+    },
   ],
 );

@@ -157,9 +157,7 @@ export class ServicoAutenticacao {
   ): Promise<UserSessionInfo | null> {
     const isValidSession = await servicoAutenticacao.validarSessao(token);
     if (!isValidSession) {
-      warning("Sessão inválida", {
-        label: "Session",
-      });
+      warning("Sessão inválida", { label: "Session" });
       return null;
     }
     const _token = parseToken(token);

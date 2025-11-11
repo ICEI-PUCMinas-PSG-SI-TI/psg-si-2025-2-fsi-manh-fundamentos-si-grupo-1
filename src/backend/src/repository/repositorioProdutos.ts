@@ -25,6 +25,7 @@ import {
   type UpdateProdutosSchema,
 } from "../db/schema/produtos";
 import { tabelaLotes } from "../db/schema/lotes";
+import type { Count, RefRegistro } from "./common";
 
 // TODO(!scope): Prevent calling where functions more than 1 time
 class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
@@ -38,64 +39,67 @@ class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
     this._whereOr = [];
   }
 
-  comPaginacao(pagina: number = 1, paginaTamanho: number = 10) {
+  comPaginacao(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
+  ): RepositorioProdutosConsulta<T> {
     this._query = this._query
       .limit(paginaTamanho)
       .offset((pagina - 1) * paginaTamanho);
     return this;
   }
 
-  comId(id: string) {
+  comId(id: string): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(eq(tabelaProdutos.id, id));
     return this;
   }
 
-  comPrecoCustoMaiorIgualQue(valor: number) {
+  comPrecoCustoMaiorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(gte(tabelaProdutos.precoCusto, valor));
     return this;
   }
 
-  comPrecoCustoMenorIgualQue(valor: number) {
+  comPrecoCustoMenorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(lte(tabelaProdutos.precoCusto, valor));
     return this;
   }
 
-  comPrecoVendaMaiorIgualQue(valor: number) {
+  comPrecoVendaMaiorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(gte(tabelaProdutos.precoVenda, valor));
     return this;
   }
 
-  comPrecoVendaMenorIgualQue(valor: number) {
+  comPrecoVendaMenorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(lte(tabelaProdutos.precoVenda, valor));
     return this;
   }
 
-  comPrecoPromocaoMaiorIgualQue(valor: number) {
+  comPrecoPromocaoMaiorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(gte(tabelaProdutos.precoPromocao, valor));
     return this;
   }
 
-  comPrecoPromocaoMenorIgualQue(valor: number) {
+  comPrecoPromocaoMenorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(lte(tabelaProdutos.precoPromocao, valor));
     return this;
   }
 
-  comPesoMaiorIgualQue(valor: number) {
+  comPesoMaiorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(gte(tabelaProdutos.peso, valor));
     return this;
   }
 
-  comPesoMenorIgualQue(valor: number) {
+  comPesoMenorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(lte(tabelaProdutos.peso, valor));
     return this;
   }
 
-  comCategoria(categoria: string) {
+  comCategoria(categoria: string): RepositorioProdutosConsulta<T> {
     this._whereAnd.push(eq(tabelaProdutos.categoria, categoria));
     return this;
   }
 
-  comTexto(texto: string) {
+  comTexto(texto: string): RepositorioProdutosConsulta<T> {
     const _texto = `%${texto}%`;
     this._whereOr.push(
       like(tabelaProdutos.nome, _texto),
@@ -127,12 +131,12 @@ class RepositorioProdutosLotesConsulta<
     this._having = [];
   }
 
-  comQuantidadeMaiorIgualQue(valor: number) {
+  comQuantidadeMaiorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._having.push(gte(sql`quantidade_total`, valor));
     return this;
   }
 
-  comQuantidadeMenorIgualQue(valor: number) {
+  comQuantidadeMenorIgualQue(valor: number): RepositorioProdutosConsulta<T> {
     this._having.push(lte(sql`quantidade_total`, valor));
     return this;
   }
@@ -145,7 +149,7 @@ class RepositorioProdutosLotesConsulta<
 }
 
 export class RepositorioProdutos {
-  inserir(...produto: InsertProdutosSchema[]) {
+  inserir(...produto: InsertProdutosSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaProdutos).values(produto).returning({
         id: tabelaProdutos.id,
@@ -183,7 +187,7 @@ export class RepositorioProdutos {
       .from(tabelaProdutos);
   }
 
-  selecionarQuery() {
+  selecionarQuery(): RepositorioProdutosConsulta<SQLiteSelectQueryBuilder> {
     const queryBase = new QueryBuilder()
       .select()
       .from(tabelaProdutos)
@@ -191,7 +195,7 @@ export class RepositorioProdutos {
     return new RepositorioProdutosConsulta(queryBase);
   }
 
-  selecionarQueryComLotes() {
+  selecionarQueryComLotes(): RepositorioProdutosConsulta<SQLiteSelectQueryBuilder> {
     const queryBase = new QueryBuilder()
       .select({
         ...getTableColumns(tabelaProdutos),
@@ -218,7 +222,7 @@ export class RepositorioProdutos {
   }
 
   // or .returning()
-  excluirPorId(id: string) {
+  excluirPorId(id: string): Promise<number> {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaProdutos)
@@ -227,7 +231,7 @@ export class RepositorioProdutos {
     });
   }
 
-  contar() {
+  contar(): Promise<Count[]> {
     return bancoDados.select({ count: count() }).from(tabelaProdutos);
   }
 }

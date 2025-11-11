@@ -7,9 +7,12 @@ import {
   type SelectUnidadesMedidaSchema,
   type UpdateUnidadesMedidaSchema,
 } from "../db/schema/unidadesMedida";
+import type { Count, RefRegistro } from "./common";
 
 export class RepositorioUnidadesMedida {
-  inserir(...unidadeMedida: InsertUnidadesMedidaSchema[]) {
+  inserir(
+    ...unidadeMedida: InsertUnidadesMedidaSchema[]
+  ): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaUnidadesMedida).values(unidadeMedida).returning({
         id: tabelaUnidadesMedida.id,
@@ -39,7 +42,7 @@ export class RepositorioUnidadesMedida {
       .offset((pagina - 1) * paginaTamanho);
   }
 
-  selecionarIdsTodos(): Promise<{ id: string }[]> {
+  selecionarIdsTodos(): Promise<RefRegistro[]> {
     return bancoDados
       .select({
         id: tabelaUnidadesMedida.id,
@@ -61,7 +64,7 @@ export class RepositorioUnidadesMedida {
   }
 
   // or .returning()
-  excluirPorId(id: string) {
+  excluirPorId(id: string): Promise<number> {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaUnidadesMedida)
@@ -70,7 +73,7 @@ export class RepositorioUnidadesMedida {
     });
   }
 
-  contar() {
+  contar(): Promise<Count[]> {
     return bancoDados.select({ count: count() }).from(tabelaUnidadesMedida);
   }
 }

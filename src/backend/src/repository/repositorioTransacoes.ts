@@ -12,6 +12,7 @@ import {
   type SQLiteSelectQueryBuilder,
 } from "drizzle-orm/sqlite-core";
 import type { SQL } from "bun";
+import type { RefRegistro } from "./common";
 
 class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
   _query: T;
@@ -24,39 +25,42 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
     this._whereOr = [];
   }
 
-  comPaginacao(pagina: number = 1, paginaTamanho: number = 10) {
+  comPaginacao(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
+  ): RespositorioTransacoesConsulta<T> {
     this._query = this._query
       .limit(paginaTamanho)
       .offset((pagina - 1) * paginaTamanho);
     return this;
   }
 
-  comId(id: string) {
+  comId(id: string): RespositorioTransacoesConsulta<T> {
     this._whereAnd.push(eq(tabelaTransacoes.id, id));
     return this;
   }
 
-  comProdutoId(id: string) {
+  comProdutoId(id: string): RespositorioTransacoesConsulta<T> {
     this._whereAnd.push(eq(tabelaTransacoes.produtoId, id));
     return this;
   }
 
-  comUsuarioId(id: string) {
+  comUsuarioId(id: string): RespositorioTransacoesConsulta<T> {
     this._whereAnd.push(eq(tabelaTransacoes.usuarioId, id));
     return this;
   }
 
-  comLoteId(id: string) {
+  comLoteId(id: string): RespositorioTransacoesConsulta<T> {
     this._whereAnd.push(eq(tabelaTransacoes.loteId, id));
     return this;
   }
 
-  comDataMaiorQue(data: Date) {
+  comDataMaiorQue(data: Date): RespositorioTransacoesConsulta<T> {
     this._whereAnd.push(eq(tabelaTransacoes.horario, data));
     return this;
   }
 
-  comDataMenorQue(data: Date) {
+  comDataMenorQue(data: Date): RespositorioTransacoesConsulta<T> {
     this._whereAnd.push(eq(tabelaTransacoes.horario, data));
     return this;
   }
@@ -68,7 +72,7 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
 }
 
 export class RepositorioTransacoes {
-  inserir(...transacao: InsertTransacoesSchema[]) {
+  inserir(...transacao: InsertTransacoesSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaTransacoes).values(transacao).returning({
         id: tabelaTransacoes.id,
@@ -98,7 +102,7 @@ export class RepositorioTransacoes {
       .offset((pagina - 1) * paginaTamanho);
   }
 
-  selecionarQuery() {
+  selecionarQuery(): RespositorioTransacoesConsulta<SQLiteSelectQueryBuilder> {
     const queryBase = new QueryBuilder()
       .select()
       .from(tabelaTransacoes)

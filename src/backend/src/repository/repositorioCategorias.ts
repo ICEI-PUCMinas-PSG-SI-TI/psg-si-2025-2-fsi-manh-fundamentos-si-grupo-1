@@ -5,9 +5,10 @@ import {
   type InsertCategoriaSchema,
   type SelectCategoriaSchema,
 } from "../db/schema/categorias";
+import type { Count, RefRegistro } from "./common";
 
 export class RepositorioCategorias {
-  inserir(...categoria: InsertCategoriaSchema[]) {
+  inserir(...categoria: InsertCategoriaSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaCategorias).values(categoria).returning({
         id: tabelaCategorias.id,
@@ -37,7 +38,7 @@ export class RepositorioCategorias {
       .offset((pagina - 1) * paginaTamanho);
   }
 
-  selecionarLike(nome: string) {
+  selecionarLike(nome: string): Promise<SelectCategoriaSchema[]> {
     return bancoDados
       .select()
       .from(tabelaCategorias)
@@ -45,7 +46,7 @@ export class RepositorioCategorias {
   }
 
   // or .returning()
-  excluirPorId(id: string) {
+  excluirPorId(id: string): Promise<number> {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaCategorias)
@@ -54,7 +55,7 @@ export class RepositorioCategorias {
     });
   }
 
-  contar() {
+  contar(): Promise<Count[]> {
     return bancoDados.select({ count: count() }).from(tabelaCategorias);
   }
 }

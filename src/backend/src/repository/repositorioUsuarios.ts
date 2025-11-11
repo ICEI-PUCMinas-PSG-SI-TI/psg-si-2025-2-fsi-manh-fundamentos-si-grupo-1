@@ -10,6 +10,7 @@ import {
   QueryBuilder,
   type SQLiteSelectQueryBuilder,
 } from "drizzle-orm/sqlite-core";
+import type { Count, RefRegistro } from "./common";
 
 class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
   _query: T;
@@ -20,19 +21,22 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     this._where = [];
   }
 
-  comPaginacao(pagina: number = 1, paginaTamanho: number = 10) {
+  comPaginacao(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
+  ): RepositorioLotesConsulta<T> {
     this._query = this._query
       .limit(paginaTamanho)
       .offset((pagina - 1) * paginaTamanho);
     return this;
   }
 
-  comId(id: string) {
+  comId(id: string): RepositorioLotesConsulta<T> {
     this._where.push(eq(tabelaUsuarios.id, id));
     return this;
   }
 
-  comLogin(login: string) {
+  comLogin(login: string): RepositorioLotesConsulta<T> {
     this._where.push(eq(tabelaUsuarios.login, login));
     return this;
   }
@@ -44,8 +48,8 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 }
 
 export class RepositorioUsuarios {
-  async inserir(...usuario: InsertUsuarioSchema[]) {
-    return await bancoDados.transaction((tx) => {
+  inserir(...usuario: InsertUsuarioSchema[]): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaUsuarios).values(usuario).returning({
         id: tabelaUsuarios.id,
       });
@@ -87,7 +91,7 @@ export class RepositorioUsuarios {
     return null;
   }
 
-  selecionarQuery() {
+  selecionarQuery(): RepositorioLotesConsulta<SQLiteSelectQueryBuilder> {
     const queryBase = new QueryBuilder()
       .select()
       .from(tabelaUsuarios)
@@ -95,7 +99,7 @@ export class RepositorioUsuarios {
     return new RepositorioLotesConsulta(queryBase);
   }
 
-  selecionarIdsTodos(): Promise<{ id: string }[]> {
+  selecionarIdsTodos(): Promise<RefRegistro[]> {
     return bancoDados
       .select({
         id: tabelaUsuarios.id,
@@ -103,11 +107,8 @@ export class RepositorioUsuarios {
       .from(tabelaUsuarios);
   }
 
-  async atualizarPorId(
-    id: string,
-    usuario: UpdateUsuarioSchema,
-  ): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
+  atualizarPorId(id: string, usuario: UpdateUsuarioSchema): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaUsuarios)
         .set(usuario)
@@ -117,7 +118,7 @@ export class RepositorioUsuarios {
   }
 
   // or .returning()
-  excluirPorId(id: string) {
+  excluirPorId(id: string): Promise<number> {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaUsuarios)
@@ -126,7 +127,7 @@ export class RepositorioUsuarios {
     });
   }
 
-  contar() {
+  contar(): Promise<Count[]> {
     return bancoDados.select({ count: count() }).from(tabelaUsuarios);
   }
 }
