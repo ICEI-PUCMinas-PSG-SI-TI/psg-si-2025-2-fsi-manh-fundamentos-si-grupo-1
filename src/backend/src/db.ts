@@ -59,26 +59,33 @@ export async function verificarBancoDados(): Promise<boolean> {
 export async function inicializarAdministrador(): Promise<void> {
   const count = await servicoUsuarios.contar();
   if (count === 0) {
-    const login = "Administrador";
-    const senha = "Admin123-";
+    // TODO: Gerar senha aleatoria
+    const admin = { login: "Administrador", senha: "Admin123-" };
     await servicoUsuarios.inserir(
       {
-        nome: login,
-        login: login,
-        password: senha,
-        descricao: login,
+        nome: admin.login,
+        login: admin.login,
+        password: admin.senha,
+        descricao: admin.login,
         habilitado: true,
       },
       { cargos: [Permissoes.Administrador] },
     );
-    warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada: ");
-    json(
+    warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada:");
+    json({ login: admin.login, senha: admin.senha }, LogLevel.Warning);
+
+    const dev = { login: "Desenvolvedor", senha: "Devel321-" };
+    await servicoUsuarios.inserir(
       {
-        login,
-        senha,
+        nome: dev.login,
+        login: dev.login,
+        password: dev.senha,
+        descricao: dev.login,
+        habilitado: true,
       },
-      LogLevel.Warning,
+      { cargos: [Permissoes.Desenvolvedor] },
     );
+    json({ login: dev.login, senha: dev.senha }, LogLevel.Warning);
   }
 }
 
