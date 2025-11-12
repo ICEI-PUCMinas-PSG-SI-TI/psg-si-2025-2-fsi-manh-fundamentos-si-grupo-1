@@ -20,8 +20,10 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     this._where = [];
   }
 
-  comPaginacao(page: number = 1, pageSize: number = 10) {
-    this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
+  comPaginacao(pagina: number = 1, paginaTamanho: number = 10) {
+    this._query = this._query
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
     return this;
   }
 
@@ -35,11 +37,9 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
-  async executarConsulta(): Promise<SelectUsuarioSchema[]> {
+  executarConsulta(): Promise<SelectUsuarioSchema[]> {
     this._query.where(and(...this._where));
-    return await bancoDados.transaction(async (tx) => {
-      return await tx.all(this._query.getSQL());
-    });
+    return bancoDados.all(this._query.getSQL());
   }
 }
 
@@ -63,32 +63,28 @@ export class RepositorioUsuarios {
     });
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectUsuarioSchema[]> {
+    return bancoDados.select().from(tabelaUsuarios);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectUsuarioSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaUsuarios)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaUsuarios);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaUsuarios)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   async selecionarPorLogin(login: string): Promise<SelectUsuarioSchema | null> {
-    return await bancoDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaUsuarios)
-        .where(eq(tabelaUsuarios.login, login));
-      if (res.length && res[0]) return res[0];
-      return null;
-    });
+    const res = await bancoDados
+      .select()
+      .from(tabelaUsuarios)
+      .where(eq(tabelaUsuarios.login, login));
+    if (res.length && res[0]) return res[0];
+    return null;
   }
 
   selecionarQuery() {
@@ -99,14 +95,12 @@ export class RepositorioUsuarios {
     return new RepositorioLotesConsulta(queryBase);
   }
 
-  selecionarIdTodos(): Promise<{ id: string }[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select({
-          id: tabelaUsuarios.id,
-        })
-        .from(tabelaUsuarios);
-    });
+  selecionarIdsTodos(): Promise<{ id: string }[]> {
+    return bancoDados
+      .select({
+        id: tabelaUsuarios.id,
+      })
+      .from(tabelaUsuarios);
   }
 
   async atualizarPorId(
@@ -114,20 +108,21 @@ export class RepositorioUsuarios {
     usuario: UpdateUsuarioSchema,
   ): Promise<number> {
     return await bancoDados.transaction(async (tx) => {
-      return (
-        await tx
-          .update(tabelaUsuarios)
-          .set(usuario)
-          .where(eq(tabelaUsuarios.id, id))
-      ).rowsAffected;
+      const resultSet = await tx
+        .update(tabelaUsuarios)
+        .set(usuario)
+        .where(eq(tabelaUsuarios.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
-  async excluirPorId(id: string) {
-    return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (await tx.delete(tabelaUsuarios).where(eq(tabelaUsuarios.id, id)))
-        .rowsAffected;
+  // or .returning()
+  excluirPorId(id: string) {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaUsuarios)
+        .where(eq(tabelaUsuarios.id, id));
+      return resultSet.rowsAffected;
     });
   }
 

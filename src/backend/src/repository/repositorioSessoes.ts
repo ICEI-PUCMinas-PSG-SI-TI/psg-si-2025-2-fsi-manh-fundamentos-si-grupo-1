@@ -27,26 +27,24 @@ export class RepositorioSessoes {
     });
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectSessaoSchema[]> {
+    return bancoDados.select().from(tabelaSessoes);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectSessaoSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaSessoes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaSessoes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaSessoes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   // or .returning()
-  async excluirPorId(id: string): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaSessoes)
         .where(eq(tabelaSessoes.id, id));
@@ -55,8 +53,8 @@ export class RepositorioSessoes {
   }
 
   // or .returning()
-  async excluirPorUsuarioId(usuarioId: string): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
+  excluirPorUsuarioId(usuarioId: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaSessoes)
         .where(eq(tabelaSessoes.usuarioId, usuarioId));
@@ -64,8 +62,10 @@ export class RepositorioSessoes {
     });
   }
 
-  async limparSessoes(): Promise<number> {
-    const resultSet = await bancoDados.delete(tabelaSessoes);
-    return resultSet.rowsAffected;
+  excluirTodos(): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx.delete(tabelaSessoes);
+      return resultSet.rowsAffected;
+    });
   }
 }

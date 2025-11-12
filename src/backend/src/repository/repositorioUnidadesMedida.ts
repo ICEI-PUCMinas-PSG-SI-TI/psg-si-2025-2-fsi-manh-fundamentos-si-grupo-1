@@ -17,64 +17,56 @@ export class RepositorioUnidadesMedida {
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectUnidadesMedidaSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      return await tx
-        .select()
-        .from(tabelaUnidadesMedida)
-        .where(eq(tabelaUnidadesMedida.id, id));
-    });
+  selecionarPorId(id: string): Promise<SelectUnidadesMedidaSchema[]> {
+    return bancoDados
+      .select()
+      .from(tabelaUnidadesMedida)
+      .where(eq(tabelaUnidadesMedida.id, id));
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectUnidadesMedidaSchema[]> {
+    return bancoDados.select().from(tabelaUnidadesMedida);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectUnidadesMedidaSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaUnidadesMedida)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaUnidadesMedida);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaUnidadesMedida)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
-  selecionarIdTodos(): Promise<{ id: string }[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select({
-          id: tabelaUnidadesMedida.id,
-        })
-        .from(tabelaUnidadesMedida);
-    });
+  selecionarIdsTodos(): Promise<{ id: string }[]> {
+    return bancoDados
+      .select({
+        id: tabelaUnidadesMedida.id,
+      })
+      .from(tabelaUnidadesMedida);
   }
 
-  async atualizarPorId(
+  atualizarPorId(
     id: string,
     unidadeMedida: UpdateUnidadesMedidaSchema,
   ): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
-      return (
-        await tx
-          .update(tabelaUnidadesMedida)
-          .set(unidadeMedida)
-          .where(eq(tabelaUnidadesMedida.id, id))
-      ).rowsAffected;
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .update(tabelaUnidadesMedida)
+        .set(unidadeMedida)
+        .where(eq(tabelaUnidadesMedida.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
-  async excluirPorId(id: string) {
-    return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (
-        await tx
-          .delete(tabelaUnidadesMedida)
-          .where(eq(tabelaUnidadesMedida.id, id))
-      ).rowsAffected;
+  // or .returning()
+  excluirPorId(id: string) {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaUnidadesMedida)
+        .where(eq(tabelaUnidadesMedida.id, id));
+      return resultSet.rowsAffected;
     });
   }
 

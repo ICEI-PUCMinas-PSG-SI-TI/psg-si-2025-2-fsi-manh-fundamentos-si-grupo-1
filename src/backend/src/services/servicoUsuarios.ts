@@ -78,7 +78,7 @@ class ServicoUsuarios {
 
   /** Listar seleciona apenas as informações públicas */
   async listarTodosPerfil() {
-    const res = await repositorioUsuarios.selecionarTodos(0, 0);
+    const res = await repositorioUsuarios.selecionarTodos();
     const usuarios = res.map((u) => ({
       id: u.id,
       nome: u.nome,
@@ -98,14 +98,14 @@ class ServicoUsuarios {
   }
 
   async selecionarTodos() {
-    const usuarios = await repositorioUsuarios.selecionarTodos(0, 0);
+    const usuarios = await repositorioUsuarios.selecionarTodos();
     debug(`Retornando usuário`, { label: "UsuarioServ" });
     return usuarios;
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
   selecionarIdTodos() {
-    return repositorioUsuarios.selecionarIdTodos();
+    return repositorioUsuarios.selecionarIdsTodos();
   }
 
   async atualizar(id: string, usuario: UpdateUsuarioSchema) {

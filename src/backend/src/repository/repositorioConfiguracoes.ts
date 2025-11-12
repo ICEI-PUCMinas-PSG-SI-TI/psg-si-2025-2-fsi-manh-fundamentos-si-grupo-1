@@ -16,32 +16,28 @@ export class RepositorioConfiguracoes {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | null> {
-    return bancoDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaConfiguracoes)
-        .where(eq(tabelaConfiguracoes.id, id));
-      if (res.length === 1) return res[0]!;
-      return null;
-    });
+  async selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | null> {
+    const res = await bancoDados
+      .select()
+      .from(tabelaConfiguracoes)
+      .where(eq(tabelaConfiguracoes.id, id));
+    if (res.length === 1) return res[0]!;
+    return null;
   }
 
-  selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectConfiguracaoSchema[]> {
+    return bancoDados.select().from(tabelaConfiguracoes);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectConfiguracaoSchema[]> {
-    return bancoDados.transaction((tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return tx
-          .select()
-          .from(tabelaConfiguracoes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return tx.select().from(tabelaConfiguracoes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaConfiguracoes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   atualizarPorId(

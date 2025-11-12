@@ -38,8 +38,10 @@ class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
     this._whereOr = [];
   }
 
-  comPaginacao(page: number = 1, pageSize: number = 10) {
-    this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
+  comPaginacao(pagina: number = 1, paginaTamanho: number = 10) {
+    this._query = this._query
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
     return this;
   }
 
@@ -111,9 +113,7 @@ class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
 
   executarConsulta(): Promise<SelectProdutosSchema[]> {
     this._query.where(and(...this._whereAnd, or(...this._whereOr)));
-    return bancoDados.transaction((tx) => {
-      return tx.all(this._query.getSQL());
-    });
+    return bancoDados.all(this._query.getSQL());
   }
 }
 
@@ -140,9 +140,7 @@ class RepositorioProdutosLotesConsulta<
   override executarConsulta(): Promise<SelectProdutosSchema[]> {
     this._query.where(and(...this._whereAnd, or(...this._whereOr)));
     this._query.having(and(...this._having));
-    return bancoDados.transaction((tx) => {
-      return tx.all(this._query.getSQL());
-    });
+    return bancoDados.all(this._query.getSQL());
   }
 }
 
@@ -156,36 +154,33 @@ export class RepositorioProdutos {
   }
 
   selecionarPorId(id: string): Promise<SelectProdutosSchema[]> {
-    return bancoDados.transaction((tx) => {
-      return tx.select().from(tabelaProdutos).where(eq(tabelaProdutos.id, id));
-    });
+    return bancoDados
+      .select()
+      .from(tabelaProdutos)
+      .where(eq(tabelaProdutos.id, id));
   }
 
-  selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectProdutosSchema[]> {
+    return bancoDados.select().from(tabelaProdutos);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectProdutosSchema[]> {
-    return bancoDados.transaction((tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return tx
-          .select()
-          .from(tabelaProdutos)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return tx.select().from(tabelaProdutos);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaProdutos)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
-  selecionarIdTodos(): Promise<{ id: string }[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select({
-          id: tabelaProdutos.id,
-        })
-        .from(tabelaProdutos);
-    });
+  selecionarIdsTodos(): Promise<{ id: string }[]> {
+    return bancoDados
+      .select({
+        id: tabelaProdutos.id,
+      })
+      .from(tabelaProdutos);
   }
 
   selecionarQuery() {

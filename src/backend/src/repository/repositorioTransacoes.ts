@@ -24,8 +24,10 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
     this._whereOr = [];
   }
 
-  comPaginacao(page: number = 1, pageSize: number = 10) {
-    this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
+  comPaginacao(pagina: number = 1, paginaTamanho: number = 10) {
+    this._query = this._query
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
     return this;
   }
 
@@ -61,9 +63,7 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
 
   executarConsulta(): Promise<SelectTransacoesSchema[]> {
     this._query.where(and(...this._whereAnd));
-    return bancoDados.transaction((tx) => {
-      return tx.all(this._query.getSQL());
-    });
+    return bancoDados.all(this._query.getSQL());
   }
 }
 
@@ -77,29 +77,25 @@ export class RepositorioTransacoes {
   }
 
   selecionarPorId(id: string): Promise<SelectTransacoesSchema[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select()
-        .from(tabelaTransacoes)
-        .where(eq(tabelaTransacoes.id, id));
-    });
+    return bancoDados
+      .select()
+      .from(tabelaTransacoes)
+      .where(eq(tabelaTransacoes.id, id));
   }
 
-  selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectTransacoesSchema[]> {
+    return bancoDados.select().from(tabelaTransacoes);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectTransacoesSchema[]> {
-    return bancoDados.transaction((tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return tx
-          .select()
-          .from(tabelaTransacoes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return tx.select().from(tabelaTransacoes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaTransacoes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   selecionarQuery() {

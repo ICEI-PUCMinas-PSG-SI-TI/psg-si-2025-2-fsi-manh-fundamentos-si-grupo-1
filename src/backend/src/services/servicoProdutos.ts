@@ -108,12 +108,12 @@ export class ServicoProdutos {
   }
 
   selecionarTodos() {
-    return repositorioProdutos.selecionarTodos(0, 0);
+    return repositorioProdutos.selecionarTodos();
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
   selecionarIdTodos() {
-    return repositorioProdutos.selecionarIdTodos();
+    return repositorioProdutos.selecionarIdsTodos();
   }
 
   async contar() {

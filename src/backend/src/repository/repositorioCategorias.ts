@@ -15,47 +15,42 @@ export class RepositorioCategorias {
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectCategoriaSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      return await tx
-        .select()
-        .from(tabelaCategorias)
-        .where(eq(tabelaCategorias.id, id));
-    });
+  selecionarPorId(id: string): Promise<SelectCategoriaSchema[]> {
+    return bancoDados
+      .select()
+      .from(tabelaCategorias)
+      .where(eq(tabelaCategorias.id, id));
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectCategoriaSchema[]> {
+    return bancoDados.select().from(tabelaCategorias);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectCategoriaSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaCategorias)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaCategorias);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaCategorias)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
-  async selecionarLike(nome: string) {
-    return await bancoDados.transaction(async (tx) => {
-      return await tx
-        .select()
-        .from(tabelaCategorias)
-        .where(like(tabelaCategorias.nome, `%${nome}%`));
-    });
+  selecionarLike(nome: string) {
+    return bancoDados
+      .select()
+      .from(tabelaCategorias)
+      .where(like(tabelaCategorias.nome, `%${nome}%`));
   }
 
-  async excluirPorId(id: string) {
-    return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (
-        await tx.delete(tabelaCategorias).where(eq(tabelaCategorias.id, id))
-      ).rowsAffected;
+  // or .returning()
+  excluirPorId(id: string) {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaCategorias)
+        .where(eq(tabelaCategorias.id, id));
+      return resultSet.rowsAffected;
     });
   }
 

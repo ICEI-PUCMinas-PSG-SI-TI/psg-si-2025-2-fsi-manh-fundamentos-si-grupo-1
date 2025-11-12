@@ -251,7 +251,7 @@ export class ServicoAutenticacao {
   }
 
   async invalidarSessoes(): Promise<boolean> {
-    const res = await repositorioSessoes.limparSessoes();
+    const res = await repositorioSessoes.excluirTodos();
     return res > 0;
   }
 }

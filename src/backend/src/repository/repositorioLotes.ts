@@ -22,8 +22,10 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     this._where = [];
   }
 
-  comPaginacao(page: number = 1, pageSize: number = 10) {
-    this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
+  comPaginacao(pagina: number = 1, paginaTamanho: number = 10) {
+    this._query = this._query
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
     return this;
   }
 
@@ -62,11 +64,9 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
     return this;
   }
 
-  async executarConsulta(): Promise<SelectLoteSchema[]> {
+  executarConsulta(): Promise<SelectLoteSchema[]> {
     this._query.where(and(...this._where));
-    return await bancoDados.transaction(async (tx) => {
-      return await tx.all(this._query.getSQL());
-    });
+    return bancoDados.all(this._query.getSQL());
   }
 }
 
@@ -79,27 +79,23 @@ export class RepositorioLotes {
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectLoteSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      return await tx.select().from(tabelaLotes).where(eq(tabelaLotes.id, id));
-    });
+  selecionarPorId(id: string): Promise<SelectLoteSchema[]> {
+    return bancoDados.select().from(tabelaLotes).where(eq(tabelaLotes.id, id));
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectLoteSchema[]> {
+    return bancoDados.select().from(tabelaLotes);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectLoteSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaLotes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaLotes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaLotes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   selecionarQuery() {
@@ -108,29 +104,31 @@ export class RepositorioLotes {
   }
 
   selecionarIdProdutosTodos(): Promise<{ id: string; produtoId: string }[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select({
-          id: tabelaLotes.id,
-          produtoId: tabelaLotes.produtoId,
-        })
-        .from(tabelaLotes);
-    });
+    return bancoDados
+      .select({
+        id: tabelaLotes.id,
+        produtoId: tabelaLotes.produtoId,
+      })
+      .from(tabelaLotes);
   }
 
   async atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
     return await bancoDados.transaction(async (tx) => {
-      return (
-        await tx.update(tabelaLotes).set(lote).where(eq(tabelaLotes.id, id))
-      ).rowsAffected;
+      const resultSet = await tx
+        .update(tabelaLotes)
+        .set(lote)
+        .where(eq(tabelaLotes.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
+  // or .returning()
   async excluirPorId(id: string) {
     return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (await tx.delete(tabelaLotes).where(eq(tabelaLotes.id, id)))
-        .rowsAffected;
+      const resultSet = await tx
+        .delete(tabelaLotes)
+        .where(eq(tabelaLotes.id, id));
+      return resultSet.rowsAffected;
     });
   }
 

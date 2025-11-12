@@ -14,60 +14,52 @@ export class RepositorioPermissoes {
     });
   }
 
-  selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectPermissoesSchema[]> {
+    return bancoDados.select().from(tabelaPermissoes);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectPermissoesSchema[]> {
-    return bancoDados.transaction((tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return tx
-          .select()
-          .from(tabelaPermissoes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return tx.select().from(tabelaPermissoes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   selecionar(
     userId: string,
     cargo: Permissoes,
   ): Promise<SelectPermissoesSchema[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select()
-        .from(tabelaPermissoes)
-        .where(
-          and(
-            eq(tabelaPermissoes.usuarioId, userId),
-            eq(tabelaPermissoes.cargo, cargo),
-          ),
-        );
-    });
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .where(
+        and(
+          eq(tabelaPermissoes.usuarioId, userId),
+          eq(tabelaPermissoes.cargo, cargo),
+        ),
+      );
   }
 
   selecionarPersmissoesPorIdUsuario(
     userId: string,
   ): Promise<SelectPermissoesSchema[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select()
-        .from(tabelaPermissoes)
-        .where(eq(tabelaPermissoes.usuarioId, userId));
-    });
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .where(eq(tabelaPermissoes.usuarioId, userId));
   }
 
   selecionarPersmissoesPorCargo(
     cargo: Permissoes,
   ): Promise<SelectPermissoesSchema[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select()
-        .from(tabelaPermissoes)
-        .where(eq(tabelaPermissoes.cargo, cargo));
-    });
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .where(eq(tabelaPermissoes.cargo, cargo));
   }
 
   async excluir(userId: string, cargo: Permissoes) {

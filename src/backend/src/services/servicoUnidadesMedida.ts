@@ -21,11 +21,11 @@ class ServicoUnidadesMedida {
   }
 
   selecionarTodos() {
-    return repositorioUnidadesMedida.selecionarTodos(0, 0);
+    return repositorioUnidadesMedida.selecionarTodos();
   }
 
   selecionarIdTodos() {
-    return repositorioUnidadesMedida.selecionarIdTodos();
+    return repositorioUnidadesMedida.selecionarIdsTodos();
   }
 
   // TODO: validar UUID

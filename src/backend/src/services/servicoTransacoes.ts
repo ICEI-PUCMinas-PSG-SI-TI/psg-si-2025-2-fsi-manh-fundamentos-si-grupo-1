@@ -60,7 +60,7 @@ export class ServicoTransacoes {
   }
 
   selecionarTodos() {
-    return repositorioTransacoes.selecionarTodos(0, 0);
+    return repositorioTransacoes.selecionarTodos();
   }
 }
 
