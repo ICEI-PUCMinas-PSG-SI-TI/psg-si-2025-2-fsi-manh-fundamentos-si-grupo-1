@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
@@ -10,7 +9,7 @@ export const tabelaLotes = sqliteTable("lotes", {
   id: text()
     .primaryKey()
     .notNull()
-    .$defaultFn(() => genUUID()),
+    .$defaultFn(() => crypto.randomUUID()),
   produtoId: text("produto_id")
     .notNull()
     .references(() => tabelaProdutos.id),

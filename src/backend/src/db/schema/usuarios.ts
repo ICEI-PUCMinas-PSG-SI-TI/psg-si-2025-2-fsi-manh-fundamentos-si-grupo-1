@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
@@ -9,7 +8,7 @@ export const tabelaUsuarios = sqliteTable("usuarios", {
   id: text()
     .primaryKey()
     .notNull()
-    .$defaultFn(() => genUUID()),
+    .$defaultFn(() => crypto.randomUUID()),
   nome: text().notNull(),
   // TODO: Verificar necessidade de login, email e identificação
   login: text().notNull().unique(),

@@ -1,7 +1,6 @@
 import { sql, type InferSelectModel } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-import { v4 as genUUID } from "uuid";
 import * as z4 from "zod/v4";
 import { tabelaUnidadesMedida } from "./unidadesMedida";
 import { tabelaCategorias } from "./categorias";
@@ -17,7 +16,7 @@ export const tabelaProdutos = sqliteTable("produtos", {
   id: text()
     .primaryKey()
     .notNull()
-    .$defaultFn(() => genUUID()),
+    .$defaultFn(() => crypto.randomUUID()),
   nome: text().notNull().default("Novo produto"),
   sku: text(),
   codigoBarra: text("codigo_barra"),
