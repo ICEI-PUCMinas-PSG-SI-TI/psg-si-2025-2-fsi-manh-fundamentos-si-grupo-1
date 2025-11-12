@@ -11,7 +11,12 @@ const apiV1FakerRouter = Router();
 
 const FakerParamsZ = z4.strictObject({
   canRecurse: z4.boolean().optional().default(false),
-  quant: z4.int().optional().default(10),
+  quant: z4
+    .int()
+    .min(1, "O mínimo de entidades geradas por request é 1.")
+    .max(1000, "O máximo de entidades geradas por request é de 1000.")
+    .optional()
+    .default(10),
 });
 
 async function criarProdutos(req: Request, res: Response, next: NextFunction) {

@@ -145,7 +145,7 @@ class RepositorioProdutosLotesConsulta<
 }
 
 export class RepositorioProdutos {
-  inserir(produto: InsertProdutosSchema) {
+  inserir(...produto: InsertProdutosSchema[]) {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaProdutos).values(produto).returning({
         id: tabelaProdutos.id,
@@ -231,3 +231,7 @@ export class RepositorioProdutos {
     return bancoDados.select({ count: count() }).from(tabelaProdutos);
   }
 }
+
+const repositorioProdutos = new RepositorioProdutos();
+
+export default repositorioProdutos;

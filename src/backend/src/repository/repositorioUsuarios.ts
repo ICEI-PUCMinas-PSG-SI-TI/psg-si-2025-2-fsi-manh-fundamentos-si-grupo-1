@@ -44,7 +44,7 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 }
 
 export class RepositorioUsuarios {
-  async inserir(usuario: InsertUsuarioSchema) {
+  async inserir(...usuario: InsertUsuarioSchema[]) {
     return await bancoDados.transaction((tx) => {
       return tx.insert(tabelaUsuarios).values(usuario).returning({
         id: tabelaUsuarios.id,
@@ -130,3 +130,7 @@ export class RepositorioUsuarios {
     return bancoDados.select({ count: count() }).from(tabelaUsuarios);
   }
 }
+
+const repositorioUsuarios = new RepositorioUsuarios();
+
+export default repositorioUsuarios;

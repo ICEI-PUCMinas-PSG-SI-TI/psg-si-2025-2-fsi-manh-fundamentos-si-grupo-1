@@ -85,3 +85,7 @@ export class RepositorioPermissoes {
     });
   }
 }
+
+const repositorioPermissoes = new RepositorioPermissoes();
+
+export default repositorioPermissoes;

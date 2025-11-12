@@ -1,14 +1,22 @@
 /* eslint-disable camelcase */
 import { faker, fakerPT_BR } from "@faker-js/faker";
-import servicoLotes from "./servicoLotes";
-import servicoProdutos from "./servicoProdutos";
 import { HttpError } from "../error";
-import servicoTransacoes from "./servicoTransacoes";
-import servicoUsuarios from "./servicoUsuarios";
+import servicoUsuarios, { hashSenha } from "./servicoUsuarios";
 import servicoUnidadesMedida from "./servicoUnidadesMedida";
+// import { StatusProduto } from "../db/enums/produtos";
 import { StatusProduto } from "../db/enums/statusProduto";
 import { warning } from "../logging";
+import servicoProdutos from "./servicoProdutos";
+import servicoLotes from "./servicoLotes";
 import servicoCategorias from "./servicoCategorias";
+import repositorioCategorias from "../repository/repositorioCategorias";
+import repositorioUnidadesMedida from "../repository/repositorioUnidadesMedida";
+import repositorioMovimentacoes from "../repository/repositorioTransacoes";
+import repositorioLotes from "../repository/repositorioLotes";
+import repositorioProdutos from "../repository/repositorioProdutos";
+import repositorioUsuarios from "../repository/repositorioUsuarios";
+import { Permissoes } from "../db/enums/permissoes";
+import repositorioPermissoes from "../repository/repositorioPermissoes";
 
 function fakerLocal() {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;
@@ -145,8 +153,9 @@ export class ServicoFaker {
     const categorias = await escolherCategorias(canRecurse, quant);
     if (!categorias || !categorias.length) throw new Error();
 
+    const produtos = [];
     for (let i = 0; i < quant; i++) {
-      await servicoProdutos.inserir({
+      produtos.push({
         nome: fakerPT_BR.commerce.product(),
         sku: fakerLote(),
         codigoBarra: fakerLote(),
@@ -168,6 +177,8 @@ export class ServicoFaker {
         status: StatusProduto.Ativo,
       });
     }
+
+    await repositorioProdutos.inserir(...produtos);
     warning(`Criado ${quant} produtos.`, { label: "Faker" });
   }
 
@@ -175,16 +186,17 @@ export class ServicoFaker {
     const produtos = await escolherProdutos(canRecurse, quant);
     if (!produtos || !produtos.length) throw new Error();
 
+    const lotes = [];
     for (let i = 0; i < quant; i++) {
-      const produto = produtos[i];
-      if (!produto) throw new Error();
-      await servicoLotes.inserir({
-        produtoId: produto.id,
+      lotes.push({
+        produtoId: produtos[i]!.id,
         codigo: fakerLote(),
         quantidade: faker.number.int({ min: 1000, max: 10000000 }),
         validade: faker.date.future({ years: 1 }),
       });
     }
+
+    await repositorioLotes.inserir(...lotes);
     warning(`Criado ${quant} lotes.`, { label: "Faker" });
   }
 
@@ -195,9 +207,10 @@ export class ServicoFaker {
     const usuarios = await escolherUsuarios(canRecurse, quant);
     if (!usuarios || !usuarios.length) throw new Error();
 
+    const movimentacoes = [];
     for (let i = 0; i < quant; i++) {
-      await servicoTransacoes.inserir({
-        // TODO: invalidar produto?
+      movimentacoes.push({
+        // TODO: invalidar campo produto (já possui lote)?
         produtoId: lotes[i]!.produtoId,
         usuarioId: usuarios[i]!.id,
         loteId: lotes[i]!.id,
@@ -209,42 +222,62 @@ export class ServicoFaker {
         motivo: faker.number.int({ min: 0, max: 9 }).toString(),
       });
     }
+
+    await repositorioMovimentacoes.inserir(...movimentacoes);
     warning(`Criado ${quant} transações.`, { label: "Faker" });
   }
+
   async criarUsuarios(quant: number) {
+    const usuarios = [];
     for (let i = 0; i < quant; i++) {
-      await servicoUsuarios.inserir({
+      const hashedPassword = await hashSenha(
+        faker.string.hexadecimal({ length: 32 }),
+      );
+      usuarios.push({
         nome: faker.person.fullName(),
         login: faker.internet.username(),
-        password: faker.string.hexadecimal({ length: 32 }),
+        hashedPassword,
         descricao: faker.person.jobDescriptor(),
         habilitado: faker.datatype.boolean(),
-        // modoEscuro: faker.datatype.boolean(),
+        modoEscuro: faker.datatype.boolean(),
         nivelPermissoes: faker.number.int({ min: 0, max: 3 }),
         // foto: fakerImage(),
       });
     }
+
+    const usuarioIds = await repositorioUsuarios.inserir(...usuarios);
+    const permissoes = usuarioIds.map((u) => ({
+      usuarioId: u.id,
+      cargo: Permissoes.Operacional,
+    }));
+    await repositorioPermissoes.inserir(...permissoes);
     warning(`Criado ${quant} usuários.`, { label: "Faker" });
   }
 
   async criarUnidadesMedida(quant: number) {
+    const unidadesMedida = [];
     for (let i = 0; i < quant; i++) {
       const unit = faker.science.unit();
-      await servicoUnidadesMedida.inserir({
+      unidadesMedida.push({
         nome: unit.name,
         abreviacao: unit.symbol,
       });
     }
+
+    await repositorioUnidadesMedida.inserir(...unidadesMedida);
     warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
   }
 
   async criarCategorias(quant: number) {
+    const categorias = [];
     for (let i = 0; i < quant; i++) {
-      await servicoCategorias.inserir({
+      categorias.push({
         nome: faker.commerce.department(),
       });
     }
-    warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
+
+    await repositorioCategorias.inserir(...categorias);
+    warning(`Criado ${quant} categorias.`, { label: "Faker" });
   }
 }
 

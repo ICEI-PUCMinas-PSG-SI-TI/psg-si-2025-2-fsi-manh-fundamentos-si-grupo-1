@@ -9,7 +9,7 @@ import {
 } from "../db/schema/unidadesMedida";
 
 export class RepositorioUnidadesMedida {
-  inserir(unidadeMedida: InsertUnidadesMedidaSchema) {
+  inserir(...unidadeMedida: InsertUnidadesMedidaSchema[]) {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaUnidadesMedida).values(unidadeMedida).returning({
         id: tabelaUnidadesMedida.id,
@@ -74,3 +74,7 @@ export class RepositorioUnidadesMedida {
     return bancoDados.select({ count: count() }).from(tabelaUnidadesMedida);
   }
 }
+
+const repositorioUnidadesMedida = new RepositorioUnidadesMedida();
+
+export default repositorioUnidadesMedida;

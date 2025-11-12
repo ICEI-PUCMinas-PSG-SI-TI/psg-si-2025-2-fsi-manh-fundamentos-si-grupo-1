@@ -52,6 +52,12 @@ export const ParamsConsultaProdutosZ = z4.strictObject({
 export type ParamsConsultaProdutos = z4.infer<typeof ParamsConsultaProdutosZ>;
 
 export class ServicoProdutos {
+  /* TODO: Inserir todos os valores de uma vez, retornar uuid
+  async inserir(produto: InsertProdutosSchema): Promise<UuidResult> {
+    // TODO;
+  }
+  */
+
   async inserir(produto: InsertProdutosSchema): Promise<UuidResult> {
     const res = await repositorioProdutos.inserir(produto);
     if (res.length !== 1 || !res[0]) throw new HttpError("", 500);

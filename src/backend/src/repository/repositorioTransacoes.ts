@@ -68,7 +68,7 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
 }
 
 export class RepositorioTransacoes {
-  inserir(transacao: InsertTransacoesSchema) {
+  inserir(...transacao: InsertTransacoesSchema[]) {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaTransacoes).values(transacao).returning({
         id: tabelaTransacoes.id,
@@ -126,3 +126,7 @@ export class RepositorioTransacoes {
   }
   */
 }
+
+const repositorioMovimentacoes = new RepositorioTransacoes();
+
+export default repositorioMovimentacoes;

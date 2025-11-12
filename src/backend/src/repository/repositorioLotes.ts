@@ -71,7 +71,7 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 }
 
 export class RepositorioLotes {
-  inserir(lote: InsertLoteSchema) {
+  inserir(...lote: InsertLoteSchema[]) {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaLotes).values(lote).returning({
         id: tabelaLotes.id,
@@ -136,3 +136,6 @@ export class RepositorioLotes {
     return bancoDados.select({ count: count() }).from(tabelaLotes);
   }
 }
+const repositorioLotes = new RepositorioLotes();
+
+export default repositorioLotes;

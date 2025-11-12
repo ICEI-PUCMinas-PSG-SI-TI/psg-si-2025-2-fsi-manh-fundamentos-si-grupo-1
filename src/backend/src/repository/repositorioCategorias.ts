@@ -7,7 +7,7 @@ import {
 } from "../db/schema/categorias";
 
 export class RepositorioCategorias {
-  inserir(categoria: InsertCategoriaSchema) {
+  inserir(...categoria: InsertCategoriaSchema[]) {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaCategorias).values(categoria).returning({
         id: tabelaCategorias.id,
@@ -58,3 +58,7 @@ export class RepositorioCategorias {
     return bancoDados.select({ count: count() }).from(tabelaCategorias);
   }
 }
+
+const repositorioCategorias = new RepositorioCategorias();
+
+export default repositorioCategorias;
