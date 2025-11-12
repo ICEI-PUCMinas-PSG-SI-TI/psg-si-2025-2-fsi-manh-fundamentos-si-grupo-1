@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { and, eq, type SQLWrapper } from "drizzle-orm";
-import bancoDados, { baseDados } from "../db";
+import bancoDados from "../db";
 import {
   tabelaTransacoes,
   type InsertTransacoesSchema,
@@ -61,7 +61,7 @@ class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
 
   executarConsulta(): Promise<SelectTransacoesSchema[]> {
     this._query.where(and(...this._whereAnd));
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.all(this._query.getSQL());
     });
   }

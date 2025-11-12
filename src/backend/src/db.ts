@@ -12,7 +12,7 @@ import { tabelaUsuarios } from "./db/schema/usuarios";
 import servicoUsuarios from "./services/servicoUsuarios";
 import { Permissoes, tabelaPermissoes } from "./db/schema/permissoes";
 
-export const baseDados = drizzle(process.env.DB_FILE_NAME!);
+const baseDados = drizzle(process.env.DB_FILE_NAME!);
 
 // TODO: Verificar se a base de dados se encontra no último schema
 export async function verificarBancoDados(): Promise<boolean> {
