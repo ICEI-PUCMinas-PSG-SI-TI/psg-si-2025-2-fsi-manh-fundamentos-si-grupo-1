@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { and, count, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
 import { tabelaLotes } from "../db/schema/lotes";
-import baseDados from "../db";
+import bancoDados from "../db";
 import {
   QueryBuilder,
   type SQLiteSelectQueryBuilder,
@@ -64,7 +64,7 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 
   async executarConsulta(): Promise<SelectLoteSchema[]> {
     this._query.where(and(...this._where));
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       return await tx.all(this._query.getSQL());
     });
   }
@@ -72,7 +72,7 @@ class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
 
 export class RepositorioLotes {
   inserir(lote: InsertLoteSchema) {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaLotes).values(lote).returning({
         id: tabelaLotes.id,
       });
@@ -80,7 +80,7 @@ export class RepositorioLotes {
   }
 
   async selecionarPorId(id: string): Promise<SelectLoteSchema[]> {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       return await tx.select().from(tabelaLotes).where(eq(tabelaLotes.id, id));
     });
   }
@@ -89,7 +89,7 @@ export class RepositorioLotes {
     page: number = 1,
     pageSize: number = 10,
   ): Promise<SelectLoteSchema[]> {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       if (page >= 1 && pageSize >= 1) {
         return await tx
           .select()
@@ -108,7 +108,7 @@ export class RepositorioLotes {
   }
 
   selecionarIdProdutosTodos(): Promise<{ id: string; produtoId: string }[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx
         .select({
           id: tabelaLotes.id,
@@ -119,7 +119,7 @@ export class RepositorioLotes {
   }
 
   async atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       return (
         await tx.update(tabelaLotes).set(lote).where(eq(tabelaLotes.id, id))
       ).rowsAffected;
@@ -127,7 +127,7 @@ export class RepositorioLotes {
   }
 
   async excluirPorId(id: string) {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       // or .returning()
       return (await tx.delete(tabelaLotes).where(eq(tabelaLotes.id, id)))
         .rowsAffected;
@@ -135,6 +135,6 @@ export class RepositorioLotes {
   }
 
   contar() {
-    return baseDados.select({ count: count() }).from(tabelaLotes);
+    return bancoDados.select({ count: count() }).from(tabelaLotes);
   }
 }

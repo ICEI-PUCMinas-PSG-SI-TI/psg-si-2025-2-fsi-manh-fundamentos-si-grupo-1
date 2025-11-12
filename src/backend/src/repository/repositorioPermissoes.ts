@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
 import {
   tabelaPermissoes,
   type InsertPermissoesSchema,
@@ -9,7 +9,7 @@ import { Permissoes } from "../db/enums/permissoes";
 
 export class RepositorioPermissoes {
   inserir(...perms: InsertPermissoesSchema[]) {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaPermissoes).values(perms).onConflictDoNothing();
     });
   }
@@ -18,7 +18,7 @@ export class RepositorioPermissoes {
     page: number = 1,
     pageSize: number = 10,
   ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       if (page >= 1 && pageSize >= 1) {
         return tx
           .select()
@@ -35,7 +35,7 @@ export class RepositorioPermissoes {
     userId: string,
     cargo: Permissoes,
   ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx
         .select()
         .from(tabelaPermissoes)
@@ -51,7 +51,7 @@ export class RepositorioPermissoes {
   selecionarPersmissoesPorIdUsuario(
     userId: string,
   ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx
         .select()
         .from(tabelaPermissoes)
@@ -62,7 +62,7 @@ export class RepositorioPermissoes {
   selecionarPersmissoesPorCargo(
     cargo: Permissoes,
   ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx
         .select()
         .from(tabelaPermissoes)
@@ -71,7 +71,7 @@ export class RepositorioPermissoes {
   }
 
   async excluir(userId: string, cargo: Permissoes) {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaPermissoes)
         .where(
@@ -85,7 +85,7 @@ export class RepositorioPermissoes {
   }
 
   excluirPermissoes(userId: string) {
-    return baseDados.transaction(async (tx) => {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaPermissoes)
         .where(eq(tabelaPermissoes.usuarioId, userId));

@@ -13,7 +13,7 @@ import servicoUsuarios from "./services/servicoUsuarios";
 import { Permissoes } from "./db/enums/permissoes";
 import { tabelaPermissoes } from "./db/schema/permissoes";
 
-const baseDados = drizzle(process.env.DB_FILE_NAME!);
+const bancoDados = drizzle(process.env.DB_FILE_NAME!);
 
 // TODO: Verificar se a base de dados se encontra no último schema
 export async function verificarBancoDados(): Promise<boolean> {
@@ -31,7 +31,7 @@ export async function verificarBancoDados(): Promise<boolean> {
       tabelaUsuarios,
     ];
     for (let i = 0; i < tables.length; i++) {
-      await baseDados
+      await bancoDados
         .select({
           value: sql`1`,
         })
@@ -82,4 +82,4 @@ export async function inicializarAdministrador() {
   }
 }
 
-export default baseDados;
+export default bancoDados;

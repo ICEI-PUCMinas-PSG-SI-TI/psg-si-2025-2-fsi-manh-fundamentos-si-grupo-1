@@ -13,7 +13,7 @@ import {
   SQL,
   type SQLWrapper,
 } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
 import {
   QueryBuilder,
   type SQLiteSelectQueryBuilder,
@@ -111,7 +111,7 @@ class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
 
   executarConsulta(): Promise<SelectProdutosSchema[]> {
     this._query.where(and(...this._whereAnd, or(...this._whereOr)));
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.all(this._query.getSQL());
     });
   }
@@ -140,7 +140,7 @@ class RepositorioProdutosLotesConsulta<
   override executarConsulta(): Promise<SelectProdutosSchema[]> {
     this._query.where(and(...this._whereAnd, or(...this._whereOr)));
     this._query.having(and(...this._having));
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.all(this._query.getSQL());
     });
   }
@@ -148,7 +148,7 @@ class RepositorioProdutosLotesConsulta<
 
 export class RepositorioProdutos {
   inserir(produto: InsertProdutosSchema) {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaProdutos).values(produto).returning({
         id: tabelaProdutos.id,
       });
@@ -156,7 +156,7 @@ export class RepositorioProdutos {
   }
 
   selecionarPorId(id: string): Promise<SelectProdutosSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.select().from(tabelaProdutos).where(eq(tabelaProdutos.id, id));
     });
   }
@@ -165,7 +165,7 @@ export class RepositorioProdutos {
     page: number = 1,
     pageSize: number = 10,
   ): Promise<SelectProdutosSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       if (page >= 1 && pageSize >= 1) {
         return tx
           .select()
@@ -179,7 +179,7 @@ export class RepositorioProdutos {
   }
 
   selecionarIdTodos(): Promise<{ id: string }[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx
         .select({
           id: tabelaProdutos.id,
@@ -213,7 +213,7 @@ export class RepositorioProdutos {
   }
 
   atualizarPorId(id: string, produto: UpdateProdutosSchema): Promise<number> {
-    return baseDados.transaction(async (tx) => {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaProdutos)
         .set(produto)
@@ -224,7 +224,7 @@ export class RepositorioProdutos {
 
   // or .returning()
   excluirPorId(id: string) {
-    return baseDados.transaction(async (tx) => {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaProdutos)
         .where(eq(tabelaProdutos.id, id));
@@ -233,6 +233,6 @@ export class RepositorioProdutos {
   }
 
   contar() {
-    return baseDados.select({ count: count() }).from(tabelaProdutos);
+    return bancoDados.select({ count: count() }).from(tabelaProdutos);
   }
 }

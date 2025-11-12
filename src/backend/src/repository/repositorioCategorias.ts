@@ -1,5 +1,5 @@
 import { eq, like, count } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
 import {
   tabelaCategorias,
   type InsertCategoriaSchema,
@@ -8,7 +8,7 @@ import {
 
 export class RepositorioCategorias {
   inserir(categoria: InsertCategoriaSchema) {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaCategorias).values(categoria).returning({
         id: tabelaCategorias.id,
       });
@@ -16,7 +16,7 @@ export class RepositorioCategorias {
   }
 
   async selecionarPorId(id: string): Promise<SelectCategoriaSchema[]> {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       return await tx
         .select()
         .from(tabelaCategorias)
@@ -28,7 +28,7 @@ export class RepositorioCategorias {
     page: number = 1,
     pageSize: number = 10,
   ): Promise<SelectCategoriaSchema[]> {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       if (page >= 1 && pageSize >= 1) {
         return await tx
           .select()
@@ -42,7 +42,7 @@ export class RepositorioCategorias {
   }
 
   async selecionarLike(nome: string) {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       return await tx
         .select()
         .from(tabelaCategorias)
@@ -51,7 +51,7 @@ export class RepositorioCategorias {
   }
 
   async excluirPorId(id: string) {
-    return await baseDados.transaction(async (tx) => {
+    return await bancoDados.transaction(async (tx) => {
       // or .returning()
       return (
         await tx.delete(tabelaCategorias).where(eq(tabelaCategorias.id, id))
@@ -60,6 +60,6 @@ export class RepositorioCategorias {
   }
 
   contar() {
-    return baseDados.select({ count: count() }).from(tabelaCategorias);
+    return bancoDados.select({ count: count() }).from(tabelaCategorias);
   }
 }

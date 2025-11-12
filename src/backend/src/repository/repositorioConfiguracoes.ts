@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
 import {
   tabelaConfiguracoes,
   type InsertConfiguracaoSchema,
@@ -11,13 +11,13 @@ export class RepositorioConfiguracoes {
   inserir(
     configuracoes: InsertConfiguracaoSchema,
   ): Promise<SelectConfiguracaoSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaConfiguracoes).values(configuracoes).returning();
     });
   }
 
   selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | null> {
-    return baseDados.transaction(async (tx) => {
+    return bancoDados.transaction(async (tx) => {
       const res = await tx
         .select()
         .from(tabelaConfiguracoes)
@@ -31,7 +31,7 @@ export class RepositorioConfiguracoes {
     page: number = 1,
     pageSize: number = 10,
   ): Promise<SelectConfiguracaoSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       if (page >= 1 && pageSize >= 1) {
         return tx
           .select()
@@ -48,7 +48,7 @@ export class RepositorioConfiguracoes {
     id: string,
     configuracoes: UpdateConfiguracaoSchema,
   ): Promise<number> {
-    return baseDados.transaction(async (tx) => {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaConfiguracoes)
         .set(configuracoes)
@@ -59,7 +59,7 @@ export class RepositorioConfiguracoes {
 
   // or .returning()
   excluirPorId(id: string) {
-    return baseDados.transaction(async (tx) => {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaConfiguracoes)
         .where(eq(tabelaConfiguracoes.id, id));
