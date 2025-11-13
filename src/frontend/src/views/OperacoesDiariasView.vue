@@ -3,42 +3,33 @@
     <h1 class="m-15 mt-7 text-6xl font-bold">Operações Diárias</h1>
     <div class="bg-base-200 m-12 pt-2 pb-1 rounded-2xl overflow-auto flex flex-col h-[83vh]">
       <!--Compras, vendas e filtrar por data-->
-      <div class="flex flex-row gap-8 m-6">
-        <button
-          @click="ativarCompra"
-          class="flex bg-stone-700 p-4 rounded-lg items-center cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
-          :class="botaoAtivoC === true ? 'scale-104' : ''"
-        >
-          <ShoppingCartIcon
-            class="w-15"
-            :class="botaoAtivoC === true ? 'text-green-500' : 'text-white'"
-          />
-          <span class="ml-6" :class="botaoAtivoC === true ? 'text-green-500' : 'text-white'">
-            Compras
-          </span>
-        </button>
-        <button
-          @click="ativarVenda"
-          class="flex bg-stone-700 p-4 rounded-lg items-center cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
-          :class="botaoAtivoV === true ? 'scale-104' : ''"
-        >
-          <ShoppingBagIcon
-            class="w-15"
-            :class="botaoAtivoV === true ? 'text-green-500' : 'text-white'"
+      <div class="flex flex-wrap md:flex-nowrap gap-6 m-6 items-center justify-between">
+        <!-- Select de Motivo -->
+        <div class="flex flex-col flex-1 min-w-[200px]">
+          <label class="text-sm font-medium mb-2">Tipo de Movimentação</label>
+          <select
+            class="select select-bordered w-full bg-white text-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+            v-model="motivo"
+            @change="carregarMovimentacoesDoDia"
           >
-          </ShoppingBagIcon>
-          <span class="text ml-6" :class="botaoAtivoV === true ? 'text-green-500 ' : 'text-white'"
-            >Vendas</span
-          >
-        </button>
+            <option disabled selected>Selecione um tipo</option>
+            <option :value="MotivoTransacoes.Compra">{{ MotivoTransacoes.Compra }}</option>
+            <option :value="MotivoTransacoes.Venda">{{ MotivoTransacoes.Venda }}</option>
+            <option :value="MotivoTransacoes.Devolucao">{{ MotivoTransacoes.Devolucao }}</option>
+            <option :value="MotivoTransacoes.Perda">{{ MotivoTransacoes.Perda }}</option>
+          </select>
+        </div>
 
-        <div class="flex flex-col bg-stone-700 p-4 rounded-lg flex-1 items-center justify-center">
-          <span class="text font-medium mb-4 text-white">Filtrar por data</span>
+        <!-- Filtro de Data -->
+        <div
+          class="flex flex-col flex-1 min-w-[200px] bg-stone-700 p-4 rounded-xl items-center justify-center shadow-md"
+        >
+          <label class="text-sm font-medium mb-3 text-white">Filtrar por data</label>
           <input
             type="date"
             v-model="dataSelecionada"
             @change="carregarMovimentacoesDoDia"
-            class="input input-bordered w-70 px-2 rounded-lg"
+            class="input input-bordered w-full max-w-[250px] px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
       </div>
@@ -67,7 +58,7 @@
         <div class="m-6 flex-1 overflow-y-auto">
           <h3 class="m-6 text-3xl font-semibold mb-2 text-white">Histórico</h3>
           <table class="w-full text-left border-t border-white">
-            <thead class="sticky z-10 text-white">
+            <thead class="sticky top-0 z-10 text-white bg-stone-700">
               <tr class="text-white text-2xl">
                 <th class="py-2">Hora</th>
                 <th class="py-2">Tipo</th>
@@ -86,7 +77,12 @@
                     })
                   }}
                 </td>
+                <<<<<<< HEAD
                 <td class="py-2">{{ i.motivo === '1' ? 'Compra' : 'Venda' }}</td>
+                =======
+                <td class="py-2"></td>
+                >>>>>>> 1a905a7 (alterações das cores em algumas páginas e adição do select na pág
+                Operações)
                 <td class="py-2">
                   {{ i._produto.nome }}
                   <br />
@@ -111,12 +107,7 @@
 
 <script setup lang="ts">
 import { ApiMovimentacoes } from '@/api/movimentacoes'
-import {
-  ShoppingCartIcon,
-  ShoppingBagIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-} from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import { onMounted, ref } from 'vue'
 import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
 import { ApiProdutos } from '@/api/produtos'
@@ -124,17 +115,13 @@ import type { GetConsultaMovimentacaoDto } from '../../../backend'
 
 const produtosCache = ref<Record<string, string>>({})
 
-function ativarCompra() {
-  botaoAtivoC.value = true
-  botaoAtivoV.value = false
-  carregarMovimentacoesDoDia()
+enum MotivoTransacoes {
+  Compra = 'Compra',
+  Venda = 'Venda',
+  Devolucao = 'Devolucao',
+  Perda = 'Perda',
 }
-
-function ativarVenda() {
-  botaoAtivoC.value = false
-  botaoAtivoV.value = true
-  carregarMovimentacoesDoDia()
-}
+const motivo = ref<MotivoTransacoes | null>()
 
 const apiProdutos = new ApiProdutos()
 async function carregarProdutos() {
@@ -146,9 +133,6 @@ async function carregarProdutos() {
     })
   }
 }
-
-const botaoAtivoC = ref<boolean>(true)
-const botaoAtivoV = ref<boolean>(false)
 
 const api = new ApiMovimentacoes()
 const movimentacoes = ref<GetConsultaMovimentacaoDto[]>([])
@@ -181,8 +165,6 @@ onMounted(async () => {
   await carregarProdutos() // carrega o id → nome
   await carregarMovimentacoesDoDia() // carrega as movimentações já filtrando pelo tipo e nome
 })
-
-ativarVenda()
 
 function formatarDataLocalParaInput(date: Date) {
   const ano = date.getFullYear()
