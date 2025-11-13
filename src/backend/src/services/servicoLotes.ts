@@ -1,23 +1,23 @@
-import z from "zod";
+import * as z4 from "zod/v4";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/repositorioLotes";
 import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
 import { HttpError } from "../error";
 import type { UuidResult } from "../api/v1/objects";
 
-export const LoteConsultaSchema = z.strictObject({
-  id: z.uuid().optional(),
-  produtoId: z.uuid().optional(),
-  pagina: z.coerce.number().int().gt(0).optional(),
-  paginaTamanho: z.coerce.number().int().gt(0).optional(),
-  quantidadeMin: z.coerce.number().optional(),
-  quantidadeMax: z.coerce.number().optional(),
-  validadeAte: z.iso.datetime().optional(),
-  validadeApos: z.iso.datetime().optional(),
-  codigo: z.string().min(1).optional(),
+export const LoteConsultaSchema = z4.strictObject({
+  id: z4.uuid().optional(),
+  produtoId: z4.uuid().optional(),
+  pagina: z4.coerce.number().int().gt(0).optional(),
+  paginaTamanho: z4.coerce.number().int().gt(0).optional(),
+  quantidadeMin: z4.coerce.number().optional(),
+  quantidadeMax: z4.coerce.number().optional(),
+  validadeAte: z4.iso.datetime().optional(),
+  validadeApos: z4.iso.datetime().optional(),
+  codigo: z4.string().min(1).optional(),
 });
 
-export type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
+export type LoteConsultaZ = z4.infer<typeof LoteConsultaSchema>;
 
 const repositorioLotes = new RepositorioLotes();
 

@@ -1,18 +1,18 @@
 import { Router, type NextFunction, type Response } from "express";
 import { mdwRequerBody, type ExtendedRequest } from "../../middlewares";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { Permissoes } from "../../db/schema/permissoes";
 import servicoPermissoes from "../../services/servicoPermissoes";
 import { ParamsIdSchemaZ } from "./objects";
 
 const apiV1PermissoesRouter = Router();
 
-const ParamsPatchPermissoesZ = z.object({
-  usuarioId: z.uuid(),
-  permissoes: z.array(z.enum(Permissoes)),
+const ParamsPatchPermissoesZ = z4.object({
+  usuarioId: z4.uuid(),
+  permissoes: z4.array(z4.enum(Permissoes)),
 });
 
-export type ParamsPatchPermissoes = z.infer<typeof ParamsPatchPermissoesZ>;
+export type ParamsPatchPermissoes = z4.infer<typeof ParamsPatchPermissoesZ>;
 
 async function addPermissoes(
   req: ExtendedRequest,
@@ -62,7 +62,7 @@ async function verPermissoesId(
   }
 }
 
-const PermsPermissoesArrayZ = z.array(z.enum(Permissoes));
+const PermsPermissoesArrayZ = z4.array(z4.enum(Permissoes));
 
 async function addPermissoesId(
   req: ExtendedRequest,

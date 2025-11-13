@@ -3,7 +3,7 @@ import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { tabelaProdutos } from "./produtos";
 
 export const tabelaLotes = sqliteTable("lotes", {
@@ -39,15 +39,15 @@ export const tabelaLotes = sqliteTable("lotes", {
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
 // diretamente para evitar a permissão de edição de futuros campos que podem
 // ser adicionados a tabela.
-export const UpdateLoteSchemaZ = z.strictObject({
-  lote: z.string().min(1).optional(),
-  quantidade: z.number().optional(),
-  validade: z.coerce.date().optional(),
+export const UpdateLoteSchemaZ = z4.strictObject({
+  lote: z4.string().min(1).optional(),
+  quantidade: z4.number().optional(),
+  validade: z4.coerce.date().optional(),
 });
 
 export const InsertLoteSchemaZ = createInsertSchema(tabelaLotes, {
-  id: z.uuid().optional(),
-  produtoId: z.uuid(),
+  id: z4.uuid().optional(),
+  produtoId: z4.uuid(),
 })
   .omit({
     createdAt: true,
@@ -56,5 +56,5 @@ export const InsertLoteSchemaZ = createInsertSchema(tabelaLotes, {
   .strict();
 
 export type SelectLoteSchema = InferSelectModel<typeof tabelaLotes>;
-export type UpdateLoteSchema = z.infer<typeof UpdateLoteSchemaZ>;
-export type InsertLoteSchema = z.infer<typeof InsertLoteSchemaZ>;
+export type UpdateLoteSchema = z4.infer<typeof UpdateLoteSchemaZ>;
+export type InsertLoteSchema = z4.infer<typeof InsertLoteSchemaZ>;

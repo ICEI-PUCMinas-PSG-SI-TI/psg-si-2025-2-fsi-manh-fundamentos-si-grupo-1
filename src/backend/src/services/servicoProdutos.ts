@@ -6,7 +6,7 @@ import {
 } from "../db/schema/produtos";
 import { HttpError } from "../error";
 import type { UuidResult } from "../api/v1/objects";
-import z from "zod";
+import * as z4 from "zod/v4";
 
 const repositorioProdutos = new RepositorioProdutos();
 
@@ -31,25 +31,25 @@ export const ParamsInserirProdutosZ = InsertProdutosSchemaZ.pick({
   status: true,
 }).strict();
 
-export type ParamsInserirProdutos = z.infer<typeof ParamsInserirProdutosZ>;
+export type ParamsInserirProdutos = z4.infer<typeof ParamsInserirProdutosZ>;
 
-export const ParamsConsultaProdutosZ = z.strictObject({
-  id: z.uuid().optional(),
-  pagina: z.coerce.number().int().gt(0).optional(),
-  paginaTamanho: z.coerce.number().int().gt(0).optional(),
-  precoCustoMin: z.coerce.number().int().gt(0).optional(),
-  precoCustoMax: z.coerce.number().int().gt(0).optional(),
-  precoVendaMin: z.coerce.number().int().gt(0).optional(),
-  precoVendaMax: z.coerce.number().int().gt(0).optional(),
-  precoPromocaoMin: z.coerce.number().int().gt(0).optional(),
-  precoPromocaoMax: z.coerce.number().int().gt(0).optional(),
-  pesoMin: z.coerce.number().int().gt(0).optional(),
-  pesoMax: z.coerce.number().int().gt(0).optional(),
-  texto: z.string().min(1).optional(),
-  categoria: z.uuid().optional(),
+export const ParamsConsultaProdutosZ = z4.strictObject({
+  id: z4.uuid().optional(),
+  pagina: z4.coerce.number().int().gt(0).optional(),
+  paginaTamanho: z4.coerce.number().int().gt(0).optional(),
+  precoCustoMin: z4.coerce.number().int().gt(0).optional(),
+  precoCustoMax: z4.coerce.number().int().gt(0).optional(),
+  precoVendaMin: z4.coerce.number().int().gt(0).optional(),
+  precoVendaMax: z4.coerce.number().int().gt(0).optional(),
+  precoPromocaoMin: z4.coerce.number().int().gt(0).optional(),
+  precoPromocaoMax: z4.coerce.number().int().gt(0).optional(),
+  pesoMin: z4.coerce.number().int().gt(0).optional(),
+  pesoMax: z4.coerce.number().int().gt(0).optional(),
+  texto: z4.string().min(1).optional(),
+  categoria: z4.uuid().optional(),
 });
 
-export type ParamsConsultaProdutos = z.infer<typeof ParamsConsultaProdutosZ>;
+export type ParamsConsultaProdutos = z4.infer<typeof ParamsConsultaProdutosZ>;
 
 export class ServicoProdutos {
   async inserir(produto: InsertProdutosSchema): Promise<UuidResult> {

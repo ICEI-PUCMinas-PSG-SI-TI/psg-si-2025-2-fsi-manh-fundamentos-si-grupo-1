@@ -3,7 +3,7 @@ import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { v4 as genUUID } from "uuid";
 import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import z from "zod";
+import * as z4 from "zod/v4";
 
 export const tabelaUsuarios = sqliteTable("usuarios", {
   id: text()
@@ -33,25 +33,25 @@ export const tabelaUsuarios = sqliteTable("usuarios", {
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
 // diretamente para evitar a permissão de edição de futuros campos que podem
 // ser adicionados a tabela.
-export const UpdateUsuarioSchemaZ = z.strictObject({
-  nome: z.string().optional(),
-  login: z.string().optional(),
-  hashedPassword: z.string().optional(),
-  descricao: z.string().optional(),
-  habilitado: z.boolean().optional(),
-  modoEscuro: z.boolean().optional(),
-  foto: z.base64().optional(),
+export const UpdateUsuarioSchemaZ = z4.strictObject({
+  nome: z4.string().optional(),
+  login: z4.string().optional(),
+  hashedPassword: z4.string().optional(),
+  descricao: z4.string().optional(),
+  habilitado: z4.boolean().optional(),
+  modoEscuro: z4.boolean().optional(),
+  foto: z4.base64().optional(),
   // TODO: Verificar como limitar nível de proteção para alterar permissões do usuário
-  nivelPermissoes: z.int().min(0).max(3).optional(),
+  nivelPermissoes: z4.int().min(0).max(3).optional(),
 });
 
 export const InsertUsuarioSchemaZ = createInsertSchema(tabelaUsuarios, {
-  id: z.uuid().optional(),
-  habilitado: z.boolean().optional(),
-  modoEscuro: z.boolean().optional(),
-  foto: z.base64().optional(),
-  createdAt: z.coerce.date().optional(),
-  updatedAt: z.coerce.date().optional(),
+  id: z4.uuid().optional(),
+  habilitado: z4.boolean().optional(),
+  modoEscuro: z4.boolean().optional(),
+  foto: z4.base64().optional(),
+  createdAt: z4.coerce.date().optional(),
+  updatedAt: z4.coerce.date().optional(),
 })
   .omit({
     id: true,
@@ -61,10 +61,10 @@ export const InsertUsuarioSchemaZ = createInsertSchema(tabelaUsuarios, {
   .strict();
 
 export const SelectUsuarioInfoSchemaZ = createSelectSchema(tabelaUsuarios, {
-  id: z.uuid(),
-  habilitado: z.boolean(),
-  modoEscuro: z.boolean(),
-  foto: z.base64().nullable(),
+  id: z4.uuid(),
+  habilitado: z4.boolean(),
+  modoEscuro: z4.boolean(),
+  foto: z4.base64().nullable(),
 })
   .pick({
     id: true,
@@ -75,6 +75,6 @@ export const SelectUsuarioInfoSchemaZ = createSelectSchema(tabelaUsuarios, {
   .strict();
 
 export type SelectUsuarioSchema = InferSelectModel<typeof tabelaUsuarios>;
-export type UpdateUsuarioSchema = z.infer<typeof UpdateUsuarioSchemaZ>;
-export type InsertUsuarioSchema = z.infer<typeof InsertUsuarioSchemaZ>;
-export type SelectUsuarioInfoSchema = z.infer<typeof SelectUsuarioInfoSchemaZ>;
+export type UpdateUsuarioSchema = z4.infer<typeof UpdateUsuarioSchemaZ>;
+export type InsertUsuarioSchema = z4.infer<typeof InsertUsuarioSchemaZ>;
+export type SelectUsuarioInfoSchema = z4.infer<typeof SelectUsuarioInfoSchemaZ>;

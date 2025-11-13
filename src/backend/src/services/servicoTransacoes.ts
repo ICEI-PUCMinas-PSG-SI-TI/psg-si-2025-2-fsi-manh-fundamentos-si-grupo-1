@@ -1,4 +1,4 @@
-import z from "zod";
+import * as z4 from "zod/v4";
 import { RepositorioTransacoes } from "../repository/repositorioTransacoes";
 import { debug } from "../logging";
 import type { InsertTransacoesSchema } from "../db/schema/transacoes";
@@ -7,19 +7,19 @@ import type { UuidResult } from "../api/v1/objects";
 
 const repositorioTransacoes = new RepositorioTransacoes();
 
-export const ParamsConsultaTransacoesZ = z.strictObject({
-  id: z.uuid().optional(),
-  produtoId: z.uuid().optional(),
-  usuarioId: z.uuid().optional(),
-  loteId: z.uuid().optional(),
+export const ParamsConsultaTransacoesZ = z4.strictObject({
+  id: z4.uuid().optional(),
+  produtoId: z4.uuid().optional(),
+  usuarioId: z4.uuid().optional(),
+  loteId: z4.uuid().optional(),
   // corce: os parametros são recebidos como string
-  pagina: z.coerce.number().int().gt(0).optional(),
-  paginaTamanho: z.coerce.number().int().gt(0).optional(),
-  dataApos: z.coerce.date().optional(),
-  dataAntes: z.coerce.date().optional(),
+  pagina: z4.coerce.number().int().gt(0).optional(),
+  paginaTamanho: z4.coerce.number().int().gt(0).optional(),
+  dataApos: z4.coerce.date().optional(),
+  dataAntes: z4.coerce.date().optional(),
 });
 
-export type ParamsConsultaTransacoes = z.infer<
+export type ParamsConsultaTransacoes = z4.infer<
   typeof ParamsConsultaTransacoesZ
 >;
 

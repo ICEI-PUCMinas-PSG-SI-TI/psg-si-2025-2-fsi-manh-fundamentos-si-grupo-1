@@ -2,7 +2,7 @@ import { sql, type InferSelectModel } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { tabelaUnidadesMedida } from "./unidadesMedida";
 import { tabelaCategorias } from "./categorias";
 
@@ -60,25 +60,25 @@ export const tabelaProdutos = sqliteTable("produtos", {
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos
 // diretamente para evitar a permissão de edição de futuros campos que podem
 // ser adicionados a tabela.
-export const UpdateProdutosSchemaZ = z.strictObject({
-  nome: z.string().optional(),
-  sku: z.string().optional(),
-  codigoBarra: z.string().optional(),
-  descricao: z.string().optional(),
-  categoria: z.string().optional(),
-  marca: z.string().optional(),
-  fornecedor: z.string().optional(),
-  dimensoes: z.string().optional(),
-  peso: z.int().optional(),
-  precoCusto: z.int().optional(),
-  precoVenda: z.int().optional(),
-  precoPromocao: z.int().optional(),
-  // quantidadeUnidadeMedida: z.string().optional(),
-  quantidadeMinima: z.int().optional(),
-  quantidadeMaxima: z.int().optional(),
-  localizacao: z.string().optional(),
-  imagem: z.base64().optional(),
-  status: z.enum([
+export const UpdateProdutosSchemaZ = z4.strictObject({
+  nome: z4.string().optional(),
+  sku: z4.string().optional(),
+  codigoBarra: z4.string().optional(),
+  descricao: z4.string().optional(),
+  categoria: z4.string().optional(),
+  marca: z4.string().optional(),
+  fornecedor: z4.string().optional(),
+  dimensoes: z4.string().optional(),
+  peso: z4.int().optional(),
+  precoCusto: z4.int().optional(),
+  precoVenda: z4.int().optional(),
+  precoPromocao: z4.int().optional(),
+  // quantidadeUnidadeMedida: z4.string().optional(),
+  quantidadeMinima: z4.int().optional(),
+  quantidadeMaxima: z4.int().optional(),
+  localizacao: z4.string().optional(),
+  imagem: z4.base64().optional(),
+  status: z4.enum([
     StatusProduto.Ativo,
     StatusProduto.Inativo,
     StatusProduto.Descontinuado,
@@ -88,8 +88,8 @@ export const UpdateProdutosSchemaZ = z.strictObject({
 
 // Os campos de inserção podem ser inferidos. Alguns deles podem ser adicionalmente validados como UUID e omitidos.
 export const InsertProdutosSchemaZ = createInsertSchema(tabelaProdutos, {
-  id: z.uuid().optional(),
-  imagem: z.base64().optional(),
+  id: z4.uuid().optional(),
+  imagem: z4.base64().optional(),
 })
   .omit({
     createdAt: true,
@@ -98,5 +98,5 @@ export const InsertProdutosSchemaZ = createInsertSchema(tabelaProdutos, {
   .strict();
 
 export type SelectProdutosSchema = InferSelectModel<typeof tabelaProdutos>;
-export type UpdateProdutosSchema = z.infer<typeof UpdateProdutosSchemaZ>;
-export type InsertProdutosSchema = z.infer<typeof InsertProdutosSchemaZ>;
+export type UpdateProdutosSchema = z4.infer<typeof UpdateProdutosSchemaZ>;
+export type InsertProdutosSchema = z4.infer<typeof InsertProdutosSchemaZ>;

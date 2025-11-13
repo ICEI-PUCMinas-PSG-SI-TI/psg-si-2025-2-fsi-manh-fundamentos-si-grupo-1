@@ -1,4 +1,4 @@
-import z from "zod";
+import * as z4 from "zod/v4";
 import {
   InsertUsuarioSchemaZ,
   type SelectUsuarioInfoSchema,
@@ -22,7 +22,7 @@ export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
   password: PasswordZ,
 });
 
-export type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
+export type InsertUsuarioSchemaReq = z4.infer<typeof InsertUsuarioSchemaReqZ>;
 
 function hashSenha(senha: string): Promise<string> {
   const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);

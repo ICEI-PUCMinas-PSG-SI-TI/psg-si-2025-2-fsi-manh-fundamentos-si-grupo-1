@@ -1,14 +1,14 @@
 import { type ExtendedRequest } from "../../middlewares";
 import { Router, type NextFunction, type Response } from "express";
 import servicoUsuarios from "../../services/servicoUsuarios";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
 import { ParamsIdSchemaZ, PasswordZ } from "./objects";
 import { mdwRequerBody } from "../../middlewares";
 
 const apiV1UsuariosRouter = Router();
 
-const AlteracaoSenhaZ = z.strictObject({
+const AlteracaoSenhaZ = z4.strictObject({
   senhaAnterior: PasswordZ,
   senhaNova: PasswordZ,
 });

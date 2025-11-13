@@ -9,7 +9,7 @@ import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../../services/servicoUsuarios";
 import { ParamsIdSchemaZ, PasswordZ } from "../objects";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
 import { mdwRequerBody } from "../../../middlewares";
 
@@ -39,7 +39,7 @@ async function postUsuario(
   }
 }
 
-const AdmAlteracaoSenhaZ = z.strictObject({
+const AdmAlteracaoSenhaZ = z4.strictObject({
   senha: PasswordZ,
 });
 

@@ -2,7 +2,7 @@ import { sql, type InferSelectModel } from "drizzle-orm";
 import { sqliteTable, text, int } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { v4 as genUUID } from "uuid";
-import z from "zod";
+import * as z4 from "zod/v4";
 
 // TODO: Verificar necessidade de desabilitar ou atualizar categorias
 export const tabelaCategorias = sqliteTable("categorias", {
@@ -17,8 +17,8 @@ export const tabelaCategorias = sqliteTable("categorias", {
 });
 
 export const InsertCategoriaSchemaZ = createInsertSchema(tabelaCategorias, {
-  id: z.uuid().optional(),
-  nome: z.string().min(1).max(128),
+  id: z4.uuid().optional(),
+  nome: z4.string().min(1).max(128),
 })
   .omit({
     createdAt: true,
@@ -26,4 +26,4 @@ export const InsertCategoriaSchemaZ = createInsertSchema(tabelaCategorias, {
   .strict();
 
 export type SelectCategoriaSchema = InferSelectModel<typeof tabelaCategorias>;
-export type InsertCategoriaSchema = z.infer<typeof InsertCategoriaSchemaZ>;
+export type InsertCategoriaSchema = z4.infer<typeof InsertCategoriaSchemaZ>;

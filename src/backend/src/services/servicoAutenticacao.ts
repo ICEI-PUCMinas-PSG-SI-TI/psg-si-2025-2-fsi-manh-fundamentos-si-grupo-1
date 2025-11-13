@@ -1,4 +1,4 @@
-import z from "zod";
+import * as z4 from "zod/v4";
 import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { RepositorioSessoes } from "../repository/repositorioSessoes";
 import { ClientError } from "../error";
@@ -13,25 +13,25 @@ import servicoPermissoes from "./servicoPermissoes";
 const repositorioUsuarios = new RepositorioUsuarios();
 const repositorioSessoes = new RepositorioSessoes();
 
-export const CredenciaisSchemaZ = z.strictObject({
-  login: z.string(),
-  senha: z.string(),
+export const CredenciaisSchemaZ = z4.strictObject({
+  login: z4.string(),
+  senha: z4.string(),
 });
 
-export type CredenciaisSchema = z.infer<typeof CredenciaisSchemaZ>;
+export type CredenciaisSchema = z4.infer<typeof CredenciaisSchemaZ>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UserSessionInfoZ = z.object({
-  id: z.string(),
-  nome: z.string(),
-  login: z.string(),
-  modoEscuro: z.boolean(),
-  nivelPermissoes: z.number(),
-  foto: z.base64(),
-  permissoes: z.array(z.enum(Permissoes)),
+const UserSessionInfoZ = z4.object({
+  id: z4.string(),
+  nome: z4.string(),
+  login: z4.string(),
+  modoEscuro: z4.boolean(),
+  nivelPermissoes: z4.number(),
+  foto: z4.base64(),
+  permissoes: z4.array(z4.enum(Permissoes)),
 });
 
-export type UserSessionInfo = z.infer<typeof UserSessionInfoZ>;
+export type UserSessionInfo = z4.infer<typeof UserSessionInfoZ>;
 
 export function generateSecureRandomString(): string {
   // Human readable alphabet (a-z, 0-9)

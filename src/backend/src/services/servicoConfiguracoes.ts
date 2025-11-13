@@ -1,4 +1,4 @@
-import z from "zod";
+import * as z4 from "zod/v4";
 import {
   UpdateConfiguracaoSchemaZ,
   type SelectConfiguracaoSchema,
@@ -17,7 +17,7 @@ export const ParamsInserirConfiguracoesZ = UpdateConfiguracaoSchemaZ.pick({
   endereco: true,
 });
 
-export type ParamsInserirConfiguracoes = z.infer<
+export type ParamsInserirConfiguracoes = z4.infer<
   typeof ParamsInserirConfiguracoesZ
 >;
 

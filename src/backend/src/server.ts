@@ -4,7 +4,7 @@ import "dotenv/config";
 import { info, middlewareHTTP } from "./logging";
 import chalk from "chalk";
 import { mdwError } from "./error";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { inicializarAdministrador, verificarBancoDados } from "./db";
 import cookieParser from "cookie-parser";
 import authRouter from "./auth";
@@ -12,7 +12,7 @@ import { mdwRequestId } from "./middlewares";
 import path from "path";
 import { fileURLToPath } from "url";
 
-z.config(z.locales.pt());
+z4.config(z4.locales.pt());
 
 console.info(chalk.bgBlueBright("psg-si-fundamentos-backend\n"));
 

@@ -4,14 +4,14 @@ import {
   type Request,
   type Response,
 } from "express";
-import z from "zod";
+import * as z4 from "zod/v4";
 import servicoFaker from "../../../services/servicoFaker";
 
 const apiV1FakerRouter = Router();
 
-const FakerParamsZ = z.strictObject({
-  canRecurse: z.boolean().optional().default(false),
-  quant: z.int().optional().default(10),
+const FakerParamsZ = z4.strictObject({
+  canRecurse: z4.boolean().optional().default(false),
+  quant: z4.int().optional().default(10),
 });
 
 async function criarProdutos(req: Request, res: Response, next: NextFunction) {

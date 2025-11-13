@@ -1,7 +1,7 @@
 import { sqliteTable, text, int, primaryKey } from "drizzle-orm/sqlite-core";
 import { tabelaUsuarios } from "./usuarios";
 import { sql, type InferSelectModel } from "drizzle-orm";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { createInsertSchema } from "drizzle-zod";
 
 // TODO: Tornar campos dinamicos
@@ -41,7 +41,7 @@ export const tabelaPermissoes = sqliteTable(
 );
 
 export const InsertPermissoesSchemaZ = createInsertSchema(tabelaPermissoes, {
-  usuarioId: z.uuid(),
+  usuarioId: z4.uuid(),
 })
   .omit({
     createdAt: true,
@@ -50,4 +50,4 @@ export const InsertPermissoesSchemaZ = createInsertSchema(tabelaPermissoes, {
   .strict();
 
 export type SelectPermissoesSchema = InferSelectModel<typeof tabelaPermissoes>;
-export type InsertPermissoesSchema = z.infer<typeof InsertPermissoesSchemaZ>;
+export type InsertPermissoesSchema = z4.infer<typeof InsertPermissoesSchemaZ>;

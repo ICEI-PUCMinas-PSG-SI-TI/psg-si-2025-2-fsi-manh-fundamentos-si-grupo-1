@@ -1,7 +1,8 @@
 import type { NextFunction, Response } from "express";
 import type { ExtendedRequest } from "./middlewares";
 import { DrizzleQueryError } from "drizzle-orm";
-import z, { ZodError } from "zod";
+import * as z4 from "zod/v4";
+import { ZodError } from "zod/v4";
 import { error } from "./logging";
 
 // TODO: Extend HttpError
@@ -38,7 +39,7 @@ export function mdwError(
     if (err instanceof ClientError || err instanceof HttpError) {
       res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {
-      const errMessage = z.prettifyError(err);
+      const errMessage = z4.prettifyError(err);
       error(errMessage, { reqId: id });
       res.status(400).send("Parâmetros inválidos!");
     } else if (err instanceof DrizzleQueryError && err.cause instanceof Error) {
