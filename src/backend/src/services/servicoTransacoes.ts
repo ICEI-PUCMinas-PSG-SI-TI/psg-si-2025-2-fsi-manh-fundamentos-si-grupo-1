@@ -44,6 +44,7 @@ export const ConsultaMovimentacoesParamsZ = z4.strictObject({
   paginaTamanho: z4.coerce.number().int().gt(0).optional(),
   dataApos: z4.coerce.date().optional(),
   dataAntes: z4.coerce.date().optional(),
+  motivo: z.enum(["Compra", "Venda", "Devolucao","Perda"]).optional(),
 });
 
 export type ConsultaMovimentacoesParams = z4.infer<

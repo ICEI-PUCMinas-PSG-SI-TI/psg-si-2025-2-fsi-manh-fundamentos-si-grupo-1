@@ -77,15 +77,9 @@
                     })
                   }}
                 </td>
-                <<<<<<< HEAD
                 <td class="py-2">{{ i.motivo === '1' ? 'Compra' : 'Venda' }}</td>
-                =======
-                <td class="py-2"></td>
-                >>>>>>> 1a905a7 (alterações das cores em algumas páginas e adição do select na pág
-                Operações)
                 <td class="py-2">
-                  {{ i._produto.nome }}
-                  <br />
+                  {{ i._produto.nome }} <br />
                   <span class="badge badge-sm badge-primary">{{ i._produto.codigo }}</span>
                 </td>
                 <td class="py-2">{{ i.quantidade }}</td>
@@ -140,25 +134,29 @@ const dataSelecionada = ref<string>(formatarDataLocalParaInput(new Date()))
 const produtoFiltro = ref<string | null>('')
 
 async function carregarMovimentacoesDoDia() {
+  const inicioDia = inicioDoDiaUTC(dataSelecionada.value)
+  const fimDia = fimDoDiaUTC(dataSelecionada.value)
+  const filtros = {
+    motivo: motivo.value ?? undefined,
+    dataApos: inicioDia.toISOString(),
+    dataAntes: fimDia.toISOString(),
+  }
+
   const res = await api.obterTodos({ pagina: 1, paginaTamanho: 100 })
-  /* const resp = await api.obterPorData(dataSelecionada.value) */
+
   if (res.ok && res.responseBody) {
     movimentacoes.value = res.responseBody
-    /*
-    const dados = res.responseBody as Movimentacao[]
-    let filtradas = dados.filter(
-      (i) => (botaoAtivoC.value && i.tipo === 1) || (botaoAtivoV.value && i.tipo != 1),
-    )
-
-    if (produtoFiltro.value && produtoFiltro.value.trim() !== '') {
-      const filtroLower = produtoFiltro.value.toLowerCase()
-      filtradas = filtradas.filter((i) =>
-        (produtosCache.value[i.produtoId] || '').toLowerCase().includes(filtroLower),
-      )
-    }
-    movimentacoes.value = filtradas
-    */
   }
+}
+
+function inicioDoDiaUTC(dateStr: string) {
+  const d = new Date(dateStr)
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0))
+}
+
+function fimDoDiaUTC(dateStr: string) {
+  const d = new Date(dateStr)
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999))
 }
 
 onMounted(async () => {

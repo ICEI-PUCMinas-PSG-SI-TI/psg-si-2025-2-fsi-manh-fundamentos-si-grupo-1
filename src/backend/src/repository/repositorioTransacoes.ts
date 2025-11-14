@@ -1,7 +1,9 @@
-import bancoDados from "../db";
+
 import { tabelaCategorias } from "../db/schema/categorias";
 import { tabelaLotes } from "../db/schema/lotes";
 import { tabelaProdutos } from "../db/schema/produtos";
+import "dotenv/config";
+import bancoDados from "../db";
 import {
   type InsertTransacoesSchema,
   type SelectTransacoesSchema,
