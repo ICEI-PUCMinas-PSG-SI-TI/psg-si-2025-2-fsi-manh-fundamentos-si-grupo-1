@@ -11,6 +11,7 @@ import {
   or,
   sql,
   SQL,
+  type ExtractTablesWithRelations,
 } from "drizzle-orm";
 import bancoDados from "../db";
 import {
@@ -21,6 +22,8 @@ import {
 } from "../db/schema/produtos";
 import { tabelaLotes } from "../db/schema/lotes";
 import type { Count, RefRegistro } from "./common";
+import type { SQLiteTransaction } from "drizzle-orm/sqlite-core";
+import type { ResultSet } from "@libsql/client";
 
 export type RepoConsultaParamsProduto = {
   pagina?: number;
@@ -272,6 +275,35 @@ export class RepositorioProdutos {
         .where(eq(tabelaProdutos.id, id));
       return resultSet.rowsAffected;
     });
+  }
+
+  async iniciarTransacao(
+    callback: (
+      tx: SQLiteTransaction<
+        "async",
+        ResultSet,
+        Record<string, never>,
+        ExtractTablesWithRelations<Record<string, never>>
+      >,
+    ) => Promise<unknown>,
+  ): Promise<void> {
+    await bancoDados.transaction(callback);
+  }
+
+  async atualizarPorIdTransaction(
+    id: string,
+    produto: UpdateProdutosSchema,
+    tx: SQLiteTransaction<
+      "async",
+      ResultSet,
+      Record<string, never>,
+      ExtractTablesWithRelations<Record<string, never>>
+    >,
+  ): Promise<unknown> {
+    return await tx
+      .update(tabelaProdutos)
+      .set(produto)
+      .where(eq(tabelaProdutos.id, id));
   }
 
   // or .returning()

@@ -11,6 +11,8 @@ import {
 import { HttpError } from "../error";
 import * as z4 from "zod/v4";
 import type { RefRegistro } from "../repository/common";
+import { configurarGerador, geradorCodigo } from "../db/geradorCodigos";
+import type { Identificador } from "../db/enums/identificador";
 
 const repositorioProdutos = new RepositorioProdutos();
 
@@ -63,6 +65,7 @@ export class ServicoProdutos {
   */
 
   async inserir(produto: InsertProdutosSchema): Promise<RefRegistro> {
+    produto.codigo = geradorCodigo();
     const res = await repositorioProdutos.inserir(produto);
     if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
     debug(`Novo produto criada!`, { label: "ServProdutos" });
@@ -117,6 +120,38 @@ export class ServicoProdutos {
   async contar(): Promise<number | undefined> {
     const res = await repositorioProdutos.contar();
     return res ? res.count : undefined;
+  }
+
+  // TODO: Otimizar
+  async alterarFormatoCodigo(identificador: Identificador): Promise<void> {
+    // TODO: Verificar se o código é o mesmo.
+    configurarGerador(identificador);
+    const res = await repositorioProdutos.contar();
+    if (!res) {
+      throw new Error();
+    }
+    if (res.count === 0) {
+      return;
+    }
+    const idList = await repositorioProdutos.selecionarIdsTodos();
+    const atualiacoes = idList.map((u) => {
+      return {
+        id: u.id,
+        codigo: geradorCodigo(),
+      };
+    });
+    await repositorioProdutos.iniciarTransacao(async (tx) => {
+      const atualizacoes = atualiacoes.map((x) => {
+        return repositorioProdutos.atualizarPorIdTransaction(
+          x.id,
+          {
+            codigo: x.codigo,
+          },
+          tx,
+        );
+      });
+      return await Promise.all(atualizacoes);
+    });
   }
 }
 

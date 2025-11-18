@@ -50,7 +50,8 @@
         </thead>
         <tbody>
           <tr v-for="produto in refProdutos" :key="produto.id" class="border-b hover:bg-gray-50">
-            <td class="p-2">{{ produto.id }}</td>
+            <!-- Use monospaced font -->
+            <td class="p-2">{{ produto.codigo }}</td>
             <td class="p-2">{{ produto.nome }}</td>
             <td class="p-2">{{ produto.categoria }}</td>
             <td class="p-2">{{ produto.quantidade || 'N/A' }}</td>

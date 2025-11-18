@@ -17,6 +17,8 @@ import repositorioProdutos from "../repository/repositorioProdutos";
 import repositorioUsuarios from "../repository/repositorioUsuarios";
 import { Permissoes } from "../db/enums/permissoes";
 import repositorioPermissoes from "../repository/repositorioPermissoes";
+import type { InsertProdutosSchema } from "../db/schema/produtos";
+import { geradorCodigo } from "../db/geradorCodigos";
 
 function fakerLocal(): string {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;
@@ -153,7 +155,7 @@ export class ServicoFaker {
     const categorias = await escolherCategorias(canRecurse, quant);
     if (!categorias || !categorias.length) throw new Error();
 
-    const produtos = [];
+    const produtos: InsertProdutosSchema[] = [];
     for (let i = 0; i < quant; i++) {
       produtos.push({
         nome: fakerPT_BR.commerce.product(),
@@ -175,6 +177,7 @@ export class ServicoFaker {
         localizacao: fakerLocal(),
         // imagem: fakerImage(),
         status: StatusProduto.Ativo,
+        codigo: geradorCodigo(),
       });
     }
 

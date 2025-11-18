@@ -53,7 +53,7 @@
     <!-- Configurações do sistema -->
     <CardComponent class="mb-4">
       <CardTitleBar title="Configurações do sistema" />
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-3">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8 justify-between">
           <LabeledInput
             class="floating-label me-2"
@@ -76,7 +76,17 @@
             label-text="Endereço"
             v-model="refConfig.endereco"
           />
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Identificadores de Produtos</legend>
+            <select class="select" v-model="refConfig.identificador">
+              <option :value="Identificador.Numero">Números (0123456789)</option>
+              <option :value="Identificador.Hexadecimal">Hexadecimal (0123456789ABCDEFG)</option>
+              <option :value="Identificador.Seguro">Seguro (6789BCDFGHJKMNPQRTW)</option>
+            </select>
+            <span class="label">Como os IDs serão gerados (com quais caracteres).</span>
+          </fieldset>
         </div>
+        <ButtonComponent @click="salvarConfiguracoes">Substituir códigos gerados.</ButtonComponent>
         <ButtonComponent @click="salvarConfiguracoes">Salvar</ButtonComponent>
       </div>
     </CardComponent>
@@ -181,11 +191,13 @@ import { limparConfiguracoes } from '@/services/storage'
 import router from '@/router'
 import type { SelectConfiguracaoSchema } from '../../../backend/src/db/schema/configuracoes'
 import { useSessaoStore } from '@/store/config/sessao'
+import { Identificador } from '../../../backend/src/db/enums/identificador'
 
 const refConfig: Ref<Partial<SelectConfiguracaoSchema>> = ref({
   nomeCliente: '',
   cpfCnpj: '',
   endereco: '',
+  identificador: '',
 })
 
 const refCategorias = ref([] as Categorias[])
