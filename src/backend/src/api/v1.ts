@@ -9,7 +9,7 @@ import apiV1Transacoes from "./v1/transacoes";
 import apiV1Produtos from "./v1/produtos";
 import apiV1Permissoes from "./v1/permissoes";
 import { mdwPermissoes } from "../middlewares";
-import { Permissoes } from "../db/schema/permissoes";
+import { Permissoes } from "../db/enums/permissoes";
 
 const apiV1Router = Router();
 

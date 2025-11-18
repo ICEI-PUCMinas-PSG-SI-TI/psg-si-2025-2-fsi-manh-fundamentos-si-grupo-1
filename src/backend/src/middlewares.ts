@@ -5,7 +5,7 @@ import servicoAutenticacao, {
   type UserSessionInfo,
 } from "./services/servicoAutenticacao";
 import { COOKIE_SESSION_TOKEN } from "./auth";
-import { Permissoes } from "./db/schema/permissoes";
+import { Permissoes } from "./db/enums/permissoes";
 
 export type Cookies = {
   tokenSessao?: string;

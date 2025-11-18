@@ -5,7 +5,7 @@ import { ClientError } from "../error";
 import { compare } from "bcrypt";
 import { debug, error, warning } from "../logging";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
-import { Permissoes } from "../db/schema/permissoes";
+import { Permissoes } from "../db/enums/permissoes";
 import servicoPermissoes from "./servicoPermissoes";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.

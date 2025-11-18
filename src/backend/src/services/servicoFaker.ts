@@ -6,7 +6,7 @@ import { HttpError } from "../error";
 import servicoTransacoes from "./servicoTransacoes";
 import servicoUsuarios from "./servicoUsuarios";
 import servicoUnidadesMedida from "./servicoUnidadesMedida";
-import { StatusProduto } from "../db/schema/produtos";
+import { StatusProduto } from "../db/enums/statusProduto";
 import { warning } from "../logging";
 import servicoCategorias from "./servicoCategorias";
 

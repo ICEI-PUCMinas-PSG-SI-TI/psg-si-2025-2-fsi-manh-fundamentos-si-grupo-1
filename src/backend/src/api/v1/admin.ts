@@ -7,7 +7,7 @@ import {
 import apiV1AdminUsuarios from "./admin/usuarios";
 import apiV1Faker from "./admin/faker";
 import servicoAutenticacao from "../../services/servicoAutenticacao";
-import { Permissoes } from "../../db/schema/permissoes";
+import { Permissoes } from "../../db/enums/permissoes";
 import { mdwPermissoes } from "../../middlewares";
 
 const apiV1AdminRouter = Router();

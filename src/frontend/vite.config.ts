@@ -46,6 +46,11 @@ export default defineConfig({
       treeshake: {
         preset: 'smallest',
       },
+      output: {
+        manualChunks(id) {
+          if (id.includes('backend/node_modules')) return 'backend'
+        },
+      },
     },
   },
 })

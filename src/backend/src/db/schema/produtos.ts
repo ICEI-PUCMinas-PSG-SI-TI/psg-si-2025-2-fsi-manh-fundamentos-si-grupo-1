@@ -4,13 +4,7 @@ import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
 import { tabelaUnidadesMedida } from "./unidadesMedida";
 import { tabelaCategorias } from "./categorias";
-
-export enum StatusProduto {
-  Ativo = "ATIVO",
-  Inativo = "INATIVO",
-  Descontinuado = "DESCONTINUADO",
-  Bloqueado = "BLOQUEADO",
-}
+import { StatusProduto } from "../enums/statusProduto";
 
 export const tabelaProdutos = sqliteTable("produtos", {
   id: text()

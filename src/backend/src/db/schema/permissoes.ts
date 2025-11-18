@@ -3,14 +3,7 @@ import { tabelaUsuarios } from "./usuarios";
 import { sql, type InferSelectModel } from "drizzle-orm";
 import * as z4 from "zod/v4";
 import { createInsertSchema } from "drizzle-zod";
-
-// TODO: Tornar campos dinamicos
-export enum Permissoes {
-  Desenvolvedor = "DEV",
-  Administrador = "ADM",
-  Operacional = "OP",
-  Consulta = "CONSULTA",
-}
+import { Permissoes } from "../enums/permissoes";
 
 export const tabelaPermissoes = sqliteTable(
   "permissoes",

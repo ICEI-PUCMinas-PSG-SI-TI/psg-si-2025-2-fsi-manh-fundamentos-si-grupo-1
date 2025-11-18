@@ -9,7 +9,7 @@ import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import { compare, hash } from "bcrypt";
 import { ClientError } from "../error";
 import { PasswordZ, type UuidResult } from "../api/v1/objects";
-import { Permissoes } from "../db/schema/permissoes";
+import { Permissoes } from "../db/enums/permissoes";
 import servicoPermissoes from "./servicoPermissoes";
 
 const repositorioUsuarios = new RepositorioUsuarios();

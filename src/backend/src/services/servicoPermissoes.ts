@@ -1,7 +1,5 @@
-import type {
-  InsertPermissoesSchema,
-  Permissoes,
-} from "../db/schema/permissoes";
+import type { Permissoes } from "../db/enums/permissoes";
+import type { InsertPermissoesSchema } from "../db/schema/permissoes";
 import { RepositorioPermissoes } from "../repository/repositorioPermissoes";
 
 const repositorioPermissoes = new RepositorioPermissoes();

@@ -1,11 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import baseDados from "../db";
 import {
-  Permissoes,
   tabelaPermissoes,
   type InsertPermissoesSchema,
   type SelectPermissoesSchema,
 } from "../db/schema/permissoes";
+import { Permissoes } from "../db/enums/permissoes";
 
 export class RepositorioPermissoes {
   inserir(...perms: InsertPermissoesSchema[]) {

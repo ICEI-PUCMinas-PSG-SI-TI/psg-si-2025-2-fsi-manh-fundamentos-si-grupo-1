@@ -10,7 +10,8 @@ import { tabelaTransacoes } from "./db/schema/transacoes";
 import { tabelaUnidadesMedida } from "./db/schema/unidadesMedida";
 import { tabelaUsuarios } from "./db/schema/usuarios";
 import servicoUsuarios from "./services/servicoUsuarios";
-import { Permissoes, tabelaPermissoes } from "./db/schema/permissoes";
+import { Permissoes } from "./db/enums/permissoes";
+import { tabelaPermissoes } from "./db/schema/permissoes";
 
 const baseDados = drizzle(process.env.DB_FILE_NAME!);
 
