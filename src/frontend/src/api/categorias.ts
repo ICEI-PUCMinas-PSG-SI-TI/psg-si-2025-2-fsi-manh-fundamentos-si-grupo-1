@@ -1,13 +1,13 @@
-import z from 'zod'
+import * as z4 from 'zod/v4'
 import { fetchW, HttpMethods as HttpMethods } from './fetchWrapper'
 import type { UuidResult } from '../../../backend'
 import type { SelectCategoriaSchema } from '../../../backend/src/db/schema/categorias'
 
 const endpoint_path = `/api/v1/categorias`
 
-const ParamIdSchemaZ = z.uuid()
+const ParamIdSchemaZ = z4.uuid()
 
-const NomeEnvioZ = z.string().nonempty()
+const NomeEnvioZ = z4.string().nonempty()
 
 export type Categorias = {
   id: string

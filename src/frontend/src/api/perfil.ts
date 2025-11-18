@@ -1,9 +1,9 @@
-import z from 'zod'
+import * as z4 from 'zod/v4'
 import { HttpMethods, fetchW } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/usuarios`
 
-const ParamIdSchemaZ = z.uuid()
+const ParamIdSchemaZ = z4.uuid()
 
 export class ApiPerfil {
   obterPorId(id: string) {

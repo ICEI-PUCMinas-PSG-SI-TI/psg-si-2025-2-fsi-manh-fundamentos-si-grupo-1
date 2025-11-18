@@ -1,11 +1,11 @@
-import z from 'zod'
+import * as z4 from 'zod/v4'
 import { fetchW, HttpMethods } from './fetchWrapper'
 import type { UuidResult, ParamsConsultaProdutos, ParamsInserirProdutos } from '../../../backend'
 import type { SelectProdutosSchema } from '../../../backend/src/db/schema/produtos'
 
 const endpoint_path = `/api/v1/produtos`
 
-const ParamIdSchemaZ = z.uuid()
+const ParamIdSchemaZ = z4.uuid()
 
 export class ApiProdutos {
   criar(opts: ParamsInserirProdutos) {

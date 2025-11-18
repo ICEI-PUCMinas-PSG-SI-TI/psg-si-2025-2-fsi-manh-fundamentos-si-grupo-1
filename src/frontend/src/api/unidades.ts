@@ -1,13 +1,13 @@
-import z from 'zod'
+import * as z4 from 'zod/v4'
 import { fetchW, HttpMethods } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/unidades`
 
-const ParamIdSchemaZ = z.uuid()
+const ParamIdSchemaZ = z4.uuid()
 
-const UnidadeMedidaEnvioZ = z.object({
-  nome: z.string().nonempty(),
-  abreviacao: z.string().nonempty(),
+const UnidadeMedidaEnvioZ = z4.object({
+  nome: z4.string().nonempty(),
+  abreviacao: z4.string().nonempty(),
 })
 
 export type UnidadeMedida = {

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z4 from 'zod/v4'
 import { fetchW, HttpMethods } from './fetchWrapper'
 import type {
   SelectUsuarioSchema,
@@ -9,7 +9,7 @@ import type { UuidResult } from '../../../backend'
 
 const endpoint_path = `/api/v1/admin/usuarios`
 
-const ParamIdSchemaZ = z.uuid()
+const ParamIdSchemaZ = z4.uuid()
 
 export class ApiUsuario {
   criar(opts: InsertUsuarioSchemaReq) {
