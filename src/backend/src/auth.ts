@@ -109,6 +109,9 @@ authRouter
   .get("/sessao", mdwAutenticacao, mdwSemBody, sessao)
   .post("/login", mdwRequerBody, login)
   .post("/logout", mdwLoadSessionCookies, logout)
-  .post("/logout-all", mdwLoadSessionCookies, logoutAll);
+  .post("/logout-all", mdwLoadSessionCookies, logoutAll)
+  // Retornar 404 caso a rota não existe (necessário devido a rota inicial
+  // redirecionar para index.html)
+  .all(/(.*)/, (_: Request, res: Response) => res.sendStatus(404));
 
 export default authRouter;

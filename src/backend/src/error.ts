@@ -37,16 +37,18 @@ export function mdwError(
   const id = req._requestId;
   if (err) {
     if (err instanceof ClientError || err instanceof HttpError) {
+      error(err.message, { label: "mdwErr.HTTP", reqId: id });
       res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {
       const errMessage = z4.prettifyError(err);
-      error(errMessage, { reqId: id });
+      error(errMessage, { label: "mdwErr.Zod", reqId: id });
       res.status(400).send("Parâmetros inválidos!");
     } else if (err instanceof DrizzleQueryError && err.cause instanceof Error) {
-      error(err.cause?.message, { label: "query", reqId: id });
+      error(err.cause?.message, { label: "mdwErr.Query", reqId: id });
       res.sendStatus(500);
     } else {
-      if (err instanceof Error) error(err.message, { reqId: id });
+      if (err instanceof Error)
+        error(err.message, { label: "mdwErr.Unk", reqId: id });
       res.sendStatus(500);
     }
   } else {
