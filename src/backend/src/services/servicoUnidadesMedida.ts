@@ -35,8 +35,7 @@ class ServicoUnidadesMedida {
 
   async contar() {
     const res = await repositorioUnidadesMedida.contar();
-    if (!res[0]) return 0;
-    return res[0].count;
+    return res ? res.count : undefined;
   }
 }
 

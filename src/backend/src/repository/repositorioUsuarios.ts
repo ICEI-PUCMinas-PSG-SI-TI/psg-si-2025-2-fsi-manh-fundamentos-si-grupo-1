@@ -56,15 +56,12 @@ export class RepositorioUsuarios {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectUsuarioSchema | null> {
-    return bancoDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaUsuarios)
-        .where(eq(tabelaUsuarios.id, id));
-      if (res.length && res[0]) return res[0];
-      return null;
-    });
+  selecionarPorId(id: string): Promise<SelectUsuarioSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaUsuarios)
+      .where(eq(tabelaUsuarios.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectUsuarioSchema[]> {
@@ -82,13 +79,12 @@ export class RepositorioUsuarios {
       .offset((pagina - 1) * paginaTamanho);
   }
 
-  async selecionarPorLogin(login: string): Promise<SelectUsuarioSchema | null> {
-    const res = await bancoDados
+  selecionarPorLogin(login: string): Promise<SelectUsuarioSchema | undefined> {
+    return bancoDados
       .select()
       .from(tabelaUsuarios)
-      .where(eq(tabelaUsuarios.login, login));
-    if (res.length && res[0]) return res[0];
-    return null;
+      .where(eq(tabelaUsuarios.login, login))
+      .get();
   }
 
   selecionarQuery(): RepositorioLotesConsulta<SQLiteSelectQueryBuilder> {
@@ -127,8 +123,8 @@ export class RepositorioUsuarios {
     });
   }
 
-  contar(): Promise<Count[]> {
-    return bancoDados.select({ count: count() }).from(tabelaUsuarios);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaUsuarios).get();
   }
 }
 

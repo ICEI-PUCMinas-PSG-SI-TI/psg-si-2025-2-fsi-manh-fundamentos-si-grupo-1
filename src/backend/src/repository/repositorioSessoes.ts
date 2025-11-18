@@ -17,15 +17,12 @@ export class RepositorioSessoes {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectSessaoSchema | null> {
-    return bancoDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaSessoes)
-        .where(eq(tabelaSessoes.id, id));
-      if (res.length && res[0]) return res[0];
-      return null;
-    });
+  selecionarPorId(id: string): Promise<SelectSessaoSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaSessoes)
+      .where(eq(tabelaSessoes.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectSessaoSchema[]> {

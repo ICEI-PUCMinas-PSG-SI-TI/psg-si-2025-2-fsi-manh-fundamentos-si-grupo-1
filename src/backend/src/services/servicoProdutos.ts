@@ -67,8 +67,11 @@ export class ServicoProdutos {
 
   async selecionarPorId(id: string) {
     const res = await repositorioProdutos.selecionarPorId(id);
-    if (res.length === 0) return null;
-    return res[0]!;
+    if (res) {
+      return res;
+    } else {
+      return null;
+    }
   }
 
   async selecionarConsulta(opts: ParamsConsultaProdutos) {
@@ -124,8 +127,7 @@ export class ServicoProdutos {
 
   async contar() {
     const res = await repositorioProdutos.contar();
-    if (!res[0]) return 0;
-    return res[0].count;
+    return res ? res.count : undefined;
   }
 }
 

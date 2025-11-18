@@ -126,8 +126,7 @@ class ServicoUsuarios {
 
   async contar() {
     const res = await repositorioUsuarios.contar();
-    if (!res[0]) return 0;
-    return res[0].count;
+    return res ? res.count : undefined;
   }
 
   // TODO: Unificar validação de senha

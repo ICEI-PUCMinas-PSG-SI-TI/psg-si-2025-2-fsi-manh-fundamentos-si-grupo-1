@@ -80,11 +80,12 @@ export class RepositorioTransacoes {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectTransacoesSchema[]> {
+  selecionarPorId(id: string): Promise<SelectTransacoesSchema | undefined> {
     return bancoDados
       .select()
       .from(tabelaTransacoes)
-      .where(eq(tabelaTransacoes.id, id));
+      .where(eq(tabelaTransacoes.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectTransacoesSchema[]> {
@@ -120,15 +121,7 @@ export class RepositorioTransacoes {
     });
   }
 
-  /* TODO: Verificar se será possível excluir transações
-  async excluirPorId(id: string) {
-    return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (await tx.delete(tabelaSessoes).where(eq(tabelaSessoes.id, id)))
-        .rowsAffected;
-    });
-  }
-  */
+  // TODO: Verificar se será possível excluir transações
 }
 
 const repositorioMovimentacoes = new RepositorioTransacoes();

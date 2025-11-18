@@ -157,11 +157,12 @@ export class RepositorioProdutos {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectProdutosSchema[]> {
+  selecionarPorId(id: string): Promise<SelectProdutosSchema | undefined> {
     return bancoDados
       .select()
       .from(tabelaProdutos)
-      .where(eq(tabelaProdutos.id, id));
+      .where(eq(tabelaProdutos.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectProdutosSchema[]> {
@@ -231,8 +232,8 @@ export class RepositorioProdutos {
     });
   }
 
-  contar(): Promise<Count[]> {
-    return bancoDados.select({ count: count() }).from(tabelaProdutos);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaProdutos).get();
   }
 }
 

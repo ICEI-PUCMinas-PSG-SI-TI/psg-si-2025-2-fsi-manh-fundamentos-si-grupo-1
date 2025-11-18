@@ -16,13 +16,12 @@ export class RepositorioConfiguracoes {
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | null> {
-    const res = await bancoDados
+  selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | undefined> {
+    return bancoDados
       .select()
       .from(tabelaConfiguracoes)
-      .where(eq(tabelaConfiguracoes.id, id));
-    if (res.length === 1) return res[0]!;
-    return null;
+      .where(eq(tabelaConfiguracoes.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectConfiguracaoSchema[]> {

@@ -33,7 +33,7 @@ async function inicializar() {
 }
 
 class ServicoConfiguracoes {
-  async selecionar(): Promise<SelectConfiguracaoSchema | null> {
+  async selecionar(): Promise<SelectConfiguracaoSchema | undefined> {
     await inicializar();
     return repositorioConfiguracoes.selecionarPorId(defaultUuid);
   }

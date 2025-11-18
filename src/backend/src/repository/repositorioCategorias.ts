@@ -16,11 +16,12 @@ export class RepositorioCategorias {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectCategoriaSchema[]> {
+  selecionarPorId(id: string): Promise<SelectCategoriaSchema | undefined> {
     return bancoDados
       .select()
       .from(tabelaCategorias)
-      .where(eq(tabelaCategorias.id, id));
+      .where(eq(tabelaCategorias.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectCategoriaSchema[]> {
@@ -55,8 +56,8 @@ export class RepositorioCategorias {
     });
   }
 
-  contar(): Promise<Count[]> {
-    return bancoDados.select({ count: count() }).from(tabelaCategorias);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaCategorias).get();
   }
 }
 

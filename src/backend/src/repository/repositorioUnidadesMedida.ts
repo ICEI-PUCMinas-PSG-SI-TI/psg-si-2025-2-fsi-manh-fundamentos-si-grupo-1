@@ -20,11 +20,12 @@ export class RepositorioUnidadesMedida {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectUnidadesMedidaSchema[]> {
+  selecionarPorId(id: string): Promise<SelectUnidadesMedidaSchema | undefined> {
     return bancoDados
       .select()
       .from(tabelaUnidadesMedida)
-      .where(eq(tabelaUnidadesMedida.id, id));
+      .where(eq(tabelaUnidadesMedida.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectUnidadesMedidaSchema[]> {
@@ -73,8 +74,11 @@ export class RepositorioUnidadesMedida {
     });
   }
 
-  contar(): Promise<Count[]> {
-    return bancoDados.select({ count: count() }).from(tabelaUnidadesMedida);
+  contar(): Promise<Count | undefined> {
+    return bancoDados
+      .select({ count: count() })
+      .from(tabelaUnidadesMedida)
+      .get();
   }
 }
 

@@ -83,8 +83,12 @@ export class RepositorioLotes {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectLoteSchema[]> {
-    return bancoDados.select().from(tabelaLotes).where(eq(tabelaLotes.id, id));
+  selecionarPorId(id: string): Promise<SelectLoteSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaLotes)
+      .where(eq(tabelaLotes.id, id))
+      .get();
   }
 
   selecionarTodos(): Promise<SelectLoteSchema[]> {
@@ -136,8 +140,8 @@ export class RepositorioLotes {
     });
   }
 
-  contar(): Promise<Count[]> {
-    return bancoDados.select({ count: count() }).from(tabelaLotes);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaLotes).get();
   }
 }
 
