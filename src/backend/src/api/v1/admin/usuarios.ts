@@ -15,7 +15,11 @@ import { mdwRequerBody } from "../../../middlewares";
 
 const apiV1AdminUsuariosRouter = Router();
 
-async function getUsuarios(req: Request, res: Response, next: NextFunction) {
+async function getUsuarios(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const consulta = await servicoUsuarios.listarTodosPerfil();
     res.send(consulta);
@@ -28,7 +32,7 @@ async function postUsuario(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = InsertUsuarioSchemaReqZ.parse(req.body);
     const uuid = await servicoUsuarios.inserir(parsedBody);
@@ -47,7 +51,7 @@ async function alterarSenha(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = AdmAlteracaoSenhaZ.parse(req.body);
@@ -66,7 +70,7 @@ async function getUsuarioId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
@@ -81,12 +85,15 @@ async function excluirUsuarioId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const alteracoes = await servicoUsuarios.excluirPorId(params.id);
-    if (alteracoes > 0) res.send(alteracoes);
-    else res.sendStatus(404);
+    const alterado = await servicoUsuarios.excluirPorId(params.id);
+    if (alterado) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -99,7 +106,7 @@ async function patchUsuario(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const updateFields = AdmUpdateUsuarioEndpointSchema.parse(req.body);
     const params = ParamsIdSchemaZ.parse(req.params);

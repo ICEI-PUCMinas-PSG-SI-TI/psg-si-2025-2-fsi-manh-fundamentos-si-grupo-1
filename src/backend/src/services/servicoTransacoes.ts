@@ -1,7 +1,10 @@
 import * as z4 from "zod/v4";
 import { RepositorioTransacoes } from "../repository/repositorioTransacoes";
 import { debug } from "../logging";
-import type { InsertTransacoesSchema } from "../db/schema/transacoes";
+import type {
+  InsertTransacoesSchema,
+  SelectTransacoesSchema,
+} from "../db/schema/transacoes";
 import { HttpError } from "../error";
 import type { UuidResult } from "../api/v1/objects";
 
@@ -31,6 +34,8 @@ export class ServicoTransacoes {
     return res[0];
   }
 
+  // TODO: reformular função ou adicionar tipagem correta
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async selecionarConsulta(opts?: ParamsConsultaTransacoes) {
     let query = repositorioTransacoes.selecionarQuery();
     if (opts) {
@@ -59,7 +64,7 @@ export class ServicoTransacoes {
     return res;
   }
 
-  selecionarTodos() {
+  selecionarTodos(): Promise<SelectTransacoesSchema[]> {
     return repositorioTransacoes.selecionarTodos();
   }
 }

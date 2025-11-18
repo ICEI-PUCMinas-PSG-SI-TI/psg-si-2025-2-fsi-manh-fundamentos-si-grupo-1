@@ -11,7 +11,7 @@ async function getUnidadesMedida(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const unidadesMedida = await servicoUnidadesMedida.selecionarTodos();
     res.send(unidadesMedida);
@@ -24,7 +24,7 @@ async function postUnidadeMedida(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const unidadeMedida = InsertUnidadesMedidasSchemaZ.parse(req.body);
     await servicoUnidadesMedida.inserir(unidadeMedida);
@@ -38,7 +38,7 @@ async function getUnidadeMedida(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     // TODO: if length === 0 return 404
@@ -55,7 +55,7 @@ async function deleteUnidadeMedida(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     // TODO: Verificar se uuid existe
     const params = ParamsIdSchemaZ.parse(req.params);

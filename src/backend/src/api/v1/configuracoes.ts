@@ -10,7 +10,7 @@ async function getConfiguracoes(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const config = await servicoConfiguracoes.selecionar();
     res.send(config);
@@ -23,7 +23,7 @@ async function patchConfiguracoes(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = UpdateConfiguracaoSchemaZ.parse(req.body);
     await servicoConfiguracoes.atualizar(parsedBody);

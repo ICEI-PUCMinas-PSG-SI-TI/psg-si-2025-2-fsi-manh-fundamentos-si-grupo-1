@@ -5,8 +5,9 @@ import { RepositorioPermissoes } from "../repository/repositorioPermissoes";
 const repositorioPermissoes = new RepositorioPermissoes();
 
 export class ServicoPermissoes {
-  inserir(perms: InsertPermissoesSchema) {
-    return repositorioPermissoes.inserir(perms);
+  async inserir(perms: InsertPermissoesSchema): Promise<boolean> {
+    const atualizacoes = await repositorioPermissoes.inserir(perms);
+    return atualizacoes > 0;
   }
 
   async consultar(usuarioId: string, perms: Permissoes): Promise<boolean> {
@@ -22,23 +23,47 @@ export class ServicoPermissoes {
   }
 
   // TODO: Verificar se usuário existe
-  adicionarPermissoesUsuario(usuarioId: string, ...perms: Permissoes[]) {
+  async adicionarPermissoesUsuario(
+    usuarioId: string,
+    ...perms: Permissoes[]
+  ): Promise<boolean> {
     const valores = perms.map((c) => ({
       usuarioId: usuarioId,
       cargo: c,
     }));
-    return repositorioPermissoes.inserir(...valores);
+    const atualizacoes = await repositorioPermissoes.inserir(...valores);
+    return atualizacoes > 0;
   }
 
   // TODO: Verificar se usuário existe
-  async removerPermissoesUsuario(usuarioId: string, ...perms: Permissoes[]) {
+  // TODO: Evitar transactions
+  async removerPermissoesUsuario(
+    usuarioId: string,
+    ...perms: Permissoes[]
+  ): Promise<boolean> {
+    let atualizacoes = 0;
     for (let i = 0; i < perms.length; i++) {
-      await repositorioPermissoes.excluir(usuarioId, perms[i]!);
+      atualizacoes += await repositorioPermissoes.excluir(usuarioId, perms[i]!);
     }
+    return atualizacoes > 0;
   }
 
-  removerTodasPermissoes(usuarioId: string) {
-    return repositorioPermissoes.excluirPermissoes(usuarioId);
+  async removerPermissoesUsuario2(
+    usuarioId: string,
+    ...perms: Permissoes[]
+  ): Promise<boolean> {
+    let atualizacoes = 0;
+
+    for (let i = 0; i < perms.length; i++) {
+      atualizacoes += await repositorioPermissoes.excluir(usuarioId, perms[i]!);
+    }
+    return atualizacoes > 0;
+  }
+
+  async removerTodasPermissoes(usuarioId: string): Promise<boolean> {
+    const atualizacoes =
+      await repositorioPermissoes.excluirPermissoes(usuarioId);
+    return atualizacoes > 0;
   }
 }
 

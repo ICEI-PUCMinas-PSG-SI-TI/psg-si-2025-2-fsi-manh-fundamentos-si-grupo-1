@@ -3,10 +3,11 @@ import { RepositorioProdutos } from "../repository/repositorioProdutos";
 import {
   InsertProdutosSchemaZ,
   type InsertProdutosSchema,
+  type SelectProdutosSchema,
 } from "../db/schema/produtos";
 import { HttpError } from "../error";
-import type { UuidResult } from "../api/v1/objects";
 import * as z4 from "zod/v4";
+import type { RefRegistro } from "../repository/common";
 
 const repositorioProdutos = new RepositorioProdutos();
 
@@ -58,14 +59,14 @@ export class ServicoProdutos {
   }
   */
 
-  async inserir(produto: InsertProdutosSchema): Promise<UuidResult> {
+  async inserir(produto: InsertProdutosSchema): Promise<RefRegistro> {
     const res = await repositorioProdutos.inserir(produto);
     if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
     debug(`Novo produto criada!`, { label: "ServProdutos" });
     return res[0];
   }
 
-  async selecionarPorId(id: string) {
+  async selecionarPorId(id: string): Promise<SelectProdutosSchema | null> {
     const res = await repositorioProdutos.selecionarPorId(id);
     if (res) {
       return res;
@@ -74,6 +75,8 @@ export class ServicoProdutos {
     }
   }
 
+  // TODO: reformular função ou adicionar tipagem correta
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async selecionarConsulta(opts: ParamsConsultaProdutos) {
     let query = repositorioProdutos.selecionarQueryComLotes();
     if (opts) {
@@ -116,16 +119,16 @@ export class ServicoProdutos {
     return res;
   }
 
-  selecionarTodos() {
+  selecionarTodos(): Promise<SelectProdutosSchema[]> {
     return repositorioProdutos.selecionarTodos();
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
-  selecionarIdTodos() {
+  selecionarIdTodos(): Promise<RefRegistro[]> {
     return repositorioProdutos.selecionarIdsTodos();
   }
 
-  async contar() {
+  async contar(): Promise<number | undefined> {
     const res = await repositorioProdutos.contar();
     return res ? res.count : undefined;
   }

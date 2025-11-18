@@ -1,6 +1,10 @@
 import type { UuidResult } from "../api/v1/objects";
-import type { InsertCategoriaSchema } from "../db/schema/categorias";
+import type {
+  InsertCategoriaSchema,
+  SelectCategoriaSchema,
+} from "../db/schema/categorias";
 import { HttpError } from "../error";
+import type { RefRegistro } from "../repository/common";
 import { RepositorioCategorias } from "../repository/repositorioCategorias";
 
 const repositorioCategorias = new RepositorioCategorias();
@@ -13,20 +17,21 @@ class ServicoCategorias {
     return res[0];
   }
 
-  selecionarPorId(id: string) {
+  selecionarPorId(id: string): Promise<RefRegistro | undefined> {
     return repositorioCategorias.selecionarPorId(id);
   }
 
-  selecionarTodos() {
+  selecionarTodos(): Promise<SelectCategoriaSchema[]> {
     return repositorioCategorias.selecionarTodos();
   }
 
   // TODO: validar UUID
-  excluirPorId(id: string) {
-    return repositorioCategorias.excluirPorId(id);
+  async excluirPorId(id: string): Promise<boolean> {
+    const atualizacoes = await repositorioCategorias.excluirPorId(id);
+    return atualizacoes > 0;
   }
 
-  async contar() {
+  async contar(): Promise<number | undefined> {
     const res = await repositorioCategorias.contar();
     return res ? res.count : undefined;
   }

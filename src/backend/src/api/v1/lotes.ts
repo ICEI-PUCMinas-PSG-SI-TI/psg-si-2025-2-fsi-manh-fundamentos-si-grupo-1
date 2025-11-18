@@ -21,7 +21,7 @@ async function getLotes(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     if (Object.keys(req.query).length === 0) {
       const consulta = await lotes.selecionarTodos();
@@ -40,7 +40,7 @@ async function postLote(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = InsertLoteSchemaZ.parse(req.body);
     const id = await lotes.inserir(parsedBody);
@@ -54,7 +54,7 @@ async function getLoteId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.selecionarPorId(params.id);
@@ -69,12 +69,15 @@ async function excluirLoteId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await lotes.excluirPorId(params.id);
-    if (consulta === 0) throw new ClientError("", 404);
-    res.send(consulta);
+    const atualizado = await lotes.excluirPorId(params.id);
+    if (atualizado) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -84,7 +87,7 @@ function notImplemented(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): void {
   try {
     throw new Error("Not implemented");
   } catch (err) {

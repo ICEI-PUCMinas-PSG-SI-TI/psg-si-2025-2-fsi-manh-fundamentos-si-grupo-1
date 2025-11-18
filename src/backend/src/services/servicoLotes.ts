@@ -1,7 +1,11 @@
 import * as z4 from "zod/v4";
 import { debug } from "../logging";
 import { RepositorioLotes } from "../repository/repositorioLotes";
-import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
+import type {
+  InsertLoteSchema,
+  SelectLoteSchema,
+  UpdateLoteSchema,
+} from "../db/schema/lotes";
 import { HttpError } from "../error";
 import type { UuidResult } from "../api/v1/objects";
 
@@ -29,7 +33,7 @@ export class ServicoLotes {
     return res[0];
   }
 
-  async selecionarPorId(id: string) {
+  async selecionarPorId(id: string): Promise<SelectLoteSchema | null> {
     const res = await repositorioLotes.selecionarPorId(id);
     if (res) {
       return res;
@@ -39,6 +43,8 @@ export class ServicoLotes {
     }
   }
 
+  // TODO: reformular função ou adicionar tipagem correta
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   async selecionarConsulta(opts?: LoteConsultaZ) {
     let query = repositorioLotes.selecionarQuery();
     if (opts) {
@@ -72,34 +78,34 @@ export class ServicoLotes {
     return res;
   }
 
-  async selecionarTodos() {
+  async selecionarTodos(): Promise<SelectLoteSchema[]> {
     const res = await repositorioLotes.selecionarTodos();
     debug(`Retornando lotes`, { label: "LoteService" });
     return res;
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
-  selecionarIdProdutosTodos() {
+  selecionarIdProdutosTodos(): Promise<{ id: string; produtoId: string }[]> {
     return repositorioLotes.selecionarIdProdutosTodos();
   }
 
-  async atualizar(id: string, lote: UpdateLoteSchema) {
-    const res = await repositorioLotes.atualizarPorId(id, lote);
+  async atualizar(id: string, lote: UpdateLoteSchema): Promise<boolean> {
+    const atualizacoes = await repositorioLotes.atualizarPorId(id, lote);
     debug(`Informações do lote ${id} atualizadas!`, {
       label: "LoteService",
     });
-    return res;
+    return atualizacoes > 0;
   }
 
-  async excluirPorId(id: string) {
-    const res = await repositorioLotes.excluirPorId(id);
+  async excluirPorId(id: string): Promise<boolean> {
+    const atualizacoes = await repositorioLotes.excluirPorId(id);
     debug(`Informações do lote ${id} excluidas!`, {
       label: "LoteService",
     });
-    return res;
+    return atualizacoes > 0;
   }
 
-  async contar() {
+  async contar(): Promise<number | undefined> {
     const res = await repositorioLotes.contar();
     return res ? res.count : undefined;
   }

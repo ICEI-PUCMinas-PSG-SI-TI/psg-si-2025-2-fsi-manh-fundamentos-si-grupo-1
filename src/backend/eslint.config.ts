@@ -51,11 +51,6 @@ export default defineConfig(
           "error",
           { checkThenables: true },
         ],
-      },
-    },
-    {
-      files: ["**/repository/*.ts"],
-      rules: {
         "@typescript-eslint/explicit-function-return-type": "warn",
       },
     },

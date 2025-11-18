@@ -10,7 +10,7 @@ async function getTransacoes(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     if (Object.keys(req.query).length === 0) {
       const consulta = await servicoTransacoes.selecionarTodos();

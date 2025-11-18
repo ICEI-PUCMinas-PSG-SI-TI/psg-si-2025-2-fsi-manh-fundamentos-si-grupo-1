@@ -30,7 +30,11 @@ const servicoAutenticacao = new ServicoAutenticacao();
 /**
  * Retorna informações do usuário da sessão de acordo com o token de sessão.
  */
-async function sessao(req: ExtendedRequest, res: Response, next: NextFunction) {
+async function sessao(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const _sessionToken = req._sessionToken;
     if (!_sessionToken) throw new ClientError("Não autenticado!", 401);
@@ -46,7 +50,11 @@ async function sessao(req: ExtendedRequest, res: Response, next: NextFunction) {
  * Recebe login e senha e cria uma nova sessão retornando token e informações
  * do usuário da sessão.
  */
-async function login(req: Request, res: Response, next: NextFunction) {
+async function login(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const parsedCredenciais = CredenciaisSchemaZ.parse(req.body);
     // if login invalid, this function will return a error
@@ -75,7 +83,11 @@ async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function logout(req: ExtendedRequest, res: Response, next: NextFunction) {
+async function logout(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   // this function will receive the token, invalidate, and redirect
   try {
     const _sessionToken = req._sessionToken;
@@ -92,7 +104,7 @@ async function logoutAll(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   // this function will receive the token, invalidate, and redirect
   try {
     const _sessionToken = req._sessionToken;

@@ -1,7 +1,11 @@
 import type { UuidResult } from "../api/v1/objects";
-import type { InsertUnidadesMedidaSchema } from "../db/schema/unidadesMedida";
+import type {
+  InsertUnidadesMedidaSchema,
+  SelectUnidadesMedidaSchema,
+} from "../db/schema/unidadesMedida";
 import { HttpError } from "../error";
 import { debug } from "../logging";
+import type { RefRegistro } from "../repository/common";
 import { RepositorioUnidadesMedida } from "../repository/repositorioUnidadesMedida";
 
 const repositorioUnidadesMedida = new RepositorioUnidadesMedida();
@@ -16,24 +20,25 @@ class ServicoUnidadesMedida {
     return res[0];
   }
 
-  selecionarPorId(id: string) {
+  selecionarPorId(id: string): Promise<SelectUnidadesMedidaSchema | undefined> {
     return repositorioUnidadesMedida.selecionarPorId(id);
   }
 
-  selecionarTodos() {
+  selecionarTodos(): Promise<SelectUnidadesMedidaSchema[]> {
     return repositorioUnidadesMedida.selecionarTodos();
   }
 
-  selecionarIdTodos() {
+  selecionarIdTodos(): Promise<RefRegistro[]> {
     return repositorioUnidadesMedida.selecionarIdsTodos();
   }
 
   // TODO: validar UUID
-  excluirPorId(id: string) {
-    return repositorioUnidadesMedida.excluirPorId(id);
+  async excluirPorId(id: string): Promise<boolean> {
+    const atualizacoes = await repositorioUnidadesMedida.excluirPorId(id);
+    return atualizacoes > 0;
   }
 
-  async contar() {
+  async contar(): Promise<number | undefined> {
     const res = await repositorioUnidadesMedida.contar();
     return res ? res.count : undefined;
   }

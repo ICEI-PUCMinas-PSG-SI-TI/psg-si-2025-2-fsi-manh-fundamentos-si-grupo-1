@@ -24,7 +24,7 @@ export type ParamsInserirConfiguracoes = z4.infer<
 /**
  * Essa função garante que o único registro de configurações na base de dados existe
  */
-async function inicializar() {
+async function inicializar(): Promise<void> {
   const resSel1 = await repositorioConfiguracoes.selecionarPorId(defaultUuid);
   if (resSel1) return;
   await repositorioConfiguracoes.inserir({ id: defaultUuid });
@@ -38,10 +38,14 @@ class ServicoConfiguracoes {
     return repositorioConfiguracoes.selecionarPorId(defaultUuid);
   }
 
-  async atualizar(configuracoes: UpdateConfiguracaoSchema) {
+  async atualizar(configuracoes: UpdateConfiguracaoSchema): Promise<boolean> {
     await inicializar();
     const _configuracoes = UpdateConfiguracaoSchemaZ.parse(configuracoes);
-    return repositorioConfiguracoes.atualizarPorId(defaultUuid, _configuracoes);
+    const atualizacoes = await repositorioConfiguracoes.atualizarPorId(
+      defaultUuid,
+      _configuracoes,
+    );
+    return atualizacoes > 0;
   }
 }
 

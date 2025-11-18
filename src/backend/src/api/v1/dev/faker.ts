@@ -19,7 +19,11 @@ const FakerParamsZ = z4.strictObject({
     .default(10),
 });
 
-async function criarProdutos(req: Request, res: Response, next: NextFunction) {
+async function criarProdutos(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const parsedBody = FakerParamsZ.parse(req.body);
     const { canRecurse, quant } = parsedBody;
@@ -30,7 +34,11 @@ async function criarProdutos(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function criarLotes(req: Request, res: Response, next: NextFunction) {
+async function criarLotes(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const parsedBody = FakerParamsZ.parse(req.body);
     const { canRecurse, quant } = parsedBody;
@@ -45,7 +53,7 @@ async function criarTransacoes(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = FakerParamsZ.parse(req.body);
     const { canRecurse, quant } = parsedBody;
@@ -56,7 +64,11 @@ async function criarTransacoes(
   }
 }
 
-async function criarUsuarios(req: Request, res: Response, next: NextFunction) {
+async function criarUsuarios(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const parsedBody = FakerParamsZ.parse(req.body);
     const { quant } = parsedBody;
@@ -71,7 +83,7 @@ async function criarUnidadesMedida(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = FakerParamsZ.parse(req.body);
     const { quant } = parsedBody;
@@ -86,7 +98,7 @@ async function criarCategorias(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = FakerParamsZ.parse(req.body);
     const { quant } = parsedBody;

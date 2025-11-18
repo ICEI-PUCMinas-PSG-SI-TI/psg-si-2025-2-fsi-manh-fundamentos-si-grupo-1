@@ -18,7 +18,7 @@ async function addPermissoes(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = ParamsPatchPermissoesZ.parse(req.body);
     await servicoPermissoes.adicionarPermissoesUsuario(
@@ -35,7 +35,7 @@ async function delPermissoes(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const parsedBody = ParamsPatchPermissoesZ.parse(req.body);
     await servicoPermissoes.removerPermissoesUsuario(
@@ -52,7 +52,7 @@ async function verPermissoesId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const permissoes = await servicoPermissoes.selecionarPermissoes(params.id);
@@ -68,7 +68,7 @@ async function addPermissoesId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = PermsPermissoesArrayZ.parse(req.body);
@@ -85,7 +85,7 @@ async function setPermissoesId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = PermsPermissoesArrayZ.parse(req.body);
@@ -103,7 +103,7 @@ async function delPermissoesId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = PermsPermissoesArrayZ.parse(req.body);

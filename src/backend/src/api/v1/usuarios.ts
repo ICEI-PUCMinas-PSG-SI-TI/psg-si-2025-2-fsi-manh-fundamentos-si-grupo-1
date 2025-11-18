@@ -17,7 +17,7 @@ async function getUsuarioId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.listarUnicoPublico(params.id);
@@ -32,7 +32,7 @@ async function alterarSenha(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const usuario = req._usuario!;
     const senhas = AlteracaoSenhaZ.parse(req.body);
@@ -59,7 +59,7 @@ async function patchUsuario(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const updateFields = UpdateUsuarioEndpointSchema.parse(req.body);
     const usuario = req._usuario!;

@@ -56,7 +56,7 @@ export async function verificarBancoDados(): Promise<boolean> {
 
 // Verifica se há usuários cadastrados no sistema, se não houver, inicializa um administrador
 // TODO: Inicializar apenas 1 vez, armazenar informação em configurações.
-export async function inicializarAdministrador() {
+export async function inicializarAdministrador(): Promise<void> {
   const count = await servicoUsuarios.contar();
   if (count === 0) {
     const login = "Administrador";

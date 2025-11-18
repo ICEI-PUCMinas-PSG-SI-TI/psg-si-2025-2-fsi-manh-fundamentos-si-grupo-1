@@ -33,7 +33,7 @@ export function mdwError(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): void {
   const id = req._requestId;
   if (err) {
     if (err instanceof ClientError || err instanceof HttpError) {

@@ -12,7 +12,7 @@ async function getProdutos(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     if (Object.keys(req.query).length === 0) {
       const consulta = await servicoProdutos.selecionarTodos();
@@ -31,7 +31,7 @@ async function getProdutoId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoProdutos.selecionarPorId(params.id);

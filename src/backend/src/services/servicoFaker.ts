@@ -18,15 +18,15 @@ import repositorioUsuarios from "../repository/repositorioUsuarios";
 import { Permissoes } from "../db/enums/permissoes";
 import repositorioPermissoes from "../repository/repositorioPermissoes";
 
-function fakerLocal() {
+function fakerLocal(): string {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;
 }
 
-function fakerLote() {
+function fakerLote(): string {
   return faker.string.alphanumeric({ casing: "upper", length: 12 });
 }
 
-function fakerDimensoes() {
+function fakerDimensoes(): string {
   return [
     faker.number.int({ min: 1, max: 100 }),
     "cm x ",
@@ -146,7 +146,7 @@ async function escolherCategorias(
 }
 
 export class ServicoFaker {
-  async criarProdutos(quant: number, canRecurse: boolean) {
+  async criarProdutos(quant: number, canRecurse: boolean): Promise<void> {
     const unidades = await escolherUnidadesMedida(canRecurse, quant);
     if (!unidades || !unidades.length) throw new Error();
 
@@ -182,7 +182,7 @@ export class ServicoFaker {
     warning(`Criado ${quant} produtos.`, { label: "Faker" });
   }
 
-  async criarLotes(quant: number, canRecurse: boolean) {
+  async criarLotes(quant: number, canRecurse: boolean): Promise<void> {
     const produtos = await escolherProdutos(canRecurse, quant);
     if (!produtos || !produtos.length) throw new Error();
 
@@ -200,7 +200,7 @@ export class ServicoFaker {
     warning(`Criado ${quant} lotes.`, { label: "Faker" });
   }
 
-  async criarTransacoes(quant: number, canRecurse: boolean) {
+  async criarTransacoes(quant: number, canRecurse: boolean): Promise<void> {
     const lotes = await escolherLotes(canRecurse, quant);
     if (!lotes || !lotes.length) throw new Error();
 
@@ -227,7 +227,7 @@ export class ServicoFaker {
     warning(`Criado ${quant} transações.`, { label: "Faker" });
   }
 
-  async criarUsuarios(quant: number) {
+  async criarUsuarios(quant: number): Promise<void> {
     const usuarios = [];
     for (let i = 0; i < quant; i++) {
       const hashedPassword = await hashSenha(
@@ -254,7 +254,7 @@ export class ServicoFaker {
     warning(`Criado ${quant} usuários.`, { label: "Faker" });
   }
 
-  async criarUnidadesMedida(quant: number) {
+  async criarUnidadesMedida(quant: number): Promise<void> {
     const unidadesMedida = [];
     for (let i = 0; i < quant; i++) {
       const unit = faker.science.unit();
@@ -270,7 +270,7 @@ export class ServicoFaker {
     warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
   }
 
-  async criarCategorias(quant: number) {
+  async criarCategorias(quant: number): Promise<void> {
     const categorias = [];
     for (let i = 0; i < quant; i++) {
       categorias.push({

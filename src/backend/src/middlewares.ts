@@ -37,7 +37,7 @@ export function mdwLoadSessionCookies(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
+): void {
   try {
     const cookies = extrairCookies(req.cookies);
     if (typeof cookies?.tokenSessao !== "string")
@@ -58,7 +58,7 @@ export async function mdwAutenticacao(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const cookies = extrairCookies(req.cookies);
     if (typeof cookies?.tokenSessao !== "string")
@@ -88,7 +88,7 @@ export async function mdwAutenticacao(
 }
 
 export function mdwPermissoes(...perms: Permissoes[]) {
-  return (req: ExtendedRequest, _res: Response, next: NextFunction) => {
+  return (req: ExtendedRequest, _res: Response, next: NextFunction): void => {
     try {
       const usuario = req._usuario;
       let permitido = false;
@@ -110,7 +110,7 @@ export function mdwRequestId(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
+): void {
   // Source - https://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
   // Posted by kennytm
   // Retrieved 11/5/2025, License - CC-BY-SA 4.0
@@ -127,7 +127,7 @@ export function mdwSemBody(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
+): void {
   if (req.body) {
     error("Invalid request with body.", {
       reqId: req._requestId,
@@ -142,7 +142,7 @@ export function mdwRequerBody(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
+): void {
   if (!req.body) {
     error("No body.", { reqId: req._requestId });
     next(new ClientError("Bad Request"));

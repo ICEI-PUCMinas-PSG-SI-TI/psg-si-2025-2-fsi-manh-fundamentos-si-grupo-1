@@ -2,6 +2,7 @@ import * as z4 from "zod/v4";
 import {
   InsertUsuarioSchemaZ,
   type SelectUsuarioInfoSchema,
+  type SelectUsuarioSchema,
   type UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
 import { debug, error } from "../logging";
@@ -11,6 +12,7 @@ import { ClientError } from "../error";
 import { PasswordZ, type UuidResult } from "../api/v1/objects";
 import { Permissoes } from "../db/enums/permissoes";
 import servicoPermissoes from "./servicoPermissoes";
+import type { RefRegistro } from "../repository/common";
 
 const repositorioUsuarios = new RepositorioUsuarios();
 
@@ -79,7 +81,7 @@ class ServicoUsuarios {
   }
 
   /** Listar seleciona apenas as informações públicas */
-  async listarTodosPerfil() {
+  async listarTodosPerfil(): Promise<SelectUsuarioInfoSchema[]> {
     const res = await repositorioUsuarios.selecionarTodos();
     const usuarios = res.map((u) => ({
       id: u.id,
@@ -88,29 +90,29 @@ class ServicoUsuarios {
       descricao: u.descricao,
       habilitado: u.habilitado,
       modoEscuro: u.modoEscuro,
-      foto: u.foto,
+      foto: u.foto as string,
     }));
     return usuarios;
   }
 
-  async selecionarPorId(id: string) {
+  async selecionarPorId(id: string): Promise<SelectUsuarioSchema | undefined> {
     const res = await repositorioUsuarios.selecionarPorId(id);
     debug(`Retornando usuário ${id}`, { label: "UsuarioServ" });
     return res;
   }
 
-  async selecionarTodos() {
+  async selecionarTodos(): Promise<SelectUsuarioSchema[]> {
     const usuarios = await repositorioUsuarios.selecionarTodos();
     debug(`Retornando usuário`, { label: "UsuarioServ" });
     return usuarios;
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
-  selecionarIdTodos() {
+  selecionarIdTodos(): Promise<RefRegistro[]> {
     return repositorioUsuarios.selecionarIdsTodos();
   }
 
-  async atualizar(id: string, usuario: UpdateUsuarioSchema) {
+  async atualizar(id: string, usuario: UpdateUsuarioSchema): Promise<number> {
     const res = await repositorioUsuarios.atualizarPorId(id, usuario);
     debug(`Informações do usuário ${id} atualizadas!`, {
       label: "UsuarioServ",
@@ -118,15 +120,15 @@ class ServicoUsuarios {
     return res;
   }
 
-  async excluirPorId(id: string) {
+  async excluirPorId(id: string): Promise<boolean> {
     const res = await repositorioUsuarios.excluirPorId(id);
     debug(`Informações do usuário ${id} excluidas!`, {
       label: "UsuarioServ",
     });
-    return res;
+    return res > 0;
   }
 
-  async contar() {
+  async contar(): Promise<number | undefined> {
     const res = await repositorioUsuarios.contar();
     return res ? res.count : undefined;
   }
@@ -135,7 +137,7 @@ class ServicoUsuarios {
   // async validarSenhaPorLogin(): Promise<boolean> {}
   // async validarSenhaPorLogin(): Promise<boolean> {}
 
-  async substituirSenha(usuarioId: string, senha: string) {
+  async substituirSenha(usuarioId: string, senha: string): Promise<boolean> {
     // Realizar hash da nova senha
     const hashedPassword = await hashSenha(senha);
     // Atualizar a senha
