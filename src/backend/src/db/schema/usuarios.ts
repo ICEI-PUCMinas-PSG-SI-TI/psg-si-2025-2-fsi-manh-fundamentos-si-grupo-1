@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import type { InferSelectModel } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -23,10 +22,11 @@ export const tabelaUsuarios = sqliteTable("usuarios", {
   foto: blob(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date()),
   updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date())
+    .$onUpdateFn(() => new Date()),
 });
 
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos

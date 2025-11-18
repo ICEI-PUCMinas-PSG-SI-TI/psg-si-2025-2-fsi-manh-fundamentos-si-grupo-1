@@ -1,4 +1,4 @@
-import { sql, type InferSelectModel } from "drizzle-orm";
+import { type InferSelectModel } from "drizzle-orm";
 import { sqliteTable, text, int } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
@@ -12,10 +12,11 @@ export const tabelaUnidadesMedida = sqliteTable("unidades_medida", {
   abreviacao: text().notNull(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date()),
   updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date())
+    .$onUpdateFn(() => new Date()),
 });
 
 // Campos da tabela que podem ser atualizados. Os campos não são inferidos

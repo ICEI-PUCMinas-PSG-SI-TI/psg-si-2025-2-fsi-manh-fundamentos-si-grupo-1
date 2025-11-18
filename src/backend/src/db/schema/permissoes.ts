@@ -1,6 +1,6 @@
 import { sqliteTable, text, int, primaryKey } from "drizzle-orm/sqlite-core";
 import { tabelaUsuarios } from "./usuarios";
-import { sql, type InferSelectModel } from "drizzle-orm";
+import { type InferSelectModel } from "drizzle-orm";
 import * as z4 from "zod/v4";
 import { createInsertSchema } from "drizzle-zod";
 import { Permissoes } from "../enums/permissoes";
@@ -21,10 +21,11 @@ export const tabelaPermissoes = sqliteTable(
     }).notNull(),
     createdAt: int("created_at", { mode: "timestamp_ms" })
       .notNull()
-      .default(sql`(unixepoch()*1000)`),
+      .$defaultFn(() => new Date()),
     updatedAt: int("updated_at", { mode: "timestamp_ms" })
       .notNull()
-      .default(sql`(unixepoch()*1000)`),
+      .$defaultFn(() => new Date())
+      .$onUpdateFn(() => new Date()),
   },
   (table) => ({
     pk: primaryKey({
