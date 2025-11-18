@@ -24,8 +24,10 @@ export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
 
 export type InsertUsuarioSchemaReq = z4.infer<typeof InsertUsuarioSchemaReqZ>;
 
+const bcryptRounds = process.env.BCRYPT_ROUNDS || "10";
+
 export function hashSenha(senha: string): Promise<string> {
-  const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
+  const rounds: number = parseInt(bcryptRounds, 10);
   return hash(senha, rounds);
 }
 
