@@ -27,8 +27,12 @@ async function postUnidadeMedida(
 ): Promise<void> {
   try {
     const unidadeMedida = InsertUnidadesMedidasSchemaZ.parse(req.body);
-    await servicoUnidadesMedida.inserir(unidadeMedida);
-    res.send();
+    const insercao = await servicoUnidadesMedida.inserir(unidadeMedida);
+    if (insercao) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(500);
+    }
   } catch (err) {
     next(err);
   }
@@ -45,7 +49,11 @@ async function getUnidadeMedida(
     const unidadeMedida = await servicoUnidadesMedida.selecionarPorId(
       params.id,
     );
-    res.send(unidadeMedida);
+    if (unidadeMedida) {
+      res.send(unidadeMedida);
+    } else {
+      res.send(500);
+    }
   } catch (err) {
     next(err);
   }
@@ -59,8 +67,12 @@ async function deleteUnidadeMedida(
   try {
     // TODO: Verificar se uuid existe
     const params = ParamsIdSchemaZ.parse(req.params);
-    await servicoUnidadesMedida.excluirPorId(params.id);
-    res.send();
+    const atualizado = await servicoUnidadesMedida.excluirPorId(params.id);
+    if (atualizado) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }

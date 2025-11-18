@@ -1,7 +1,6 @@
 import type { ExtendedRequest } from "../../middlewares";
 import { LoteConsultaSchema, ServicoLotes } from "../../services/servicoLotes";
 import { Router, type NextFunction, type Response } from "express";
-import { ClientError } from "../../error";
 import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
 import { mdwRequerBody } from "../../middlewares";
@@ -58,8 +57,11 @@ async function getLoteId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await lotes.selecionarPorId(params.id);
-    if (!consulta) throw new ClientError("", 404);
-    res.send(consulta);
+    if (consulta) {
+      res.send(consulta);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }

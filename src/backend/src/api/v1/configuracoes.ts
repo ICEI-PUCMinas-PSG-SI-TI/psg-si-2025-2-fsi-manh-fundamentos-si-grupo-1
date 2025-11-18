@@ -6,6 +6,7 @@ import { Router, type NextFunction, type Response } from "express";
 import z4 from "zod/v4";
 import { Identificador } from "../../db/enums/identificador";
 import servicoProdutos from "../../services/servicoProdutos";
+import { error } from "../../logging";
 
 const apiV1ConfiguracoesRouter = Router();
 
@@ -16,7 +17,12 @@ async function getConfiguracoes(
 ): Promise<void> {
   try {
     const config = await servicoConfiguracoes.selecionar();
-    res.send(config);
+    if (config) {
+      res.send(config);
+    } else {
+      error("Nenhum valor encontrado.", { label: "endConfig" });
+      res.sendStatus(500);
+    }
   } catch (err) {
     next(err);
   }
@@ -29,8 +35,13 @@ async function patchConfiguracoes(
 ): Promise<void> {
   try {
     const parsedBody = UpdateConfiguracaoSchemaZ.parse(req.body);
-    await servicoConfiguracoes.atualizar(parsedBody);
-    res.send();
+    const atualizado = await servicoConfiguracoes.atualizar(parsedBody);
+    if (atualizado) {
+      res.sendStatus(200);
+    } else {
+      error("Atualização não realizada.", { label: "endConfig" });
+      res.sendStatus(500);
+    }
   } catch (err) {
     next(err);
   }
@@ -47,6 +58,7 @@ async function alterarIdentificador(
         identificador: z4.enum(Identificador),
       })
       .parse(req.body);
+    // TODO: Retornar alguma coisa indicando erro/sucesso
     await servicoProdutos.alterarFormatoCodigo(parsedBody.identificador);
     res.sendStatus(200);
   } catch (err) {
@@ -56,8 +68,8 @@ async function alterarIdentificador(
 
 apiV1ConfiguracoesRouter
   .get("/", getConfiguracoes)
-  .put("/", patchConfiguracoes)
-  .patch("/codigo", alterarIdentificador)
+  .put("/", mdwRequerBody, patchConfiguracoes)
+  .patch("/codigo", mdwRequerBody, alterarIdentificador)
   .patch("/", mdwRequerBody, patchConfiguracoes);
 
 export default apiV1ConfiguracoesRouter;

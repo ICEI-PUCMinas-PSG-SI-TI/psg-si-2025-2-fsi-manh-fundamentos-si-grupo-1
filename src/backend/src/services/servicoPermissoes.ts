@@ -48,16 +48,14 @@ export class ServicoPermissoes {
     return atualizacoes > 0;
   }
 
-  async removerPermissoesUsuario2(
+  async definirPermissoesUsuario(
     usuarioId: string,
     ...perms: Permissoes[]
   ): Promise<boolean> {
-    let atualizacoes = 0;
-
-    for (let i = 0; i < perms.length; i++) {
-      atualizacoes += await repositorioPermissoes.excluir(usuarioId, perms[i]!);
-    }
-    return atualizacoes > 0;
+    await this.removerTodasPermissoes(usuarioId);
+    await this.adicionarPermissoesUsuario(usuarioId, ...perms);
+    // TODO: Utilizar Transaction unica
+    return true;
   }
 
   async removerTodasPermissoes(usuarioId: string): Promise<boolean> {

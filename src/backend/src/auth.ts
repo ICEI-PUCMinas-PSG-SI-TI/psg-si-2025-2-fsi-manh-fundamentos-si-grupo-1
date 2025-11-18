@@ -93,8 +93,10 @@ async function logout(
     const _sessionToken = req._sessionToken;
     // TODO: Limpar todos os cookies
     res.clearCookie(COOKIE_SESSION_TOKEN);
-    if (_sessionToken) await servicoAutenticacao.logout(_sessionToken);
-    res.send();
+    if (_sessionToken) {
+      await servicoAutenticacao.logout(_sessionToken);
+    }
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }
@@ -110,8 +112,10 @@ async function logoutAll(
     const _sessionToken = req._sessionToken;
     // TODO: Limpar todos os cookies
     res.clearCookie(COOKIE_SESSION_TOKEN);
-    if (_sessionToken) await servicoAutenticacao.logoutAll(_sessionToken);
-    res.send();
+    if (_sessionToken) {
+      await servicoAutenticacao.logoutAll(_sessionToken);
+    }
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }

@@ -28,7 +28,7 @@ async function criarProdutos(
     const parsedBody = FakerParamsZ.parse(req.body);
     const { canRecurse, quant } = parsedBody;
     await servicoFaker.criarProdutos(quant, canRecurse);
-    res.send();
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }
@@ -43,7 +43,7 @@ async function criarLotes(
     const parsedBody = FakerParamsZ.parse(req.body);
     const { canRecurse, quant } = parsedBody;
     await servicoFaker.criarLotes(quant, canRecurse);
-    res.send();
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }
@@ -58,7 +58,7 @@ async function criarTransacoes(
     const parsedBody = FakerParamsZ.parse(req.body);
     const { canRecurse, quant } = parsedBody;
     await servicoFaker.criarTransacoes(quant, canRecurse);
-    res.send();
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }
@@ -73,7 +73,7 @@ async function criarUsuarios(
     const parsedBody = FakerParamsZ.parse(req.body);
     const { quant } = parsedBody;
     await servicoFaker.criarUsuarios(quant);
-    res.send();
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }
@@ -88,7 +88,7 @@ async function criarUnidadesMedida(
     const parsedBody = FakerParamsZ.parse(req.body);
     const { quant } = parsedBody;
     await servicoFaker.criarUnidadesMedida(quant);
-    res.send();
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }
@@ -103,7 +103,7 @@ async function criarCategorias(
     const parsedBody = FakerParamsZ.parse(req.body);
     const { quant } = parsedBody;
     await servicoFaker.criarCategorias(quant);
-    res.send();
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }

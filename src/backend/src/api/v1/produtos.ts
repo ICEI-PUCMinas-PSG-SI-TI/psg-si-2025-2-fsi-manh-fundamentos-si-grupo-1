@@ -4,7 +4,6 @@ import servicoProdutos, {
   ParamsConsultaProdutosZ,
 } from "../../services/servicoProdutos";
 import { ParamsIdSchemaZ } from "./objects";
-import { ClientError } from "../../error";
 
 const apiV1ProdutosRouter = Router();
 
@@ -35,8 +34,11 @@ async function getProdutoId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoProdutos.selecionarPorId(params.id);
-    if (!consulta) throw new ClientError("Not Found", 404);
-    res.send(consulta);
+    if (consulta) {
+      res.send(consulta);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }

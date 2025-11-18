@@ -36,8 +36,7 @@ async function postUsuario(
   try {
     const parsedBody = InsertUsuarioSchemaReqZ.parse(req.body);
     const uuid = await servicoUsuarios.inserir(parsedBody);
-    if (uuid) res.send(uuid);
-    else res.send(500);
+    res.send(uuid);
   } catch (err) {
     next(err);
   }
@@ -59,8 +58,11 @@ async function alterarSenha(
       params.id,
       parsedBody.senha,
     );
-    if (ok) res.send();
-    else res.sendStatus(401);
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(401);
+    }
   } catch (err) {
     next(err);
   }
@@ -74,8 +76,11 @@ async function getUsuarioId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
-    if (consulta) res.send(consulta);
-    else res.sendStatus(404);
+    if (consulta) {
+      res.send(consulta);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -111,8 +116,11 @@ async function patchUsuario(
     const updateFields = AdmUpdateUsuarioEndpointSchema.parse(req.body);
     const params = ParamsIdSchemaZ.parse(req.params);
     const alteracoes = await servicoUsuarios.atualizar(params.id, updateFields);
-    if (alteracoes > 0) res.send();
-    else res.sendStatus(404);
+    if (alteracoes > 0) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }

@@ -21,8 +21,11 @@ async function getUsuarioId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.listarUnicoPublico(params.id);
-    if (consulta) res.send(consulta);
-    else res.sendStatus(404);
+    if (consulta) {
+      res.send(consulta);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -41,8 +44,11 @@ async function alterarSenha(
       senhas.senhaNova,
       usuario.id,
     );
-    if (ok) res.send();
-    else res.sendStatus(401);
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(401);
+    }
   } catch (err) {
     next(err);
   }
@@ -63,9 +69,15 @@ async function patchUsuario(
   try {
     const updateFields = UpdateUsuarioEndpointSchema.parse(req.body);
     const usuario = req._usuario!;
-    const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
-    if (updates > 0) res.send();
-    else res.sendStatus(400);
+    const atualizacoes = await servicoUsuarios.atualizar(
+      usuario.id,
+      updateFields,
+    );
+    if (atualizacoes > 0) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(400);
+    }
   } catch (err) {
     next(err);
   }

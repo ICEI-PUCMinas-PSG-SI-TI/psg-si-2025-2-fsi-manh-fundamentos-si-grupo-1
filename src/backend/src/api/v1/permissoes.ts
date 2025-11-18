@@ -21,11 +21,16 @@ async function addPermissoes(
 ): Promise<void> {
   try {
     const parsedBody = ParamsPatchPermissoesZ.parse(req.body);
-    await servicoPermissoes.adicionarPermissoesUsuario(
+    const ok = await servicoPermissoes.adicionarPermissoesUsuario(
       parsedBody.usuarioId,
       ...parsedBody.permissoes,
     );
-    res.send();
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      // 400 ou 500? -> Como o servidor não indica o que deu erro, retornar 500.
+      res.sendStatus(500);
+    }
   } catch (err) {
     next(err);
   }
@@ -38,11 +43,15 @@ async function delPermissoes(
 ): Promise<void> {
   try {
     const parsedBody = ParamsPatchPermissoesZ.parse(req.body);
-    await servicoPermissoes.removerPermissoesUsuario(
+    const ok = await servicoPermissoes.removerPermissoesUsuario(
       parsedBody.usuarioId,
       ...parsedBody.permissoes,
     );
-    res.send();
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -72,11 +81,15 @@ async function addPermissoesId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = PermsPermissoesArrayZ.parse(req.body);
-    await servicoPermissoes.adicionarPermissoesUsuario(
+    const ok = await servicoPermissoes.adicionarPermissoesUsuario(
       params.id,
       ...parsedBody,
     );
-    res.send();
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -89,12 +102,15 @@ async function setPermissoesId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = PermsPermissoesArrayZ.parse(req.body);
-    await servicoPermissoes.removerTodasPermissoes(params.id);
-    await servicoPermissoes.adicionarPermissoesUsuario(
+    const ok = await servicoPermissoes.definirPermissoesUsuario(
       params.id,
       ...parsedBody,
     );
-    res.send();
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -107,8 +123,15 @@ async function delPermissoesId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = PermsPermissoesArrayZ.parse(req.body);
-    await servicoPermissoes.removerPermissoesUsuario(params.id, ...parsedBody);
-    res.send();
+    const ok = await servicoPermissoes.removerPermissoesUsuario(
+      params.id,
+      ...parsedBody,
+    );
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }

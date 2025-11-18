@@ -57,8 +57,12 @@ async function deleteCategorias(
   try {
     // TODO: Verificar se uuid existe
     const params = ParamsIdSchemaZ.parse(req.params);
-    await servicoCategorias.excluirPorId(params.id);
-    res.send();
+    const ok = await servicoCategorias.excluirPorId(params.id);
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
