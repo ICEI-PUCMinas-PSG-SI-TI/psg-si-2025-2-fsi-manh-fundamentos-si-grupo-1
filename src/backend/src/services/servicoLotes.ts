@@ -31,7 +31,9 @@ const repositorioLotes = new RepositorioLotes();
 export class ServicoLotes {
   async inserir(lote: InsertLoteSchema): Promise<UuidResult> {
     const res = await repositorioLotes.inserir(lote);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    if (res.length !== 1 || !res[0]) {
+      throw new HttpError("", 500);
+    }
     debug(`Novo lote criado!`, { label: "LoteService" });
     return res[0];
   }

@@ -24,13 +24,21 @@ export function setLogLevel(level: LogLevel): void {
 
 function colorStatusCode(statusCode: number): string {
   let text;
-  if (statusCode >= 600) text = `${statusCode}`;
-  else if (statusCode >= 500) text = chalk.redBright(statusCode);
-  else if (statusCode >= 400) text = chalk.red(statusCode);
-  else if (statusCode >= 300) text = chalk.yellow(statusCode);
-  else if (statusCode >= 200) text = chalk.green(statusCode);
-  else if (statusCode >= 100) text = chalk.blue(statusCode);
-  else text = `${statusCode}`;
+  if (statusCode >= 600) {
+    text = `${statusCode}`;
+  } else if (statusCode >= 500) {
+    text = chalk.redBright(statusCode);
+  } else if (statusCode >= 400) {
+    text = chalk.red(statusCode);
+  } else if (statusCode >= 300) {
+    text = chalk.yellow(statusCode);
+  } else if (statusCode >= 200) {
+    text = chalk.green(statusCode);
+  } else if (statusCode >= 100) {
+    text = chalk.blue(statusCode);
+  } else {
+    text = `${statusCode}`;
+  }
   return text;
 }
 
@@ -74,9 +82,11 @@ export type LogOpts = {
 };
 
 function log(messsage: string, level: LogLevel, opts?: LogOpts): void {
-  if (level > logLevel) return;
+  if (level > logLevel) {
+    return;
+  }
   const messageArray: string[] = [];
-  if (!opts?.excludeTimestamp)
+  if (!opts?.excludeTimestamp) {
     messageArray.push(
       new Date().toLocaleString(locale, {
         hour12: false,
@@ -89,9 +99,14 @@ function log(messsage: string, level: LogLevel, opts?: LogOpts): void {
         fractionalSecondDigits: 3,
       }),
     );
+  }
   messageArray.push(colorLogLevel(level));
-  if (opts?.label?.length) messageArray.push(`[${opts.label}]`);
-  if (opts?.reqId?.length) messageArray.push(`{${opts.reqId}}`);
+  if (opts?.label?.length) {
+    messageArray.push(`[${opts.label}]`);
+  }
+  if (opts?.reqId?.length) {
+    messageArray.push(`{${opts.reqId}}`);
+  }
   messageArray.push(messsage);
   const finalMessage = messageArray.join(" ");
   console.info(finalMessage);

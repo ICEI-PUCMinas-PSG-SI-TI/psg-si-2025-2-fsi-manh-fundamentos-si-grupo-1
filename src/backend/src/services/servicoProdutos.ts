@@ -67,7 +67,9 @@ export class ServicoProdutos {
   async inserir(produto: InsertProdutosSchema): Promise<RefRegistro> {
     produto.codigo = geradorCodigo();
     const res = await repositorioProdutos.inserir(produto);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    if (res.length !== 1 || !res[0]) {
+      throw new HttpError("", 500);
+    }
     debug(`Novo produto criada!`, { label: "ServProdutos" });
     return res[0];
   }

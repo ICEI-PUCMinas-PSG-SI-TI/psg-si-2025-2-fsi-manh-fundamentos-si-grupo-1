@@ -15,7 +15,9 @@ class ServicoUnidadesMedida {
     unidadesMedida: InsertUnidadesMedidaSchema,
   ): Promise<UuidResult> {
     const res = await repositorioUnidadesMedida.inserir(unidadesMedida);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    if (res.length !== 1 || !res[0]) {
+      throw new HttpError("", 500);
+    }
     debug(`Nova unidade de medida criada!`, { label: "UnidadesMedidaServico" });
     return res[0];
   }

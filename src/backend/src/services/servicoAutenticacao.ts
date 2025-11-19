@@ -161,7 +161,9 @@ export class ServicoAutenticacao {
       return null;
     }
     const _token = parseToken(token);
-    if (!_token) return null;
+    if (!_token) {
+      return null;
+    }
     // TODO: validarSessao: Promise<SelectSessao>
     const sessao = await repositorioSessoes.selecionarPorId(_token?.id);
     if (!sessao) {
@@ -190,7 +192,9 @@ export class ServicoAutenticacao {
   ): Promise<SelectSessaoSchema | null> {
     const now = new Date();
     const sessao = await repositorioSessoes.selecionarPorId(sessionId);
-    if (!sessao) return null;
+    if (!sessao) {
+      return null;
+    }
     // Check expiration
     if (
       now.getTime() - sessao.createdAt.getTime() >=
@@ -207,8 +211,11 @@ export class ServicoAutenticacao {
     token: string,
   ): Promise<SelectSessaoSchema | null> {
     const _token = parseToken(token);
-    if (!_token) return null;
-    return await this.selecionarSessao(_token?.id);
+    if (!_token) {
+      return null;
+    } else {
+      return await this.selecionarSessao(_token?.id);
+    }
   }
 
   // NOTE: Aqui, todas as conexões serão validadas via hash do segredo.
@@ -216,32 +223,43 @@ export class ServicoAutenticacao {
   // TODO: Adicionar validarSessaoInseguro()
   async validarSessao(token: string): Promise<boolean> {
     const _token = parseToken(token);
-    if (!_token) return false;
+    if (!_token) {
+      return false;
+    }
     const sessao = await repositorioSessoes.selecionarPorId(_token.id);
-    if (!sessao) return false;
+    if (!sessao) {
+      return false;
+    }
     const tokenSecretHash = await hashSecret(_token.secret);
     // Node.js only
     // crypto.timingSafeEqual(tokenSecretHash, sessao.secretHash)
     const validSecret = constantTimeEqual(tokenSecretHash, sessao.secretHash);
-    if (!validSecret) return false;
-    return true;
+    return validSecret;
   }
 
   // TODO: Verificar se o segredo confere?
   async logout(token: string): Promise<boolean> {
     const _token = parseToken(token);
-    if (!_token) return false;
+    if (!_token) {
+      return false;
+    }
     const sessoes = await repositorioSessoes.selecionarPorId(_token.id);
-    if (!sessoes) return false;
+    if (!sessoes) {
+      return false;
+    }
     const excRes = await repositorioSessoes.excluirPorId(_token.id);
     return excRes > 0;
   }
 
   async logoutAll(token: string): Promise<boolean> {
     const _token = parseToken(token);
-    if (!_token) return false;
+    if (!_token) {
+      return false;
+    }
     const sessoes = await repositorioSessoes.selecionarPorId(_token.id);
-    if (!sessoes) return false;
+    if (!sessoes) {
+      return false;
+    }
     const excRes = await repositorioSessoes.excluirPorUsuarioId(
       sessoes.usuarioId,
     );

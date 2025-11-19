@@ -47,8 +47,9 @@ export function mdwError(
       error(err.cause?.message, { label: "mdwErr.Query", reqId: id });
       res.sendStatus(500);
     } else {
-      if (err instanceof Error)
+      if (err instanceof Error) {
         error(err.message, { label: "mdwErr.Unk", reqId: id });
+      }
       res.sendStatus(500);
     }
   } else {

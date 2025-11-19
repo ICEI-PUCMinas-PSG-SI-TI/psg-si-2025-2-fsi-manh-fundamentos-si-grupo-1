@@ -32,7 +32,9 @@ export type ParamsConsultaTransacoes = z4.infer<
 export class ServicoTransacoes {
   async inserir(transacao: InsertTransacoesSchema): Promise<UuidResult> {
     const res = await repositorioTransacoes.inserir(transacao);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
+    if (res.length !== 1 || !res[0]) {
+      throw new HttpError("", 500);
+    }
     debug(`Nova transação criada!`, { label: "ServTransacoes" });
     return res[0];
   }

@@ -22,7 +22,9 @@ export interface ExtendedRequest extends Request {
 }
 
 function extrairCookies(cookies: unknown): Cookies | null {
-  if (!cookies || typeof cookies !== "object") return null;
+  if (!cookies || typeof cookies !== "object") {
+    return null;
+  }
   const _cookies: Cookies = {};
   if (
     COOKIE_SESSION_TOKEN in cookies &&
@@ -40,8 +42,9 @@ export function mdwLoadSessionCookies(
 ): void {
   try {
     const cookies = extrairCookies(req.cookies);
-    if (typeof cookies?.tokenSessao !== "string")
+    if (typeof cookies?.tokenSessao !== "string") {
       throw new ClientError("Não autenticado!", 400);
+    }
     req._cookies = cookies;
     req._sessionToken = cookies.tokenSessao;
     next();
@@ -61,8 +64,9 @@ export async function mdwAutenticacao(
 ): Promise<void> {
   try {
     const cookies = extrairCookies(req.cookies);
-    if (typeof cookies?.tokenSessao !== "string")
+    if (typeof cookies?.tokenSessao !== "string") {
       throw new ClientError("Unauthorized", 401);
+    }
     req._cookies = cookies;
     req._sessionToken = cookies.tokenSessao;
     if (!req._cookies.tokenSessao || req._cookies.tokenSessao.length === 0) {
@@ -98,7 +102,9 @@ export function mdwPermissoes(...perms: Permissoes[]) {
           permitido,
         );
       }
-      if (!permitido) throw new ClientError("Unauthorized", 401);
+      if (!permitido) {
+        throw new ClientError("Unauthorized", 401);
+      }
       next();
     } catch (err) {
       next(err);

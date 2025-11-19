@@ -45,7 +45,9 @@ class ServicoUsuarios {
     const _usuario = await repositorioUsuarios.selecionarPorLogin(
       usuario.login,
     );
-    if (_usuario) throw new ClientError("Login já existe.", 409);
+    if (_usuario) {
+      throw new ClientError("Login já existe.", 409);
+    }
     const insertUsuario = InsertUsuarioSchemaZ.parse({
       nome: usuario.nome,
       login: usuario.login,
@@ -56,7 +58,9 @@ class ServicoUsuarios {
       hashedPassword: hashedPassword,
     });
     const res = await repositorioUsuarios.inserir(insertUsuario);
-    if (res.length !== 1 || !res[0]) throw new ClientError("", 500);
+    if (res.length !== 1 || !res[0]) {
+      throw new ClientError("", 500);
+    }
     if (opts?.cargos) {
       await servicoPermissoes.adicionarPermissoesUsuario(
         res[0].id,
@@ -71,7 +75,9 @@ class ServicoUsuarios {
     id: string,
   ): Promise<SelectUsuarioInfoSchema | null> {
     const res = await repositorioUsuarios.selecionarPorId(id);
-    if (!res) return null;
+    if (!res) {
+      return null;
+    }
     return {
       id: res.id,
       nome: res.nome,

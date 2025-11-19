@@ -22,7 +22,9 @@ z4.config(z4.locales.pt());
 console.info(chalk.bgBlueBright("psg-si-fundamentos-backend\n"));
 
 // Verifica se a base de dados está ok
-if (!(await verificarBancoDados())) process.exit();
+if (!(await verificarBancoDados())) {
+  process.exit();
+}
 
 // Garante que há pelo menos um administrador
 // TODO: Inicializar um perfil de desenvolvedor

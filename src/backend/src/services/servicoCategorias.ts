@@ -13,8 +13,11 @@ class ServicoCategorias {
   // TODO: Verificar se categoria já existe ou colocar nome como "unico"
   async inserir(categoria: InsertCategoriaSchema): Promise<UuidResult> {
     const res = await repositorioCategorias.inserir(categoria);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
-    return res[0];
+    if (res.length !== 1 || !res[0]) {
+      throw new HttpError("", 500);
+    } else {
+      return res[0];
+    }
   }
 
   selecionarPorId(id: string): Promise<RefRegistro | undefined> {

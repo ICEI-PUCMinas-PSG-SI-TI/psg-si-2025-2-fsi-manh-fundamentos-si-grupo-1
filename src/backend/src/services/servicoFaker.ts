@@ -48,7 +48,9 @@ function fakerImage() {
 
 function escolherAleatorios<T>(quant: number, valores: T[]): T[] {
   const _filtro: T[] = [];
-  if (valores.length === 0) throw new Error();
+  if (valores.length === 0) {
+    throw new Error();
+  }
   for (let i = 0; i < quant; i++) {
     const n = faker.number.int({ min: 0, max: valores.length - 1 });
     _filtro.push(valores[n]!);
@@ -63,15 +65,20 @@ async function escolherUnidadesMedida(
 ): Promise<{ id: string }[]> {
   let quantUnidades = await servicoUnidadesMedida.contar();
   if (quantUnidades === 0) {
-    if (canRecurse) await servicoFaker.criarUnidadesMedida(quant);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarUnidadesMedida(quant);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantUnidades = await servicoUnidadesMedida.contar();
-  if (quantUnidades === 0)
+  if (quantUnidades === 0) {
     throw new HttpError("Can't create relational data", 400);
+  }
   const unidades = await servicoUnidadesMedida.selecionarIdTodos();
-  if (!unidades || unidades.length === 0)
+  if (!unidades || unidades.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, unidades);
 }
 
@@ -81,15 +88,20 @@ async function escolherProdutos(
 ): Promise<{ id: string }[]> {
   let quantProdutos = await servicoProdutos.contar();
   if (quantProdutos === 0) {
-    if (canRecurse) await servicoFaker.criarProdutos(quant, canRecurse);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarProdutos(quant, canRecurse);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantProdutos = await servicoProdutos.contar();
-  if (quantProdutos === 0)
+  if (quantProdutos === 0) {
     throw new HttpError("Can't create relational data", 400);
+  }
   const produtosId = await servicoProdutos.selecionarIdTodos();
-  if (!produtosId || produtosId.length === 0)
+  if (!produtosId || produtosId.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, produtosId);
 }
 
@@ -99,15 +111,20 @@ async function escolherUsuarios(
 ): Promise<{ id: string }[]> {
   let quantUsuarios = await servicoUsuarios.contar();
   if (quantUsuarios === 0) {
-    if (canRecurse) await servicoFaker.criarUsuarios(quant);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarUsuarios(quant);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantUsuarios = await servicoUsuarios.contar();
-  if (quantUsuarios === 0)
+  if (quantUsuarios === 0) {
     throw new HttpError("Can't create relational data", 400);
+  }
   const usuariosId = await servicoUsuarios.selecionarIdTodos();
-  if (!usuariosId || usuariosId.length === 0)
+  if (!usuariosId || usuariosId.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, usuariosId);
 }
 
@@ -117,15 +134,20 @@ async function escolherLotes(
 ): Promise<{ id: string; produtoId: string }[]> {
   let quantLotes = await servicoLotes.contar();
   if (quantLotes === 0) {
-    if (canRecurse) await servicoFaker.criarLotes(quant, canRecurse);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarLotes(quant, canRecurse);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantLotes = await servicoLotes.contar();
-  if (quantLotes === 0)
+  if (quantLotes === 0) {
     throw new HttpError("Can't create relational data", 400);
+  }
   const lotes = await servicoLotes.selecionarIdProdutosTodos();
-  if (!lotes || lotes.length === 0)
+  if (!lotes || lotes.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, lotes);
 }
 
@@ -135,25 +157,34 @@ async function escolherCategorias(
 ): Promise<{ id: string }[]> {
   let quantCategorias = await servicoCategorias.contar();
   if (quantCategorias === 0) {
-    if (canRecurse) await servicoFaker.criarCategorias(quant);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarCategorias(quant);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantCategorias = await servicoCategorias.contar();
-  if (quantCategorias === 0)
+  if (quantCategorias === 0) {
     throw new HttpError("Can't create relational data", 400);
+  }
   const categorias = await servicoCategorias.selecionarTodos();
-  if (!categorias || categorias.length === 0)
+  if (!categorias || categorias.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, categorias);
 }
 
 export class ServicoFaker {
   async criarProdutos(quant: number, canRecurse: boolean): Promise<void> {
     const unidades = await escolherUnidadesMedida(canRecurse, quant);
-    if (!unidades || !unidades.length) throw new Error();
+    if (!unidades || !unidades.length) {
+      throw new Error();
+    }
 
     const categorias = await escolherCategorias(canRecurse, quant);
-    if (!categorias || !categorias.length) throw new Error();
+    if (!categorias || !categorias.length) {
+      throw new Error();
+    }
 
     const produtos: InsertProdutosSchema[] = [];
     for (let i = 0; i < quant; i++) {
@@ -187,7 +218,9 @@ export class ServicoFaker {
 
   async criarLotes(quant: number, canRecurse: boolean): Promise<void> {
     const produtos = await escolherProdutos(canRecurse, quant);
-    if (!produtos || !produtos.length) throw new Error();
+    if (!produtos || !produtos.length) {
+      throw new Error();
+    }
 
     const lotes = [];
     for (let i = 0; i < quant; i++) {
@@ -205,10 +238,14 @@ export class ServicoFaker {
 
   async criarTransacoes(quant: number, canRecurse: boolean): Promise<void> {
     const lotes = await escolherLotes(canRecurse, quant);
-    if (!lotes || !lotes.length) throw new Error();
+    if (!lotes || !lotes.length) {
+      throw new Error();
+    }
 
     const usuarios = await escolherUsuarios(canRecurse, quant);
-    if (!usuarios || !usuarios.length) throw new Error();
+    if (!usuarios || !usuarios.length) {
+      throw new Error();
+    }
 
     const movimentacoes = [];
     for (let i = 0; i < quant; i++) {

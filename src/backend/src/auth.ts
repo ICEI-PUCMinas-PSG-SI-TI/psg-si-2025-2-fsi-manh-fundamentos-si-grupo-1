@@ -37,7 +37,9 @@ async function sessao(
 ): Promise<void> {
   try {
     const _sessionToken = req._sessionToken;
-    if (!_sessionToken) throw new ClientError("Não autenticado!", 401);
+    if (!_sessionToken) {
+      throw new ClientError("Não autenticado!", 401);
+    }
     const sessao =
       await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
     res.send(sessao);
