@@ -1,13 +1,13 @@
-import "dotenv/config";
-import { count, eq } from "drizzle-orm";
 import bancoDados from "../db";
 import {
-  tabelaUnidadesMedida,
   type InsertUnidadesMedidaSchema,
   type SelectUnidadesMedidaSchema,
   type UpdateUnidadesMedidaSchema,
+  tabelaUnidadesMedida,
 } from "../db/schema/unidadesMedida";
 import type { Count, RefRegistro } from "./common";
+import "dotenv/config";
+import { count, eq } from "drizzle-orm";
 
 export class RepositorioUnidadesMedida {
   inserir(

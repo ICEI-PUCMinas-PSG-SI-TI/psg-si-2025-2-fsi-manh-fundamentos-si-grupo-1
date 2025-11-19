@@ -1,17 +1,17 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { error, json, LogLevel, notice, warning } from "./logging";
-import { DrizzleQueryError, sql } from "drizzle-orm";
-import { tabelaLotes } from "./db/schema/lotes";
+import { Permissoes } from "./db/enums/permissoes";
 import { tabelaCategorias } from "./db/schema/categorias";
 import { tabelaConfiguracoes } from "./db/schema/configuracoes";
+import { tabelaLotes } from "./db/schema/lotes";
+import { tabelaPermissoes } from "./db/schema/permissoes";
 import { tabelaProdutos } from "./db/schema/produtos";
 import { tabelaSessoes } from "./db/schema/sessoes";
 import { tabelaTransacoes } from "./db/schema/transacoes";
 import { tabelaUnidadesMedida } from "./db/schema/unidadesMedida";
 import { tabelaUsuarios } from "./db/schema/usuarios";
+import { LogLevel, error, json, notice, warning } from "./logging";
 import servicoUsuarios from "./services/servicoUsuarios";
-import { Permissoes } from "./db/enums/permissoes";
-import { tabelaPermissoes } from "./db/schema/permissoes";
+import { DrizzleQueryError, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/libsql";
 
 const DB_FILE_NAME = process.env.DB_FILE_NAME || "file:database.db";
 const bancoDados = drizzle(DB_FILE_NAME);

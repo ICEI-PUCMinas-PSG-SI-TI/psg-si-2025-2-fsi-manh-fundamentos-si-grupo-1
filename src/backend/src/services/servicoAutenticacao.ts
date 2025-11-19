@@ -1,12 +1,12 @@
-import * as z4 from "zod/v4";
-import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
-import { RepositorioSessoes } from "../repository/repositorioSessoes";
-import { ClientError } from "../error";
-import { compare } from "bcrypt";
-import { debug, error, warning } from "../logging";
-import type { SelectSessaoSchema } from "../db/schema/sessoes";
 import { Permissoes } from "../db/enums/permissoes";
+import type { SelectSessaoSchema } from "../db/schema/sessoes";
+import { ClientError } from "../error";
+import { debug, error, warning } from "../logging";
+import { RepositorioSessoes } from "../repository/repositorioSessoes";
+import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
 import servicoPermissoes from "./servicoPermissoes";
+import { compare } from "bcrypt";
+import * as z4 from "zod/v4";
 
 // O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
 

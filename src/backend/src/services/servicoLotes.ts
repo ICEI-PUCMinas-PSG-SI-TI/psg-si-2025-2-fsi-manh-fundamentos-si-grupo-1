@@ -1,17 +1,16 @@
-import * as z4 from "zod/v4";
-import { debug } from "../logging";
+import type { UuidResult } from "../api/v1/objects";
 import type {
   InsertLoteSchema,
   SelectLoteSchema,
   UpdateLoteSchema,
 } from "../db/schema/lotes";
-import {
-  RepositorioLotes,
-  type RepoConsultaParamsLote,
-} from "../repository/repositorioLotes";
-
 import { HttpError } from "../error";
-import type { UuidResult } from "../api/v1/objects";
+import { debug } from "../logging";
+import {
+  type RepoConsultaParamsLote,
+  RepositorioLotes,
+} from "../repository/repositorioLotes";
+import * as z4 from "zod/v4";
 
 export const LoteConsultaSchema = z4.object({
   id: z4.uuid().optional(),

@@ -1,10 +1,10 @@
-import * as z4 from "zod/v4";
 import {
-  UpdateConfiguracaoSchemaZ,
   type SelectConfiguracaoSchema,
   type UpdateConfiguracaoSchema,
+  UpdateConfiguracaoSchemaZ,
 } from "../db/schema/configuracoes";
 import { RepositorioConfiguracoes } from "../repository/repositorioConfiguracoes";
+import * as z4 from "zod/v4";
 
 const repositorioConfiguracoes = new RepositorioConfiguracoes();
 

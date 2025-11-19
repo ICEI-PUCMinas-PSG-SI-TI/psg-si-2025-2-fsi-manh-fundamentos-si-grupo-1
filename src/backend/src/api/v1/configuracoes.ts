@@ -1,12 +1,12 @@
-import type { ExtendedRequest } from "../../middlewares";
+import { Identificador } from "../../db/enums/identificador";
 import { UpdateConfiguracaoSchemaZ } from "../../db/schema/configuracoes";
+import { error } from "../../logging";
+import type { ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
 import servicoConfiguracoes from "../../services/servicoConfiguracoes";
-import { Router, type NextFunction, type Response } from "express";
-import z4 from "zod/v4";
-import { Identificador } from "../../db/enums/identificador";
 import servicoProdutos from "../../services/servicoProdutos";
-import { error } from "../../logging";
+import { type NextFunction, type Response, Router } from "express";
+import z4 from "zod/v4";
 
 const apiV1ConfiguracoesRouter = Router();
 

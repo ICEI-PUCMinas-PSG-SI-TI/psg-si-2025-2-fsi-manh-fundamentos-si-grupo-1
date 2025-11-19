@@ -1,6 +1,6 @@
+import type { ExtendedRequest } from "./middlewares";
 import chalk from "chalk";
 import type { NextFunction, Response } from "express";
-import type { ExtendedRequest } from "./middlewares";
 
 const locale = process.env.LOCALE || "iso";
 

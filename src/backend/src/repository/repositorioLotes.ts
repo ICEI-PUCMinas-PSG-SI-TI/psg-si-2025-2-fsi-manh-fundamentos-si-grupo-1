@@ -1,13 +1,13 @@
-import "dotenv/config";
-import { and, count, eq, gte, like, lte, SQL } from "drizzle-orm";
-import { tabelaLotes } from "../db/schema/lotes";
 import bancoDados from "../db";
+import { tabelaLotes } from "../db/schema/lotes";
 import type {
   InsertLoteSchema,
   SelectLoteSchema,
   UpdateLoteSchema,
 } from "../db/schema/lotes";
 import type { Count, RefRegistro } from "./common";
+import "dotenv/config";
+import { SQL, and, count, eq, gte, like, lte } from "drizzle-orm";
 
 export type RepoConsultaParamsLote = {
   pagina?: number;

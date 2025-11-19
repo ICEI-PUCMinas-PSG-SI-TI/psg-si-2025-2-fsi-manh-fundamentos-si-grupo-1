@@ -1,9 +1,9 @@
-import { Router, type NextFunction, type Response } from "express";
-import { ParamsIdSchemaZ } from "./objects";
-import servicoCategorias from "../../services/servicoCategorias";
 import { InsertCategoriaSchemaZ } from "../../db/schema/categorias";
 import type { ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
+import servicoCategorias from "../../services/servicoCategorias";
+import { ParamsIdSchemaZ } from "./objects";
+import { type NextFunction, type Response, Router } from "express";
 
 const apiV1CategoriasRouter = Router();
 

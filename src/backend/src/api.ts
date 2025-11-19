@@ -1,6 +1,6 @@
-import { Router, type Request, type Response } from "express";
 import apiV1Router from "./api/v1";
 import { mdwAutenticacao } from "./middlewares";
+import { type Request, type Response, Router } from "express";
 
 const apiRouter = Router();
 

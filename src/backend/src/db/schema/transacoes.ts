@@ -1,10 +1,10 @@
+import { tabelaLotes } from "./lotes";
+import { tabelaProdutos } from "./produtos";
+import { tabelaUsuarios } from "./usuarios";
 import { type InferSelectModel } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
-import { tabelaProdutos } from "./produtos";
-import { tabelaUsuarios } from "./usuarios";
-import { tabelaLotes } from "./lotes";
 
 export const tabelaTransacoes = sqliteTable("transacoes", {
   id: text()

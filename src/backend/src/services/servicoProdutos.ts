@@ -1,18 +1,18 @@
-import { debug } from "../logging";
+import type { Identificador } from "../db/enums/identificador";
+import { configurarGerador, geradorCodigo } from "../db/geradorCodigos";
 import {
-  RepositorioProdutos,
-  type RepoConsultaParamsProdutoQuantidade,
-} from "../repository/repositorioProdutos";
-import {
-  InsertProdutosSchemaZ,
   type InsertProdutosSchema,
+  InsertProdutosSchemaZ,
   type SelectProdutosSchema,
 } from "../db/schema/produtos";
 import { HttpError } from "../error";
-import * as z4 from "zod/v4";
+import { debug } from "../logging";
 import type { RefRegistro } from "../repository/common";
-import { configurarGerador, geradorCodigo } from "../db/geradorCodigos";
-import type { Identificador } from "../db/enums/identificador";
+import {
+  type RepoConsultaParamsProdutoQuantidade,
+  RepositorioProdutos,
+} from "../repository/repositorioProdutos";
+import * as z4 from "zod/v4";
 
 const repositorioProdutos = new RepositorioProdutos();
 

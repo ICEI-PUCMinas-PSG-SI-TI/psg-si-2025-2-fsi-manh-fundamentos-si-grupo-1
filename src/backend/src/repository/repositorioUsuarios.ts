@@ -1,4 +1,3 @@
-import { and, count, eq, SQL } from "drizzle-orm";
 import bancoDados from "../db";
 import { tabelaUsuarios } from "../db/schema/usuarios";
 import type {
@@ -7,6 +6,7 @@ import type {
   UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
 import type { Count, RefRegistro } from "./common";
+import { SQL, and, count, eq } from "drizzle-orm";
 
 export type RepoConsultaParamsUsuarios = {
   pagina?: number;

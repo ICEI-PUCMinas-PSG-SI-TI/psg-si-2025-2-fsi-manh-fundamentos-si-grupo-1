@@ -1,10 +1,10 @@
+import { StatusProduto } from "../enums/statusProduto";
+import { tabelaCategorias } from "./categorias";
+import { tabelaUnidadesMedida } from "./unidadesMedida";
 import { type InferSelectModel } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
-import { tabelaUnidadesMedida } from "./unidadesMedida";
-import { tabelaCategorias } from "./categorias";
-import { StatusProduto } from "../enums/statusProduto";
 
 export const tabelaProdutos = sqliteTable("produtos", {
   id: text()

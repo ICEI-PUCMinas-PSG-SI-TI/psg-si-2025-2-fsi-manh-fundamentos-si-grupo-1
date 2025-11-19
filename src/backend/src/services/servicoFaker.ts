@@ -1,24 +1,24 @@
 /* eslint-disable camelcase */
-import { faker, fakerPT_BR } from "@faker-js/faker";
-import { HttpError } from "../error";
-import servicoUsuarios, { hashSenha } from "./servicoUsuarios";
-import servicoUnidadesMedida from "./servicoUnidadesMedida";
+import { Permissoes } from "../db/enums/permissoes";
 // import { StatusProduto } from "../db/enums/produtos";
 import { StatusProduto } from "../db/enums/statusProduto";
-import { warning } from "../logging";
-import servicoProdutos from "./servicoProdutos";
-import servicoLotes from "./servicoLotes";
-import servicoCategorias from "./servicoCategorias";
-import repositorioCategorias from "../repository/repositorioCategorias";
-import repositorioUnidadesMedida from "../repository/repositorioUnidadesMedida";
-import repositorioMovimentacoes from "../repository/repositorioTransacoes";
-import repositorioLotes from "../repository/repositorioLotes";
-import repositorioProdutos from "../repository/repositorioProdutos";
-import repositorioUsuarios from "../repository/repositorioUsuarios";
-import { Permissoes } from "../db/enums/permissoes";
-import repositorioPermissoes from "../repository/repositorioPermissoes";
-import type { InsertProdutosSchema } from "../db/schema/produtos";
 import { geradorCodigo } from "../db/geradorCodigos";
+import type { InsertProdutosSchema } from "../db/schema/produtos";
+import { HttpError } from "../error";
+import { warning } from "../logging";
+import repositorioCategorias from "../repository/repositorioCategorias";
+import repositorioLotes from "../repository/repositorioLotes";
+import repositorioPermissoes from "../repository/repositorioPermissoes";
+import repositorioProdutos from "../repository/repositorioProdutos";
+import repositorioMovimentacoes from "../repository/repositorioTransacoes";
+import repositorioUnidadesMedida from "../repository/repositorioUnidadesMedida";
+import repositorioUsuarios from "../repository/repositorioUsuarios";
+import servicoCategorias from "./servicoCategorias";
+import servicoLotes from "./servicoLotes";
+import servicoProdutos from "./servicoProdutos";
+import servicoUnidadesMedida from "./servicoUnidadesMedida";
+import servicoUsuarios, { hashSenha } from "./servicoUsuarios";
+import { faker, fakerPT_BR } from "@faker-js/faker";
 
 function fakerLocal(): string {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;

@@ -1,9 +1,9 @@
-import { Router, type NextFunction, type Response } from "express";
-import { mdwRequerBody, type ExtendedRequest } from "../../middlewares";
-import * as z4 from "zod/v4";
 import { Permissoes } from "../../db/enums/permissoes";
+import { type ExtendedRequest, mdwRequerBody } from "../../middlewares";
 import servicoPermissoes from "../../services/servicoPermissoes";
 import { ParamsIdSchemaZ } from "./objects";
+import { type NextFunction, type Response, Router } from "express";
+import * as z4 from "zod/v4";
 
 const apiV1PermissoesRouter = Router();
 

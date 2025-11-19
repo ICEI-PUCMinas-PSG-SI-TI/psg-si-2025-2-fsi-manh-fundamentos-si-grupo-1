@@ -1,6 +1,6 @@
-import { customAlphabet } from "nanoid";
-import { Identificador } from "./enums/identificador";
 import servicoConfiguracoes from "../services/servicoConfiguracoes";
+import { Identificador } from "./enums/identificador";
+import { customAlphabet } from "nanoid";
 
 const config = await servicoConfiguracoes.selecionar();
 

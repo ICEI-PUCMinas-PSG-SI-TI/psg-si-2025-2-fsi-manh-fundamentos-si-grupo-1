@@ -1,13 +1,14 @@
-import "dotenv/config";
-import { and, eq, type SQL } from "drizzle-orm";
 import bancoDados from "../db";
 import {
-  tabelaTransacoes,
   type InsertTransacoesSchema,
   type SelectTransacoesSchema,
   type UpdateTransacoesSchema,
+  tabelaTransacoes,
 } from "../db/schema/transacoes";
 import type { RefRegistro } from "./common";
+import "dotenv/config";
+import "dotenv/config";
+import { type SQL, and, eq } from "drizzle-orm";
 
 export type RepoConsultaParamsTransacoes = {
   pagina?: number;

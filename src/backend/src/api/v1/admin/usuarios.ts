@@ -1,17 +1,17 @@
+import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
 import { type ExtendedRequest } from "../../../middlewares";
-import {
-  Router,
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import { mdwRequerBody } from "../../../middlewares";
 import servicoUsuarios, {
   InsertUsuarioSchemaReqZ,
 } from "../../../services/servicoUsuarios";
 import { ParamsIdSchemaZ, PasswordZ } from "../objects";
+import {
+  type NextFunction,
+  type Request,
+  type Response,
+  Router,
+} from "express";
 import * as z4 from "zod/v4";
-import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
-import { mdwRequerBody } from "../../../middlewares";
 
 const apiV1AdminUsuariosRouter = Router();
 

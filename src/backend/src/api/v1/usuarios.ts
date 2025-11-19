@@ -1,10 +1,10 @@
-import { type ExtendedRequest } from "../../middlewares";
-import { Router, type NextFunction, type Response } from "express";
-import servicoUsuarios from "../../services/servicoUsuarios";
-import * as z4 from "zod/v4";
 import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
-import { ParamsIdSchemaZ, PasswordZ } from "./objects";
+import { type ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
+import servicoUsuarios from "../../services/servicoUsuarios";
+import { ParamsIdSchemaZ, PasswordZ } from "./objects";
+import { type NextFunction, type Response, Router } from "express";
+import * as z4 from "zod/v4";
 
 const apiV1UsuariosRouter = Router();
 

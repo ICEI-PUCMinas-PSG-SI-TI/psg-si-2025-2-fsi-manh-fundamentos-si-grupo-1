@@ -1,9 +1,9 @@
-import type { ExtendedRequest } from "../../middlewares";
-import { LoteConsultaSchema, ServicoLotes } from "../../services/servicoLotes";
-import { Router, type NextFunction, type Response } from "express";
-import { ParamsIdSchemaZ } from "./objects";
 import { InsertLoteSchemaZ } from "../../db/schema/lotes";
+import type { ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
+import { LoteConsultaSchema, ServicoLotes } from "../../services/servicoLotes";
+import { ParamsIdSchemaZ } from "./objects";
+import { type NextFunction, type Response, Router } from "express";
 
 const apiV1LotesRouter = Router();
 

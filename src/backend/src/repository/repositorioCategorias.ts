@@ -1,11 +1,11 @@
-import { eq, like, count } from "drizzle-orm";
 import bancoDados from "../db";
 import {
-  tabelaCategorias,
   type InsertCategoriaSchema,
   type SelectCategoriaSchema,
+  tabelaCategorias,
 } from "../db/schema/categorias";
 import type { Count, RefRegistro } from "./common";
+import { count, eq, like } from "drizzle-orm";
 
 export class RepositorioCategorias {
   inserir(...categoria: InsertCategoriaSchema[]): Promise<RefRegistro[]> {

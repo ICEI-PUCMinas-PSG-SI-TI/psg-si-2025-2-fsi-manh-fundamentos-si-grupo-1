@@ -1,11 +1,11 @@
+import servicoAutenticacao from "../../services/servicoAutenticacao";
+import apiV1AdminUsuarios from "./admin/usuarios";
 import {
-  Router,
   type NextFunction,
   type Request,
   type Response,
+  Router,
 } from "express";
-import apiV1AdminUsuarios from "./admin/usuarios";
-import servicoAutenticacao from "../../services/servicoAutenticacao";
 
 const apiV1AdminRouter = Router();
 

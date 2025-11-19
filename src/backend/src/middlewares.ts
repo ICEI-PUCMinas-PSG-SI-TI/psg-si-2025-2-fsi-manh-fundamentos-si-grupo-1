@@ -1,11 +1,11 @@
-import type { NextFunction, Request, Response } from "express";
+import { COOKIE_SESSION_TOKEN } from "./auth";
+import { Permissoes } from "./db/enums/permissoes";
 import { ClientError } from "./error";
 import { error, warning } from "./logging";
 import servicoAutenticacao, {
   type UserSessionInfo,
 } from "./services/servicoAutenticacao";
-import { COOKIE_SESSION_TOKEN } from "./auth";
-import { Permissoes } from "./db/enums/permissoes";
+import type { NextFunction, Request, Response } from "express";
 
 export type Cookies = {
   tokenSessao?: string;

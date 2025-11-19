@@ -1,9 +1,9 @@
-import type { NextFunction, Response } from "express";
+import { error } from "./logging";
 import type { ExtendedRequest } from "./middlewares";
 import { DrizzleQueryError } from "drizzle-orm";
+import type { NextFunction, Response } from "express";
 import * as z4 from "zod/v4";
 import { ZodError } from "zod/v4";
-import { error } from "./logging";
 
 // TODO: Extend HttpError
 export class ClientError extends Error {

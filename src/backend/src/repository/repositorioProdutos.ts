@@ -1,5 +1,17 @@
+import bancoDados from "../db";
+import { tabelaLotes } from "../db/schema/lotes";
+import {
+  type InsertProdutosSchema,
+  type SelectProdutosSchema,
+  type UpdateProdutosSchema,
+  tabelaProdutos,
+} from "../db/schema/produtos";
+import type { Count, RefRegistro } from "./common";
+import type { ResultSet } from "@libsql/client";
 import "dotenv/config";
 import {
+  type ExtractTablesWithRelations,
+  SQL,
   and,
   asc,
   count,
@@ -10,20 +22,8 @@ import {
   lte,
   or,
   sql,
-  SQL,
-  type ExtractTablesWithRelations,
 } from "drizzle-orm";
-import bancoDados from "../db";
-import {
-  tabelaProdutos,
-  type InsertProdutosSchema,
-  type SelectProdutosSchema,
-  type UpdateProdutosSchema,
-} from "../db/schema/produtos";
-import { tabelaLotes } from "../db/schema/lotes";
-import type { Count, RefRegistro } from "./common";
 import type { SQLiteTransaction } from "drizzle-orm/sqlite-core";
-import type { ResultSet } from "@libsql/client";
 
 export type RepoConsultaParamsProduto = {
   pagina?: number;

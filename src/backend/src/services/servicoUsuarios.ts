@@ -1,18 +1,18 @@
-import * as z4 from "zod/v4";
+import { PasswordZ, type UuidResult } from "../api/v1/objects";
+import { Permissoes } from "../db/enums/permissoes";
 import {
   InsertUsuarioSchemaZ,
   type SelectUsuarioInfoSchema,
   type SelectUsuarioSchema,
   type UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
-import { debug, error } from "../logging";
-import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
-import { compare, hash } from "bcrypt";
 import { ClientError } from "../error";
-import { PasswordZ, type UuidResult } from "../api/v1/objects";
-import { Permissoes } from "../db/enums/permissoes";
-import servicoPermissoes from "./servicoPermissoes";
+import { debug, error } from "../logging";
 import type { RefRegistro } from "../repository/common";
+import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
+import servicoPermissoes from "./servicoPermissoes";
+import { compare, hash } from "bcrypt";
+import * as z4 from "zod/v4";
 
 const repositorioUsuarios = new RepositorioUsuarios();
 

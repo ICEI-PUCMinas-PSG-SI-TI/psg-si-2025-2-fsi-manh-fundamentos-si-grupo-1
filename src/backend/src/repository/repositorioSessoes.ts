@@ -1,12 +1,12 @@
-import "dotenv/config";
-import { eq } from "drizzle-orm";
+import bancoDados from "../db";
 import {
-  tabelaSessoes,
   type InsertSessaoSchema,
   type SelectSessaoSchema,
+  tabelaSessoes,
 } from "../db/schema/sessoes";
-import bancoDados from "../db";
 import type { RefRegistro } from "./common";
+import "dotenv/config";
+import { eq } from "drizzle-orm";
 
 export class RepositorioSessoes {
   inserir(sessao: InsertSessaoSchema): Promise<RefRegistro[]> {

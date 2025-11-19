@@ -1,9 +1,9 @@
-import { Router, type NextFunction, type Response } from "express";
 import type { ExtendedRequest } from "../../middlewares";
 import servicoProdutos, {
   ParamsConsultaProdutosZ,
 } from "../../services/servicoProdutos";
 import { ParamsIdSchemaZ } from "./objects";
+import { type NextFunction, type Response, Router } from "express";
 
 const apiV1ProdutosRouter = Router();
 

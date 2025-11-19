@@ -1,21 +1,21 @@
+import { ClientError } from "./error";
+import { error } from "./logging";
 import {
-  Router,
+  type ExtendedRequest,
+  mdwAutenticacao,
+  mdwLoadSessionCookies,
+} from "./middlewares";
+import { mdwRequerBody, mdwSemBody } from "./middlewares";
+import {
+  CredenciaisSchemaZ,
+  ServicoAutenticacao,
+} from "./services/servicoAutenticacao";
+import {
   type NextFunction,
   type Request,
   type Response,
+  Router,
 } from "express";
-import { ClientError } from "./error";
-import {
-  ServicoAutenticacao,
-  CredenciaisSchemaZ,
-} from "./services/servicoAutenticacao";
-import { error } from "./logging";
-import {
-  mdwLoadSessionCookies,
-  mdwAutenticacao,
-  type ExtendedRequest,
-} from "./middlewares";
-import { mdwSemBody, mdwRequerBody } from "./middlewares";
 
 const authRouter = Router();
 

@@ -1,9 +1,9 @@
-import { sqliteTable, text, int, primaryKey } from "drizzle-orm/sqlite-core";
+import { Permissoes } from "../enums/permissoes";
 import { tabelaUsuarios } from "./usuarios";
 import { type InferSelectModel } from "drizzle-orm";
-import * as z4 from "zod/v4";
+import { int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-import { Permissoes } from "../enums/permissoes";
+import * as z4 from "zod/v4";
 
 export const tabelaPermissoes = sqliteTable(
   "permissoes",

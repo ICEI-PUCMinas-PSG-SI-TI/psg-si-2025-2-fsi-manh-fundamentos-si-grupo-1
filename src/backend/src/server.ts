@@ -1,16 +1,16 @@
-import express from "express";
 import apiRouter from "./api";
-import "dotenv/config";
-import { info, middlewareHTTP } from "./logging";
-import chalk from "chalk";
-import { mdwError } from "./error";
-import * as z4 from "zod/v4";
-import { inicializarAdministrador, verificarBancoDados } from "./db";
-import cookieParser from "cookie-parser";
 import authRouter from "./auth";
+import { inicializarAdministrador, verificarBancoDados } from "./db";
+import { mdwError } from "./error";
+import { info, middlewareHTTP } from "./logging";
 import { mdwRequestId } from "./middlewares";
+import chalk from "chalk";
+import cookieParser from "cookie-parser";
+import "dotenv/config";
+import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import * as z4 from "zod/v4";
 
 const app = express();
 const port = process.env.PORT || 8080;
