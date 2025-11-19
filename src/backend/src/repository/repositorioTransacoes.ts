@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { and, eq, type SQLWrapper } from "drizzle-orm";
+import { and, eq, type SQL, type SQLWrapper } from "drizzle-orm";
 import bancoDados from "../db";
 import {
   tabelaTransacoes,
@@ -11,7 +11,6 @@ import {
   QueryBuilder,
   type SQLiteSelectQueryBuilder,
 } from "drizzle-orm/sqlite-core";
-import type { SQL } from "bun";
 import type { RefRegistro } from "./common";
 
 class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
