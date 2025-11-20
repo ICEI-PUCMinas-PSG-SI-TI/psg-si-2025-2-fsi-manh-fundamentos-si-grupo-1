@@ -264,7 +264,9 @@ export class ServicoFaker {
       });
     }
 
-    await repositorioUnidadesMedida.inserir(...unidadesMedida);
+    await repositorioUnidadesMedida.inserirIgnorandoDuplicatas(
+      ...unidadesMedida,
+    );
     warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
   }
 
@@ -276,7 +278,7 @@ export class ServicoFaker {
       });
     }
 
-    await repositorioCategorias.inserir(...categorias);
+    await repositorioCategorias.inserirIgnorandoDuplicatas(...categorias);
     warning(`Criado ${quant} categorias.`, { label: "Faker" });
   }
 }

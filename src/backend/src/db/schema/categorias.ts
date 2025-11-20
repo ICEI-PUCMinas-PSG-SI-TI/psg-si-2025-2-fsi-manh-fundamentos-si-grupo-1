@@ -9,7 +9,7 @@ export const tabelaCategorias = sqliteTable("categorias", {
     .primaryKey()
     .notNull()
     .$defaultFn(() => crypto.randomUUID()),
-  nome: text().notNull(),
+  nome: text().notNull().unique(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .$defaultFn(() => new Date()),

@@ -14,9 +14,27 @@ export class RepositorioUnidadesMedida {
     ...unidadeMedida: InsertUnidadesMedidaSchema[]
   ): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaUnidadesMedida).values(unidadeMedida).returning({
-        id: tabelaUnidadesMedida.id,
-      });
+      return tx
+        .insert(tabelaUnidadesMedida)
+        .values(unidadeMedida)
+        .onConflictDoNothing()
+        .returning({
+          id: tabelaUnidadesMedida.id,
+        });
+    });
+  }
+
+  inserirIgnorandoDuplicatas(
+    ...unidadeMedida: InsertUnidadesMedidaSchema[]
+  ): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
+      return tx
+        .insert(tabelaUnidadesMedida)
+        .values(unidadeMedida)
+        .onConflictDoNothing()
+        .returning({
+          id: tabelaUnidadesMedida.id,
+        });
     });
   }
 

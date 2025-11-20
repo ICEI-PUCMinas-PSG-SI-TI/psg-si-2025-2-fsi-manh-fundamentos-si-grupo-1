@@ -16,6 +16,20 @@ export class RepositorioCategorias {
     });
   }
 
+  inserirIgnorandoDuplicatas(
+    ...unidadeMedida: InsertCategoriaSchema[]
+  ): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
+      return tx
+        .insert(tabelaCategorias)
+        .values(unidadeMedida)
+        .onConflictDoNothing()
+        .returning({
+          id: tabelaCategorias.id,
+        });
+    });
+  }
+
   selecionarPorId(id: string): Promise<SelectCategoriaSchema | undefined> {
     return bancoDados
       .select()

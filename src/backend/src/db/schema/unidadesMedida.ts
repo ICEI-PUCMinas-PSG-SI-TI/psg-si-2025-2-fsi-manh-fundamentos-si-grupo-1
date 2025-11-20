@@ -8,8 +8,8 @@ export const tabelaUnidadesMedida = sqliteTable("unidades_medida", {
     .primaryKey()
     .notNull()
     .$defaultFn(() => crypto.randomUUID()),
-  nome: text().notNull(),
-  abreviacao: text().notNull(),
+  nome: text().notNull().unique(),
+  abreviacao: text().notNull().unique(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .$defaultFn(() => new Date()),
