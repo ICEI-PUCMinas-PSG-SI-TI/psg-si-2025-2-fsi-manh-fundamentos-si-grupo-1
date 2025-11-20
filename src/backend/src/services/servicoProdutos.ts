@@ -21,7 +21,7 @@ export const ParamsInserirProdutosZ = InsertProdutosSchemaZ.pick({
   sku: true,
   codigoBarra: true,
   descricao: true,
-  categoria: true,
+  categoriaId: true,
   marca: true,
   fornecedor: true,
   dimensoes: true,
@@ -52,7 +52,7 @@ export const ParamsConsultaProdutosZ = z4.strictObject({
   pesoMin: z4.coerce.number().int().gt(0).optional(),
   pesoMax: z4.coerce.number().int().gt(0).optional(),
   texto: z4.string().min(1).optional(),
-  categoria: z4.uuid().optional(),
+  categoriaId: z4.uuid().optional(),
 });
 
 export type ParamsConsultaProdutos = z4.infer<typeof ParamsConsultaProdutosZ>;
@@ -89,7 +89,7 @@ export class ServicoProdutos {
   selecionarConsulta(opts?: ParamsConsultaProdutos) {
     const filtros = {
       comId: opts?.id,
-      comCategoria: opts?.categoria,
+      comCategoriaId: opts?.categoriaId,
       comTexto: opts?.texto,
       comPrecoCustoMaiorIgualQue: opts?.precoCustoMin,
       comPrecoCustoMenorIgualQue: opts?.precoCustoMax,
@@ -106,7 +106,7 @@ export class ServicoProdutos {
       filtros.paginaTamanho = opts?.paginaTamanho;
     }
 
-    const query = repositorioProdutos.selecionarConsultaComQuantidade(filtros);
+    const query = repositorioProdutos.selecionarConsultaCompleta(filtros);
     return query;
   }
 

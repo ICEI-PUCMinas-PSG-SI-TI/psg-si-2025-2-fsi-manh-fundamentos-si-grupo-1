@@ -1,4 +1,5 @@
 import bancoDados from "../db";
+import { tabelaCategorias } from "../db/schema/categorias";
 import { tabelaLotes } from "../db/schema/lotes";
 import {
   type InsertProdutosSchema,
@@ -37,7 +38,7 @@ export type RepoConsultaParamsProduto = {
   comPrecoPromocaoMenorIgualQue?: number;
   comPesoMaiorIgualQue?: number;
   comPesoMenorIgualQue?: number;
-  comCategoria?: string;
+  comCategoriaId?: string;
   comTexto?: string;
 };
 
@@ -106,8 +107,8 @@ export class RepositorioProdutos {
       gte(tabelaProdutos.peso, valor);
     const comPesoMenorIgualQue = (valor: number): SQL =>
       lte(tabelaProdutos.peso, valor);
-    const comCategoria = (categoria: string): SQL =>
-      eq(tabelaProdutos.categoria, categoria);
+    const comCategoriaId = (categoriaId: string): SQL =>
+      eq(tabelaProdutos.categoriaId, categoriaId);
     const comTexto = (texto: string): SQL => {
       const _texto = `%${texto}%`;
       return or(
@@ -115,11 +116,10 @@ export class RepositorioProdutos {
         like(tabelaProdutos.sku, _texto),
         like(tabelaProdutos.codigoBarra, _texto),
         like(tabelaProdutos.descricao, _texto),
-        // like(tabelaProdutos.categoria, _texto),
         like(tabelaProdutos.marca, _texto),
         like(tabelaProdutos.fornecedor, _texto),
+        like(tabelaProdutos.localizacao, _texto),
         // like(tabelaProdutos.dimensoes, _texto),
-        // like(tabelaProdutos.localizacao, _texto),
       )!;
     };
 
@@ -156,7 +156,9 @@ export class RepositorioProdutos {
           opts?.comPesoMenorIgualQue
             ? comPesoMenorIgualQue(opts.comPesoMenorIgualQue)
             : undefined,
-          opts?.comCategoria ? comCategoria(opts.comCategoria) : undefined,
+          opts?.comCategoriaId
+            ? comCategoriaId(opts.comCategoriaId)
+            : undefined,
           opts?.comTexto ? comTexto(opts.comTexto) : undefined,
         ),
       )
@@ -165,7 +167,7 @@ export class RepositorioProdutos {
       .execute();
   }
 
-  selecionarConsultaComQuantidade(
+  selecionarConsultaCompleta(
     opts?: RepoConsultaParamsProdutoQuantidade,
   ): Promise<SelectProdutosSchema[]> {
     const comId = (id: string): SQL => eq(tabelaProdutos.id, id);
@@ -185,8 +187,8 @@ export class RepositorioProdutos {
       gte(tabelaProdutos.peso, valor);
     const comPesoMenorIgualQue = (valor: number): SQL =>
       lte(tabelaProdutos.peso, valor);
-    const comCategoria = (categoria: string): SQL =>
-      eq(tabelaProdutos.categoria, categoria);
+    const comCategoriaId = (categoriaId: string): SQL =>
+      eq(tabelaProdutos.categoriaId, categoriaId);
     const comTexto = (texto: string): SQL => {
       const _texto = `%${texto}%`;
       return or(
@@ -194,11 +196,10 @@ export class RepositorioProdutos {
         like(tabelaProdutos.sku, _texto),
         like(tabelaProdutos.codigoBarra, _texto),
         like(tabelaProdutos.descricao, _texto),
-        // like(tabelaProdutos.categoria, _texto),
         like(tabelaProdutos.marca, _texto),
         like(tabelaProdutos.fornecedor, _texto),
+        like(tabelaProdutos.localizacao, _texto),
         // like(tabelaProdutos.dimensoes, _texto),
-        // like(tabelaProdutos.localizacao, _texto),
       )!;
     };
 
@@ -216,9 +217,14 @@ export class RepositorioProdutos {
         quantidade: sql<number>`sum(${tabelaLotes.quantidade})`.as(
           "quantidade_total",
         ),
+        categoria: tabelaCategorias.nome,
       })
       .from(tabelaProdutos)
       .leftJoin(tabelaLotes, eq(tabelaProdutos.id, tabelaLotes.produtoId))
+      .leftJoin(
+        tabelaCategorias,
+        eq(tabelaProdutos.categoriaId, tabelaCategorias.id),
+      )
       .groupBy(tabelaProdutos.id)
       .orderBy(asc(tabelaProdutos.id))
       .having(
@@ -258,7 +264,9 @@ export class RepositorioProdutos {
           opts?.comPesoMenorIgualQue
             ? comPesoMenorIgualQue(opts.comPesoMenorIgualQue)
             : undefined,
-          opts?.comCategoria ? comCategoria(opts.comCategoria) : undefined,
+          opts?.comCategoriaId
+            ? comCategoriaId(opts.comCategoriaId)
+            : undefined,
           opts?.comTexto ? comTexto(opts.comTexto) : undefined,
         ),
       )

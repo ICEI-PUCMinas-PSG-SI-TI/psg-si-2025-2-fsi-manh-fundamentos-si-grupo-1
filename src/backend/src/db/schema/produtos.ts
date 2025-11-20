@@ -19,9 +19,6 @@ export const tabelaProdutos = sqliteTable("produtos", {
   sku: text(),
   codigoBarra: text("codigo_barra"),
   descricao: text(),
-  // TODO: Futuramente criar uma outra tabela de relação produto x categoria e
-  // remover campo
-  categoria: text(),
   categoriaId: text().references(() => tabelaCategorias.id),
   marca: text(),
   fornecedor: text(),
@@ -62,7 +59,6 @@ export const UpdateProdutosSchemaZ = z4.strictObject({
   sku: z4.string().optional(),
   codigoBarra: z4.string().optional(),
   descricao: z4.string().optional(),
-  categoria: z4.string().optional(),
   marca: z4.string().optional(),
   fornecedor: z4.string().optional(),
   dimensoes: z4.string().optional(),

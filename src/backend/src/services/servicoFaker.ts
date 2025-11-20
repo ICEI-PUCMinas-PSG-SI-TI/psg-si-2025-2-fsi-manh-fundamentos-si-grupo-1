@@ -193,7 +193,6 @@ export class ServicoFaker {
         sku: fakerLote(),
         codigoBarra: fakerLote(),
         descricao: fakerPT_BR.commerce.productDescription(),
-        categoria: fakerPT_BR.commerce.department(),
         categoriaId: categorias[i]!.id,
         marca: fakerPT_BR.company.name(),
         fornecedor: fakerPT_BR.company.name(),
@@ -314,7 +313,7 @@ export class ServicoFaker {
     const categorias = [];
     for (let i = 0; i < quant; i++) {
       categorias.push({
-        nome: faker.commerce.department(),
+        nome: fakerPT_BR.commerce.department(),
       });
     }
 

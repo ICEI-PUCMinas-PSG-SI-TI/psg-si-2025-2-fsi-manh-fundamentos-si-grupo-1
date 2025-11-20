@@ -54,7 +54,7 @@
             <td class="p-2">{{ produto.codigo }}</td>
             <td class="p-2">{{ produto.nome }}</td>
             <td class="p-2">{{ produto.categoria }}</td>
-            <td class="p-2">{{ produto.quantidade || 'N/A' }}</td>
+            <td class="p-2">{{ produto.quantidade || '0' }}</td>
             <td class="p-2">
               R$
               {{
@@ -134,6 +134,7 @@ const showModal = ref(false)
 // const modalMode = ref('create')
 
 type SelectProdutosSchemaEx = SelectProdutosSchema & {
+  categoria?: string
   quantidade?: number
 }
 
@@ -202,15 +203,22 @@ const apiCategorias = new ApiCategorias()
 
 async function obterProdutos() {
   if (search.value.length > 0 || categoriaFilter.value.length > 0) {
-    const body: { texto?: string; categorias?: string } = {}
+    const body: { texto?: string; categoriaId?: string; pagina?: number; paginaTamanho?: number } =
+      {
+        pagina: 1,
+        paginaTamanho: 100,
+      }
     if (search.value.length > 0) body.texto = search.value
-    if (categoriaFilter.value.length > 0) body.texto = categoriaFilter.value
+    if (categoriaFilter.value.length > 0) body.categoriaId = categoriaFilter.value
     const res = await apiProdutos.obterTodos(body)
     if (res.ok && res.responseBody) {
       refProdutos.value = res.responseBody
     }
   } else {
-    const res = await apiProdutos.obterTodos()
+    const res = await apiProdutos.obterTodos({
+      pagina: 1,
+      paginaTamanho: 100,
+    })
     if (res.ok && res.responseBody) {
       refProdutos.value = res.responseBody
     }
