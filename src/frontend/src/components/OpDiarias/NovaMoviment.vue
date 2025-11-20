@@ -1,15 +1,15 @@
 <template>
-  <div
-    class="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-md z-50 p-4"
-  >
-    <CardComponent class="w-full max-w-xl p-6 bg-base-200 rounded-2xl shadow-xl border border-gray-300">
+  <div class="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-md z-50 p-4">
+    <CardComponent
+      class="w-full max-w-xl p-6 bg-base-200 rounded-2xl shadow-xl border border-gray-300"
+    >
       <!-- Título -->
       <CardTitleBar title="Inserir Nova Movimentação" />
 
       <!-- Formulário -->
       <form class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         <LabeledInput
-          class="w-full "
+          class="w-full"
           html-type="text"
           label-text="Produto"
           html-place-holder="Digite o nome do produto"
@@ -25,7 +25,6 @@
           html-type="number"
           label-text="Quantidade"
           html-place-holder="0"
-
         />
         <LabeledInput
           class="w-full md:col-span-2"
@@ -58,10 +57,7 @@
         >
           Cancelar
         </ButtonComponent>
-        <ButtonComponent
-          class="bg-green-500 text-white hover:bg-green-600 transition-colors"
-
-        >
+        <ButtonComponent class="bg-green-500 text-white hover:bg-green-600 transition-colors">
           Confirmar
         </ButtonComponent>
       </div>
@@ -76,6 +72,4 @@ import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
 
 const visivel = defineModel()
-
-
 </script>
