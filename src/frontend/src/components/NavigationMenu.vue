@@ -4,7 +4,6 @@ import {
   ArrowsUpDownIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
-  PresentationChartBarIcon,
   UsersIcon,
 } from '@heroicons/vue/24/outline'
 import NavigationMenuItem from './NavigationMenuItem.vue'
@@ -27,13 +26,6 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
 
       <NavigationMenuItemSeparator />
 
-      <RouterLink to="/dashboard" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <PresentationChartBarIcon class="m-2" />
-          Dashboard
-        </NavigationMenuItem>
-      </RouterLink>
-
       <RouterLink to="/operacoes" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
           <ArrowsUpDownIcon class="m-2" />
@@ -54,31 +46,6 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
           Produtos
         </NavigationMenuItem>
       </RouterLink>
-
-      <!-- TODO: Funcionalidade não será implementada no momento (sprint 3)
-      <NavigationMenuItemSeparator />
-
-      <RouterLink to="/relatorio_1" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 1
-        </NavigationMenuItem>
-      </RouterLink>
-
-      <RouterLink to="/relatorio_2" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 2
-        </NavigationMenuItem>
-      </RouterLink>
-
-      <RouterLink to="/relatorio_3" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 3
-        </NavigationMenuItem>
-      </RouterLink>
-      -->
 
       <NavigationMenuItemSeparator />
 

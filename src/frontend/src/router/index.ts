@@ -1,4 +1,3 @@
-import DashboardView from '@/views/DashboardView.vue'
 import PesquisaProdutosView from '@/views/PesquisaProdutosView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MovimentacoesView from '@/views/MovimentacoesView.vue'
@@ -18,7 +17,7 @@ const router = createRouter({
     {
       name: 'start',
       path: '/',
-      redirect: '/dashboard',
+      redirect: '/operacoes',
     },
     {
       name: 'loading',
@@ -29,14 +28,6 @@ const router = createRouter({
       name: 'login',
       path: '/login',
       component: LoginView,
-    },
-    {
-      name: 'dashboard',
-      path: '/dashboard',
-      component: DashboardView,
-      meta: {
-        requerAutenticacao: true,
-      },
     },
     {
       // Página de controle de estoque (registra entradas e saidas).
@@ -64,30 +55,6 @@ const router = createRouter({
         requerAutenticacao: true,
       },
     },
-    // TODO: Funcionalidade não será implementada no momento (sprint 3)
-    /*
-    {
-      path: '/relatorio_1',
-      component: NotImplementedView,
-      meta: {
-        requerAutenticacao: true,
-      },
-    },
-    {
-      path: '/relatorio_2',
-      component: NotImplementedView,
-      meta: {
-        requerAutenticacao: true,
-      },
-    },
-    {
-      path: '/relatorio_3',
-      component: NotImplementedView,
-      meta: {
-        requerAutenticacao: true,
-      },
-    },
-    */
     {
       name: 'usuarios',
       path: '/usuarios',
@@ -158,7 +125,7 @@ router.beforeEach((to, _from, next: NavigationGuardNext) => {
     if (permitido) {
       next()
     } else {
-      next({ name: 'dashboard' })
+      next({ name: 'operacoes' })
     }
   } else {
     next()
