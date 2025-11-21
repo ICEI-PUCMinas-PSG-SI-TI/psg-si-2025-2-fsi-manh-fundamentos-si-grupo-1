@@ -1,23 +1,32 @@
-import servicoConfiguracoes from "../services/servicoConfiguracoes";
-import { Identificador } from "./enums/identificador";
+// import servicoConfiguracoes from "../services/servicoConfiguracoes";
+import {
+  Identificador,
+  alfabetoHexadecimal,
+  alfabetoNumerico,
+  alfabetoSeguro,
+} from "./enums/identificador";
 import { customAlphabet } from "nanoid";
 
-const config = await servicoConfiguracoes.selecionar();
+// const config = await servicoConfiguracoes.selecionar();
+
+const config = {
+  identificador: Identificador.Seguro,
+};
 
 function creteNanoId(identificador: Identificador): (size?: number) => string {
   let alphabet: string, size: number;
   switch (identificador) {
     case Identificador.Hexadecimal:
-      alphabet = "0123456789ABCDEF";
+      alphabet = alfabetoHexadecimal;
       size = 7;
       break;
-    case Identificador.Numero:
-      alphabet = "0123456789";
+    case Identificador.Numerico:
+      alphabet = alfabetoNumerico;
       size = 10;
       break;
     default:
       // or Identificador.Seguro:
-      alphabet = "6789BCDFGHJKMNPQRTW";
+      alphabet = alfabetoSeguro;
       size = 6;
       break;
   }

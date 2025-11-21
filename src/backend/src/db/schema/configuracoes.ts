@@ -15,7 +15,7 @@ export const tabelaConfiguracoes = sqliteTable("configuracoes", {
   endereco: text(),
   identificador: text({
     enum: [
-      Identificador.Numero,
+      Identificador.Numerico,
       Identificador.Hexadecimal,
       Identificador.Seguro,
     ],

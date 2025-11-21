@@ -1,4 +1,5 @@
 import { COOKIE_SESSION_TOKEN } from "./auth";
+import { alfabetoHexadecimal } from "./db/enums/identificador";
 import { Permissoes } from "./db/enums/permissoes";
 import { ClientError } from "./error";
 import { error, warning } from "./logging";
@@ -6,6 +7,7 @@ import servicoAutenticacao, {
   type UserSessionInfo,
 } from "./services/servicoAutenticacao";
 import type { NextFunction, Request, Response } from "express";
+import { customAlphabet } from "nanoid";
 
 export type Cookies = {
   tokenSessao?: string;
@@ -112,20 +114,14 @@ export function mdwPermissoes(...perms: Permissoes[]) {
   };
 }
 
+const createRequestId = customAlphabet(alfabetoHexadecimal, 4);
+
 export function mdwRequestId(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
 ): void {
-  // Source - https://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
-  // Posted by kennytm
-  // Retrieved 11/5/2025, License - CC-BY-SA 4.0
-
-  const firstPart = (Math.random() * 46656) | 0;
-  const secondPart = (Math.random() * 46656) | 0;
-  req._requestId =
-    ("000" + firstPart.toString(36)).slice(-3) +
-    ("000" + secondPart.toString(36)).slice(-3);
+  req._requestId = createRequestId();
   next();
 }
 
