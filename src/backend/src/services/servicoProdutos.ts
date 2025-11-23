@@ -1,5 +1,8 @@
 import { debug } from "../logging";
-import { RepositorioProdutos } from "../repository/repositorioProdutos";
+import {
+  RepositorioProdutos,
+  type RepoConsultaParamsProdutoQuantidade,
+} from "../repository/repositorioProdutos";
 import {
   InsertProdutosSchemaZ,
   type InsertProdutosSchema,
@@ -75,48 +78,31 @@ export class ServicoProdutos {
     }
   }
 
-  // TODO: reformular função ou adicionar tipagem correta
+  // HACK: Criar DTO para essa função
+  // TODO: Criar DTO para essa função
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async selecionarConsulta(opts: ParamsConsultaProdutos) {
-    let query = repositorioProdutos.selecionarQueryComLotes();
-    if (opts) {
-      if (opts.id) {
-        query = query.comId(opts.id);
-      }
-      query = query.comPaginacao(opts.pagina, opts.paginaTamanho);
-      if (opts.precoCustoMin) {
-        query = query.comPrecoCustoMaiorIgualQue(opts.precoCustoMin);
-      }
-      if (opts.precoCustoMax) {
-        query = query.comPrecoCustoMenorIgualQue(opts.precoCustoMax);
-      }
-      if (opts.precoVendaMin) {
-        query = query.comPrecoVendaMaiorIgualQue(opts.precoVendaMin);
-      }
-      if (opts.precoVendaMax) {
-        query = query.comPrecoVendaMenorIgualQue(opts.precoVendaMax);
-      }
-      if (opts.precoPromocaoMin) {
-        query = query.comPrecoPromocaoMaiorIgualQue(opts.precoPromocaoMin);
-      }
-      if (opts.precoPromocaoMax) {
-        query = query.comPrecoPromocaoMenorIgualQue(opts.precoPromocaoMax);
-      }
-      if (opts.pesoMin) {
-        query = query.comPesoMaiorIgualQue(opts.pesoMin);
-      }
-      if (opts.pesoMax) {
-        query = query.comPesoMenorIgualQue(opts.pesoMax);
-      }
-      if (opts.categoria) {
-        query = query.comCategoria(opts.categoria);
-      }
-      if (opts.texto) {
-        query = query.comTexto(opts.texto);
-      }
+  selecionarConsulta(opts?: ParamsConsultaProdutos) {
+    const filtros = {
+      comId: opts?.id,
+      comCategoria: opts?.categoria,
+      comTexto: opts?.texto,
+      comPrecoCustoMaiorIgualQue: opts?.precoCustoMin,
+      comPrecoCustoMenorIgualQue: opts?.precoCustoMax,
+      comPrecoVendaMaiorIgualQue: opts?.precoVendaMin,
+      comPrecoVendaMenorIgualQue: opts?.precoVendaMax,
+      comPrecoPromocaoMaiorIgualQue: opts?.precoPromocaoMin,
+      comPrecoPromocaoMenorIgualQue: opts?.precoPromocaoMax,
+      comPesoMaiorIgualQue: opts?.pesoMin,
+      comPesoMenorIgualQue: opts?.pesoMax,
+    } as RepoConsultaParamsProdutoQuantidade;
+
+    if (opts?.pagina && opts?.paginaTamanho) {
+      filtros.pagina = opts?.pagina;
+      filtros.paginaTamanho = opts?.paginaTamanho;
     }
-    const res = await query.executarConsulta();
-    return res;
+
+    const query = repositorioProdutos.selecionarConsultaComQuantidade(filtros);
+    return query;
   }
 
   selecionarTodos(): Promise<SelectProdutosSchema[]> {

@@ -1,15 +1,19 @@
 import * as z4 from "zod/v4";
 import { debug } from "../logging";
-import { RepositorioLotes } from "../repository/repositorioLotes";
 import type {
   InsertLoteSchema,
   SelectLoteSchema,
   UpdateLoteSchema,
 } from "../db/schema/lotes";
+import {
+  RepositorioLotes,
+  type RepoConsultaParamsLote,
+} from "../repository/repositorioLotes";
+
 import { HttpError } from "../error";
 import type { UuidResult } from "../api/v1/objects";
 
-export const LoteConsultaSchema = z4.strictObject({
+export const LoteConsultaSchema = z4.object({
   id: z4.uuid().optional(),
   produtoId: z4.uuid().optional(),
   pagina: z4.coerce.number().int().gt(0).optional(),
@@ -43,39 +47,30 @@ export class ServicoLotes {
     }
   }
 
-  // TODO: reformular função ou adicionar tipagem correta
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async selecionarConsulta(opts?: LoteConsultaZ) {
-    let query = repositorioLotes.selecionarQuery();
-    if (opts) {
-      if (opts.id) {
-        query = query.comId(opts.id);
-      }
-      if (opts.produtoId) {
-        query = query.comProdutoId(opts.produtoId);
-      }
-      if (opts.codigo) {
-        query = query.comCodigo(opts.codigo);
-      }
-      query = query.comPaginacao(opts.pagina, opts.paginaTamanho);
-      if (opts.validadeApos) {
-        const validadeApos = new Date(opts.validadeApos);
-        query = query.comValidadeMaiorIgualQue(validadeApos);
-      }
-      if (opts.validadeAte) {
-        const validadeAte = new Date(opts.validadeAte);
-        query = query.comValidadeMenorIgualQue(validadeAte);
-      }
-      if (opts.quantidadeMin) {
-        query = query.comQuantidadeMaiorIgualQue(opts.quantidadeMin);
-      }
-      if (opts.quantidadeMax) {
-        query = query.comQuantidadeMenorIgualQue(opts.quantidadeMax);
-      }
+  selecionarConsulta(opts?: LoteConsultaZ): Promise<SelectLoteSchema[]> {
+    const filters = {
+      comId: opts?.id,
+      comProdutoId: opts?.produtoId,
+      comCodigo: opts?.codigo,
+      comQuantidadeMaiorIgualQue: opts?.quantidadeMin,
+      comQuantidadeMenorIgualQue: opts?.quantidadeMax,
+    } as RepoConsultaParamsLote;
+
+    if (opts?.validadeApos) {
+      const validadeApos = new Date(opts.validadeApos);
+      filters.comValidadeMaiorIgualQue = validadeApos;
     }
-    const res = await query.executarConsulta();
+    if (opts?.validadeAte) {
+      const validadeAte = new Date(opts.validadeAte);
+      filters.comValidadeMenorIgualQue = validadeAte;
+    }
+    if (opts?.pagina && opts?.paginaTamanho) {
+      filters.pagina = opts?.pagina;
+      filters.paginaTamanho = opts?.paginaTamanho;
+    }
+    const query = repositorioLotes.selecionarConsulta(filters);
     debug(`Retornando lotes selecionados`, { label: "LoteService" });
-    return res;
+    return query;
   }
 
   async selecionarTodos(): Promise<SelectLoteSchema[]> {

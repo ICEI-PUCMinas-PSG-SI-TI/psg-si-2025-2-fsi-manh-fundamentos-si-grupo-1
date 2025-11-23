@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { and, eq, type SQL, type SQLWrapper } from "drizzle-orm";
+import { and, eq, type SQL } from "drizzle-orm";
 import bancoDados from "../db";
 import {
   tabelaTransacoes,
@@ -7,68 +7,18 @@ import {
   type SelectTransacoesSchema,
   type UpdateTransacoesSchema,
 } from "../db/schema/transacoes";
-import {
-  QueryBuilder,
-  type SQLiteSelectQueryBuilder,
-} from "drizzle-orm/sqlite-core";
 import type { RefRegistro } from "./common";
 
-class RespositorioTransacoesConsulta<T extends SQLiteSelectQueryBuilder> {
-  _query: T;
-  _whereAnd: SQLWrapper[];
-  _whereOr: SQL[];
-
-  constructor(queryBase: T) {
-    this._query = queryBase;
-    this._whereAnd = [];
-    this._whereOr = [];
-  }
-
-  comPaginacao(
-    pagina: number = 1,
-    paginaTamanho: number = 10,
-  ): RespositorioTransacoesConsulta<T> {
-    this._query = this._query
-      .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
-    return this;
-  }
-
-  comId(id: string): RespositorioTransacoesConsulta<T> {
-    this._whereAnd.push(eq(tabelaTransacoes.id, id));
-    return this;
-  }
-
-  comProdutoId(id: string): RespositorioTransacoesConsulta<T> {
-    this._whereAnd.push(eq(tabelaTransacoes.produtoId, id));
-    return this;
-  }
-
-  comUsuarioId(id: string): RespositorioTransacoesConsulta<T> {
-    this._whereAnd.push(eq(tabelaTransacoes.usuarioId, id));
-    return this;
-  }
-
-  comLoteId(id: string): RespositorioTransacoesConsulta<T> {
-    this._whereAnd.push(eq(tabelaTransacoes.loteId, id));
-    return this;
-  }
-
-  comDataMaiorQue(data: Date): RespositorioTransacoesConsulta<T> {
-    this._whereAnd.push(eq(tabelaTransacoes.horario, data));
-    return this;
-  }
-
-  comDataMenorQue(data: Date): RespositorioTransacoesConsulta<T> {
-    this._whereAnd.push(eq(tabelaTransacoes.horario, data));
-    return this;
-  }
-
-  executarConsulta(): Promise<SelectTransacoesSchema[]> {
-    this._query.where(and(...this._whereAnd));
-    return bancoDados.all(this._query.getSQL());
-  }
-}
+export type RepoConsultaParamsTransacoes = {
+  pagina?: number;
+  paginaTamanho?: number;
+  comId?: string;
+  comProdutoId?: string;
+  comUsuarioId?: string;
+  comLoteId?: string;
+  comDataMaiorQue?: Date;
+  comDataMenorQue?: Date;
+};
 
 export class RepositorioTransacoes {
   inserir(...transacao: InsertTransacoesSchema[]): Promise<RefRegistro[]> {
@@ -102,12 +52,42 @@ export class RepositorioTransacoes {
       .offset((pagina - 1) * paginaTamanho);
   }
 
-  selecionarQuery(): RespositorioTransacoesConsulta<SQLiteSelectQueryBuilder> {
-    const queryBase = new QueryBuilder()
+  selecionarConsulta(
+    opts?: RepoConsultaParamsTransacoes,
+  ): Promise<SelectTransacoesSchema[]> {
+    const comId = (id: string): SQL => eq(tabelaTransacoes.id, id);
+    const comProdutoId = (id: string): SQL =>
+      eq(tabelaTransacoes.produtoId, id);
+    const comUsuarioId = (id: string): SQL =>
+      eq(tabelaTransacoes.usuarioId, id);
+    const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
+    const comDataMaiorQue = (data: Date): SQL =>
+      eq(tabelaTransacoes.horario, data);
+    const comDataMenorQue = (data: Date): SQL =>
+      eq(tabelaTransacoes.horario, data);
+
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
       .select()
       .from(tabelaTransacoes)
-      .$dynamic();
-    return new RespositorioTransacoesConsulta(queryBase);
+      .where(
+        and(
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comProdutoId ? comProdutoId(opts.comProdutoId) : undefined,
+          opts?.comUsuarioId ? comUsuarioId(opts.comUsuarioId) : undefined,
+          opts?.comLoteId ? comLoteId(opts.comLoteId) : undefined,
+          opts?.comDataMaiorQue
+            ? comDataMaiorQue(opts.comDataMaiorQue)
+            : undefined,
+          opts?.comDataMenorQue
+            ? comDataMenorQue(opts.comDataMenorQue)
+            : undefined,
+        ),
+      )
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   atualizarPorId(id: string, sessao: UpdateTransacoesSchema): Promise<number> {

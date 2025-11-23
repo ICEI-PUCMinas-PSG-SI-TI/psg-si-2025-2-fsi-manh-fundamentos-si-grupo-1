@@ -1,4 +1,4 @@
-import { and, count, eq, type SQLWrapper } from "drizzle-orm";
+import { and, count, eq, SQL } from "drizzle-orm";
 import bancoDados from "../db";
 import { tabelaUsuarios } from "../db/schema/usuarios";
 import type {
@@ -6,46 +6,14 @@ import type {
   SelectUsuarioSchema,
   UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
-import {
-  QueryBuilder,
-  type SQLiteSelectQueryBuilder,
-} from "drizzle-orm/sqlite-core";
 import type { Count, RefRegistro } from "./common";
 
-class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
-  _query: T;
-  _where: SQLWrapper[];
-
-  constructor(queryBase: T) {
-    this._query = queryBase;
-    this._where = [];
-  }
-
-  comPaginacao(
-    pagina: number = 1,
-    paginaTamanho: number = 10,
-  ): RepositorioLotesConsulta<T> {
-    this._query = this._query
-      .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
-    return this;
-  }
-
-  comId(id: string): RepositorioLotesConsulta<T> {
-    this._where.push(eq(tabelaUsuarios.id, id));
-    return this;
-  }
-
-  comLogin(login: string): RepositorioLotesConsulta<T> {
-    this._where.push(eq(tabelaUsuarios.login, login));
-    return this;
-  }
-
-  executarConsulta(): Promise<SelectUsuarioSchema[]> {
-    this._query.where(and(...this._where));
-    return bancoDados.all(this._query.getSQL());
-  }
-}
+export type RepoConsultaParamsUsuarios = {
+  pagina?: number;
+  paginaTamanho?: number;
+  comId?: string;
+  comLogin?: string;
+};
 
 export class RepositorioUsuarios {
   inserir(...usuario: InsertUsuarioSchema[]): Promise<RefRegistro[]> {
@@ -87,12 +55,27 @@ export class RepositorioUsuarios {
       .get();
   }
 
-  selecionarQuery(): RepositorioLotesConsulta<SQLiteSelectQueryBuilder> {
-    const queryBase = new QueryBuilder()
+  selecionarQuery(
+    opts?: RepoConsultaParamsUsuarios,
+  ): Promise<SelectUsuarioSchema[]> {
+    const comId = (id: string): SQL => eq(tabelaUsuarios.id, id);
+    const comLogin = (login: string): SQL => eq(tabelaUsuarios.login, login);
+
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
       .select()
       .from(tabelaUsuarios)
-      .$dynamic();
-    return new RepositorioLotesConsulta(queryBase);
+      .where(
+        and(
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comLogin ? comLogin(opts.comLogin) : undefined,
+        ),
+      )
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarIdsTodos(): Promise<RefRegistro[]> {

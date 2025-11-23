@@ -1,11 +1,7 @@
 import "dotenv/config";
-import { and, count, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
+import { and, count, eq, gte, like, lte, SQL } from "drizzle-orm";
 import { tabelaLotes } from "../db/schema/lotes";
 import bancoDados from "../db";
-import {
-  QueryBuilder,
-  type SQLiteSelectQueryBuilder,
-} from "drizzle-orm/sqlite-core";
 import type {
   InsertLoteSchema,
   SelectLoteSchema,
@@ -13,66 +9,17 @@ import type {
 } from "../db/schema/lotes";
 import type { Count, RefRegistro } from "./common";
 
-// TODO(!scope): Prevent calling where functions more than 1 time
-class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
-  _query: T;
-  _where: SQLWrapper[];
-
-  constructor(queryBase: T) {
-    this._query = queryBase;
-    this._where = [];
-  }
-
-  comPaginacao(
-    pagina: number = 1,
-    paginaTamanho: number = 10,
-  ): RepositorioLotesConsulta<T> {
-    this._query = this._query
-      .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
-    return this;
-  }
-
-  comId(id: string): RepositorioLotesConsulta<T> {
-    this._where.push(eq(tabelaLotes.id, id));
-    return this;
-  }
-
-  comProdutoId(id: string): RepositorioLotesConsulta<T> {
-    this._where.push(eq(tabelaLotes.produtoId, id));
-    return this;
-  }
-
-  comValidadeMaiorIgualQue(data: Date): RepositorioLotesConsulta<T> {
-    this._where.push(gte(tabelaLotes.validade, data));
-    return this;
-  }
-
-  comValidadeMenorIgualQue(data: Date): RepositorioLotesConsulta<T> {
-    this._where.push(lte(tabelaLotes.validade, data));
-    return this;
-  }
-
-  comQuantidadeMaiorIgualQue(valor: number): RepositorioLotesConsulta<T> {
-    this._where.push(gte(tabelaLotes.quantidade, valor));
-    return this;
-  }
-
-  comQuantidadeMenorIgualQue(valor: number): RepositorioLotesConsulta<T> {
-    this._where.push(lte(tabelaLotes.quantidade, valor));
-    return this;
-  }
-
-  comCodigo(lote: string): RepositorioLotesConsulta<T> {
-    this._where.push(like(tabelaLotes.codigo, `%${lote}%`));
-    return this;
-  }
-
-  executarConsulta(): Promise<SelectLoteSchema[]> {
-    this._query.where(and(...this._where));
-    return bancoDados.all(this._query.getSQL());
-  }
-}
+export type RepoConsultaParamsLote = {
+  pagina?: number;
+  paginaTamanho?: number;
+  comCodigo?: string;
+  comId?: string;
+  comProdutoId?: string;
+  comValidadeMaiorIgualQue?: Date;
+  comValidadeMenorIgualQue?: Date;
+  comQuantidadeMaiorIgualQue?: number;
+  comQuantidadeMenorIgualQue?: number;
+};
 
 export class RepositorioLotes {
   inserir(...lote: InsertLoteSchema[]): Promise<RefRegistro[]> {
@@ -106,9 +53,50 @@ export class RepositorioLotes {
       .offset((pagina - 1) * paginaTamanho);
   }
 
-  selecionarQuery(): RepositorioLotesConsulta<SQLiteSelectQueryBuilder> {
-    const queryBase = new QueryBuilder().select().from(tabelaLotes).$dynamic();
-    return new RepositorioLotesConsulta(queryBase);
+  selecionarConsulta(
+    opts?: RepoConsultaParamsLote,
+  ): Promise<SelectLoteSchema[]> {
+    const comCodigo = (lote: string): SQL =>
+      like(tabelaLotes.codigo, `%${lote}%`);
+    const comId = (id: string): SQL => eq(tabelaLotes.id, id);
+    const comProdutoId = (id: string): SQL => eq(tabelaLotes.produtoId, id);
+    const comValidadeMaiorIgualQue = (data: Date): SQL =>
+      gte(tabelaLotes.validade, data);
+    const comValidadeMenorIgualQue = (data: Date): SQL =>
+      lte(tabelaLotes.validade, data);
+    const comQuantidadeMaiorIgualQue = (valor: number): SQL =>
+      gte(tabelaLotes.quantidade, valor);
+    const comQuantidadeMenorIgualQue = (valor: number): SQL =>
+      lte(tabelaLotes.quantidade, valor);
+
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
+      .select()
+      .from(tabelaLotes)
+      .where(
+        and(
+          opts?.comCodigo ? comCodigo(opts.comCodigo) : undefined,
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comProdutoId ? comProdutoId(opts.comProdutoId) : undefined,
+          opts?.comValidadeMaiorIgualQue
+            ? comValidadeMaiorIgualQue(opts.comValidadeMaiorIgualQue)
+            : undefined,
+          opts?.comValidadeMenorIgualQue
+            ? comValidadeMenorIgualQue(opts.comValidadeMenorIgualQue)
+            : undefined,
+          opts?.comQuantidadeMaiorIgualQue
+            ? comQuantidadeMaiorIgualQue(opts.comQuantidadeMaiorIgualQue)
+            : undefined,
+          opts?.comQuantidadeMenorIgualQue
+            ? comQuantidadeMenorIgualQue(opts.comQuantidadeMenorIgualQue)
+            : undefined,
+        ),
+      )
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarIdProdutosTodos(): Promise<{ id: string; produtoId: string }[]> {

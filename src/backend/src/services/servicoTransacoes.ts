@@ -1,5 +1,8 @@
 import * as z4 from "zod/v4";
-import { RepositorioTransacoes } from "../repository/repositorioTransacoes";
+import {
+  RepositorioTransacoes,
+  type RepoConsultaParamsTransacoes,
+} from "../repository/repositorioTransacoes";
 import { debug } from "../logging";
 import type {
   InsertTransacoesSchema,
@@ -34,34 +37,30 @@ export class ServicoTransacoes {
     return res[0];
   }
 
-  // TODO: reformular função ou adicionar tipagem correta
+  // HACK: Criar DTO para essa função
+  // TODO: Criar DTO para essa função
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async selecionarConsulta(opts?: ParamsConsultaTransacoes) {
-    let query = repositorioTransacoes.selecionarQuery();
-    if (opts) {
-      if (opts.id) {
-        query = query.comId(opts.id);
-      }
-      if (opts.produtoId) {
-        query = query.comProdutoId(opts.produtoId);
-      }
-      if (opts.usuarioId) {
-        query = query.comUsuarioId(opts.usuarioId);
-      }
-      if (opts.loteId) {
-        query = query.comLoteId(opts.loteId);
-      }
-      query = query.comPaginacao(opts.pagina, opts.paginaTamanho);
-      if (opts.dataApos) {
-        query = query.comDataMaiorQue(opts.dataApos);
-      }
-      if (opts.dataAntes) {
-        query = query.comDataMenorQue(opts.dataAntes);
-      }
+  selecionarConsulta(opts?: ParamsConsultaTransacoes) {
+    const filtros = {
+      comId: opts?.id,
+      comProdutoId: opts?.produtoId,
+      comUsuarioId: opts?.usuarioId,
+      comLoteId: opts?.loteId,
+    } as RepoConsultaParamsTransacoes;
+
+    if (opts?.dataApos) {
+      filtros.comDataMaiorQue = new Date(opts.dataApos);
     }
-    const res = await query.executarConsulta();
+    if (opts?.dataAntes) {
+      filtros.comDataMenorQue = new Date(opts.dataAntes);
+    }
+    if (opts?.pagina && opts?.paginaTamanho) {
+      filtros.pagina = opts?.pagina;
+      filtros.paginaTamanho = opts?.paginaTamanho;
+    }
+
     debug(`Retornando transações selecionadas`, { label: "ServTransacoes" });
-    return res;
+    return repositorioTransacoes.selecionarConsulta(filtros);
   }
 
   selecionarTodos(): Promise<SelectTransacoesSchema[]> {
