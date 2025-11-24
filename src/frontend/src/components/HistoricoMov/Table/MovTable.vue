@@ -20,7 +20,10 @@ const refMovimentacoes: Ref<
 > = ref([])
 
 async function obterMovimentacoes() {
-  const res = await movimentacoes.obterTodos()
+  const res = await movimentacoes.obterTodos({
+    pagina: 1,
+    paginaTamanho: 100,
+  })
   if (res.ok && res.responseBody) {
     refMovimentacoes.value = res.responseBody as []
   }

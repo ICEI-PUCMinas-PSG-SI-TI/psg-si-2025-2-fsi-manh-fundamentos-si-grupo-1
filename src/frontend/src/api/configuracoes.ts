@@ -1,6 +1,7 @@
 import { fetchW, HttpMethods } from './fetchWrapper'
 import type { ParamsInserirConfiguracoes } from '../../../backend'
 import type { SelectConfiguracaoSchema } from '../../../backend/src/db/schema/configuracoes'
+import type { Identificador } from '../../../backend/src/db/enums/identificador'
 
 const endpoint_path = `/api/v1/configuracoes`
 
@@ -19,5 +20,12 @@ export class ApiConfiguracoes {
 
   ping() {
     return fetchW('/ping')
+  }
+
+  alterarIdentificador(identificador: Identificador) {
+    return fetchW(`${endpoint_path}/codigo`, {
+      method: HttpMethods.Patch,
+      body: { identificador },
+    })
   }
 }

@@ -3,6 +3,9 @@ import { UpdateConfiguracaoSchemaZ } from "../../db/schema/configuracoes";
 import { mdwRequerBody } from "../../middlewares";
 import servicoConfiguracoes from "../../services/servicoConfiguracoes";
 import { Router, type NextFunction, type Response } from "express";
+import z4 from "zod/v4";
+import { Identificador } from "../../db/enums/identificador";
+import servicoProdutos from "../../services/servicoProdutos";
 
 const apiV1ConfiguracoesRouter = Router();
 
@@ -33,9 +36,28 @@ async function patchConfiguracoes(
   }
 }
 
+async function alterarIdentificador(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const parsedBody = z4
+      .object({
+        identificador: z4.enum(Identificador),
+      })
+      .parse(req.body);
+    await servicoProdutos.alterarFormatoCodigo(parsedBody.identificador);
+    res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+}
+
 apiV1ConfiguracoesRouter
   .get("/", getConfiguracoes)
   .put("/", patchConfiguracoes)
+  .patch("/codigo", alterarIdentificador)
   .patch("/", mdwRequerBody, patchConfiguracoes);
 
 export default apiV1ConfiguracoesRouter;

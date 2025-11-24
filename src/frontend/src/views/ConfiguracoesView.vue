@@ -86,7 +86,7 @@
             <span class="label">Como os IDs serão gerados (com quais caracteres).</span>
           </fieldset>
         </div>
-        <ButtonComponent @click="salvarConfiguracoes">Substituir códigos gerados.</ButtonComponent>
+        <ButtonComponent @click="substituirCodigos">Substituir códigos gerados.</ButtonComponent>
         <ButtonComponent @click="salvarConfiguracoes">Salvar</ButtonComponent>
       </div>
     </CardComponent>
@@ -324,6 +324,15 @@ async function deslogarSessaoTodas() {
   useSessao.logout()
   limparConfiguracoes()
   router.push('/login')
+}
+
+async function substituirCodigos() {
+  // TODO: Ter certeza que a configuração aqui é a mesma do backend
+  const res = await configuracoes.alterarIdentificador(refConfig.value.identificador!)
+  if (res.ok) {
+    notificacoes.addNotification('Códigos alterados.', { time: 3000 })
+  }
+  obterConfiguracoes()
 }
 
 obterSessao()
