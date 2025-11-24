@@ -1,18 +1,18 @@
 <template>
-  <div class="w-full min-h-screen">
-    <h1 class="m-15 mt-7 text-6xl font-bold">Operações Diárias</h1>
-    <div class="bg-base-200 m-12 pt-2 pb-1 rounded-2xl overflow-auto flex flex-col h-[83vh]">
+  <div class="w-full min-h-screen max-w-full">
+    <div class="bg-base-200 md:m-9 mt-4 p-4 rounded-2xl flex flex-col">
       <!--Compras, vendas e filtrar por data-->
-      <div class="flex flex-wrap md:flex-nowrap gap-6 m-6 items-center justify-between">
+      <div class="flex flex-wrap gap-6 mb-6 items-start">
         <!-- Select de Motivo -->
         <div class="flex flex-col flex-1 min-w-[200px]">
           <label class="text-sm font-medium mb-2">Tipo de Movimentação</label>
           <select
-            class="select select-bordered w-full bg-white text-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+            class="cursor-pointer select select-bordered w-full bg-white text-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary"
             v-model="motivo"
-            @change="carregarMovimentacoesDoDia"
+            @change="resetarPagina()"
           >
             <option disabled selected>Selecione um tipo</option>
+            <option :value="null" selected>Todos</option>
             <option :value="MotivoTransacoes.Compra">{{ MotivoTransacoes.Compra }}</option>
             <option :value="MotivoTransacoes.Venda">{{ MotivoTransacoes.Venda }}</option>
             <option :value="MotivoTransacoes.Devolucao">{{ MotivoTransacoes.Devolucao }}</option>
@@ -21,23 +21,30 @@
         </div>
 
         <!-- Filtro de Data -->
-        <div
-          class="flex flex-col flex-1 min-w-[200px] bg-stone-700 p-4 rounded-xl items-center justify-center shadow-md"
-        >
+        <div class="flex flex-col flex-1 min-w-[200px] bg-stone-700 p-4 rounded-xl">
           <label class="text-sm font-medium mb-3 text-white">Filtrar por data</label>
-          <input
-            type="date"
-            v-model="dataSelecionada"
-            @change="carregarMovimentacoesDoDia"
-            class="input input-bordered w-full max-w-[250px] px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <div class="flex items-center gap-4 w-full">
+            <input
+              type="checkbox"
+              v-model="checkBoxFiltro"
+              @change="resetarPagina"
+              class="checkbox h-6 w-6 rounded-md border-2 border-white bg-stone-600 checked:bg-green-500 checked:border-green-400 transition-all duration-110"
+            />
+            <input
+              type="date"
+              v-model="dataSelecionada"
+              @change="carregarMovimentacoesDoDia"
+              class="input input-bordered w-full px-3 py-2 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
         </div>
       </div>
       <!--div buscar produto, nova movimentação e histórico-->
-      <div class="bg-stone-700 m-6 rounded-2xl pt-1 flex flex-col h-[70vh]">
-        <!--Buscar Produto e Nova Movimentação-->
-        <div class="m-6 flex justify-between items-center mb-6">
-          <div class="relative w-80">
+      <div class="bg-stone-700 rounded-2xl p-4 flex flex-col flex-1 min-h-[60vh]">
+        <!-- Busca + Botão Nova Movimentação -->
+        <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+          <!-- Campo de busca -->
+          <div class="relative w-full md:w-80">
             <input
               type="text"
               v-model="produtoFiltro"
@@ -47,29 +54,45 @@
             />
             <MagnifyingGlassIcon class="w-6 text-black absolute left-2 top-1/2 -translate-y-1/2" />
           </div>
+
+          <!-- Botão Nova Movimentação -->
           <button
-            class="bg-white w-60 flex text-black font-semibold px-4 py-2 rounded-xl transition-tranform duration-100 transform hover:scale-103 cursor-pointer"
+            class="cursor-pointer bg-white w-full md:w-60 flex justify-center text-black font-semibold px-4 py-2 rounded-xl transition-transform duration-100 hover:scale-[1.03]"
             @click="novaMovimentacao = true"
           >
             <PlusIcon class="w-5 mr-2"></PlusIcon> NOVA MOVIMENTAÇÃO
           </button>
         </div>
 
-        <div class="m-6 flex-1 overflow-y-auto">
-          <h3 class="m-6 text-3xl font-semibold mb-2 text-white">Histórico</h3>
-          <table class="w-full text-left border-t border-white">
+        <!-- TABELA  -->
+        <h3 class="text-3xl font-semibold mb-4 text-white">Histórico</h3>
+        <div class="overflow-x-auto overflow-y-hidden flex-1">
+          <table class="min-w-full text-left border-t border-white">
             <thead class="sticky top-0 z-10 text-white bg-stone-700">
-              <tr class="text-white text-2xl">
-                <th class="py-2">Hora</th>
-                <th class="py-2">Tipo</th>
-                <th class="py-2">Produto</th>
-                <th class="py-2">Qtd</th>
-                <th class="py-2">Usuário</th>
+              <tr class="text-white text-xl">
+                <th class="py-3 px-2">Data/Hora</th>
+                <th class="py-3 px-2">Tipo</th>
+                <th class="py-3 px-2">Produto</th>
+                <th class="py-3 px-2">Qtd</th>
+                <th class="py-3 px-2">Usuário</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr v-for="i in movimentacoes" :key="i.id" class="text-xl text-white">
-                <td class="py-2">
+              <tr
+                v-for="i in movimentacoes"
+                :key="i.id"
+                class="text-xl text-white border-b border-stone-500"
+              >
+                <td class="py-2 px-2">
+                  {{
+                    new Date(i.horario).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: '2-digit',
+                    })
+                  }}
+                  <br />
                   {{
                     new Date(i.horario).toLocaleTimeString('pt-BR', {
                       hour: '2-digit',
@@ -77,7 +100,7 @@
                     })
                   }}
                 </td>
-                <td class="py-2">{{ i.motivo === '1' ? 'Compra' : 'Venda' }}</td>
+                <td class="py-2 px-2">{{}}</td>
                 <td class="py-2">
                   {{ i._produto.nome }} <br />
                   <span class="badge badge-sm badge-primary">{{ i._produto.codigo }}</span>
@@ -93,6 +116,23 @@
             </tbody>
           </table>
         </div>
+        <div class="flex justify-center mt-4 lg:justify-end items-center gap-2 join">
+          <button
+            class="join-item btn btn-neutral"
+            :class="pagina === 1 ? 'btn-disabled' : 'border-base-content'"
+            @click="pagAnterior"
+          >
+            Anterior
+          </button>
+          <button class="join-item btn btn-neutral border-base-content">{{ pagina }}</button>
+          <button
+            :class="movimentacoes.length < paginaTamanho ? 'btn-disabled' : 'border-base-content'"
+            class="join-item btn btn-neutral"
+            @click="proxPagina"
+          >
+            Próximo
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -101,37 +141,22 @@
 
 <script setup lang="ts">
 import { ApiMovimentacoes } from '@/api/movimentacoes'
+
 import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/24/outline'
-import { onMounted, ref } from 'vue'
 import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
-import { ApiProdutos } from '@/api/produtos'
 import type { GetConsultaMovimentacaoDto } from '../../../backend'
+import { onMounted, ref } from 'vue'
+import { MotivoTransacoes, type ConsultaMovimentacoesParams } from '../../../backend'
 
-const produtosCache = ref<Record<string, string>>({})
-
-enum MotivoTransacoes {
-  Compra = 'Compra',
-  Venda = 'Venda',
-  Devolucao = 'Devolucao',
-  Perda = 'Perda',
-}
-const motivo = ref<MotivoTransacoes | null>()
-
-const apiProdutos = new ApiProdutos()
-async function carregarProdutos() {
-  const res = await apiProdutos.obterTodos()
-  if (res.ok && res.responseBody) {
-    const lista = res.responseBody
-    lista.forEach((p: { id: string; nome: string }) => {
-      produtosCache.value[p.id] = p.nome
-    })
-  }
-}
-
+const motivo = ref<MotivoTransacoes | null>(null)
 const api = new ApiMovimentacoes()
-const movimentacoes = ref<GetConsultaMovimentacaoDto[]>([])
 const dataSelecionada = ref<string>(formatarDataLocalParaInput(new Date()))
 const produtoFiltro = ref<string | null>('')
+const novaMovimentacao = ref<boolean>(false)
+const pagina = ref(1)
+const paginaTamanho = ref(100)
+const checkBoxFiltro = ref<boolean>(false)
+const movimentacoes = ref<GetConsultaMovimentacaoDto[]>([])
 
 async function carregarMovimentacoesDoDia() {
   const inicioDia = inicioDoDiaUTC(dataSelecionada.value)
@@ -140,9 +165,16 @@ async function carregarMovimentacoesDoDia() {
     motivo: motivo.value ?? undefined,
     dataApos: inicioDia.toISOString(),
     dataAntes: fimDia.toISOString(),
+    pagina: pagina.value,
+    paginaTamanho: paginaTamanho.value,
+  } as ConsultaMovimentacoesParams
+
+  if (checkBoxFiltro.value) {
+    filtros.dataAntes = fimDia.toISOString()
+    filtros.dataApos = inicioDia.toISOString()
   }
 
-  const res = await api.obterTodos({ pagina: 1, paginaTamanho: 100 })
+  const res = await api.obterTodos(filtros)
 
   if (res.ok && res.responseBody) {
     movimentacoes.value = res.responseBody
@@ -160,7 +192,6 @@ function fimDoDiaUTC(dateStr: string) {
 }
 
 onMounted(async () => {
-  await carregarProdutos() // carrega o id → nome
   await carregarMovimentacoesDoDia() // carrega as movimentações já filtrando pelo tipo e nome
 })
 
@@ -171,5 +202,21 @@ function formatarDataLocalParaInput(date: Date) {
   return `${ano}-${mes}-${dia}`
 }
 
-const novaMovimentacao = ref<boolean>(false)
+function proxPagina() {
+  if (movimentacoes.value.length < paginaTamanho.value) return
+  pagina.value++
+  carregarMovimentacoesDoDia()
+}
+
+function pagAnterior() {
+  if (pagina.value > 1) {
+    pagina.value--
+    carregarMovimentacoesDoDia()
+  }
+}
+
+function resetarPagina() {
+  pagina.value = 1
+  carregarMovimentacoesDoDia()
+}
 </script>

@@ -42,9 +42,9 @@ export const ConsultaMovimentacoesParamsZ = z4.strictObject({
   // corce: os parametros são recebidos como string
   pagina: z4.coerce.number().int().gt(0).optional(),
   paginaTamanho: z4.coerce.number().int().gt(0).optional(),
-  dataApos: z4.coerce.date().optional(),
-  dataAntes: z4.coerce.date().optional(),
-  motivo: z.enum(["Compra", "Venda", "Devolucao","Perda"]).optional(),
+  dataApos: z4.iso.datetime().optional(),
+  dataAntes: z4.iso.datetime().optional(),
+  motivo: z.enum(["Compra", "Venda", "Devolucao", "Perda"]).optional(),
 });
 
 export type ConsultaMovimentacoesParams = z4.infer<
@@ -162,3 +162,4 @@ class ServicoTransacoes {
 const servicoTransacoes = new ServicoTransacoes();
 
 export default servicoTransacoes;
+

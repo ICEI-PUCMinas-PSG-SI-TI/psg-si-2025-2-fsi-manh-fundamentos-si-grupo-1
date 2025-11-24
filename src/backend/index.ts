@@ -3,6 +3,7 @@
 export { Permissoes } from "./src/db/enums/permissoes";
 export { Identificador } from "./src/db/enums/identificador";
 export { StatusProduto } from "./src/db/enums/statusProduto";
+export { MotivoTransacoes } from "./src/db/enum/motivoTransacao";
 
 // DTOs
 
