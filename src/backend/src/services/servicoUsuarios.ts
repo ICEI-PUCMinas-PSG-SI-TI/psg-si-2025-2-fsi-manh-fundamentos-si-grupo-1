@@ -54,7 +54,6 @@ class ServicoUsuarios {
       foto: usuario.foto,
       descricao: usuario.descricao,
       habilitado: usuario.habilitado,
-      nivelPermissoes: usuario.nivelPermissoes,
       hashedPassword: hashedPassword,
     });
     const res = await repositorioUsuarios.inserir(insertUsuario);

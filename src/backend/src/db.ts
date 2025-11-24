@@ -68,7 +68,6 @@ export async function inicializarAdministrador(): Promise<void> {
         password: senha,
         descricao: login,
         habilitado: true,
-        nivelPermissoes: 0,
       },
       { cargos: [Permissoes.Administrador] },
     );

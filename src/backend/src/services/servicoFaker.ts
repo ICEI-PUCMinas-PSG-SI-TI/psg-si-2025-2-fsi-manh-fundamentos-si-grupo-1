@@ -144,7 +144,7 @@ async function escolherLotes(
   if (quantLotes === 0) {
     throw new HttpError("Can't create relational data", 400);
   }
-  const lotes = await servicoLotes.selecionarIdProdutosTodos();
+  const lotes = await repositorioLotes.selecionarIdProdutosTodos();
   if (!lotes || lotes.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
   }
@@ -279,7 +279,6 @@ export class ServicoFaker {
         descricao: faker.person.jobDescriptor(),
         habilitado: faker.datatype.boolean(),
         modoEscuro: faker.datatype.boolean(),
-        nivelPermissoes: faker.number.int({ min: 0, max: 3 }),
         // foto: fakerImage(),
       });
     }

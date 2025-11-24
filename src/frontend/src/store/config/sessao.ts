@@ -29,9 +29,7 @@ export const useSessaoStore = defineStore('sessao', {
   },
   actions: {
     possuiPermissao(permissao: Permissoes): boolean {
-      return permissao === Permissoes.Administrador && refUserInfo.value?.nivelPermissoes === 0
-        ? true
-        : !!refUserInfo.value?.permissoes.includes(permissao)
+      return refUserInfo.value?.permissoes.includes(permissao) || false
     },
     logout() {
       refUserInfo.value = null

@@ -80,11 +80,6 @@ export class ServicoLotes {
     return res;
   }
 
-  // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
-  selecionarIdProdutosTodos(): Promise<{ id: string; produtoId: string }[]> {
-    return repositorioLotes.selecionarIdProdutosTodos();
-  }
-
   async atualizar(id: string, lote: UpdateLoteSchema): Promise<boolean> {
     const atualizacoes = await repositorioLotes.atualizarPorId(id, lote);
     debug(`Informações do lote ${id} atualizadas!`, {

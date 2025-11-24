@@ -67,7 +67,6 @@ function formatarData(dataISO: string): string {
 
 const transacoes = ref<Movimentacao[]>([])
 /*
-=======
 const transacoes = ref<Movimentacao[]>([])
 
 onMounted(async () => {
@@ -76,7 +75,6 @@ onMounted(async () => {
     if (!res.ok) throw new Error('Erro ao buscar transações')
     transacoes.value = await res.json()
   } catch (error) {
-<<<<<<< HEAD
     console.error('Erro ao buscar transações:', error)
   }
 })
@@ -110,3 +108,4 @@ const transacoesPaginadas = computed(() => {
 
 const totalPaginas = computed(() => Math.ceil(transacoesFiltradas.value.length / itensPorPagina))
 </script>
+

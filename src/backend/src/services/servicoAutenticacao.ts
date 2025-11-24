@@ -26,7 +26,6 @@ const UserSessionInfoZ = z4.object({
   nome: z4.string(),
   login: z4.string(),
   modoEscuro: z4.boolean(),
-  nivelPermissoes: z4.number(),
   foto: z4.base64(),
   permissoes: z4.array(z4.enum(Permissoes)),
 });
@@ -144,7 +143,6 @@ export class ServicoAutenticacao {
         nome: usuario.nome,
         login: usuario.login,
         modoEscuro: usuario.modoEscuro,
-        nivelPermissoes: usuario.nivelPermissoes,
         foto: usuario.foto as string,
         permissoes: perms,
       },
@@ -181,7 +179,6 @@ export class ServicoAutenticacao {
       nome: usuario.nome,
       login: usuario.login,
       modoEscuro: usuario.modoEscuro,
-      nivelPermissoes: usuario.nivelPermissoes,
       foto: usuario.foto as string,
       permissoes: perms,
     };

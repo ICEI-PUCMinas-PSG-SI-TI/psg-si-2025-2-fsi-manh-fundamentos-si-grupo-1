@@ -15,10 +15,6 @@ export const tabelaUsuarios = sqliteTable("usuarios", {
   descricao: text(),
   habilitado: int({ mode: "boolean" }).notNull().default(true),
   modoEscuro: int("modo_escuro", { mode: "boolean" }).notNull().default(false),
-  /**
-   * @deprecated Utilizar a tabela de permissões
-   */
-  nivelPermissoes: int("nivel_permissoes").notNull().default(3),
   foto: blob(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
@@ -40,8 +36,6 @@ export const UpdateUsuarioSchemaZ = z4.strictObject({
   habilitado: z4.boolean().optional(),
   modoEscuro: z4.boolean().optional(),
   foto: z4.base64().optional(),
-  // TODO: Verificar como limitar nível de proteção para alterar permissões do usuário
-  nivelPermissoes: z4.int().min(0).max(3).optional(),
 });
 
 export const InsertUsuarioSchemaZ = createInsertSchema(tabelaUsuarios, {
