@@ -38,6 +38,7 @@ export const UpdateConfiguracaoSchemaZ = z4.strictObject({
   nomeCliente: z4.string().nullish(),
   cpfCnpj: z4.string().nullish(),
   endereco: z4.string().nullish(),
+  identificador: z4.enum(Identificador).optional(),
 });
 
 export const InsertConfiguracaoSchemaZ = createInsertSchema(

@@ -15,6 +15,7 @@ export const ParamsInserirConfiguracoesZ = UpdateConfiguracaoSchemaZ.pick({
   nomeCliente: true,
   cpfCnpj: true,
   endereco: true,
+  identificador: true,
 });
 
 export type ParamsInserirConfiguracoes = z4.infer<
