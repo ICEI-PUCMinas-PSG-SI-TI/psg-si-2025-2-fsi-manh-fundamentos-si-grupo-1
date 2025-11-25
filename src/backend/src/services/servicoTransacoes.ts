@@ -1,3 +1,4 @@
+import { MotivoTransacoes } from "../db/enum/motivoTransacao";
 import { ServerError } from "../error";
 import repositorioMovimentacoes, {
   type RepoConsultaParamsTransacoes,
@@ -44,7 +45,7 @@ export const ConsultaMovimentacoesParamsZ = z4.strictObject({
   paginaTamanho: z4.coerce.number().int().gt(0).optional(),
   dataApos: z4.iso.datetime().optional(),
   dataAntes: z4.iso.datetime().optional(),
-  motivo: z.enum(["Compra", "Venda", "Devolucao", "Perda"]).optional(),
+  motivo: z.enum(MotivoTransacoes).optional(),
 });
 
 export type ConsultaMovimentacoesParams = z4.infer<

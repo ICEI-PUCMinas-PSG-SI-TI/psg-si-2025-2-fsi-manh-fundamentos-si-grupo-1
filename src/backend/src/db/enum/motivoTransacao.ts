@@ -2,7 +2,7 @@
 export enum MotivoTransacoes{
   Compra = "Compra",
   Venda = "Venda",
-  Devolucao = "Devolucao",
+  Devolucao = "Devolução",
   Perda = "Perda",
-  
+  Transferencia = "Transferência"
 }
