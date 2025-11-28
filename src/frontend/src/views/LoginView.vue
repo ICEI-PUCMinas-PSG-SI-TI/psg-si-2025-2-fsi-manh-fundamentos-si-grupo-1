@@ -48,7 +48,7 @@
           <!-- Botão -->
           <button
             type="submit"
-            class="shadow-xl cursor-pointer mt-4 w-full bg-rose-600 text-white font-bold py-2 transition transform hover:scale-105"
+            class="shadow-xl cursor-pointer mt-4 w-full bg-green-600 text-white font-bold py-2 transition transform hover:scale-105"
           >
             Login
           </button>

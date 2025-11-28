@@ -29,7 +29,7 @@ function show() {
 </script>
 
 <template>
-  <div class="card bg-base-100 border-2 border-base-300">
+  <div class="card bg-base-200">
     <div class="card-body">
       <div class="flex flex-col p-2 gap-2">
         <div class="font-semibold text-xl mb-4">Unidades de medida</div>
@@ -39,7 +39,7 @@ function show() {
           <input type="checkbox" v-model="recurse" class="checkbox checkbox-md me-2" />
           <p>Recursivo: Gerar outras entidades dependentes se necessário.</p>
         </div>
-        <ButtonComponent class="btn-success" @click="gerar"> Gerar </ButtonComponent>
+        <ButtonComponent class="bg-green-700 text-white" @click="gerar"> Gerar </ButtonComponent>
         <hr />
         <p><strong>Deletar todos as unidades de medida.</strong></p>
         <p>

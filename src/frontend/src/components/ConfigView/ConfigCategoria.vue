@@ -54,7 +54,9 @@ obterCategorias()
           html-place-holder="Categoria"
           v-model="refNovaCategoria"
         />
-        <ButtonComponent class="w-full" @click="adicionarCategoria"> Adicionar</ButtonComponent>
+        <ButtonComponent class="w-full bg-green-700 text-white" @click="adicionarCategoria">
+          Adicionar</ButtonComponent
+        >
       </div>
       <div class="xl:col-span-2">
         <p

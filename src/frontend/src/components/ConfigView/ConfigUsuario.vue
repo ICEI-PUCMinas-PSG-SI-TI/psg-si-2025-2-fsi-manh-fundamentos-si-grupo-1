@@ -60,7 +60,7 @@ obterSessao()
 <template>
   <CardComponent class="flex flex-col mb-4">
     <CardTitleBar title="Perfil do usuário" />
-    <div class="flex flex-col justify-center items-center">
+    <div class="flex flex-col justify-center items-center bg-base-200">
       <img
         class="avatar rounded-full border"
         width="100px"
@@ -93,16 +93,18 @@ obterSessao()
       />
     </div>
     <div
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-center align-middle items-center"
+      class="bg-base-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-center align-middle items-center"
     >
-      <ButtonComponent class="btn-accent" @click="alterarInformacoesUsuario">
+      <ButtonComponent class="bg-green-700 text-neutral-content" @click="alterarInformacoesUsuario">
         Salvar
       </ButtonComponent>
-      <ButtonComponent class="btn-warning" @click="showAlterarSenha = true">
+      <ButtonComponent class="btn-warning text-white" @click="showAlterarSenha = true">
         Alterar Senha
       </ButtonComponent>
-      <ButtonComponent class="btn-error" @click="deslogarSessao"> Deslogar </ButtonComponent>
-      <ButtonComponent class="btn-error" @click="deslogarSessaoTodas">
+      <ButtonComponent class="bg-red-500 text-white" @click="deslogarSessao">
+        Deslogar
+      </ButtonComponent>
+      <ButtonComponent class="bg-red-500 text-white" @click="deslogarSessaoTodas">
         Deslogar de todas as sessões
       </ButtonComponent>
     </div>

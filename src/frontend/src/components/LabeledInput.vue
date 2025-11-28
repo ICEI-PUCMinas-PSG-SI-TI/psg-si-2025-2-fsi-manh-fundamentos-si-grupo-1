@@ -3,7 +3,7 @@
     <legend v-if="labelText" class="fieldset-legend mx-1">{{ labelText }}</legend>
     <input
       :type="htmlType"
-      class="input input-md focus:outline-offset-0 w-full"
+      class="input input-md focus:outline-offset-0 w-full bg-base-100"
       :placeholder="htmlPlaceHolder"
       v-model="model"
     />

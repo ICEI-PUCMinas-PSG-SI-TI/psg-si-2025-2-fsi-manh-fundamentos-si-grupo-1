@@ -17,7 +17,9 @@
             <option :value="MotivoTransacoes.Venda">{{ MotivoTransacoes.Venda }}</option>
             <option :value="MotivoTransacoes.Devolucao">{{ MotivoTransacoes.Devolucao }}</option>
             <option :value="MotivoTransacoes.Perda">{{ MotivoTransacoes.Perda }}</option>
-            <option :value="MotivoTransacoes.Transferencia">{{ MotivoTransacoes.Transferencia  }}</option>
+            <option :value="MotivoTransacoes.Transferencia">
+              {{ MotivoTransacoes.Transferencia }}
+            </option>
           </select>
         </div>
 

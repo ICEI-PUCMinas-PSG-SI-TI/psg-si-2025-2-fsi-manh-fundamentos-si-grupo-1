@@ -94,11 +94,12 @@ obterConfiguracoes()
           <span class="label">Como os IDs serão gerados (com quais caracteres).</span>
         </fieldset>
       </div>
-      <ButtonComponent @click="salvarConfiguracoes">Salvar</ButtonComponent>
+      <ButtonComponent @click="salvarConfiguracoes" class="bg-green-700 text-white">
+        Salvar
+      </ButtonComponent>
       <ButtonComponent class="btn-error" @click="substituirCodigos">
         Substituir códigos de produtos gerados.
       </ButtonComponent>
     </div>
   </CardComponent>
 </template>
-

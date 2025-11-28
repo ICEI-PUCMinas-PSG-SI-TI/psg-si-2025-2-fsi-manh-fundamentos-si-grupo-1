@@ -65,7 +65,7 @@ obterUnidadesMedida()
           html-place-holder="Abreviação"
           v-model="refNovaUnidadeMedida.abreviacao"
         />
-        <ButtonComponent class="w-full" @click="adicionarUnidadeMedida">
+        <ButtonComponent class="w-full bg-green-700 text-white" @click="adicionarUnidadeMedida">
           Adicionar
         </ButtonComponent>
       </div>

@@ -10,7 +10,7 @@ import DevCardCategorias from '@/components/dev/DevCardCategorias.vue'
 
 <template>
   <div class="flex flex-col p-3 w-full">
-    <div class="card bg-base-100 border-2 border-base-300 mb-4">
+    <div class="card bg-base-200 border-2 border-base-300 mb-4">
       <div class="card-body">
         <!-- TODO: Inserir o conteúdo dentro do title? -->
         <CardTitleBar title="Ferramentas de Desenvolvedor/Testes" class="mb-3" />

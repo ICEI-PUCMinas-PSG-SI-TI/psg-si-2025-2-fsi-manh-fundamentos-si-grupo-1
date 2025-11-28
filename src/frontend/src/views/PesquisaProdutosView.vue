@@ -43,7 +43,8 @@
     </div>
 
     <!-- Tabela -->
-    <div class="border-2 border-green-500 rounded-lg p-4 overflow-x-auto">
+
+    <div class="b rounded-lg p-4 overflow-x-auto bg-base-200">
       <table class="w-full border-collapse">
         <thead>
           <tr class="border-b">
@@ -56,8 +57,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="produto in refProdutos" :key="produto.id" class="border-b hover:bg-gray-50">
-            <!-- Use monospaced font -->
+          <tr v-for="produto in refProdutos" :key="produto.id" class="border-b">
+            <!-- TODO: Use monospaced font -->
             <td class="p-2">{{ produto.codigo }}</td>
             <td class="p-2">{{ produto.nome }}</td>
             <td class="p-2">{{ produto.categoria || 'N/A' }}</td>
