@@ -14,13 +14,14 @@ class RepositorioPermissoes extends RepositorioBase {
       const res = await tx
         .insert(tabelaPermissoes)
         .values(perms)
-        .onConflictDoNothing();
+        .onConflictDoNothing()
+        .execute();
       return res.rowsAffected;
     });
   }
 
   selecionarTodos(): Promise<SelectPermissoesSchema[]> {
-    return bancoDados.select().from(tabelaPermissoes);
+    return bancoDados.select().from(tabelaPermissoes).execute();
   }
 
   selecionarPagina(
@@ -31,7 +32,8 @@ class RepositorioPermissoes extends RepositorioBase {
       .select()
       .from(tabelaPermissoes)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionar(
@@ -46,14 +48,16 @@ class RepositorioPermissoes extends RepositorioBase {
           eq(tabelaPermissoes.usuarioId, userId),
           eq(tabelaPermissoes.cargo, cargo),
         ),
-      );
+      )
+      .execute();
   }
 
   selecionarPorIdUsuario(userId: string): Promise<SelectPermissoesSchema[]> {
     return bancoDados
       .select()
       .from(tabelaPermissoes)
-      .where(eq(tabelaPermissoes.usuarioId, userId));
+      .where(eq(tabelaPermissoes.usuarioId, userId))
+      .execute();
   }
 
   selecionarPersmissoesPorCargo(
@@ -62,7 +66,8 @@ class RepositorioPermissoes extends RepositorioBase {
     return bancoDados
       .select()
       .from(tabelaPermissoes)
-      .where(eq(tabelaPermissoes.cargo, cargo));
+      .where(eq(tabelaPermissoes.cargo, cargo))
+      .execute();
   }
 
   excluir(userId: string, cargo: Permissoes): Promise<number> {
@@ -74,7 +79,8 @@ class RepositorioPermissoes extends RepositorioBase {
             eq(tabelaPermissoes.usuarioId, userId),
             eq(tabelaPermissoes.cargo, cargo),
           ),
-        );
+        )
+        .execute();
       return resultSet.rowsAffected;
     });
   }
@@ -83,7 +89,8 @@ class RepositorioPermissoes extends RepositorioBase {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaPermissoes)
-        .where(eq(tabelaPermissoes.usuarioId, userId));
+        .where(eq(tabelaPermissoes.usuarioId, userId))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

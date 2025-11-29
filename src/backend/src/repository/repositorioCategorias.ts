@@ -10,9 +10,13 @@ import { count, eq, like } from "drizzle-orm";
 class RepositorioCategorias {
   inserir(...categoria: InsertCategoriaSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaCategorias).values(categoria).returning({
-        id: tabelaCategorias.id,
-      });
+      return tx
+        .insert(tabelaCategorias)
+        .values(categoria)
+        .returning({
+          id: tabelaCategorias.id,
+        })
+        .execute();
     });
   }
 
@@ -26,7 +30,8 @@ class RepositorioCategorias {
         .onConflictDoNothing()
         .returning({
           id: tabelaCategorias.id,
-        });
+        })
+        .execute();
     });
   }
 
@@ -39,7 +44,7 @@ class RepositorioCategorias {
   }
 
   selecionarTodos(): Promise<SelectCategoriaSchema[]> {
-    return bancoDados.select().from(tabelaCategorias);
+    return bancoDados.select().from(tabelaCategorias).execute();
   }
 
   selecionarPagina(
@@ -50,14 +55,16 @@ class RepositorioCategorias {
       .select()
       .from(tabelaCategorias)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarLike(nome: string): Promise<SelectCategoriaSchema[]> {
     return bancoDados
       .select()
       .from(tabelaCategorias)
-      .where(like(tabelaCategorias.nome, `%${nome}%`));
+      .where(like(tabelaCategorias.nome, `%${nome}%`))
+      .execute();
   }
 
   // or .returning()
@@ -65,7 +72,8 @@ class RepositorioCategorias {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaCategorias)
-        .where(eq(tabelaCategorias.id, id));
+        .where(eq(tabelaCategorias.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

@@ -11,9 +11,13 @@ import { eq } from "drizzle-orm";
 class RepositorioSessoes {
   inserir(sessao: InsertSessaoSchema): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaSessoes).values(sessao).returning({
-        id: tabelaSessoes.id,
-      });
+      return tx
+        .insert(tabelaSessoes)
+        .values(sessao)
+        .returning({
+          id: tabelaSessoes.id,
+        })
+        .execute();
     });
   }
 
@@ -26,7 +30,7 @@ class RepositorioSessoes {
   }
 
   selecionarTodos(): Promise<SelectSessaoSchema[]> {
-    return bancoDados.select().from(tabelaSessoes);
+    return bancoDados.select().from(tabelaSessoes).execute();
   }
 
   selecionarPagina(
@@ -37,7 +41,8 @@ class RepositorioSessoes {
       .select()
       .from(tabelaSessoes)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   // or .returning()
@@ -45,7 +50,8 @@ class RepositorioSessoes {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaSessoes)
-        .where(eq(tabelaSessoes.id, id));
+        .where(eq(tabelaSessoes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
@@ -55,14 +61,15 @@ class RepositorioSessoes {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaSessoes)
-        .where(eq(tabelaSessoes.usuarioId, usuarioId));
+        .where(eq(tabelaSessoes.usuarioId, usuarioId))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
 
   excluirTodos(): Promise<number> {
     return bancoDados.transaction(async (tx) => {
-      const resultSet = await tx.delete(tabelaSessoes);
+      const resultSet = await tx.delete(tabelaSessoes).execute();
       return resultSet.rowsAffected;
     });
   }

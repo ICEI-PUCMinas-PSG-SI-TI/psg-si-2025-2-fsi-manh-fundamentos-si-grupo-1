@@ -25,7 +25,7 @@ class RepositorioConfiguracoes {
   }
 
   selecionarTodos(): Promise<SelectConfiguracaoSchema[]> {
-    return bancoDados.select().from(tabelaConfiguracoes);
+    return bancoDados.select().from(tabelaConfiguracoes).execute();
   }
 
   selecionarPagina(
@@ -36,7 +36,8 @@ class RepositorioConfiguracoes {
       .select()
       .from(tabelaConfiguracoes)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   atualizarPorId(
@@ -48,7 +49,8 @@ class RepositorioConfiguracoes {
       const resultSet = await tx
         .update(tabelaConfiguracoes)
         .set(valores)
-        .where(eq(tabelaConfiguracoes.id, id));
+        .where(eq(tabelaConfiguracoes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
@@ -58,7 +60,8 @@ class RepositorioConfiguracoes {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaConfiguracoes)
-        .where(eq(tabelaConfiguracoes.id, id));
+        .where(eq(tabelaConfiguracoes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

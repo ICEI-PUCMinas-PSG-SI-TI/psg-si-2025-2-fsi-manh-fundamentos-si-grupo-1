@@ -94,9 +94,13 @@ export type SelectConsultaProdutosSchema = SelectProdutosSchema & {
 class RepositorioProdutos extends RepositorioBase {
   inserir(...produto: InsertProdutosSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaProdutos).values(produto).returning({
-        id: tabelaProdutos.id,
-      });
+      return tx
+        .insert(tabelaProdutos)
+        .values(produto)
+        .returning({
+          id: tabelaProdutos.id,
+        })
+        .execute();
     });
   }
 
@@ -109,7 +113,7 @@ class RepositorioProdutos extends RepositorioBase {
   }
 
   selecionarTodos(): Promise<SelectProdutosSchema[]> {
-    return bancoDados.select().from(tabelaProdutos);
+    return bancoDados.select().from(tabelaProdutos).execute();
   }
 
   selecionarPagina(
@@ -120,7 +124,8 @@ class RepositorioProdutos extends RepositorioBase {
       .select()
       .from(tabelaProdutos)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarIdsTodos(): Promise<{ id: string }[]> {
@@ -128,7 +133,8 @@ class RepositorioProdutos extends RepositorioBase {
       .select({
         id: tabelaProdutos.id,
       })
-      .from(tabelaProdutos);
+      .from(tabelaProdutos)
+      .execute();
   }
 
   selecionarPorCategoriaId(id: string): Promise<Count | undefined> {
@@ -270,7 +276,8 @@ class RepositorioProdutos extends RepositorioBase {
       const resultSet = await tx
         .update(tabelaProdutos)
         .set(valores)
-        .where(eq(tabelaProdutos.id, id));
+        .where(eq(tabelaProdutos.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
@@ -284,7 +291,8 @@ class RepositorioProdutos extends RepositorioBase {
     return await tx
       .update(tabelaProdutos)
       .set(valores)
-      .where(eq(tabelaProdutos.id, id));
+      .where(eq(tabelaProdutos.id, id))
+      .execute();
   }
 
   // or .returning()
@@ -292,7 +300,8 @@ class RepositorioProdutos extends RepositorioBase {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaProdutos)
-        .where(eq(tabelaProdutos.id, id));
+        .where(eq(tabelaProdutos.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

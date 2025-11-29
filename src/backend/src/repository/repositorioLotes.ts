@@ -24,9 +24,13 @@ export type RepoConsultaParamsLote = {
 class RepositorioLotes {
   inserir(...lote: InsertLoteSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaLotes).values(lote).returning({
-        id: tabelaLotes.id,
-      });
+      return tx
+        .insert(tabelaLotes)
+        .values(lote)
+        .returning({
+          id: tabelaLotes.id,
+        })
+        .execute();
     });
   }
 
@@ -39,7 +43,7 @@ class RepositorioLotes {
   }
 
   selecionarTodos(): Promise<SelectLoteSchema[]> {
-    return bancoDados.select().from(tabelaLotes);
+    return bancoDados.select().from(tabelaLotes).execute();
   }
 
   selecionarPagina(
@@ -50,7 +54,8 @@ class RepositorioLotes {
       .select()
       .from(tabelaLotes)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarConsulta(
@@ -105,7 +110,8 @@ class RepositorioLotes {
         id: tabelaLotes.id,
         produtoId: tabelaLotes.produtoId,
       })
-      .from(tabelaLotes);
+      .from(tabelaLotes)
+      .execute();
   }
 
   atualizarPorId(id: string, valores: UpdateLoteSchema): Promise<number> {
@@ -114,7 +120,8 @@ class RepositorioLotes {
       const resultSet = await tx
         .update(tabelaLotes)
         .set(valores)
-        .where(eq(tabelaLotes.id, id));
+        .where(eq(tabelaLotes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
@@ -124,7 +131,8 @@ class RepositorioLotes {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaLotes)
-        .where(eq(tabelaLotes.id, id));
+        .where(eq(tabelaLotes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

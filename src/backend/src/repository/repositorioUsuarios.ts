@@ -18,9 +18,13 @@ export type RepoConsultaParamsUsuarios = {
 class RepositorioUsuarios {
   inserir(...usuario: InsertUsuarioSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaUsuarios).values(usuario).returning({
-        id: tabelaUsuarios.id,
-      });
+      return tx
+        .insert(tabelaUsuarios)
+        .values(usuario)
+        .returning({
+          id: tabelaUsuarios.id,
+        })
+        .execute();
     });
   }
 
@@ -33,7 +37,7 @@ class RepositorioUsuarios {
   }
 
   selecionarTodos(): Promise<SelectUsuarioSchema[]> {
-    return bancoDados.select().from(tabelaUsuarios);
+    return bancoDados.select().from(tabelaUsuarios).execute();
   }
 
   selecionarPagina(
@@ -44,7 +48,8 @@ class RepositorioUsuarios {
       .select()
       .from(tabelaUsuarios)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarPorLogin(login: string): Promise<SelectUsuarioSchema | undefined> {
@@ -83,7 +88,8 @@ class RepositorioUsuarios {
       .select({
         id: tabelaUsuarios.id,
       })
-      .from(tabelaUsuarios);
+      .from(tabelaUsuarios)
+      .execute();
   }
 
   atualizarPorId(id: string, valores: UpdateUsuarioSchema): Promise<number> {
@@ -92,7 +98,8 @@ class RepositorioUsuarios {
       const resultSet = await tx
         .update(tabelaUsuarios)
         .set(valores)
-        .where(eq(tabelaUsuarios.id, id));
+        .where(eq(tabelaUsuarios.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
@@ -102,7 +109,8 @@ class RepositorioUsuarios {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaUsuarios)
-        .where(eq(tabelaUsuarios.id, id));
+        .where(eq(tabelaUsuarios.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

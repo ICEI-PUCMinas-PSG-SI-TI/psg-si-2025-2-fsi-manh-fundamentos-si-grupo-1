@@ -35,9 +35,13 @@ type SelectConsultaTransacoesSchema = SelectTransacoesSchema & {
 class RepositorioTransacoes {
   inserir(...transacao: InsertTransacoesSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaTransacoes).values(transacao).returning({
-        id: tabelaTransacoes.id,
-      });
+      return tx
+        .insert(tabelaTransacoes)
+        .values(transacao)
+        .returning({
+          id: tabelaTransacoes.id,
+        })
+        .execute();
     });
   }
 
@@ -50,7 +54,7 @@ class RepositorioTransacoes {
   }
 
   selecionarTodos(): Promise<SelectTransacoesSchema[]> {
-    return bancoDados.select().from(tabelaTransacoes);
+    return bancoDados.select().from(tabelaTransacoes).execute();
   }
 
   selecionarPagina(
@@ -61,7 +65,8 @@ class RepositorioTransacoes {
       .select()
       .from(tabelaTransacoes)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarConsulta(
@@ -176,7 +181,8 @@ class RepositorioTransacoes {
       const resultSet = await tx
         .update(tabelaTransacoes)
         .set(valores)
-        .where(eq(tabelaTransacoes.id, id));
+        .where(eq(tabelaTransacoes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

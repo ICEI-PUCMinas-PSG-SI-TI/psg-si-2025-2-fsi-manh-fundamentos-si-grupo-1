@@ -20,7 +20,8 @@ class RepositorioUnidadesMedida {
         .onConflictDoNothing()
         .returning({
           id: tabelaUnidadesMedida.id,
-        });
+        })
+        .execute();
     });
   }
 
@@ -34,7 +35,8 @@ class RepositorioUnidadesMedida {
         .onConflictDoNothing()
         .returning({
           id: tabelaUnidadesMedida.id,
-        });
+        })
+        .execute();
     });
   }
 
@@ -47,7 +49,7 @@ class RepositorioUnidadesMedida {
   }
 
   selecionarTodos(): Promise<SelectUnidadesMedidaSchema[]> {
-    return bancoDados.select().from(tabelaUnidadesMedida);
+    return bancoDados.select().from(tabelaUnidadesMedida).execute();
   }
 
   selecionarPagina(
@@ -58,7 +60,8 @@ class RepositorioUnidadesMedida {
       .select()
       .from(tabelaUnidadesMedida)
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarIdsTodos(): Promise<RefRegistro[]> {
@@ -66,7 +69,8 @@ class RepositorioUnidadesMedida {
       .select({
         id: tabelaUnidadesMedida.id,
       })
-      .from(tabelaUnidadesMedida);
+      .from(tabelaUnidadesMedida)
+      .execute();
   }
 
   atualizarPorId(
@@ -78,7 +82,8 @@ class RepositorioUnidadesMedida {
       const resultSet = await tx
         .update(tabelaUnidadesMedida)
         .set(valores)
-        .where(eq(tabelaUnidadesMedida.id, id));
+        .where(eq(tabelaUnidadesMedida.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
@@ -88,7 +93,8 @@ class RepositorioUnidadesMedida {
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaUnidadesMedida)
-        .where(eq(tabelaUnidadesMedida.id, id));
+        .where(eq(tabelaUnidadesMedida.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }

@@ -36,7 +36,8 @@ export async function verificarBancoDados(): Promise<boolean> {
         .select({
           value: sql`1`,
         })
-        .from(tables[i]!);
+        .from(tables[i]!)
+        .execute();
     }
     notice("Conexão a base de dados OK.", { label: "db" });
   } catch (err) {
