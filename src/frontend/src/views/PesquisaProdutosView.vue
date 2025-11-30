@@ -35,6 +35,20 @@
       </div>
     </div>
 
+    <div class="ml-auto flex items-center gap-2 mb-4">
+      <label class="text-sm text-gray-600">Pesquisar por:</label>
+      <select class="border px-2 py-1 rounded">
+        <option selected>Nome do produto</option>
+        <option>Todos os campos</option>
+        <option>Código</option>
+        <option>SKU</option>
+        <option>Código de Barra</option>
+        <option>Descrição</option>
+        <option>Marca</option>
+        <option>Fornecedor</option>
+      </select>
+    </div>
+
     <!-- Tabela -->
     <div class="border-2 border-green-300 rounded-lg p-4 overflow-x-auto">
       <table class="w-full border-collapse">
