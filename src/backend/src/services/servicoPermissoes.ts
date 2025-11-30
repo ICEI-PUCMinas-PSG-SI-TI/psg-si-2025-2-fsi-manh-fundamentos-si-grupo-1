@@ -69,30 +69,21 @@ class ServicoPermissoes {
     usuarioId: string,
     ...perms: Permissoes[]
   ): Promise<boolean> {
-    await repositorioPermissoes.utilizarTransacao(async (tx) => {
-      const regUsuario = await repositorioUsuarios.selecionarPorId(usuarioId);
-      if (regUsuario) {
-        await repositorioPermissoes.excluirPermissoesTransacao(tx, usuarioId);
-        const valores = perms.map((c) => ({
-          usuarioId: usuarioId,
-          cargo: c,
-        }));
-        const atualizacoes = await repositorioPermissoes.inserir(...valores);
-        if (atualizacoes > 0) {
-          return true;
-        } else {
-          throw new ServerError(
-            "Houve um erro ao alterar as permissões do usuário.",
-          );
-        }
+    const regUsuario = await repositorioUsuarios.selecionarPorId(usuarioId);
+    if (regUsuario) {
+      await repositorioPermissoes.excluirPermissoes(usuarioId);
+      const valores = perms.map((c) => ({ usuarioId: usuarioId, cargo: c }));
+      const atualizacoes = await repositorioPermissoes.inserir(...valores);
+      if (atualizacoes > 0) {
+        return true;
       } else {
-        throw new ClientError("Usuário não encontrado.", 404);
+        throw new ServerError(
+          "Houve um erro ao alterar as permissões do usuário.",
+        );
       }
-    });
-
-    await this.adicionarPermissoesUsuario(usuarioId, ...perms);
-    // TODO: Utilizar Transaction unica
-    return true;
+    } else {
+      throw new ClientError("Usuário não encontrado.", 404);
+    }
   }
 }
 

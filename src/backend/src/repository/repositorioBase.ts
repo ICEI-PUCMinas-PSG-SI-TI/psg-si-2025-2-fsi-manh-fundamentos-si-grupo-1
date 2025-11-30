@@ -17,3 +17,7 @@ export class RepositorioBase {
     return bancoDados.transaction(callback);
   }
 }
+
+const repositorioBase = new RepositorioBase();
+
+export default repositorioBase;

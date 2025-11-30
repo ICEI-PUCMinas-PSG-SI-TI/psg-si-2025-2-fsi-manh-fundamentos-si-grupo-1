@@ -1,6 +1,6 @@
 import { error } from "./logging";
 import type { ExtendedRequest } from "./middlewares";
-import { DrizzleQueryError } from "drizzle-orm";
+import { DrizzleError, DrizzleQueryError } from "drizzle-orm";
 import type { NextFunction, Response } from "express";
 import * as z4 from "zod/v4";
 import { ZodError } from "zod/v4";
@@ -59,6 +59,9 @@ export function mdwError(
       res.status(400).send("Parâmetros inválidos!");
     } else if (err instanceof DrizzleQueryError && err.cause instanceof Error) {
       error(err.cause?.message, { label: "mdwErr.Query", reqId: id });
+      res.sendStatus(500);
+    } else if (err instanceof DrizzleError) {
+      error(err.message, { label: "mdwErr.ORM", reqId: id });
       res.sendStatus(500);
     } else {
       if (err instanceof Error) {

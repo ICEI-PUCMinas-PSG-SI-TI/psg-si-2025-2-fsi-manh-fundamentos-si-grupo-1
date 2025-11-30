@@ -5,10 +5,7 @@ import {
   type SelectPermissoesSchema,
   tabelaPermissoes,
 } from "../db/schema/permissoes";
-import {
-  RepositorioBase,
-  type SQLiteTransactionCustom,
-} from "./repositorioBase";
+import { RepositorioBase } from "./repositorioBase";
 import { and, eq } from "drizzle-orm";
 
 class RepositorioPermissoes extends RepositorioBase {
@@ -89,16 +86,6 @@ class RepositorioPermissoes extends RepositorioBase {
         .where(eq(tabelaPermissoes.usuarioId, userId));
       return resultSet.rowsAffected;
     });
-  }
-
-  async excluirPermissoesTransacao(
-    tx: SQLiteTransactionCustom,
-    userId: string,
-  ): Promise<number> {
-    const resultSet = await tx
-      .delete(tabelaPermissoes)
-      .where(eq(tabelaPermissoes.usuarioId, userId));
-    return resultSet.rowsAffected;
   }
 }
 
