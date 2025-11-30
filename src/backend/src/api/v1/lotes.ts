@@ -15,11 +15,11 @@ async function getLotes(
   try {
     if (Object.keys(req.query).length === 0) {
       const consulta = await servicoLotes.selecionarTodos();
-      res.send(consulta);
+      res.json(consulta);
     } else {
       const parsedQueryParams = LoteConsultaSchema.parse(req.query);
       const consulta = await servicoLotes.selecionarConsulta(parsedQueryParams);
-      res.send(consulta);
+      res.json(consulta);
     }
   } catch (err) {
     next(err);
@@ -49,7 +49,7 @@ async function getLoteId(
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoLotes.selecionarPorId(params.id);
     if (consulta) {
-      res.send(consulta);
+      res.json(consulta);
     } else {
       res.sendStatus(404);
     }

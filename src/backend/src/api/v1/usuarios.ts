@@ -22,7 +22,7 @@ async function getUsuarioId(
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.listarUnicoPublico(params.id);
     if (consulta) {
-      res.send(consulta);
+      res.json(consulta);
     } else {
       res.sendStatus(404);
     }

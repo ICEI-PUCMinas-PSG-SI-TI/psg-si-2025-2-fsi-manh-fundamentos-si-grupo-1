@@ -14,7 +14,7 @@ async function getCategorias(
 ): Promise<void> {
   try {
     const categorias = await servicoCategorias.selecionarTodos();
-    res.send(categorias);
+    res.json(categorias);
   } catch (err) {
     next(err);
   }
@@ -27,8 +27,8 @@ async function postCategoria(
 ): Promise<void> {
   try {
     const categoria = InsertCategoriaSchemaZ.parse(req.body);
-    const id = await servicoCategorias.inserir(categoria);
-    res.send(id);
+    const idRegistro = await servicoCategorias.inserir(categoria);
+    res.send(idRegistro);
   } catch (err) {
     next(err);
   }
@@ -43,7 +43,7 @@ async function getCategoria(
     const params = ParamsIdSchemaZ.parse(req.params);
     const categoria = await servicoCategorias.selecionarPorId(params.id);
     if (categoria) {
-      res.send(categoria);
+      res.json(categoria);
     } else {
       res.sendStatus(404);
     }

@@ -15,7 +15,7 @@ async function verPermissoesId(
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const permissoes = await servicoPermissoes.selecionarPermissoes(params.id);
-    res.send(permissoes);
+    res.json(permissoes);
   } catch (err) {
     next(err);
   }

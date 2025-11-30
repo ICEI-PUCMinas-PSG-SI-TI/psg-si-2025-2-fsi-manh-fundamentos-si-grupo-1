@@ -14,7 +14,7 @@ async function getUnidadesMedida(
 ): Promise<void> {
   try {
     const unidadesMedida = await servicoUnidadesMedida.selecionarTodos();
-    res.send(unidadesMedida);
+    res.json(unidadesMedida);
   } catch (err) {
     next(err);
   }
@@ -49,9 +49,9 @@ async function getUnidadeMedida(
       params.id,
     );
     if (unidadeMedida) {
-      res.send(unidadeMedida);
+      res.json(unidadeMedida);
     } else {
-      res.send(500);
+      res.sendStatus(500);
     }
   } catch (err) {
     next(err);

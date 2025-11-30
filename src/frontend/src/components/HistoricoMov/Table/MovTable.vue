@@ -13,7 +13,7 @@ async function obterMovimentacoes() {
     paginaTamanho: 100,
   })
   if (res.ok && res.responseBody) {
-    refMovimentacoes.value = res.responseBody as []
+    refMovimentacoes.value = res.responseBody
   }
 }
 

@@ -15,11 +15,11 @@ async function getProdutos(
   try {
     if (Object.keys(req.query).length === 0) {
       const consulta = await servicoProdutos.selecionarTodos();
-      res.send(consulta);
+      res.json(consulta);
     } else {
       const parsedBody = ParamsConsultaProdutosZ.parse(req.query);
       const consulta = await servicoProdutos.selecionarConsulta(parsedBody);
-      res.send(consulta);
+      res.json(consulta);
     }
   } catch (err) {
     next(err);
@@ -35,7 +35,7 @@ async function getProdutoId(
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoProdutos.selecionarPorId(params.id);
     if (consulta) {
-      res.send(consulta);
+      res.json(consulta);
     } else {
       res.sendStatus(404);
     }

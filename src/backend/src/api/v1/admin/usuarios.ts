@@ -22,7 +22,7 @@ async function getUsuarios(
 ): Promise<void> {
   try {
     const consulta = await servicoUsuarios.selecionarTodos();
-    res.send(consulta);
+    res.json(consulta);
   } catch (err) {
     next(err);
   }
@@ -77,7 +77,7 @@ async function getUsuarioId(
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
     if (consulta) {
-      res.send(consulta);
+      res.json(consulta);
     } else {
       res.sendStatus(404);
     }

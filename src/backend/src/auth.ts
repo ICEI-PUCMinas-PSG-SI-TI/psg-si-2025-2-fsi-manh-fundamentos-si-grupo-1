@@ -39,7 +39,7 @@ async function sessao(
     }
     const sessao =
       await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
-    res.send(sessao);
+    res.json(sessao);
   } catch (err) {
     next(err);
   }
@@ -75,7 +75,7 @@ async function login(
       path: "/",
       sameSite: "lax",
     });
-    res.send(infoSessao.usuario);
+    res.json(infoSessao.usuario);
   } catch (err) {
     error("Não foi possível realizar o login.", { label: "Auth" });
     next(err);

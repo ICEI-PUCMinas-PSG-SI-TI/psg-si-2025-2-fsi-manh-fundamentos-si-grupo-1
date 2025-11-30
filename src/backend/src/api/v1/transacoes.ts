@@ -14,12 +14,12 @@ async function getTransacoes(
   try {
     if (Object.keys(req.query).length === 0) {
       const consulta = await servicoTransacoes.selecionarTodos();
-      res.send(consulta);
+      res.json(consulta);
     } else {
       const parsedQueryParams = ConsultaMovimentacoesParamsZ.parse(req.query);
       const consulta =
         await servicoTransacoes.selecionarConsulta(parsedQueryParams);
-      res.send(consulta);
+      res.json(consulta);
     }
   } catch (err) {
     next(err);

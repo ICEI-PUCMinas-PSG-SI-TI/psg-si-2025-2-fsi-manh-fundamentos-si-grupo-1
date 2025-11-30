@@ -19,7 +19,7 @@ async function getConfiguracoes(
   try {
     const config = await servicoConfiguracoes.selecionar();
     if (config) {
-      res.send(config);
+      res.json(config);
     } else {
       error("Nenhum valor encontrado.", { label: "endConfig" });
       res.sendStatus(500);
