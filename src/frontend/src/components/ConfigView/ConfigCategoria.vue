@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { ApiCategorias } from '@/api/categorias'
+import { useNotificationStore } from '@/store/config/toast'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { ref } from 'vue'
+import type { GetCategoriaDTO } from '../../../../backend'
+import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { ref } from 'vue'
-import { ApiCategorias } from '@/api/categorias'
-import { useNotificationStore } from '@/store/config/toast'
-import ButtonComponent from '../ButtonComponent.vue'
-import type { GetCategoriaDTO } from '../../../../backend'
-import { XMarkIcon } from '@heroicons/vue/24/outline'
 
 const categorias = new ApiCategorias()
 

@@ -121,11 +121,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, watch } from 'vue'
-import { ApiProdutos } from '@/api/produtos'
 import { ApiCategorias } from '@/api/categorias'
-import type { GetCategoriaDTO, GetConsultaProdutoDto, GetProdutoDto } from '../../../backend'
+import { ApiProdutos } from '@/api/produtos'
 import { notificacoes } from '@/main'
+import { ref, type Ref, watch } from 'vue'
+import type { GetCategoriaDTO, GetConsultaProdutoDto, GetProdutoDto } from '../../../backend'
 
 const search = ref('')
 const categoriaFilter = ref('')

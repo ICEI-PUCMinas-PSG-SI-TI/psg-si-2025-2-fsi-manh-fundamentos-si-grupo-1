@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import MovTable from '@/components/HistoricoMov/Table/MovTable.vue'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { GetConsultaMovimentacaoDto } from '../../../backend'
 // import { onMounted } from 'vue'
 

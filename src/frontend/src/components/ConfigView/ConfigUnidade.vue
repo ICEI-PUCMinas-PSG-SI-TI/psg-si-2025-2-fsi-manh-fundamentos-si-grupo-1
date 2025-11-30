@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { ApiUnidadesMedida } from '@/api/unidades'
+import { useNotificationStore } from '@/store/config/toast'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { ref } from 'vue'
+import type { GetUnidadeDto } from '../../../../backend'
 import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { useNotificationStore } from '@/store/config/toast'
-import { ref } from 'vue'
-import { ApiUnidadesMedida } from '@/api/unidades'
-import type { GetUnidadeDto } from '../../../../backend'
 
 const unidadesMedida = new ApiUnidadesMedida()
 

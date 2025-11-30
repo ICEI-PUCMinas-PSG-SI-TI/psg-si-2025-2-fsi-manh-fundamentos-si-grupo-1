@@ -1,15 +1,15 @@
-import PesquisaProdutosView from '@/views/PesquisaProdutosView.vue'
+import { sessao } from '@/main'
+import CadastroUsuariosView from '@/views/CadastroUsuariosView.vue'
+import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
+import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
+import LoadingView from '@/views/LoadingView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MovimentacoesView from '@/views/MovimentacoesView.vue'
-import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-router'
-import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
-import { sessao } from '@/main'
-import { Permissoes } from '../../../backend'
-import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
-import CadastroUsuariosView from '@/views/CadastroUsuariosView.vue'
-import LoadingView from '@/views/LoadingView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import OperacoesDiariasView from '@/views/OperacoesDiariasView.vue'
+import PesquisaProdutosView from '@/views/PesquisaProdutosView.vue'
+import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-router'
+import { Permissoes } from '../../../backend'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

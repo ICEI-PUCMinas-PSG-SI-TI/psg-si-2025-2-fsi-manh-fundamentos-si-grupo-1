@@ -1,5 +1,5 @@
-import { HttpMethods, fetchW } from './fetchWrapper'
 import { UuidParseZ } from './common'
+import { HttpMethods, fetchW } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/usuarios`
 
@@ -30,4 +30,3 @@ export class ApiPerfil {
     })
   }
 }
-

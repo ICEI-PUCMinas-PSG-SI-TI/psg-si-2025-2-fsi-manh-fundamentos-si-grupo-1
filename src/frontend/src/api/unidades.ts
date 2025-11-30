@@ -1,7 +1,7 @@
 import * as z4 from 'zod/v4'
-import { fetchW, HttpMethods } from './fetchWrapper'
 import type { GetUnidadeDto, SetUnidadeDTO } from '../../../backend'
 import { UuidParseZ, type IdRegistro } from './common'
+import { fetchW, HttpMethods } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/unidades`
 
@@ -33,4 +33,3 @@ export class ApiUnidadesMedida {
     })
   }
 }
-

@@ -111,15 +111,15 @@
 
 <script setup lang="ts">
 import { ApiMovimentacoes } from '@/api/movimentacoes'
+import { ApiProdutos } from '@/api/produtos'
+import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
 import {
-  ShoppingCartIcon,
-  ShoppingBagIcon,
   MagnifyingGlassIcon,
   PlusIcon,
+  ShoppingBagIcon,
+  ShoppingCartIcon,
 } from '@heroicons/vue/24/outline'
 import { onMounted, ref } from 'vue'
-import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
-import { ApiProdutos } from '@/api/produtos'
 import type { GetConsultaMovimentacaoDto } from '../../../backend'
 
 const produtosCache = ref<Record<string, string>>({})

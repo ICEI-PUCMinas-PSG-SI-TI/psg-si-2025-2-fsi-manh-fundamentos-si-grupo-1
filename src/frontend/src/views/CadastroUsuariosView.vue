@@ -131,13 +131,13 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 
+import { ApiPermissoes } from '@/api/permissoes'
+import { ApiUsuario } from '@/api/usuarios'
 import InfoUsuario from '@/components/CadastroUsuario/InfoUsuario.vue'
 import LabeledInput from '@/components/LabeledInput.vue'
-import { ApiUsuario } from '@/api/usuarios'
-import { Permissoes, type GetUsuarioDto } from '../../../backend'
-import { ApiPermissoes } from '@/api/permissoes'
 import { notificacoes } from '@/main'
 import { CrecenciaisZ } from '@/services/objects'
+import { Permissoes, type GetUsuarioDto } from '../../../backend'
 
 // TODO: Não exportar senhas para o frontend
 const refUsuarios: Ref<GetUsuarioDto[] | null> = ref(null)

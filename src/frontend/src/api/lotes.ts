@@ -1,6 +1,6 @@
-import { fetchW } from './fetchWrapper'
-import { UuidParseZ } from './common'
 import type { GetLoteDTO } from '../../../backend'
+import { UuidParseZ } from './common'
+import { fetchW } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/lotes`
 

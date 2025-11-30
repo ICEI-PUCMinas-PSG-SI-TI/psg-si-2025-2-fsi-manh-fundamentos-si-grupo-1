@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import ConfigSistema from '@/components/ConfigView/ConfigSistema.vue'
-import ConfigUsuario from '@/components/ConfigView/ConfigUsuario.vue'
 import ConfigCategoria from '@/components/ConfigView/ConfigCategoria.vue'
+import ConfigSistema from '@/components/ConfigView/ConfigSistema.vue'
 import ConfigUnidade from '@/components/ConfigView/ConfigUnidade.vue'
+import ConfigUsuario from '@/components/ConfigView/ConfigUsuario.vue'
 </script>

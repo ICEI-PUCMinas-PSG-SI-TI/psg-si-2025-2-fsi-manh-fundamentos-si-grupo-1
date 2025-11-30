@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { ApiAutenticacao } from '@/api/auth'
 import { ApiPerfil } from '@/api/perfil'
+import router from '@/router'
+import { limparConfiguracoes } from '@/services/storage'
+import { useSessaoStore } from '@/store/config/sessao'
+import { useNotificationStore } from '@/store/config/toast'
+import { ref } from 'vue'
+import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import AlterarSenha from '../config/AlterarSenha.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { ApiAutenticacao } from '@/api/auth'
-import { ref } from 'vue'
-import { useSessaoStore } from '@/store/config/sessao'
-import { useNotificationStore } from '@/store/config/toast'
-import { limparConfiguracoes } from '@/services/storage'
-import router from '@/router'
-import ButtonComponent from '../ButtonComponent.vue'
 
 const autenticacao = new ApiAutenticacao()
 const usuario = new ApiPerfil()

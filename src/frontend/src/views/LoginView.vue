@@ -59,15 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
-import { ref, type Ref } from 'vue'
 import { ApiAutenticacao } from '@/api/auth'
 import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
-import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
-import { useNotificationStore } from '@/store/config/toast'
-import { useSessaoStore } from '@/store/config/sessao'
-import { useRoute, useRouter } from 'vue-router'
 import { CrecenciaisZ } from '@/services/objects'
+import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
+import { useSessaoStore } from '@/store/config/sessao'
+import { useNotificationStore } from '@/store/config/toast'
+import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
+import { ref, type Ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 

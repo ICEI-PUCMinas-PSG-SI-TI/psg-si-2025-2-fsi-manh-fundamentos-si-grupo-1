@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSessaoStore } from '@/store/config/sessao'
 import {
   ArchiveBoxIcon,
   ArrowsUpDownIcon,
@@ -6,13 +7,12 @@ import {
   Cog6ToothIcon,
   UsersIcon,
 } from '@heroicons/vue/24/outline'
-import NavigationMenuItem from './NavigationMenuItem.vue'
-import LogoMenuItem from './LogoMenuItem.vue'
-import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
-import DarkModeToggle from './DarkModeToggle.vue'
-import { useSessaoStore } from '@/store/config/sessao'
 import { computed } from 'vue'
 import { Permissoes } from '../../../backend'
+import DarkModeToggle from './DarkModeToggle.vue'
+import LogoMenuItem from './LogoMenuItem.vue'
+import NavigationMenuItem from './NavigationMenuItem.vue'
+import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
 
 const useSessao = useSessaoStore()
 const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador))
