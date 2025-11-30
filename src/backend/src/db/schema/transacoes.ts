@@ -1,8 +1,8 @@
+import { type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { tabelaLotes } from "./lotes";
 import { tabelaProdutos } from "./produtos";
 import { tabelaUsuarios } from "./usuarios";
-import { type InferInsertModel, type InferSelectModel } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const tabelaTransacoes = sqliteTable("transacoes", {
   id: text()

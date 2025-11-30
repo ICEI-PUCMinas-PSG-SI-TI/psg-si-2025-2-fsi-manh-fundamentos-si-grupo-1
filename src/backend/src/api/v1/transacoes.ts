@@ -1,8 +1,8 @@
+import { type NextFunction, type Response, Router } from "express";
 import type { ExtendedRequest } from "../../middlewares";
 import servicoTransacoes, {
   ConsultaMovimentacoesParamsZ,
 } from "../../services/servicoTransacoes";
-import { type NextFunction, type Response, Router } from "express";
 
 const apiV1TransacoesRouter = Router();
 

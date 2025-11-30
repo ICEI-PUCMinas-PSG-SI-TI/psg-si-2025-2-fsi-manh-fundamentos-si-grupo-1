@@ -1,3 +1,5 @@
+import type { NextFunction, Request, Response } from "express";
+import { customAlphabet } from "nanoid";
 import { COOKIE_SESSION_TOKEN } from "./auth";
 import { alfabetoHexadecimal } from "./db/enums/identificador";
 import { Permissoes } from "./db/enums/permissoes";
@@ -6,8 +8,6 @@ import { error, warning } from "./logging";
 import servicoAutenticacao, {
   type GetSessaoDto,
 } from "./services/servicoAutenticacao";
-import type { NextFunction, Request, Response } from "express";
-import { customAlphabet } from "nanoid";
 
 export type Cookies = {
   tokenSessao?: string;

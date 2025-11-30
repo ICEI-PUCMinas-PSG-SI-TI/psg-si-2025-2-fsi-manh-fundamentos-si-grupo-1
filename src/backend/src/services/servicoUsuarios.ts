@@ -1,3 +1,5 @@
+import { compare } from "bcrypt";
+import * as z4 from "zod/v4";
 import { SenhaZ } from "../api/v1/objects";
 import { Permissoes } from "../db/enums/permissoes";
 import { InsertUsuarioSchemaZ } from "../db/schema/usuarios";
@@ -6,8 +8,6 @@ import { error } from "../logging";
 import repositorioUsuarios from "../repository/repositorioUsuarios";
 import { hashSenha } from "../system/auth";
 import servicoPermissoes from "./servicoPermissoes";
-import { compare } from "bcrypt";
-import * as z4 from "zod/v4";
 
 export const SetUsuarioDtoZ = z4.strictObject({
   nome: z4.string().min(1).max(32),

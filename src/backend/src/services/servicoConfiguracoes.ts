@@ -1,7 +1,7 @@
+import * as z4 from "zod/v4";
 import { Identificador } from "../db/enums/identificador";
 import { ServerError } from "../error";
 import repositorioConfiguracoes from "../repository/repositorioConfiguracoes";
-import * as z4 from "zod/v4";
 
 // Por enquanto haverá apenas 1 configuração padrão
 const defaultUuid = "00000000-0000-0000-0000-000000000000";

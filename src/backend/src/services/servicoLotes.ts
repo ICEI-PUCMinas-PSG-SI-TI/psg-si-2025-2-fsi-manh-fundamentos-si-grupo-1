@@ -1,8 +1,8 @@
+import * as z4 from "zod/v4";
 import { ServerError } from "../error";
 import repositorioLotes, {
   type RepoConsultaParamsLote,
 } from "../repository/repositorioLotes";
-import * as z4 from "zod/v4";
 
 export const LoteConsultaSchema = z4.object({
   id: z4.uuid().optional(),

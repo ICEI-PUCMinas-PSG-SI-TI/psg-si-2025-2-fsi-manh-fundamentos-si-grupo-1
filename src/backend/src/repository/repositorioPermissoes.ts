@@ -1,3 +1,4 @@
+import { and, eq } from "drizzle-orm";
 import bancoDados from "../db";
 import { Permissoes } from "../db/enums/permissoes";
 import {
@@ -6,7 +7,6 @@ import {
   tabelaPermissoes,
 } from "../db/schema/permissoes";
 import { RepositorioBase } from "./repositorioBase";
-import { and, eq } from "drizzle-orm";
 
 class RepositorioPermissoes extends RepositorioBase {
   inserir(...perms: InsertPermissoesSchema[]): Promise<number> {

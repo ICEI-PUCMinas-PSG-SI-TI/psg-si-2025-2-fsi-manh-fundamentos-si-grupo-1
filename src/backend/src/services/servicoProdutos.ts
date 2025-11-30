@@ -1,3 +1,4 @@
+import * as z4 from "zod/v4";
 import type { Identificador } from "../db/enums/identificador";
 import { StatusProduto } from "../db/enums/statusProduto";
 import { configurarGerador, geradorCodigo } from "../db/geradorCodigos";
@@ -6,7 +7,6 @@ import { debug } from "../logging";
 import repositorioProdutos, {
   type RepoConsultaParamsProdutoQuantidade,
 } from "../repository/repositorioProdutos";
-import * as z4 from "zod/v4";
 
 export const SetProdutoDtoZ = z4.object({
   nome: z4.string(),

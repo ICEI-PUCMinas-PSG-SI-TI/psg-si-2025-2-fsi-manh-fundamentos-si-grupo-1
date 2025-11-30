@@ -1,3 +1,5 @@
+import { compare } from "bcrypt";
+import * as z4 from "zod/v4";
 import { Permissoes } from "../db/enums/permissoes";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
 import { ClientError } from "../error";
@@ -10,8 +12,6 @@ import {
   generateSecureRandomString,
   hashSecret,
 } from "../system/auth";
-import { compare } from "bcrypt";
-import * as z4 from "zod/v4";
 
 // Parte do código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
 

@@ -1,11 +1,11 @@
 // import servicoConfiguracoes from "../services/servicoConfiguracoes";
+import { customAlphabet } from "nanoid";
 import {
   Identificador,
   alfabetoHexadecimal,
   alfabetoNumerico,
   alfabetoSeguro,
 } from "./enums/identificador";
-import { customAlphabet } from "nanoid";
 
 // const config = await servicoConfiguracoes.selecionar();
 

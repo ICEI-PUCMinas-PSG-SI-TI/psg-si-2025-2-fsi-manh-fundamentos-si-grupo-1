@@ -1,17 +1,3 @@
-import bancoDados from "../db";
-import { tabelaCategorias } from "../db/schema/categorias";
-import { tabelaLotes } from "../db/schema/lotes";
-import {
-  type InsertProdutosSchema,
-  type SelectProdutosSchema,
-  type UpdateProdutosSchema,
-  tabelaProdutos,
-} from "../db/schema/produtos";
-import type { Count, RefRegistro } from "./common";
-import {
-  RepositorioBase,
-  type SQLiteTransactionCustom,
-} from "./repositorioBase";
 import "dotenv/config";
 import {
   SQL,
@@ -26,6 +12,20 @@ import {
   or,
   sql,
 } from "drizzle-orm";
+import bancoDados from "../db";
+import { tabelaCategorias } from "../db/schema/categorias";
+import { tabelaLotes } from "../db/schema/lotes";
+import {
+  type InsertProdutosSchema,
+  type SelectProdutosSchema,
+  type UpdateProdutosSchema,
+  tabelaProdutos,
+} from "../db/schema/produtos";
+import type { Count, RefRegistro } from "./common";
+import {
+  RepositorioBase,
+  type SQLiteTransactionCustom,
+} from "./repositorioBase";
 
 export type RepoConsultaParamsProduto = {
   pagina?: number;

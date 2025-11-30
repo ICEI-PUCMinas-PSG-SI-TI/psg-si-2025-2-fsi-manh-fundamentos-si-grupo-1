@@ -1,9 +1,3 @@
-import apiRouter from "./api";
-import authRouter from "./auth";
-import { inicializarAdministrador, verificarBancoDados } from "./db";
-import { mdwError } from "./error";
-import { info, middlewareHTTP } from "./logging";
-import { mdwRequestId } from "./middlewares";
 import chalk from "chalk";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
@@ -11,6 +5,12 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import * as z4 from "zod/v4";
+import apiRouter from "./api";
+import authRouter from "./auth";
+import { inicializarAdministrador, verificarBancoDados } from "./db";
+import { mdwError } from "./error";
+import { info, middlewareHTTP } from "./logging";
+import { mdwRequestId } from "./middlewares";
 
 const app = express();
 const port = process.env.PORT || 8080;

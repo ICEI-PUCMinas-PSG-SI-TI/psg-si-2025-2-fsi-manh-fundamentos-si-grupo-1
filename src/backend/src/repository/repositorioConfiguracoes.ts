@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import bancoDados from "../db";
 import {
   type InsertConfiguracaoSchema,
@@ -5,7 +6,6 @@ import {
   type UpdateConfiguracaoSchema,
   tabelaConfiguracoes,
 } from "../db/schema/configuracoes";
-import { eq } from "drizzle-orm";
 
 class RepositorioConfiguracoes {
   inserir(
