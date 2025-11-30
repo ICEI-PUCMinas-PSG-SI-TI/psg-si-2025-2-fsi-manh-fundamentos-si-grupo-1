@@ -45,6 +45,7 @@ export type {
 } from "./src/services/servicoProdutos";
 
 export type {
+  GetMovimentacaoDto,
   GetConsultaMovimentacaoDto,
   ConsultaMovimentacoesParams,
 } from "./src/services/servicoTransacoes";
