@@ -1,13 +1,13 @@
 import { ApiAutenticacao } from '@/api/auth'
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
-import type { UserSessionInfo } from '../../../../backend'
+import { type GetSessaoDto } from '../../../../backend'
 import { Permissoes } from '../../../../backend'
 
 const autenticacao = new ApiAutenticacao()
 
 // TODO: Armazenar informações separadamente?
-const refUserInfo: Ref<UserSessionInfo | null> = ref(null)
+const refUserInfo: Ref<GetSessaoDto | null> = ref(null)
 const refDidFetch = ref(false)
 
 async function isUserLoggedIn(): Promise<boolean> {
@@ -23,7 +23,7 @@ async function isUserLoggedIn(): Promise<boolean> {
 export const useSessaoStore = defineStore('sessao', {
   state: () => ({ isLoggedIn: false, didFetch: refDidFetch }),
   getters: {
-    getUserInfo(): UserSessionInfo | null {
+    getUserInfo(): GetSessaoDto | null {
       return refUserInfo.value
     },
   },

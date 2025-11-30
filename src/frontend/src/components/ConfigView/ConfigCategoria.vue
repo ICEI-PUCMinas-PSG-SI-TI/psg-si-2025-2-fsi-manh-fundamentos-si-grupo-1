@@ -3,16 +3,17 @@ import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
 import { ref } from 'vue'
-import { ApiCategorias, type Categorias } from '@/api/categorias'
+import { ApiCategorias } from '@/api/categorias'
 import { useNotificationStore } from '@/store/config/toast'
 import ButtonComponent from '../ButtonComponent.vue'
+import type { GetCategoriaDTO } from '../../../../backend'
 
 const categorias = new ApiCategorias()
 
 const notificacoes = useNotificationStore()
 
 const refNovaCategoria = ref()
-const refCategorias = ref([] as Categorias[])
+const refCategorias = ref([] as GetCategoriaDTO[])
 
 async function adicionarCategoria() {
   const res = await categorias.criar(refNovaCategoria.value)

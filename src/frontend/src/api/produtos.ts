@@ -1,27 +1,29 @@
-import * as z4 from 'zod/v4'
 import { fetchW, HttpMethods } from './fetchWrapper'
-import type { UuidResult, ParamsConsultaProdutos, ParamsInserirProdutos } from '../../../backend'
-import type { SelectProdutosSchema } from '../../../backend/src/db/schema/produtos'
+import type {
+  ParamsConsultaProdutos,
+  SetProdutoDto,
+  GetProdutoDto,
+  GetConsultaProdutoDto,
+} from '../../../backend'
+import { UuidParseZ, type IdRegistro } from './common'
 
 const endpoint_path = `/api/v1/produtos`
 
-const ParamIdSchemaZ = z4.uuid()
-
 export class ApiProdutos {
-  criar(opts: ParamsInserirProdutos) {
-    return fetchW<UuidResult>(endpoint_path, {
+  criar(opts: SetProdutoDto) {
+    return fetchW<IdRegistro>(endpoint_path, {
       method: HttpMethods.Post,
       body: opts,
     })
   }
 
   obterPorId(id: string) {
-    const _id = ParamIdSchemaZ.parse(id)
-    return fetchW(`${endpoint_path}/${_id}`)
+    const _id = UuidParseZ.parse(id)
+    return fetchW<GetProdutoDto | null>(`${endpoint_path}/${_id}`)
   }
 
   obterTodos(params?: ParamsConsultaProdutos) {
-    return fetchW<SelectProdutosSchema[]>(endpoint_path, {
+    return fetchW<GetConsultaProdutoDto[]>(endpoint_path, {
       params: params,
     })
   }

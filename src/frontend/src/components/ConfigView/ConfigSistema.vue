@@ -4,7 +4,7 @@ import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { Identificador } from '../../../../backend/src/db/enums/identificador'
+import { Identificador } from '../../../../backend'
 import { useNotificationStore } from '@/store/config/toast'
 import { ApiConfiguracoes } from '@/api/configuracoes'
 
@@ -101,3 +101,4 @@ obterConfiguracoes()
     </div>
   </CardComponent>
 </template>
+

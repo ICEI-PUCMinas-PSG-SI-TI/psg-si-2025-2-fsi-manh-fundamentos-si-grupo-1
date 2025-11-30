@@ -53,7 +53,7 @@
             <!-- Use monospaced font -->
             <td class="p-2">{{ produto.codigo }}</td>
             <td class="p-2">{{ produto.nome }}</td>
-            <td class="p-2">{{ produto.categoria }}</td>
+            <td class="p-2">{{ produto.categoria || 'N/A' }}</td>
             <td class="p-2">{{ produto.quantidade || '0' }}</td>
             <td class="p-2">
               R$
@@ -124,8 +124,7 @@
 import { ref, type Ref, watch } from 'vue'
 import { ApiProdutos } from '@/api/produtos'
 import { ApiCategorias } from '@/api/categorias'
-import type { SelectProdutosSchema } from '../../../backend/src/db/schema/produtos'
-import type { SelectCategoriaSchema } from '../../../backend/src/db/schema/categorias'
+import type { GetCategoriaDTO, GetConsultaProdutoDto, GetProdutoDto } from '../../../backend'
 import { notificacoes } from '@/main'
 
 const search = ref('')
@@ -133,12 +132,7 @@ const categoriaFilter = ref('')
 const showModal = ref(false)
 // const modalMode = ref('create')
 
-type SelectProdutosSchemaEx = SelectProdutosSchema & {
-  categoria?: string
-  quantidade?: number
-}
-
-const refProdutos: Ref<SelectProdutosSchemaEx[] | null> = ref(null)
+const refProdutos: Ref<GetConsultaProdutoDto[]> = ref([])
 
 const form: Ref<{
   id: string
@@ -148,7 +142,7 @@ const form: Ref<{
   preco: number
 } | null> = ref(null)
 
-const categorias: Ref<SelectCategoriaSchema[]> = ref([])
+const categorias: Ref<GetCategoriaDTO[]> = ref([])
 
 function criarProduto() {
   // modalMode.value = 'create'
@@ -158,12 +152,12 @@ function criarProduto() {
   alert('Redirect to produtos/new')
 }
 
-function visualizarProduto(p: SelectProdutosSchema) {
+function visualizarProduto(p: GetProdutoDto) {
   // TODO: redirect
   alert('Redirect to produtos/' + p.id)
 }
 
-function remover(_p: SelectProdutosSchema) {
+function remover(_p: GetProdutoDto) {
   // TODO: Devido a dependencias.
   notificacoes.addNotification('No momento não é permitido a exclusão de produtos!', { time: 3000 })
   /*

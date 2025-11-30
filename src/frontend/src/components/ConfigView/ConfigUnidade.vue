@@ -6,13 +6,14 @@ import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
 import { useNotificationStore } from '@/store/config/toast'
 import { ref } from 'vue'
-import { ApiUnidadesMedida, type UnidadeMedida } from '@/api/unidades'
+import { ApiUnidadesMedida } from '@/api/unidades'
+import type { GetUnidadeDto } from '../../../../backend'
 
 const unidadesMedida = new ApiUnidadesMedida()
 
 const notificacoes = useNotificationStore()
 
-const refUnidadesMedida = ref([] as UnidadeMedida[])
+const refUnidadesMedida = ref([] as GetUnidadeDto[])
 const refNovaUnidadeMedida = ref({
   nome: '',
   abreviacao: '',

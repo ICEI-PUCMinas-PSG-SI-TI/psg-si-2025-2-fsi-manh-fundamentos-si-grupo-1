@@ -133,15 +133,14 @@ import { ref, type Ref } from 'vue'
 
 import InfoUsuario from '@/components/CadastroUsuario/InfoUsuario.vue'
 import LabeledInput from '@/components/LabeledInput.vue'
-import type { SelectUsuarioSchema } from '../../../backend/src/db/schema/usuarios'
 import { ApiUsuario } from '@/api/usuarios'
-import { Permissoes } from '../../../backend'
+import { Permissoes, type GetUsuarioDto } from '../../../backend'
 import { ApiPermissoes } from '@/api/permissoes'
 import { notificacoes } from '@/main'
 import { CrecenciaisZ } from '@/services/objects'
 
 // TODO: Não exportar senhas para o frontend
-const refUsuarios: Ref<SelectUsuarioSchema[] | null> = ref(null)
+const refUsuarios: Ref<GetUsuarioDto[] | null> = ref(null)
 const editando: Ref<boolean> = ref(false)
 const permissoes: Ref<Permissoes> = ref(Permissoes.Consulta)
 
@@ -169,7 +168,7 @@ function excluir() {
   notificacoes.addNotification('No momento não é permitido excluir usuários.')
 }
 
-async function desabilitar(usuario: SelectUsuarioSchema, status: boolean) {
+async function desabilitar(usuario: GetUsuarioDto, status: boolean) {
   const res = await apiUsuario.atualizar(usuario.id, { habilitado: status })
   if (res.ok) {
     if (status) {
@@ -180,7 +179,7 @@ async function desabilitar(usuario: SelectUsuarioSchema, status: boolean) {
   }
 }
 
-async function editar(usuario: SelectUsuarioSchema) {
+async function editar(usuario: GetUsuarioDto) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
   editando.value = true
   refFields.value.id = usuario.id
@@ -213,10 +212,11 @@ async function confirmar() {
       login: refFields.value.login,
       nome: refFields.value.nome,
       descricao: refFields.value.descricao,
+      senha: credenciais.data.senha,
       password: credenciais.data.senha,
     })
     if (!res.ok || !res.responseBody) return
-    const res2 = await apiPermissoes.definir(res.responseBody.id, [permissoes.value])
+    const res2 = await apiPermissoes.definir(res.responseBody, [permissoes.value])
     if (res2.ok) {
       notificacoes.addNotification('Usuário e permissões configurados com sucesso.')
       limparCampos()
