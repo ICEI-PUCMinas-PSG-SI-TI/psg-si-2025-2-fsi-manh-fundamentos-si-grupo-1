@@ -8,7 +8,7 @@ import type { RefRegistro } from "./common";
 import "dotenv/config";
 import { eq } from "drizzle-orm";
 
-export class RepositorioSessoes {
+class RepositorioSessoes {
   inserir(sessao: InsertSessaoSchema): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaSessoes).values(sessao).returning({
@@ -67,3 +67,7 @@ export class RepositorioSessoes {
     });
   }
 }
+
+const repositorioSessoes = new RepositorioSessoes();
+
+export default repositorioSessoes;

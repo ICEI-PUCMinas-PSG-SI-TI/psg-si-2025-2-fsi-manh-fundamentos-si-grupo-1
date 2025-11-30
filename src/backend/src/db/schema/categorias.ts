@@ -3,7 +3,6 @@ import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
 
-// TODO: Verificar necessidade de desabilitar ou atualizar categorias
 export const tabelaCategorias = sqliteTable("categorias", {
   id: text()
     .primaryKey()

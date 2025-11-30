@@ -5,9 +5,13 @@ import {
   type SelectPermissoesSchema,
   tabelaPermissoes,
 } from "../db/schema/permissoes";
+import {
+  RepositorioBase,
+  type SQLiteTransactionCustom,
+} from "./repositorioBase";
 import { and, eq } from "drizzle-orm";
 
-export class RepositorioPermissoes {
+class RepositorioPermissoes extends RepositorioBase {
   inserir(...perms: InsertPermissoesSchema[]): Promise<number> {
     return bancoDados.transaction(async (tx) => {
       const res = await tx
@@ -48,9 +52,7 @@ export class RepositorioPermissoes {
       );
   }
 
-  selecionarPersmissoesPorIdUsuario(
-    userId: string,
-  ): Promise<SelectPermissoesSchema[]> {
+  selecionarPorIdUsuario(userId: string): Promise<SelectPermissoesSchema[]> {
     return bancoDados
       .select()
       .from(tabelaPermissoes)
@@ -87,6 +89,16 @@ export class RepositorioPermissoes {
         .where(eq(tabelaPermissoes.usuarioId, userId));
       return resultSet.rowsAffected;
     });
+  }
+
+  async excluirPermissoesTransacao(
+    tx: SQLiteTransactionCustom,
+    userId: string,
+  ): Promise<number> {
+    const resultSet = await tx
+      .delete(tabelaPermissoes)
+      .where(eq(tabelaPermissoes.usuarioId, userId));
+    return resultSet.rowsAffected;
   }
 }
 

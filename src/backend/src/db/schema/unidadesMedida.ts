@@ -19,14 +19,6 @@ export const tabelaUnidadesMedida = sqliteTable("unidades_medida", {
     .$onUpdateFn(() => new Date()),
 });
 
-// Campos da tabela que podem ser atualizados. Os campos não são inferidos
-// diretamente para evitar a permissão de edição de futuros campos que podem
-// ser adicionados a tabela.
-export const UpdateUnidadesMedidasSchemaZ = z4.strictObject({
-  nome: z4.string().min(1).max(128).optional(),
-  abreviacao: z4.string().min(1).max(16).optional(),
-});
-
 export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
   tabelaUnidadesMedida,
   {
@@ -44,8 +36,8 @@ export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
 export type SelectUnidadesMedidaSchema = InferSelectModel<
   typeof tabelaUnidadesMedida
 >;
-export type UpdateUnidadesMedidaSchema = z4.infer<
-  typeof UpdateUnidadesMedidasSchemaZ
+export type UpdateUnidadesMedidaSchema = Partial<
+  InferSelectModel<typeof tabelaUnidadesMedida>
 >;
 export type InsertUnidadesMedidaSchema = z4.infer<
   typeof InsertUnidadesMedidasSchemaZ

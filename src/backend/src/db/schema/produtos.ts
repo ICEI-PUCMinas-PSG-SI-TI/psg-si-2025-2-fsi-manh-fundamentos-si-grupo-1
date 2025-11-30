@@ -27,7 +27,7 @@ export const tabelaProdutos = sqliteTable("produtos", {
   precoCusto: int("preco_custo"),
   precoVenda: int("preco_venda"),
   precoPromocao: int("preco_promocao"),
-  quantidadeUnidadeMedida: text("quantidade_unidade_medida")
+  unidadeMedidaId: text("quantidade_unidade_medida")
     .notNull()
     .references(() => tabelaUnidadesMedida.id),
   quantidadeMinima: int("quantidade_minima"),
@@ -67,7 +67,7 @@ export const UpdateProdutosSchemaZ = z4.strictObject({
   precoVenda: z4.int().optional(),
   precoPromocao: z4.int().optional(),
   codigo: z4.string().optional(),
-  // quantidadeUnidadeMedida: z4.string().optional(),
+  unidadeMedidaId: z4.uuid().optional(),
   quantidadeMinima: z4.int().optional(),
   quantidadeMaxima: z4.int().optional(),
   localizacao: z4.string().optional(),
@@ -94,5 +94,7 @@ export const InsertProdutosSchemaZ = createInsertSchema(tabelaProdutos, {
   .strict();
 
 export type SelectProdutosSchema = InferSelectModel<typeof tabelaProdutos>;
-export type UpdateProdutosSchema = z4.infer<typeof UpdateProdutosSchemaZ>;
+export type UpdateProdutosSchema = Partial<
+  InferSelectModel<typeof tabelaProdutos>
+>;
 export type InsertProdutosSchema = z4.infer<typeof InsertProdutosSchemaZ>;

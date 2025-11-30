@@ -28,6 +28,17 @@ export class HttpError extends Error {
   }
 }
 
+export class ServerError extends Error {
+  code: number;
+
+  constructor(message: string) {
+    super(message);
+    Object.setPrototypeOf(this, ServerError.prototype);
+    this.name = "ServerError";
+    this.code = 500;
+  }
+}
+
 export function mdwError(
   err: Error,
   req: ExtendedRequest,
@@ -36,7 +47,10 @@ export function mdwError(
 ): void {
   const id = req._requestId;
   if (err) {
-    if (err instanceof ClientError || err instanceof HttpError) {
+    if (err instanceof ServerError) {
+      error(err.message, { label: "mdwErr.HTTP", reqId: id });
+      res.status(err.code);
+    } else if (err instanceof ClientError || err instanceof HttpError) {
       error(err.message, { label: "mdwErr.HTTP", reqId: id });
       res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {

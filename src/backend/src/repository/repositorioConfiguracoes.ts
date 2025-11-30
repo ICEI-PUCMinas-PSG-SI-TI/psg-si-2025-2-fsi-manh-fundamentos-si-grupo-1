@@ -7,7 +7,7 @@ import {
 } from "../db/schema/configuracoes";
 import { eq } from "drizzle-orm";
 
-export class RepositorioConfiguracoes {
+class RepositorioConfiguracoes {
   inserir(
     configuracoes: InsertConfiguracaoSchema,
   ): Promise<SelectConfiguracaoSchema[]> {
@@ -41,12 +41,13 @@ export class RepositorioConfiguracoes {
 
   atualizarPorId(
     id: string,
-    configuracoes: UpdateConfiguracaoSchema,
+    valores: UpdateConfiguracaoSchema,
   ): Promise<number> {
+    valores.updatedAt = new Date();
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaConfiguracoes)
-        .set(configuracoes)
+        .set(valores)
         .where(eq(tabelaConfiguracoes.id, id));
       return resultSet.rowsAffected;
     });
@@ -62,3 +63,7 @@ export class RepositorioConfiguracoes {
     });
   }
 }
+
+const repositorioConfiguracoes = new RepositorioConfiguracoes();
+
+export default repositorioConfiguracoes;

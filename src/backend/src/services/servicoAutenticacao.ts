@@ -2,26 +2,25 @@ import { Permissoes } from "../db/enums/permissoes";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
 import { ClientError } from "../error";
 import { debug, error, warning } from "../logging";
-import { RepositorioSessoes } from "../repository/repositorioSessoes";
-import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
-import servicoPermissoes from "./servicoPermissoes";
+import repositorioPermissoes from "../repository/repositorioPermissoes";
+import repositorioSessoes from "../repository/repositorioSessoes";
+import repositorioUsuarios from "../repository/repositorioUsuarios";
+import {
+  constantTimeEqual,
+  generateSecureRandomString,
+  hashSecret,
+} from "../system/auth";
 import { compare } from "bcrypt";
 import * as z4 from "zod/v4";
 
-// O código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
-
-const repositorioUsuarios = new RepositorioUsuarios();
-const repositorioSessoes = new RepositorioSessoes();
+// Parte do código utilizado neste arquivo foi adaptado de https://lucia-auth.com para fins de aprendizado.
 
 export const CredenciaisSchemaZ = z4.strictObject({
   login: z4.string(),
   senha: z4.string(),
 });
 
-export type CredenciaisSchema = z4.infer<typeof CredenciaisSchemaZ>;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UserSessionInfoZ = z4.object({
+export const GetSessaoDtoZ = z4.strictObject({
   id: z4.string(),
   nome: z4.string(),
   login: z4.string(),
@@ -30,41 +29,7 @@ const UserSessionInfoZ = z4.object({
   permissoes: z4.array(z4.enum(Permissoes)),
 });
 
-export type UserSessionInfo = z4.infer<typeof UserSessionInfoZ>;
-
-export function generateSecureRandomString(): string {
-  // Human readable alphabet (a-z, 0-9)
-  const alphabet =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const alphabetLenght = alphabet.length;
-  // Generate 24 bytes = 192 bits of entropy.
-  // We're only going to use 5 bits per byte so the total entropy will be 192 * 5 / 8 = 120 bits
-  const bytes = new Uint8Array(24);
-  crypto.getRandomValues(bytes);
-
-  let id = "";
-  for (let i = 0; i < bytes.length; i++) {
-    id += alphabet[bytes[i]! % alphabetLenght];
-  }
-  return id;
-}
-
-export function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.byteLength !== b.byteLength) {
-    return false;
-  }
-  let c = 0;
-  for (let i = 0; i < a.byteLength; i++) {
-    c |= a[i]! ^ b[i]!;
-  }
-  return c === 0;
-}
-
-export async function hashSecret(secret: string): Promise<Uint8Array> {
-  const secretBytes = new TextEncoder().encode(secret);
-  const secretHashBuffer = await crypto.subtle.digest("SHA-256", secretBytes);
-  return new Uint8Array(secretHashBuffer);
-}
+export type GetSessaoDto = z4.infer<typeof GetSessaoDtoZ>;
 
 async function criarSessao(
   userId: string,
@@ -111,7 +76,7 @@ const ONE_DAY = 60 * 60 * 24 * 1000;
 const SESSION_EXPIRES_IN_MSECONDS = ONE_DAY;
 
 // TODO: Check for timing attacks
-export class ServicoAutenticacao {
+class ServicoAutenticacao {
   async login(
     login: string,
     senha: string,
@@ -119,7 +84,7 @@ export class ServicoAutenticacao {
     ipAddress: string,
   ): Promise<{
     token: string;
-    usuario: UserSessionInfo;
+    usuario: GetSessaoDto;
   }> {
     // Verificar se existe um usuário com este login
     const usuario = await repositorioUsuarios.selecionarPorLogin(login);
@@ -135,7 +100,10 @@ export class ServicoAutenticacao {
       throw new ClientError("Unauthorized", 401);
     }
     const token = await criarSessao(usuario.id, userAgent, ipAddress);
-    const perms = await servicoPermissoes.selecionarPermissoes(usuario.id);
+    const registros = await repositorioPermissoes.selecionarPorIdUsuario(
+      usuario.id,
+    );
+    const perms = registros.map((registro) => registro.cargo);
     return {
       token,
       usuario: {
@@ -150,9 +118,7 @@ export class ServicoAutenticacao {
   }
 
   // TODO: Unificar queries
-  async consultarSessaoPorToken(
-    token: string,
-  ): Promise<UserSessionInfo | null> {
+  async consultarSessaoPorToken(token: string): Promise<GetSessaoDto | null> {
     const isValidSession = await servicoAutenticacao.validarSessao(token);
     if (!isValidSession) {
       warning("Sessão inválida", { label: "Session" });
@@ -173,7 +139,10 @@ export class ServicoAutenticacao {
       error("Usuário não encontrado.", { label: "AuthServ" });
       return null;
     }
-    const perms = await servicoPermissoes.selecionarPermissoes(usuario.id);
+    const registros = await repositorioPermissoes.selecionarPorIdUsuario(
+      usuario.id,
+    );
+    const perms = registros.map((registro) => registro.cargo);
     return {
       id: usuario.id,
       nome: usuario.nome,

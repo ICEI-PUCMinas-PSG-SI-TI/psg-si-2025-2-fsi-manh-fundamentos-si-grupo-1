@@ -2,15 +2,15 @@ import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
 import { type ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
 import servicoUsuarios from "../../services/servicoUsuarios";
-import { ParamsIdSchemaZ, PasswordZ } from "./objects";
+import { ParamsIdSchemaZ, SenhaZ } from "./objects";
 import { type NextFunction, type Response, Router } from "express";
 import * as z4 from "zod/v4";
 
 const apiV1UsuariosRouter = Router();
 
 const AlteracaoSenhaZ = z4.strictObject({
-  senhaAnterior: PasswordZ,
-  senhaNova: PasswordZ,
+  senhaAnterior: SenhaZ,
+  senhaNova: SenhaZ,
 });
 
 async function getUsuarioId(
@@ -40,9 +40,9 @@ async function alterarSenha(
     const usuario = req._usuario!;
     const senhas = AlteracaoSenhaZ.parse(req.body);
     const ok = await servicoUsuarios.alterarSenha(
+      usuario.id,
       senhas.senhaAnterior,
       senhas.senhaNova,
-      usuario.id,
     );
     if (ok) {
       res.sendStatus(200);
@@ -67,13 +67,10 @@ async function patchUsuario(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const updateFields = UpdateUsuarioEndpointSchema.parse(req.body);
+    const parsedBody = UpdateUsuarioEndpointSchema.parse(req.body);
     const usuario = req._usuario!;
-    const atualizacoes = await servicoUsuarios.atualizar(
-      usuario.id,
-      updateFields,
-    );
-    if (atualizacoes > 0) {
+    const atualizado = await servicoUsuarios.atualizar(usuario.id, parsedBody);
+    if (atualizado) {
       res.sendStatus(200);
     } else {
       res.sendStatus(400);

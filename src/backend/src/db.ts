@@ -65,6 +65,7 @@ export async function inicializarAdministrador(): Promise<void> {
       {
         nome: admin.login,
         login: admin.login,
+        senha: admin.senha,
         password: admin.senha,
         descricao: admin.login,
         habilitado: true,
@@ -79,7 +80,8 @@ export async function inicializarAdministrador(): Promise<void> {
       {
         nome: dev.login,
         login: dev.login,
-        password: dev.senha,
+        senha: admin.senha,
+        password: admin.senha,
         descricao: dev.login,
         habilitado: true,
       },

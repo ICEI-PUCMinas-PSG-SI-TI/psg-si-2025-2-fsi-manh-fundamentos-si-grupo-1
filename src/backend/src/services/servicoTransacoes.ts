@@ -1,19 +1,40 @@
-import type { UuidResult } from "../api/v1/objects";
-import type {
-  InsertTransacoesSchema,
-  SelectTransacoesSchema,
-} from "../db/schema/transacoes";
-import { HttpError } from "../error";
-import { debug } from "../logging";
-import {
+import { ServerError } from "../error";
+import repositorioMovimentacoes, {
   type RepoConsultaParamsTransacoes,
-  RepositorioTransacoes,
 } from "../repository/repositorioTransacoes";
+import z from "zod";
 import * as z4 from "zod/v4";
 
-const repositorioTransacoes = new RepositorioTransacoes();
+export const GetMovimentacaoDtoZ = z4.strictObject({
+  id: z4.uuid(),
+  produtoId: z4.uuid(),
+  usuarioId: z4.uuid(),
+  loteId: z4.uuid(),
+  motivo: z4.string(),
+  quantidade: z4.int(),
+  horario: z4.iso.datetime(),
+  localOrigem: z4.string().nullable().optional(),
+  localDestino: z4.string().nullable().optional(),
+  observacao: z4.string().nullable().optional(),
+});
 
-export const ParamsConsultaTransacoesZ = z4.strictObject({
+export type GetMovimentacaoDto = z4.infer<typeof GetMovimentacaoDtoZ>;
+
+export const SetMovimentacaoDtoZ = z4.strictObject({
+  produtoId: z4.uuid(),
+  usuarioId: z4.uuid(),
+  loteId: z4.uuid(),
+  motivo: z4.string(),
+  quantidade: z4.int(),
+  horario: z4.iso.datetime(),
+  localOrigem: z4.string().optional(),
+  localDestino: z4.string().optional(),
+  observacao: z4.string().optional(),
+});
+
+export type SetMovimentacaoDto = z4.infer<typeof SetMovimentacaoDtoZ>;
+
+export const ConsultaMovimentacoesParamsZ = z4.strictObject({
   id: z4.uuid().optional(),
   produtoId: z4.uuid().optional(),
   usuarioId: z4.uuid().optional(),
@@ -25,24 +46,42 @@ export const ParamsConsultaTransacoesZ = z4.strictObject({
   dataAntes: z4.coerce.date().optional(),
 });
 
-export type ParamsConsultaTransacoes = z4.infer<
-  typeof ParamsConsultaTransacoesZ
+export type ConsultaMovimentacoesParams = z4.infer<
+  typeof ConsultaMovimentacoesParamsZ
 >;
 
-export class ServicoTransacoes {
-  async inserir(transacao: InsertTransacoesSchema): Promise<UuidResult> {
-    const res = await repositorioTransacoes.inserir(transacao);
-    if (res.length !== 1 || !res[0]) {
-      throw new HttpError("", 500);
+export const GetConsultaMovimentacaoDtoZ = GetMovimentacaoDtoZ.extend({
+  _usuario: z4.object({ nome: z4.string() }),
+  _categoria: z4.object({ nome: z4.string() }),
+  _produto: z4.object({ nome: z4.string() }),
+  _lote: z4.object({ codigo: z4.string() }),
+});
+
+type GetConsultaMovimentacaoDto = z.infer<typeof GetConsultaMovimentacaoDtoZ>;
+
+class ServicoTransacoes {
+  async inserir(valores: SetMovimentacaoDto): Promise<string> {
+    const res = await repositorioMovimentacoes.inserir({
+      loteId: valores.loteId,
+      motivo: valores.motivo,
+      produtoId: valores.produtoId,
+      quantidade: valores.quantidade,
+      usuarioId: valores.usuarioId,
+      horario: new Date(valores.horario),
+      localDestino: valores.localDestino,
+      localOrigem: valores.localOrigem,
+      observacao: valores.observacao,
+    });
+    if (res[0]) {
+      return res[0].id;
+    } else {
+      throw new ServerError("Não foi possível registrar a movimentação!");
     }
-    debug(`Nova transação criada!`, { label: "ServTransacoes" });
-    return res[0];
   }
 
-  // HACK: Criar DTO para essa função
-  // TODO: Criar DTO para essa função
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  selecionarConsulta(opts?: ParamsConsultaTransacoes) {
+  async selecionarConsulta(
+    opts?: ConsultaMovimentacoesParams,
+  ): Promise<GetConsultaMovimentacaoDto[]> {
     const filtros = {
       comId: opts?.id,
       comProdutoId: opts?.produtoId,
@@ -61,12 +100,51 @@ export class ServicoTransacoes {
       filtros.paginaTamanho = opts?.paginaTamanho;
     }
 
-    debug(`Retornando transações selecionadas`, { label: "ServTransacoes" });
-    return repositorioTransacoes.selecionarConsulta(filtros);
+    const registros =
+      await repositorioMovimentacoes.selecionarConsulta(filtros);
+    return registros.map((registro) => {
+      if (
+        registro._usuario === null ||
+        registro._categoria === null ||
+        registro._produto === null ||
+        registro._lote === null
+      ) {
+        throw new ServerError("Houve um erro ao verificar os registros.");
+      } else {
+        return {
+          id: registro.id,
+          produtoId: registro.produtoId,
+          usuarioId: registro.usuarioId,
+          loteId: registro.loteId,
+          motivo: registro.motivo,
+          quantidade: registro.quantidade,
+          horario: registro.horario.toISOString(),
+          localOrigem: registro.localOrigem,
+          localDestino: registro.localDestino,
+          observacao: registro.observacao,
+          _usuario: { nome: registro._usuario.nome },
+          _categoria: { nome: registro._categoria.nome },
+          _produto: { nome: registro._produto.nome },
+          _lote: { codigo: registro._lote.codigo },
+        };
+      }
+    });
   }
 
-  selecionarTodos(): Promise<SelectTransacoesSchema[]> {
-    return repositorioTransacoes.selecionarTodos();
+  async selecionarTodos(): Promise<GetMovimentacaoDto[]> {
+    const registros = await repositorioMovimentacoes.selecionarTodos();
+    return registros.map((registro) => ({
+      id: registro.id,
+      produtoId: registro.produtoId,
+      usuarioId: registro.usuarioId,
+      loteId: registro.loteId,
+      motivo: registro.motivo,
+      quantidade: registro.quantidade,
+      horario: new Date(registro.horario).toISOString(),
+      localOrigem: registro.localOrigem,
+      localDestino: registro.localDestino,
+      observacao: registro.observacao,
+    }));
   }
 }
 

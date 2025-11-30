@@ -1,20 +1,11 @@
-import { InsertLoteSchemaZ } from "../../db/schema/lotes";
 import type { ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
-import { LoteConsultaSchema, ServicoLotes } from "../../services/servicoLotes";
+import servicoLotes, { SetLoteDtoZ } from "../../services/servicoLotes";
+import { LoteConsultaSchema } from "../../services/servicoLotes";
 import { ParamsIdSchemaZ } from "./objects";
 import { type NextFunction, type Response, Router } from "express";
 
 const apiV1LotesRouter = Router();
-
-const lotes = new ServicoLotes();
-
-// GET / { queryParams: SelectLoteSchema }
-// POST / { body: InsertLoteSchema }
-// GET /:id
-// PUT /:id { body: UpdateLoteSchema }
-// PATCH /:id { body: UpdateLoteSchema }
-// DELETE /:id
 
 async function getLotes(
   req: ExtendedRequest,
@@ -23,11 +14,11 @@ async function getLotes(
 ): Promise<void> {
   try {
     if (Object.keys(req.query).length === 0) {
-      const consulta = await lotes.selecionarTodos();
+      const consulta = await servicoLotes.selecionarTodos();
       res.send(consulta);
     } else {
       const parsedQueryParams = LoteConsultaSchema.parse(req.query);
-      const consulta = await lotes.selecionarConsulta(parsedQueryParams);
+      const consulta = await servicoLotes.selecionarConsulta(parsedQueryParams);
       res.send(consulta);
     }
   } catch (err) {
@@ -41,9 +32,9 @@ async function postLote(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const parsedBody = InsertLoteSchemaZ.parse(req.body);
-    const id = await lotes.inserir(parsedBody);
-    res.send(id);
+    const parsedBody = SetLoteDtoZ.parse(req.body);
+    const idRegistro = await servicoLotes.inserir(parsedBody);
+    res.send(idRegistro);
   } catch (err) {
     next(err);
   }
@@ -56,7 +47,7 @@ async function getLoteId(
 ): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await lotes.selecionarPorId(params.id);
+    const consulta = await servicoLotes.selecionarPorId(params.id);
     if (consulta) {
       res.send(consulta);
     } else {
@@ -74,7 +65,7 @@ async function excluirLoteId(
 ): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const atualizado = await lotes.excluirPorId(params.id);
+    const atualizado = await servicoLotes.excluirPorId(params.id);
     if (atualizado) {
       res.sendStatus(200);
     } else {

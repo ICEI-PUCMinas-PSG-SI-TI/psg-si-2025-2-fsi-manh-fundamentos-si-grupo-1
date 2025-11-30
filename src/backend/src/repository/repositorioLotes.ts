@@ -21,7 +21,7 @@ export type RepoConsultaParamsLote = {
   comQuantidadeMenorIgualQue?: number;
 };
 
-export class RepositorioLotes {
+class RepositorioLotes {
   inserir(...lote: InsertLoteSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaLotes).values(lote).returning({
@@ -108,11 +108,12 @@ export class RepositorioLotes {
       .from(tabelaLotes);
   }
 
-  atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
+  atualizarPorId(id: string, valores: UpdateLoteSchema): Promise<number> {
+    valores.updatedAt = new Date();
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaLotes)
-        .set(lote)
+        .set(valores)
         .where(eq(tabelaLotes.id, id));
       return resultSet.rowsAffected;
     });

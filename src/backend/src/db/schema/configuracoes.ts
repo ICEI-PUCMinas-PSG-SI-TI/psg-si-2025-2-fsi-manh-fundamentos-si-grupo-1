@@ -31,16 +31,6 @@ export const tabelaConfiguracoes = sqliteTable("configuracoes", {
     .$onUpdateFn(() => new Date()),
 });
 
-// Campos da tabela que podem ser atualizados. Os campos não são inferidos
-// diretamente para evitar a permissão de edição de futuros campos que podem
-// ser adicionados a tabela.
-export const UpdateConfiguracaoSchemaZ = z4.strictObject({
-  nomeCliente: z4.string().nullish(),
-  cpfCnpj: z4.string().nullish(),
-  endereco: z4.string().nullish(),
-  identificador: z4.enum(Identificador).optional(),
-});
-
 export const InsertConfiguracaoSchemaZ = createInsertSchema(
   tabelaConfiguracoes,
   {
@@ -57,8 +47,8 @@ export const InsertConfiguracaoSchemaZ = createInsertSchema(
 export type SelectConfiguracaoSchema = InferSelectModel<
   typeof tabelaConfiguracoes
 >;
-export type UpdateConfiguracaoSchema = z4.infer<
-  typeof UpdateConfiguracaoSchemaZ
+export type UpdateConfiguracaoSchema = Partial<
+  InferSelectModel<typeof tabelaConfiguracoes>
 >;
 export type InsertConfiguracaoSchema = z4.infer<
   typeof InsertConfiguracaoSchemaZ

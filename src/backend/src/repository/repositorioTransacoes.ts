@@ -1,14 +1,18 @@
 import bancoDados from "../db";
+import { tabelaCategorias } from "../db/schema/categorias";
+import { tabelaLotes } from "../db/schema/lotes";
+import { tabelaProdutos } from "../db/schema/produtos";
 import {
   type InsertTransacoesSchema,
   type SelectTransacoesSchema,
   type UpdateTransacoesSchema,
   tabelaTransacoes,
 } from "../db/schema/transacoes";
+import { tabelaUsuarios } from "../db/schema/usuarios";
 import type { RefRegistro } from "./common";
 import "dotenv/config";
 import "dotenv/config";
-import { type SQL, and, eq } from "drizzle-orm";
+import { type SQL, and, eq, getTableColumns } from "drizzle-orm";
 
 export type RepoConsultaParamsTransacoes = {
   pagina?: number;
@@ -21,7 +25,14 @@ export type RepoConsultaParamsTransacoes = {
   comDataMenorQue?: Date;
 };
 
-export class RepositorioTransacoes {
+type SelectConsultaTransacoesSchema = SelectTransacoesSchema & {
+  _usuario: { nome: string } | null;
+  _categoria: { nome: string } | null;
+  _produto: { nome: string } | null;
+  _lote: { codigo: string } | null;
+};
+
+class RepositorioTransacoes {
   inserir(...transacao: InsertTransacoesSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaTransacoes).values(transacao).returning({
@@ -54,6 +65,72 @@ export class RepositorioTransacoes {
   }
 
   selecionarConsulta(
+    opts?: RepoConsultaParamsTransacoes,
+  ): Promise<SelectConsultaTransacoesSchema[]> {
+    const comId = (id: string): SQL => eq(tabelaTransacoes.id, id);
+    const comProdutoId = (id: string): SQL =>
+      eq(tabelaTransacoes.produtoId, id);
+    const comUsuarioId = (id: string): SQL =>
+      eq(tabelaTransacoes.usuarioId, id);
+    const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
+    const comDataMaiorQue = (data: Date): SQL =>
+      eq(tabelaTransacoes.horario, data);
+    const comDataMenorQue = (data: Date): SQL =>
+      eq(tabelaTransacoes.horario, data);
+
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
+      .select({
+        ...getTableColumns(tabelaTransacoes),
+        _usuario: {
+          nome: tabelaUsuarios.nome,
+        },
+        _categoria: {
+          nome: tabelaCategorias.nome,
+        },
+        _produto: {
+          nome: tabelaProdutos.nome,
+        },
+        _lote: {
+          codigo: tabelaLotes.codigo,
+        },
+      })
+      .from(tabelaTransacoes)
+      .where(
+        and(
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comProdutoId ? comProdutoId(opts.comProdutoId) : undefined,
+          opts?.comUsuarioId ? comUsuarioId(opts.comUsuarioId) : undefined,
+          opts?.comLoteId ? comLoteId(opts.comLoteId) : undefined,
+          opts?.comDataMaiorQue
+            ? comDataMaiorQue(opts.comDataMaiorQue)
+            : undefined,
+          opts?.comDataMenorQue
+            ? comDataMenorQue(opts.comDataMenorQue)
+            : undefined,
+        ),
+      )
+      .leftJoin(
+        tabelaUsuarios,
+        eq(tabelaTransacoes.usuarioId, tabelaUsuarios.id),
+      )
+      .leftJoin(
+        tabelaCategorias,
+        eq(tabelaTransacoes.usuarioId, tabelaCategorias.id),
+      )
+      .leftJoin(
+        tabelaProdutos,
+        eq(tabelaTransacoes.usuarioId, tabelaProdutos.id),
+      )
+      .leftJoin(tabelaLotes, eq(tabelaTransacoes.usuarioId, tabelaLotes.id))
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
+
+  selecionarConsultaSimples(
     opts?: RepoConsultaParamsTransacoes,
   ): Promise<SelectTransacoesSchema[]> {
     const comId = (id: string): SQL => eq(tabelaTransacoes.id, id);
@@ -88,14 +165,16 @@ export class RepositorioTransacoes {
         ),
       )
       .limit(paginaTamanho)
-      .offset((pagina - 1) * paginaTamanho);
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
-  atualizarPorId(id: string, sessao: UpdateTransacoesSchema): Promise<number> {
+  atualizarPorId(id: string, valores: UpdateTransacoesSchema): Promise<number> {
+    valores.updatedAt = new Date();
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaTransacoes)
-        .set(sessao)
+        .set(valores)
         .where(eq(tabelaTransacoes.id, id));
       return resultSet.rowsAffected;
     });

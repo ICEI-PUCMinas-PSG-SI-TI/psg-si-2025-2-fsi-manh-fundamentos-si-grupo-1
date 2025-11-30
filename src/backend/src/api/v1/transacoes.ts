@@ -1,6 +1,6 @@
 import type { ExtendedRequest } from "../../middlewares";
 import servicoTransacoes, {
-  ParamsConsultaTransacoesZ,
+  ConsultaMovimentacoesParamsZ,
 } from "../../services/servicoTransacoes";
 import { type NextFunction, type Response, Router } from "express";
 
@@ -16,7 +16,7 @@ async function getTransacoes(
       const consulta = await servicoTransacoes.selecionarTodos();
       res.send(consulta);
     } else {
-      const parsedQueryParams = ParamsConsultaTransacoesZ.parse(req.query);
+      const parsedQueryParams = ConsultaMovimentacoesParamsZ.parse(req.query);
       const consulta =
         await servicoTransacoes.selecionarConsulta(parsedQueryParams);
       res.send(consulta);
@@ -26,6 +26,7 @@ async function getTransacoes(
   }
 }
 
+// TODO: Criar post de transações, verificar permissões
 apiV1TransacoesRouter.get("/", getTransacoes);
 
 export default apiV1TransacoesRouter;

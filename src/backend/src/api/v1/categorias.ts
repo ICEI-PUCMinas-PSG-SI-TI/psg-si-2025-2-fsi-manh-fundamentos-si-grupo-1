@@ -41,9 +41,12 @@ async function getCategoria(
 ): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    // TODO: if length === 0 return 404
     const categoria = await servicoCategorias.selecionarPorId(params.id);
-    res.send(categoria);
+    if (categoria) {
+      res.send(categoria);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -55,7 +58,6 @@ async function deleteCategorias(
   next: NextFunction,
 ): Promise<void> {
   try {
-    // TODO: Verificar se uuid existe
     const params = ParamsIdSchemaZ.parse(req.params);
     const ok = await servicoCategorias.excluirPorId(params.id);
     if (ok) {

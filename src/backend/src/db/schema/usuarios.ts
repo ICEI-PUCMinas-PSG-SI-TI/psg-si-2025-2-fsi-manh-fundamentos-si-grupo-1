@@ -1,6 +1,6 @@
-import type { InferSelectModel } from "drizzle-orm";
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
 
 export const tabelaUsuarios = sqliteTable("usuarios", {
@@ -53,21 +53,8 @@ export const InsertUsuarioSchemaZ = createInsertSchema(tabelaUsuarios, {
   })
   .strict();
 
-export const SelectUsuarioInfoSchemaZ = createSelectSchema(tabelaUsuarios, {
-  id: z4.uuid(),
-  habilitado: z4.boolean(),
-  modoEscuro: z4.boolean(),
-  foto: z4.base64().nullable(),
-})
-  .pick({
-    id: true,
-    foto: true,
-    nome: true,
-    descricao: true,
-  })
-  .strict();
-
 export type SelectUsuarioSchema = InferSelectModel<typeof tabelaUsuarios>;
-export type UpdateUsuarioSchema = z4.infer<typeof UpdateUsuarioSchemaZ>;
+export type UpdateUsuarioSchema = Partial<
+  InferInsertModel<typeof tabelaUsuarios>
+>;
 export type InsertUsuarioSchema = z4.infer<typeof InsertUsuarioSchemaZ>;
-export type SelectUsuarioInfoSchema = z4.infer<typeof SelectUsuarioInfoSchemaZ>;

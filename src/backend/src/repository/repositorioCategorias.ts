@@ -7,7 +7,7 @@ import {
 import type { Count, RefRegistro } from "./common";
 import { count, eq, like } from "drizzle-orm";
 
-export class RepositorioCategorias {
+class RepositorioCategorias {
   inserir(...categoria: InsertCategoriaSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaCategorias).values(categoria).returning({

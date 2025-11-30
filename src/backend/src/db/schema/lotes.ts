@@ -35,15 +35,6 @@ export const tabelaLotes = sqliteTable("lotes", {
     .$onUpdateFn(() => new Date()),
 });
 
-// Campos da tabela que podem ser atualizados. Os campos não são inferidos
-// diretamente para evitar a permissão de edição de futuros campos que podem
-// ser adicionados a tabela.
-export const UpdateLoteSchemaZ = z4.strictObject({
-  lote: z4.string().min(1).optional(),
-  quantidade: z4.number().optional(),
-  validade: z4.coerce.date().optional(),
-});
-
 export const InsertLoteSchemaZ = createInsertSchema(tabelaLotes, {
   id: z4.uuid().optional(),
   produtoId: z4.uuid(),
@@ -55,5 +46,5 @@ export const InsertLoteSchemaZ = createInsertSchema(tabelaLotes, {
   .strict();
 
 export type SelectLoteSchema = InferSelectModel<typeof tabelaLotes>;
-export type UpdateLoteSchema = z4.infer<typeof UpdateLoteSchemaZ>;
+export type UpdateLoteSchema = Partial<InferSelectModel<typeof tabelaLotes>>;
 export type InsertLoteSchema = z4.infer<typeof InsertLoteSchemaZ>;

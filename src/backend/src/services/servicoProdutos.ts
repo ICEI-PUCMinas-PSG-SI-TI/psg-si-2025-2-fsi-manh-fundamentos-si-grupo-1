@@ -1,43 +1,68 @@
 import type { Identificador } from "../db/enums/identificador";
+import { StatusProduto } from "../db/enums/statusProduto";
 import { configurarGerador, geradorCodigo } from "../db/geradorCodigos";
-import {
-  type InsertProdutosSchema,
-  InsertProdutosSchemaZ,
-  type SelectProdutosSchema,
-} from "../db/schema/produtos";
 import { HttpError } from "../error";
 import { debug } from "../logging";
-import type { RefRegistro } from "../repository/common";
-import {
+import repositorioProdutos, {
   type RepoConsultaParamsProdutoQuantidade,
-  RepositorioProdutos,
 } from "../repository/repositorioProdutos";
 import * as z4 from "zod/v4";
 
-const repositorioProdutos = new RepositorioProdutos();
+export const SetProdutoDtoZ = z4.object({
+  nome: z4.string(),
+  codigo: z4.string(),
+  sku: z4.string().nullable(),
+  codigoBarra: z4.string().nullable(),
+  descricao: z4.string().nullable(),
+  categoriaId: z4.uuid().nullable(),
+  marca: z4.string().nullable(),
+  fornecedor: z4.string().nullable(),
+  dimensoes: z4.string().nullable(),
+  peso: z4.number().nullable(),
+  precoCusto: z4.number().nullable(),
+  precoVenda: z4.number().nullable(),
+  precoPromocao: z4.number().nullable(),
+  unidadeMedidaId: z4.uuid(),
+  quantidadeMinima: z4.number().nullable(),
+  quantidadeMaxima: z4.number().nullable(),
+  localizacao: z4.string().nullable(),
+  imagem: z4.base64(),
+  status: z4.enum(StatusProduto),
+});
 
-export const ParamsInserirProdutosZ = InsertProdutosSchemaZ.pick({
-  nome: true,
-  sku: true,
-  codigoBarra: true,
-  descricao: true,
-  categoriaId: true,
-  marca: true,
-  fornecedor: true,
-  dimensoes: true,
-  peso: true,
-  precoCusto: true,
-  precoVenda: true,
-  precoPromocao: true,
-  quantidadeMinima: true,
-  quantidadeMaxima: true,
-  localizacao: true,
-  imagem: true,
-  quantidadeUnidadeMedida: true,
-  status: true,
-}).strict();
+export type SetProdutoDto = z4.infer<typeof SetProdutoDtoZ>;
 
-export type ParamsInserirProdutos = z4.infer<typeof ParamsInserirProdutosZ>;
+export const GetProdutoDtoZ = z4.object({
+  id: z4.uuid(),
+  nome: z4.string(),
+  codigo: z4.string(),
+  sku: z4.string().nullable(),
+  codigoBarra: z4.string().nullable(),
+  descricao: z4.string().nullable(),
+  categoriaId: z4.uuid().nullable(),
+  marca: z4.string().nullable(),
+  fornecedor: z4.string().nullable(),
+  dimensoes: z4.string().nullable(),
+  peso: z4.number().nullable(),
+  precoCusto: z4.number().nullable(),
+  precoVenda: z4.number().nullable(),
+  precoPromocao: z4.number().nullable(),
+  unidadeMedidaId: z4.uuid(),
+  quantidadeMinima: z4.number().nullable(),
+  quantidadeMaxima: z4.number().nullable(),
+  localizacao: z4.string().nullable(),
+  imagem: z4.base64(),
+  status: z4.enum(StatusProduto),
+});
+
+export type GetProdutoDto = z4.infer<typeof GetProdutoDtoZ>;
+
+export const GetConsultaProdutoDtoZ = GetProdutoDtoZ.extend({
+  categoria: z4.string().nullable().optional(),
+  quantidade: z4.number().nullable().optional(),
+});
+
+export type GetConsultaProdutoDto = z4.infer<typeof GetConsultaProdutoDtoZ>;
 
 export const ParamsConsultaProdutosZ = z4.strictObject({
   id: z4.uuid().optional(),
@@ -57,36 +82,51 @@ export const ParamsConsultaProdutosZ = z4.strictObject({
 
 export type ParamsConsultaProdutos = z4.infer<typeof ParamsConsultaProdutosZ>;
 
-export class ServicoProdutos {
-  /* TODO: Inserir todos os valores de uma vez, retornar uuid
-  async inserir(produto: InsertProdutosSchema): Promise<UuidResult> {
-    // TODO;
-  }
-  */
-
-  async inserir(produto: InsertProdutosSchema): Promise<RefRegistro> {
+class ServicoProdutos {
+  async inserir(produto: SetProdutoDto): Promise<string> {
     produto.codigo = geradorCodigo();
     const res = await repositorioProdutos.inserir(produto);
     if (res.length !== 1 || !res[0]) {
       throw new HttpError("", 500);
     }
     debug(`Novo produto criada!`, { label: "ServProdutos" });
-    return res[0];
+    return res[0].id;
   }
 
-  async selecionarPorId(id: string): Promise<SelectProdutosSchema | null> {
-    const res = await repositorioProdutos.selecionarPorId(id);
-    if (res) {
-      return res;
+  async selecionarPorId(id: string): Promise<GetProdutoDto | null> {
+    const registro = await repositorioProdutos.selecionarPorId(id);
+    if (registro) {
+      return {
+        id: registro.id,
+        nome: registro.nome,
+        codigo: registro.codigo,
+        sku: registro.sku,
+        codigoBarra: registro.codigoBarra,
+        descricao: registro.descricao,
+        // TODO: map() categoriaId -> Nome Categoria
+        categoriaId: registro.categoriaId,
+        marca: registro.marca,
+        fornecedor: registro.fornecedor,
+        dimensoes: registro.dimensoes,
+        peso: registro.peso,
+        precoCusto: registro.precoCusto,
+        precoVenda: registro.precoVenda,
+        precoPromocao: registro.precoPromocao,
+        quantidadeMinima: registro.quantidadeMinima,
+        quantidadeMaxima: registro.quantidadeMaxima,
+        localizacao: registro.localizacao,
+        imagem: registro.imagem as string,
+        status: registro.status,
+        unidadeMedidaId: registro.unidadeMedidaId,
+      };
     } else {
       return null;
     }
   }
 
-  // HACK: Criar DTO para essa função
-  // TODO: Criar DTO para essa função
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  selecionarConsulta(opts?: ParamsConsultaProdutos) {
+  async selecionarConsulta(
+    opts?: ParamsConsultaProdutos,
+  ): Promise<GetConsultaProdutoDto[]> {
     const filtros = {
       comId: opts?.id,
       comCategoriaId: opts?.categoriaId,
@@ -106,22 +146,71 @@ export class ServicoProdutos {
       filtros.paginaTamanho = opts?.paginaTamanho;
     }
 
-    const query = repositorioProdutos.selecionarConsultaCompleta(filtros);
-    return query;
+    const registros =
+      await repositorioProdutos.selecionarConsultaCompleta(filtros);
+    return registros.map((registro) => ({
+      id: registro.id,
+      nome: registro.nome,
+      codigo: registro.codigo,
+      sku: registro.sku,
+      codigoBarra: registro.codigoBarra,
+      descricao: registro.descricao,
+      // TODO: map() categoriaId -> Nome Categoria
+      categoriaId: registro.categoriaId,
+      marca: registro.marca,
+      fornecedor: registro.fornecedor,
+      dimensoes: registro.dimensoes,
+      peso: registro.peso,
+      precoCusto: registro.precoCusto,
+      precoVenda: registro.precoVenda,
+      precoPromocao: registro.precoPromocao,
+      quantidadeMinima: registro.quantidadeMinima,
+      quantidadeMaxima: registro.quantidadeMaxima,
+      localizacao: registro.localizacao,
+      imagem: registro.imagem as string,
+      status: registro.status,
+      unidadeMedidaId: registro.unidadeMedidaId,
+      quantidade: registro.quantidade,
+      categoria: registro.categoria,
+    }));
   }
 
-  selecionarTodos(): Promise<SelectProdutosSchema[]> {
-    return repositorioProdutos.selecionarTodos();
+  async selecionarTodos(): Promise<GetProdutoDto[]> {
+    const registros = await repositorioProdutos.selecionarTodos();
+    return registros.map((registro) => ({
+      id: registro.id,
+      nome: registro.nome,
+      codigo: registro.codigo,
+      sku: registro.sku,
+      codigoBarra: registro.codigoBarra,
+      descricao: registro.descricao,
+      // TODO: map() categoriaId -> Nome Categoria
+      categoriaId: registro.categoriaId,
+      marca: registro.marca,
+      fornecedor: registro.fornecedor,
+      dimensoes: registro.dimensoes,
+      peso: registro.peso,
+      precoCusto: registro.precoCusto,
+      precoVenda: registro.precoVenda,
+      precoPromocao: registro.precoPromocao,
+      quantidadeMinima: registro.quantidadeMinima,
+      quantidadeMaxima: registro.quantidadeMaxima,
+      localizacao: registro.localizacao,
+      imagem: registro.imagem as string,
+      status: registro.status,
+      unidadeMedidaId: registro.unidadeMedidaId,
+    }));
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
-  selecionarIdTodos(): Promise<RefRegistro[]> {
-    return repositorioProdutos.selecionarIdsTodos();
+  async listarIds(): Promise<string[]> {
+    const registros = await repositorioProdutos.selecionarIdsTodos();
+    return registros.map((registro) => registro.id);
   }
 
-  async contar(): Promise<number | undefined> {
+  async contar(): Promise<number> {
     const res = await repositorioProdutos.contar();
-    return res ? res.count : undefined;
+    return res!.count;
   }
 
   // TODO: Otimizar
@@ -136,21 +225,17 @@ export class ServicoProdutos {
       return;
     }
     const idList = await repositorioProdutos.selecionarIdsTodos();
-    const atualiacoes = idList.map((u) => {
+    const novosIds = idList.map((u) => {
       return {
         id: u.id,
-        codigo: geradorCodigo(),
+        novoCodigo: geradorCodigo(),
       };
     });
-    await repositorioProdutos.iniciarTransacao(async (tx) => {
-      const atualizacoes = atualiacoes.map((x) => {
-        return repositorioProdutos.atualizarPorIdTransaction(
-          x.id,
-          {
-            codigo: x.codigo,
-          },
-          tx,
-        );
+    await repositorioProdutos.utilizarTransacao(async (tx) => {
+      const atualizacoes = novosIds.map((registro) => {
+        return repositorioProdutos.atualizarPorIdTransacao(tx, registro.id, {
+          codigo: registro.novoCodigo,
+        });
       });
       return await Promise.all(atualizacoes);
     });

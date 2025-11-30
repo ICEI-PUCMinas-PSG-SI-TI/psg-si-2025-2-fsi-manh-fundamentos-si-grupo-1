@@ -8,10 +8,12 @@ import {
   tabelaProdutos,
 } from "../db/schema/produtos";
 import type { Count, RefRegistro } from "./common";
-import type { ResultSet } from "@libsql/client";
+import {
+  RepositorioBase,
+  type SQLiteTransactionCustom,
+} from "./repositorioBase";
 import "dotenv/config";
 import {
-  type ExtractTablesWithRelations,
   SQL,
   and,
   asc,
@@ -24,7 +26,6 @@ import {
   or,
   sql,
 } from "drizzle-orm";
-import type { SQLiteTransaction } from "drizzle-orm/sqlite-core";
 
 export type RepoConsultaParamsProduto = {
   pagina?: number;
@@ -42,12 +43,55 @@ export type RepoConsultaParamsProduto = {
   comTexto?: string;
 };
 
+const comId = (id: string): SQL => eq(tabelaProdutos.id, id);
+const comPrecoCustoMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.precoCusto, valor);
+const comPrecoCustoMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.precoCusto, valor);
+const comPrecoVendaMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.precoVenda, valor);
+const comPrecoVendaMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.precoVenda, valor);
+const comPrecoPromocaoMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.precoPromocao, valor);
+const comPrecoPromocaoMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.precoPromocao, valor);
+const comPesoMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.peso, valor);
+const comPesoMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.peso, valor);
+const comCategoriaId = (categoriaId: string): SQL =>
+  eq(tabelaProdutos.categoriaId, categoriaId);
+const comTexto = (texto: string): SQL => {
+  const _texto = `%${texto}%`;
+  return or(
+    like(tabelaProdutos.nome, _texto),
+    like(tabelaProdutos.sku, _texto),
+    like(tabelaProdutos.codigoBarra, _texto),
+    like(tabelaProdutos.descricao, _texto),
+    like(tabelaProdutos.marca, _texto),
+    like(tabelaProdutos.fornecedor, _texto),
+    // like(tabelaProdutos.localizacao, _texto),
+    // like(tabelaProdutos.dimensoes, _texto),
+  )!;
+};
+
+const comQuantidadeMaiorIgualQue = (valor: number): SQL =>
+  gte(sql`quantidade_total`, valor);
+const comQuantidadeMenorIgualQue = (valor: number): SQL =>
+  lte(sql`quantidade_total`, valor);
+
 export type RepoConsultaParamsProdutoQuantidade = RepoConsultaParamsProduto & {
   comQuantidadeMenorIgualQue?: number;
   comQuantidadeMaiorIgualQue?: number;
 };
 
-export class RepositorioProdutos {
+export type SelectConsultaProdutosSchema = SelectProdutosSchema & {
+  quantidade: number;
+  categoria: string | null;
+};
+
+class RepositorioProdutos extends RepositorioBase {
   inserir(...produto: InsertProdutosSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaProdutos).values(produto).returning({
@@ -90,39 +134,6 @@ export class RepositorioProdutos {
   selecionarConsulta(
     opts?: RepoConsultaParamsProduto,
   ): Promise<SelectProdutosSchema[]> {
-    const comId = (id: string): SQL => eq(tabelaProdutos.id, id);
-    const comPrecoCustoMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.precoCusto, valor);
-    const comPrecoCustoMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.precoCusto, valor);
-    const comPrecoVendaMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.precoVenda, valor);
-    const comPrecoVendaMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.precoVenda, valor);
-    const comPrecoPromocaoMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.precoPromocao, valor);
-    const comPrecoPromocaoMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.precoPromocao, valor);
-    const comPesoMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.peso, valor);
-    const comPesoMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.peso, valor);
-    const comCategoriaId = (categoriaId: string): SQL =>
-      eq(tabelaProdutos.categoriaId, categoriaId);
-    const comTexto = (texto: string): SQL => {
-      const _texto = `%${texto}%`;
-      return or(
-        like(tabelaProdutos.nome, _texto),
-        like(tabelaProdutos.sku, _texto),
-        like(tabelaProdutos.codigoBarra, _texto),
-        like(tabelaProdutos.descricao, _texto),
-        like(tabelaProdutos.marca, _texto),
-        like(tabelaProdutos.fornecedor, _texto),
-        like(tabelaProdutos.localizacao, _texto),
-        // like(tabelaProdutos.dimensoes, _texto),
-      )!;
-    };
-
     const pagina = opts?.pagina || 1;
     const paginaTamanho = opts?.paginaTamanho || 100;
 
@@ -169,45 +180,7 @@ export class RepositorioProdutos {
 
   selecionarConsultaCompleta(
     opts?: RepoConsultaParamsProdutoQuantidade,
-  ): Promise<SelectProdutosSchema[]> {
-    const comId = (id: string): SQL => eq(tabelaProdutos.id, id);
-    const comPrecoCustoMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.precoCusto, valor);
-    const comPrecoCustoMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.precoCusto, valor);
-    const comPrecoVendaMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.precoVenda, valor);
-    const comPrecoVendaMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.precoVenda, valor);
-    const comPrecoPromocaoMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.precoPromocao, valor);
-    const comPrecoPromocaoMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.precoPromocao, valor);
-    const comPesoMaiorIgualQue = (valor: number): SQL =>
-      gte(tabelaProdutos.peso, valor);
-    const comPesoMenorIgualQue = (valor: number): SQL =>
-      lte(tabelaProdutos.peso, valor);
-    const comCategoriaId = (categoriaId: string): SQL =>
-      eq(tabelaProdutos.categoriaId, categoriaId);
-    const comTexto = (texto: string): SQL => {
-      const _texto = `%${texto}%`;
-      return or(
-        like(tabelaProdutos.nome, _texto),
-        like(tabelaProdutos.sku, _texto),
-        like(tabelaProdutos.codigoBarra, _texto),
-        like(tabelaProdutos.descricao, _texto),
-        like(tabelaProdutos.marca, _texto),
-        like(tabelaProdutos.fornecedor, _texto),
-        like(tabelaProdutos.localizacao, _texto),
-        // like(tabelaProdutos.dimensoes, _texto),
-      )!;
-    };
-
-    const comQuantidadeMaiorIgualQue = (valor: number): SQL =>
-      gte(sql`quantidade_total`, valor);
-    const comQuantidadeMenorIgualQue = (valor: number): SQL =>
-      lte(sql`quantidade_total`, valor);
-
+  ): Promise<SelectConsultaProdutosSchema[]> {
     const pagina = opts?.pagina || 1;
     const paginaTamanho = opts?.paginaTamanho || 100;
 
@@ -275,42 +248,26 @@ export class RepositorioProdutos {
       .execute();
   }
 
-  atualizarPorId(id: string, produto: UpdateProdutosSchema): Promise<number> {
+  atualizarPorId(id: string, valores: UpdateProdutosSchema): Promise<number> {
+    valores.updatedAt = new Date();
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaProdutos)
-        .set(produto)
+        .set(valores)
         .where(eq(tabelaProdutos.id, id));
       return resultSet.rowsAffected;
     });
   }
 
-  async iniciarTransacao(
-    callback: (
-      tx: SQLiteTransaction<
-        "async",
-        ResultSet,
-        Record<string, never>,
-        ExtractTablesWithRelations<Record<string, never>>
-      >,
-    ) => Promise<unknown>,
-  ): Promise<void> {
-    await bancoDados.transaction(callback);
-  }
-
-  async atualizarPorIdTransaction(
+  async atualizarPorIdTransacao(
+    tx: SQLiteTransactionCustom,
     id: string,
-    produto: UpdateProdutosSchema,
-    tx: SQLiteTransaction<
-      "async",
-      ResultSet,
-      Record<string, never>,
-      ExtractTablesWithRelations<Record<string, never>>
-    >,
+    valores: UpdateProdutosSchema,
   ): Promise<unknown> {
+    valores.updatedAt = new Date();
     return await tx
       .update(tabelaProdutos)
-      .set(produto)
+      .set(valores)
       .where(eq(tabelaProdutos.id, id));
   }
 

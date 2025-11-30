@@ -15,7 +15,7 @@ export type RepoConsultaParamsUsuarios = {
   comLogin?: string;
 };
 
-export class RepositorioUsuarios {
+class RepositorioUsuarios {
   inserir(...usuario: InsertUsuarioSchema[]): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaUsuarios).values(usuario).returning({
@@ -86,11 +86,12 @@ export class RepositorioUsuarios {
       .from(tabelaUsuarios);
   }
 
-  atualizarPorId(id: string, usuario: UpdateUsuarioSchema): Promise<number> {
+  atualizarPorId(id: string, valores: UpdateUsuarioSchema): Promise<number> {
+    valores.updatedAt = new Date();
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaUsuarios)
-        .set(usuario)
+        .set(valores)
         .where(eq(tabelaUsuarios.id, id));
       return resultSet.rowsAffected;
     });

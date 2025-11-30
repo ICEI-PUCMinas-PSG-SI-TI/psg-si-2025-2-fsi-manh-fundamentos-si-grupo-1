@@ -6,9 +6,8 @@ import {
   mdwLoadSessionCookies,
 } from "./middlewares";
 import { mdwRequerBody, mdwSemBody } from "./middlewares";
-import {
+import servicoAutenticacao, {
   CredenciaisSchemaZ,
-  ServicoAutenticacao,
 } from "./services/servicoAutenticacao";
 import {
   type NextFunction,
@@ -20,8 +19,6 @@ import {
 const authRouter = Router();
 
 export const COOKIE_SESSION_TOKEN = "session_token";
-
-const servicoAutenticacao = new ServicoAutenticacao();
 
 // A aplicação ira suportar criação de novos logins apenas por administradores
 // POST /auth/login

@@ -9,7 +9,7 @@ import type { Count, RefRegistro } from "./common";
 import "dotenv/config";
 import { count, eq } from "drizzle-orm";
 
-export class RepositorioUnidadesMedida {
+class RepositorioUnidadesMedida {
   inserir(
     ...unidadeMedida: InsertUnidadesMedidaSchema[]
   ): Promise<RefRegistro[]> {
@@ -71,12 +71,13 @@ export class RepositorioUnidadesMedida {
 
   atualizarPorId(
     id: string,
-    unidadeMedida: UpdateUnidadesMedidaSchema,
+    valores: UpdateUnidadesMedidaSchema,
   ): Promise<number> {
+    valores.updatedAt = new Date();
     return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaUnidadesMedida)
-        .set(unidadeMedida)
+        .set(valores)
         .where(eq(tabelaUnidadesMedida.id, id));
       return resultSet.rowsAffected;
     });

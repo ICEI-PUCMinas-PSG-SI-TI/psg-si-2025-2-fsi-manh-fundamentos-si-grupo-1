@@ -4,7 +4,7 @@ import { Permissoes } from "./db/enums/permissoes";
 import { ClientError } from "./error";
 import { error, warning } from "./logging";
 import servicoAutenticacao, {
-  type UserSessionInfo,
+  type GetSessaoDto,
 } from "./services/servicoAutenticacao";
 import type { NextFunction, Request, Response } from "express";
 import { customAlphabet } from "nanoid";
@@ -18,7 +18,7 @@ export interface ExtendedRequest extends Request {
    * @deprecated Utilizar _cookies.tokenSessao
    */
   _sessionToken?: string;
-  _usuario?: UserSessionInfo;
+  _usuario?: GetSessaoDto;
   _requestId?: string;
   _cookies?: Cookies;
 }
@@ -93,7 +93,9 @@ export async function mdwAutenticacao(
   }
 }
 
-export function mdwPermissoes(...perms: Permissoes[]) {
+export function mdwPermissoes(
+  ...perms: Permissoes[]
+): (e: ExtendedRequest, r: Response, n: NextFunction) => void {
   return (req: ExtendedRequest, _res: Response, next: NextFunction): void => {
     try {
       const usuario = req._usuario;

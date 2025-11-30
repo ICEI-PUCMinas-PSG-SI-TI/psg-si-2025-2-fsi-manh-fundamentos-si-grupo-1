@@ -1,10 +1,10 @@
 import type { Permissoes } from "../db/enums/permissoes";
 import type { InsertPermissoesSchema } from "../db/schema/permissoes";
-import { RepositorioPermissoes } from "../repository/repositorioPermissoes";
+import { ClientError, ServerError } from "../error";
+import repositorioPermissoes from "../repository/repositorioPermissoes";
+import repositorioUsuarios from "../repository/repositorioUsuarios";
 
-const repositorioPermissoes = new RepositorioPermissoes();
-
-export class ServicoPermissoes {
+class ServicoPermissoes {
   async inserir(perms: InsertPermissoesSchema): Promise<boolean> {
     const atualizacoes = await repositorioPermissoes.inserir(perms);
     return atualizacoes > 0;
@@ -16,23 +16,32 @@ export class ServicoPermissoes {
   }
 
   async selecionarPermissoes(usuarioId: string): Promise<Permissoes[]> {
-    const res =
-      await repositorioPermissoes.selecionarPersmissoesPorIdUsuario(usuarioId);
-    const perms: Permissoes[] = res.map((p) => p.cargo);
-    return perms;
+    const registros =
+      await repositorioPermissoes.selecionarPorIdUsuario(usuarioId);
+    return registros.map((p) => p.cargo);
   }
 
-  // TODO: Verificar se usuário existe
   async adicionarPermissoesUsuario(
     usuarioId: string,
     ...perms: Permissoes[]
   ): Promise<boolean> {
-    const valores = perms.map((c) => ({
-      usuarioId: usuarioId,
-      cargo: c,
-    }));
-    const atualizacoes = await repositorioPermissoes.inserir(...valores);
-    return atualizacoes > 0;
+    const regUsuario = await repositorioUsuarios.selecionarPorId(usuarioId);
+    if (regUsuario) {
+      const valores = perms.map((c) => ({
+        usuarioId: usuarioId,
+        cargo: c,
+      }));
+      const atualizacoes = await repositorioPermissoes.inserir(...valores);
+      if (atualizacoes > 0) {
+        return true;
+      } else {
+        throw new ServerError(
+          "Não foi possível alterar as permissões do usuário.",
+        );
+      }
+    } else {
+      return false;
+    }
   }
 
   // TODO: Verificar se usuário existe
@@ -41,27 +50,49 @@ export class ServicoPermissoes {
     usuarioId: string,
     ...perms: Permissoes[]
   ): Promise<boolean> {
-    let atualizacoes = 0;
-    for (let i = 0; i < perms.length; i++) {
-      atualizacoes += await repositorioPermissoes.excluir(usuarioId, perms[i]!);
+    const regUsuario = await repositorioUsuarios.selecionarPorId(usuarioId);
+    if (regUsuario) {
+      let atualizacoes = 0;
+      for (let i = 0; i < perms.length; i++) {
+        atualizacoes += await repositorioPermissoes.excluir(
+          usuarioId,
+          perms[i]!,
+        );
+      }
+      return atualizacoes > 0;
+    } else {
+      return false;
     }
-    return atualizacoes > 0;
   }
 
   async definirPermissoesUsuario(
     usuarioId: string,
     ...perms: Permissoes[]
   ): Promise<boolean> {
-    await this.removerTodasPermissoes(usuarioId);
+    await repositorioPermissoes.utilizarTransacao(async (tx) => {
+      const regUsuario = await repositorioUsuarios.selecionarPorId(usuarioId);
+      if (regUsuario) {
+        await repositorioPermissoes.excluirPermissoesTransacao(tx, usuarioId);
+        const valores = perms.map((c) => ({
+          usuarioId: usuarioId,
+          cargo: c,
+        }));
+        const atualizacoes = await repositorioPermissoes.inserir(...valores);
+        if (atualizacoes > 0) {
+          return true;
+        } else {
+          throw new ServerError(
+            "Houve um erro ao alterar as permissões do usuário.",
+          );
+        }
+      } else {
+        throw new ClientError("Usuário não encontrado.", 404);
+      }
+    });
+
     await this.adicionarPermissoesUsuario(usuarioId, ...perms);
     // TODO: Utilizar Transaction unica
     return true;
-  }
-
-  async removerTodasPermissoes(usuarioId: string): Promise<boolean> {
-    const atualizacoes =
-      await repositorioPermissoes.excluirPermissoes(usuarioId);
-    return atualizacoes > 0;
   }
 }
 
