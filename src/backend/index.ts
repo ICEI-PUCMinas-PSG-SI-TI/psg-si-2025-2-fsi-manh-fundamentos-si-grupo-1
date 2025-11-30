@@ -44,5 +44,8 @@ export type {
   GetConsultaProdutoDto,
 } from "./src/services/servicoProdutos";
 
-export type { ConsultaMovimentacoesParams } from "./src/services/servicoTransacoes";
+export type {
+  GetConsultaMovimentacaoDto,
+  ConsultaMovimentacoesParams,
+} from "./src/services/servicoTransacoes";
 

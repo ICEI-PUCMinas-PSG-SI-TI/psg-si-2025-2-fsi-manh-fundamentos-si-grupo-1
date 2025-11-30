@@ -88,7 +88,7 @@
                 </td>
                 <td class="py-2">{{ i.tipo === 1 ? 'Compra' : 'Venda' }}</td>
                 <td class="py-2">
-                  <MovTableProduct :product-id="i.produtoId" :lote-id="i.loteId" />
+                  <MovTableProduct :produto="i.produtoId" :lote="i.loteId" />
                 </td>
                 <td class="py-2">{{ i.quantidade }}</td>
                 <td class="py-2">{{ i.usuarioId }}</td>

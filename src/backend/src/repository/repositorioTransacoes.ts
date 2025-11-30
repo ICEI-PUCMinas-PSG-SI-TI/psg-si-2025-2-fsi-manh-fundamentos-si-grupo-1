@@ -28,7 +28,7 @@ export type RepoConsultaParamsTransacoes = {
 type SelectConsultaTransacoesSchema = SelectTransacoesSchema & {
   _usuario: { nome: string } | null;
   _categoria: { nome: string } | null;
-  _produto: { nome: string } | null;
+  _produto: { nome: string; codigo: string } | null;
   _lote: { codigo: string } | null;
 };
 
@@ -92,6 +92,7 @@ class RepositorioTransacoes {
         },
         _produto: {
           nome: tabelaProdutos.nome,
+          codigo: tabelaProdutos.codigo,
         },
         _lote: {
           codigo: tabelaLotes.codigo,
@@ -116,15 +117,15 @@ class RepositorioTransacoes {
         tabelaUsuarios,
         eq(tabelaTransacoes.usuarioId, tabelaUsuarios.id),
       )
-      .leftJoin(
+      .innerJoin(
         tabelaCategorias,
-        eq(tabelaTransacoes.usuarioId, tabelaCategorias.id),
+        eq(tabelaProdutos.categoriaId, tabelaCategorias.id),
       )
       .leftJoin(
         tabelaProdutos,
-        eq(tabelaTransacoes.usuarioId, tabelaProdutos.id),
+        eq(tabelaTransacoes.produtoId, tabelaProdutos.id),
       )
-      .leftJoin(tabelaLotes, eq(tabelaTransacoes.usuarioId, tabelaLotes.id))
+      .leftJoin(tabelaLotes, eq(tabelaTransacoes.loteId, tabelaLotes.id))
       .limit(paginaTamanho)
       .offset((pagina - 1) * paginaTamanho)
       .execute();

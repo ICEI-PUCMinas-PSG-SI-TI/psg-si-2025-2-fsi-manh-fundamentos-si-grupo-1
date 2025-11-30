@@ -37,20 +37,8 @@
 <script setup lang="ts">
 import MovTable from '@/components/HistoricoMov/Table/MovTable.vue'
 import { ref, computed } from 'vue'
+import type { GetConsultaMovimentacaoDto } from '../../../backend'
 // import { onMounted } from 'vue'
-
-interface Movimentacao {
-  id: string
-  produtoId: string
-  usuarioId: string
-  loteId: string
-  motivo: string
-  quantidade: number
-  horario: string
-  localOrigem: string
-  localDestino: string
-  observacao: string
-}
 
 /* === Formatações === */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -65,10 +53,8 @@ function formatarData(dataISO: string): string {
   })
 }
 
-const transacoes = ref<Movimentacao[]>([])
+const transacoes = ref<GetConsultaMovimentacaoDto[]>([])
 /*
-const transacoes = ref<Movimentacao[]>([])
-
 onMounted(async () => {
   try {
     const res = await fetch('http://localhost:5173/api/v1/transacoes')
@@ -108,4 +94,3 @@ const transacoesPaginadas = computed(() => {
 
 const totalPaginas = computed(() => Math.ceil(transacoesFiltradas.value.length / itensPorPagina))
 </script>
-

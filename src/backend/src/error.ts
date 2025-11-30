@@ -49,7 +49,7 @@ export function mdwError(
   if (err) {
     if (err instanceof ServerError) {
       error(err.message, { label: "mdwErr.HTTP", reqId: id });
-      res.status(err.code);
+      res.sendStatus(err.code);
     } else if (err instanceof ClientError || err instanceof HttpError) {
       error(err.message, { label: "mdwErr.HTTP", reqId: id });
       res.status(err.code).send(err.message);

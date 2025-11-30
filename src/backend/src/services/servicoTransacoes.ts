@@ -52,12 +52,17 @@ export type ConsultaMovimentacoesParams = z4.infer<
 
 export const GetConsultaMovimentacaoDtoZ = GetMovimentacaoDtoZ.extend({
   _usuario: z4.object({ nome: z4.string() }),
-  _categoria: z4.object({ nome: z4.string() }),
-  _produto: z4.object({ nome: z4.string() }),
+  _categoria: z4.object({ nome: z4.string() }).optional(),
+  _produto: z4.strictObject({
+    nome: z4.string(),
+    codigo: z4.string(),
+  }),
   _lote: z4.object({ codigo: z4.string() }),
 });
 
-type GetConsultaMovimentacaoDto = z.infer<typeof GetConsultaMovimentacaoDtoZ>;
+export type GetConsultaMovimentacaoDto = z.infer<
+  typeof GetConsultaMovimentacaoDtoZ
+>;
 
 class ServicoTransacoes {
   async inserir(valores: SetMovimentacaoDto): Promise<string> {
@@ -105,7 +110,7 @@ class ServicoTransacoes {
     return registros.map((registro) => {
       if (
         registro._usuario === null ||
-        registro._categoria === null ||
+        // registro._categoria === null ||
         registro._produto === null ||
         registro._lote === null
       ) {
@@ -123,8 +128,13 @@ class ServicoTransacoes {
           localDestino: registro.localDestino,
           observacao: registro.observacao,
           _usuario: { nome: registro._usuario.nome },
-          _categoria: { nome: registro._categoria.nome },
-          _produto: { nome: registro._produto.nome },
+          _categoria: registro._categoria
+            ? { nome: registro._categoria.nome }
+            : undefined,
+          _produto: {
+            nome: registro._produto.nome,
+            codigo: registro._produto.codigo,
+          },
           _lote: { codigo: registro._lote.codigo },
         };
       }
