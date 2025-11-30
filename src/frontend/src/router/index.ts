@@ -4,6 +4,7 @@ import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
 import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
 import LoadingView from '@/views/LoadingView.vue'
 import LoginView from '@/views/LoginView.vue'
+import MotivoAlertaView from '@/views/motivoAlertaView.vue'
 import MovimentacoesView from '@/views/MovimentacoesView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import OperacoesDiariasView from '@/views/OperacoesDiariasView.vue'
@@ -51,6 +52,14 @@ const router = createRouter({
       name: 'produtos',
       path: '/produtos',
       component: PesquisaProdutosView,
+      meta: {
+        requerAutenticacao: true,
+      },
+    },
+    {
+      name: 'alertas',
+      path: '/alertas',
+      component: MotivoAlertaView,
       meta: {
         requerAutenticacao: true,
       },
