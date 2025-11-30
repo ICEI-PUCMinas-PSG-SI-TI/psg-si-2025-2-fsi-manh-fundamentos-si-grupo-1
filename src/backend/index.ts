@@ -3,6 +3,7 @@
 export { Identificador } from "./src/db/enums/identificador";
 export { Permissoes } from "./src/db/enums/permissoes";
 export { StatusProduto } from "./src/db/enums/statusProduto";
+export { MotivoAlerta } from "./src/db/enums/motivoAlerta";
 
 // DTOs
 
@@ -50,3 +51,5 @@ export type {
   GetConsultaMovimentacaoDto,
   GetMovimentacaoDto,
 } from "./src/services/servicoTransacoes";
+
+export type { GetAlertasDto } from "./src/services/servicoAlertas";

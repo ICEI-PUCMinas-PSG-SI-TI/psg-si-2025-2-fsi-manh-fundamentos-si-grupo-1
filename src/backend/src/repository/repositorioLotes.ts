@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { SQL, and, count, eq, gte, like, lte } from "drizzle-orm";
+import { SQL, and, count, eq, gte, isNotNull, like, lte } from "drizzle-orm";
 import bancoDados from "../db";
 import type {
   InsertLoteSchema,
@@ -55,6 +55,22 @@ class RepositorioLotes {
       .from(tabelaLotes)
       .limit(paginaTamanho)
       .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
+
+  selecionarValidadeAlertas(
+    data: Date,
+  ): Promise<{ id: string; produtoId: string; validade: Date | null }[]> {
+    return bancoDados
+      .select({
+        id: tabelaLotes.id,
+        produtoId: tabelaLotes.produtoId,
+        validade: tabelaLotes.validade,
+      })
+      .from(tabelaLotes)
+      .where(
+        and(isNotNull(tabelaLotes.validade), lte(tabelaLotes.validade, data)),
+      )
       .execute();
   }
 
