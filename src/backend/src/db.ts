@@ -1,18 +1,20 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { error, json, LogLevel, notice, warning } from "./logging";
-import { DrizzleQueryError, sql } from "drizzle-orm";
-import { tabelaLotes } from "./db/schema/lotes";
+import { Permissoes } from "./db/enums/permissoes";
 import { tabelaCategorias } from "./db/schema/categorias";
 import { tabelaConfiguracoes } from "./db/schema/configuracoes";
+import { tabelaLotes } from "./db/schema/lotes";
+import { tabelaPermissoes } from "./db/schema/permissoes";
 import { tabelaProdutos } from "./db/schema/produtos";
 import { tabelaSessoes } from "./db/schema/sessoes";
 import { tabelaTransacoes } from "./db/schema/transacoes";
 import { tabelaUnidadesMedida } from "./db/schema/unidadesMedida";
 import { tabelaUsuarios } from "./db/schema/usuarios";
+import { LogLevel, error, json, notice, warning } from "./logging";
 import servicoUsuarios from "./services/servicoUsuarios";
-import { Permissoes, tabelaPermissoes } from "./db/schema/permissoes";
+import { DrizzleQueryError, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/libsql";
 
-export const baseDados = drizzle(process.env.DB_FILE_NAME!);
+const DB_FILE_NAME = process.env.DB_FILE_NAME || "file:database.db";
+const bancoDados = drizzle(DB_FILE_NAME);
 
 // TODO: Verificar se a base de dados se encontra no último schema
 export async function verificarBancoDados(): Promise<boolean> {
@@ -30,7 +32,7 @@ export async function verificarBancoDados(): Promise<boolean> {
       tabelaUsuarios,
     ];
     for (let i = 0; i < tables.length; i++) {
-      await baseDados
+      await bancoDados
         .select({
           value: sql`1`,
         })
@@ -54,31 +56,39 @@ export async function verificarBancoDados(): Promise<boolean> {
 
 // Verifica se há usuários cadastrados no sistema, se não houver, inicializa um administrador
 // TODO: Inicializar apenas 1 vez, armazenar informação em configurações.
-export async function inicializarAdministrador() {
+export async function inicializarAdministrador(): Promise<void> {
   const count = await servicoUsuarios.contar();
   if (count === 0) {
-    const login = "Administrador";
-    const senha = "Admin123-";
+    // TODO: Gerar senha aleatoria
+    const admin = { login: "Administrador", senha: "Admin123-" };
     await servicoUsuarios.inserir(
       {
-        nome: login,
-        login: login,
-        password: senha,
-        descricao: login,
+        nome: admin.login,
+        login: admin.login,
+        senha: admin.senha,
+        password: admin.senha,
+        descricao: admin.login,
         habilitado: true,
-        nivelPermissoes: 0,
       },
       { cargos: [Permissoes.Administrador] },
     );
-    warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada: ");
-    json(
+    warning("Nenhum usuário foi encontrado. Credênciais de primeira entrada:");
+    json({ login: admin.login, senha: admin.senha }, LogLevel.Warning);
+
+    const dev = { login: "Desenvolvedor", senha: "Devel321-" };
+    await servicoUsuarios.inserir(
       {
-        login,
-        senha,
+        nome: dev.login,
+        login: dev.login,
+        senha: admin.senha,
+        password: admin.senha,
+        descricao: dev.login,
+        habilitado: true,
       },
-      LogLevel.Warning,
+      { cargos: [Permissoes.Desenvolvedor] },
     );
+    json({ login: dev.login, senha: dev.senha }, LogLevel.Warning);
   }
 }
 
-export default baseDados;
+export default bancoDados;

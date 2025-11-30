@@ -1,24 +1,28 @@
+import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
 import { type ExtendedRequest } from "../../../middlewares";
+import { mdwRequerBody } from "../../../middlewares";
+import servicoUsuarios, {
+  SetUsuarioDtoZ,
+} from "../../../services/servicoUsuarios";
+import { ParamsIdSchemaZ, SenhaZ } from "../objects";
 import {
-  Router,
   type NextFunction,
   type Request,
   type Response,
+  Router,
 } from "express";
-import servicoUsuarios, {
-  InsertUsuarioSchemaReqZ,
-} from "../../../services/servicoUsuarios";
-import { ParamsIdSchemaZ, PasswordZ } from "../objects";
-import z from "zod";
-import { UpdateUsuarioSchemaZ } from "../../../db/schema/usuarios";
-import { mdwRequerBody } from "../../../middlewares";
+import * as z4 from "zod/v4";
 
 const apiV1AdminUsuariosRouter = Router();
 
-async function getUsuarios(req: Request, res: Response, next: NextFunction) {
+async function getUsuarios(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
-    const consulta = await servicoUsuarios.listarTodosPerfil();
-    res.send(consulta);
+    const consulta = await servicoUsuarios.selecionarTodos();
+    res.json(consulta);
   } catch (err) {
     next(err);
   }
@@ -28,26 +32,25 @@ async function postUsuario(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
-    const parsedBody = InsertUsuarioSchemaReqZ.parse(req.body);
+    const parsedBody = SetUsuarioDtoZ.parse(req.body);
     const uuid = await servicoUsuarios.inserir(parsedBody);
-    if (uuid) res.send(uuid);
-    else res.send(500);
+    res.send(uuid);
   } catch (err) {
     next(err);
   }
 }
 
-const AdmAlteracaoSenhaZ = z.strictObject({
-  senha: PasswordZ,
+const AdmAlteracaoSenhaZ = z4.strictObject({
+  senha: SenhaZ,
 });
 
 async function alterarSenha(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const parsedBody = AdmAlteracaoSenhaZ.parse(req.body);
@@ -55,8 +58,11 @@ async function alterarSenha(
       params.id,
       parsedBody.senha,
     );
-    if (ok) res.send();
-    else res.sendStatus(401);
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -66,12 +72,15 @@ async function getUsuarioId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.selecionarPorId(params.id);
-    if (consulta) res.send(consulta);
-    else res.sendStatus(404);
+    if (consulta) {
+      res.json(consulta);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -81,12 +90,15 @@ async function excluirUsuarioId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const alteracoes = await servicoUsuarios.excluirPorId(params.id);
-    if (alteracoes > 0) res.send(alteracoes);
-    else res.sendStatus(404);
+    const alterado = await servicoUsuarios.excluirPorId(params.id);
+    if (alterado) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -99,13 +111,16 @@ async function patchUsuario(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const updateFields = AdmUpdateUsuarioEndpointSchema.parse(req.body);
     const params = ParamsIdSchemaZ.parse(req.params);
-    const alteracoes = await servicoUsuarios.atualizar(params.id, updateFields);
-    if (alteracoes > 0) res.send();
-    else res.sendStatus(404);
+    const alterado = await servicoUsuarios.atualizar(params.id, updateFields);
+    if (alterado) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }

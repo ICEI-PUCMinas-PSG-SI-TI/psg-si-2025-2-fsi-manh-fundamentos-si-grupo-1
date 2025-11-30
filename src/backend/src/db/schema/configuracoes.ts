@@ -1,39 +1,40 @@
-import { sql, type InferSelectModel } from "drizzle-orm";
-import { sqliteTable, text, int } from "drizzle-orm/sqlite-core";
+import { Identificador } from "../enums/identificador";
+import { type InferSelectModel } from "drizzle-orm";
+import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-import { v4 as genUUID } from "uuid";
-import z from "zod";
+import * as z4 from "zod/v4";
 
 export const tabelaConfiguracoes = sqliteTable("configuracoes", {
   // TODO: Generate always the same id for config?
   id: text()
     .primaryKey()
     .notNull()
-    .$defaultFn(() => genUUID()),
+    .$defaultFn(() => crypto.randomUUID()),
   nomeCliente: text("nome_cliente"),
   cpfCnpj: text("cpf_cnpj"),
   endereco: text(),
+  identificador: text({
+    enum: [
+      Identificador.Numerico,
+      Identificador.Hexadecimal,
+      Identificador.Seguro,
+    ],
+  })
+    .notNull()
+    .default(Identificador.Seguro),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date()),
   updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
-});
-
-// Campos da tabela que podem ser atualizados. Os campos não são inferidos
-// diretamente para evitar a permissão de edição de futuros campos que podem
-// ser adicionados a tabela.
-export const UpdateConfiguracaoSchemaZ = z.strictObject({
-  nomeCliente: z.string().nullish(),
-  cpfCnpj: z.string().nullish(),
-  endereco: z.string().nullish(),
+    .$defaultFn(() => new Date())
+    .$onUpdateFn(() => new Date()),
 });
 
 export const InsertConfiguracaoSchemaZ = createInsertSchema(
   tabelaConfiguracoes,
   {
-    id: z.uuid().optional(),
+    id: z4.uuid().optional(),
     // TODO(!scope): Validar cpf/cnpj?
   },
 )
@@ -46,9 +47,9 @@ export const InsertConfiguracaoSchemaZ = createInsertSchema(
 export type SelectConfiguracaoSchema = InferSelectModel<
   typeof tabelaConfiguracoes
 >;
-export type UpdateConfiguracaoSchema = z.infer<
-  typeof UpdateConfiguracaoSchemaZ
+export type UpdateConfiguracaoSchema = Partial<
+  InferSelectModel<typeof tabelaConfiguracoes>
 >;
-export type InsertConfiguracaoSchema = z.infer<
+export type InsertConfiguracaoSchema = z4.infer<
   typeof InsertConfiguracaoSchemaZ
 >;

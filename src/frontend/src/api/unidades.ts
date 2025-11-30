@@ -1,41 +1,36 @@
-import z from 'zod'
+import * as z4 from 'zod/v4'
 import { fetchW, HttpMethods } from './fetchWrapper'
+import type { GetUnidadeDto, SetUnidadeDTO } from '../../../backend'
+import { UuidParseZ, type IdRegistro } from './common'
 
 const endpoint_path = `/api/v1/unidades`
 
-const ParamIdSchemaZ = z.uuid()
-
-const UnidadeMedidaEnvioZ = z.object({
-  nome: z.string().nonempty(),
-  abreviacao: z.string().nonempty(),
+const UnidadeMedidaEnvioZ = z4.object({
+  nome: z4.string().nonempty(),
+  abreviacao: z4.string().nonempty(),
 })
-
-export type UnidadeMedida = {
-  id: string
-  nome: string
-  abreviacao: string
-}
 
 export class ApiUnidadesMedida {
   obterTodos() {
-    return fetchW<UnidadeMedida[]>(endpoint_path)
+    return fetchW<GetUnidadeDto[]>(endpoint_path)
   }
 
   criar(nome: string, abreviacao: string) {
     const bodyContent = UnidadeMedidaEnvioZ.parse({
       nome,
       abreviacao,
-    })
-    return fetchW(endpoint_path, {
+    } as SetUnidadeDTO)
+    return fetchW<IdRegistro>(endpoint_path, {
       method: HttpMethods.Post,
       body: bodyContent,
     })
   }
 
   excluir(id: string) {
-    const uuid = ParamIdSchemaZ.parse(id)
-    return fetchW(`${endpoint_path}/${uuid}`, {
+    const uuid = UuidParseZ.parse(id)
+    return fetchW<undefined>(`${endpoint_path}/${uuid}`, {
       method: HttpMethods.Delete,
     })
   }
 }
+

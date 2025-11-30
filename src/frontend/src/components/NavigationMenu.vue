@@ -4,7 +4,6 @@ import {
   ArrowsUpDownIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
-  PresentationChartBarIcon,
   UsersIcon,
 } from '@heroicons/vue/24/outline'
 import NavigationMenuItem from './NavigationMenuItem.vue'
@@ -13,7 +12,7 @@ import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
 import DarkModeToggle from './DarkModeToggle.vue'
 import { useSessaoStore } from '@/store/config/sessao'
 import { computed } from 'vue'
-import { Permissoes } from '../../../backend/src/db/schema/permissoes'
+import { Permissoes } from '../../../backend'
 
 const useSessao = useSessaoStore()
 const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador))
@@ -26,13 +25,6 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
       <LogoMenuItem class="mb-2" />
 
       <NavigationMenuItemSeparator />
-
-      <RouterLink to="/dashboard" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <PresentationChartBarIcon class="m-2" />
-          Dashboard
-        </NavigationMenuItem>
-      </RouterLink>
 
       <RouterLink to="/operacoes" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
@@ -54,31 +46,6 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
           Produtos
         </NavigationMenuItem>
       </RouterLink>
-
-      <!-- TODO: Funcionalidade não será implementada no momento (sprint 3)
-      <NavigationMenuItemSeparator />
-
-      <RouterLink to="/relatorio_1" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 1
-        </NavigationMenuItem>
-      </RouterLink>
-
-      <RouterLink to="/relatorio_2" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 2
-        </NavigationMenuItem>
-      </RouterLink>
-
-      <RouterLink to="/relatorio_3" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 3
-        </NavigationMenuItem>
-      </RouterLink>
-      -->
 
       <NavigationMenuItemSeparator />
 

@@ -1,77 +1,72 @@
-import { and, eq } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
+import { Permissoes } from "../db/enums/permissoes";
 import {
-  Permissoes,
-  tabelaPermissoes,
   type InsertPermissoesSchema,
   type SelectPermissoesSchema,
+  tabelaPermissoes,
 } from "../db/schema/permissoes";
+import { RepositorioBase } from "./repositorioBase";
+import { and, eq } from "drizzle-orm";
 
-export class RepositorioPermissoes {
-  inserir(...perms: InsertPermissoesSchema[]) {
-    return baseDados.transaction((tx) => {
-      return tx.insert(tabelaPermissoes).values(perms).onConflictDoNothing();
+class RepositorioPermissoes extends RepositorioBase {
+  inserir(...perms: InsertPermissoesSchema[]): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const res = await tx
+        .insert(tabelaPermissoes)
+        .values(perms)
+        .onConflictDoNothing();
+      return res.rowsAffected;
     });
   }
 
-  selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectPermissoesSchema[]> {
+    return bancoDados.select().from(tabelaPermissoes);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return tx
-          .select()
-          .from(tabelaPermissoes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return tx.select().from(tabelaPermissoes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   selecionar(
     userId: string,
     cargo: Permissoes,
   ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
-      return tx
-        .select()
-        .from(tabelaPermissoes)
-        .where(
-          and(
-            eq(tabelaPermissoes.usuarioId, userId),
-            eq(tabelaPermissoes.cargo, cargo),
-          ),
-        );
-    });
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .where(
+        and(
+          eq(tabelaPermissoes.usuarioId, userId),
+          eq(tabelaPermissoes.cargo, cargo),
+        ),
+      );
   }
 
-  selecionarPersmissoesPorIdUsuario(
-    userId: string,
-  ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
-      return tx
-        .select()
-        .from(tabelaPermissoes)
-        .where(eq(tabelaPermissoes.usuarioId, userId));
-    });
+  selecionarPorIdUsuario(userId: string): Promise<SelectPermissoesSchema[]> {
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .where(eq(tabelaPermissoes.usuarioId, userId));
   }
 
   selecionarPersmissoesPorCargo(
     cargo: Permissoes,
   ): Promise<SelectPermissoesSchema[]> {
-    return baseDados.transaction((tx) => {
-      return tx
-        .select()
-        .from(tabelaPermissoes)
-        .where(eq(tabelaPermissoes.cargo, cargo));
-    });
+    return bancoDados
+      .select()
+      .from(tabelaPermissoes)
+      .where(eq(tabelaPermissoes.cargo, cargo));
   }
 
-  async excluir(userId: string, cargo: Permissoes) {
-    return await baseDados.transaction(async (tx) => {
+  excluir(userId: string, cargo: Permissoes): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaPermissoes)
         .where(
@@ -84,8 +79,8 @@ export class RepositorioPermissoes {
     });
   }
 
-  excluirPermissoes(userId: string) {
-    return baseDados.transaction(async (tx) => {
+  excluirPermissoes(userId: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaPermissoes)
         .where(eq(tabelaPermissoes.usuarioId, userId));
@@ -93,3 +88,7 @@ export class RepositorioPermissoes {
     });
   }
 }
+
+const repositorioPermissoes = new RepositorioPermissoes();
+
+export default repositorioPermissoes;

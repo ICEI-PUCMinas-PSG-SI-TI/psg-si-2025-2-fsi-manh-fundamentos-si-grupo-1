@@ -110,7 +110,7 @@ useSessao.$subscribe((_, state) => {
     if (typeof route.query.nextPage === 'string' && router.hasRoute(route.query.nextPage)) {
       router.push(route.query.nextPage)
     } else {
-      router.push({ name: 'dashboard' })
+      router.push({ name: 'operacoes' })
     }
   }
 })

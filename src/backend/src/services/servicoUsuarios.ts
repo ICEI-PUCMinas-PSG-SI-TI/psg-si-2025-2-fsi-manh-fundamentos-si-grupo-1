@@ -1,169 +1,254 @@
-import z from "zod";
-import {
-  InsertUsuarioSchemaZ,
-  type SelectUsuarioInfoSchema,
-  type UpdateUsuarioSchema,
-} from "../db/schema/usuarios";
-import { debug, error } from "../logging";
-import { RepositorioUsuarios } from "../repository/repositorioUsuarios";
-import { compare, hash } from "bcrypt";
-import { ClientError } from "../error";
-import { PasswordZ, type UuidResult } from "../api/v1/objects";
-import { Permissoes } from "../db/schema/permissoes";
+import { SenhaZ } from "../api/v1/objects";
+import { Permissoes } from "../db/enums/permissoes";
+import { InsertUsuarioSchemaZ } from "../db/schema/usuarios";
+import { ClientError, ServerError } from "../error";
+import { error } from "../logging";
+import repositorioUsuarios from "../repository/repositorioUsuarios";
+import { hashSenha } from "../system/auth";
 import servicoPermissoes from "./servicoPermissoes";
+import { compare } from "bcrypt";
+import * as z4 from "zod/v4";
 
-const repositorioUsuarios = new RepositorioUsuarios();
-
-export const InsertUsuarioSchemaReqZ = InsertUsuarioSchemaZ.omit({
-  hashedPassword: true,
-  modoEscuro: true,
-}).extend({
-  // TODO: Quando criado o usuário terá uma senha padrão ou temporária?
-  password: PasswordZ,
+export const SetUsuarioDtoZ = z4.strictObject({
+  nome: z4.string().min(1).max(32),
+  login: z4.string().min(1).max(32),
+  senha: SenhaZ,
+  // @Deprecated
+  password: SenhaZ,
+  descricao: z4.string().max(256).nullable().optional(),
+  habilitado: z4.boolean().optional(),
+  foto: z4.base64().nullable().optional(),
 });
 
-export type InsertUsuarioSchemaReq = z.infer<typeof InsertUsuarioSchemaReqZ>;
+export type SetUsuarioDto = z4.infer<typeof SetUsuarioDtoZ>;
 
-function hashSenha(senha: string): Promise<string> {
-  const rounds: number = parseInt(process.env.BCRYPT_ROUNDS!, 10);
-  return hash(senha, rounds);
-}
+export type GetUsuarioSimplesDto = {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  foto: string | null;
+};
+
+export type GetUsuarioDto = GetUsuarioSimplesDto & {
+  login: string;
+  habilitado: boolean;
+  modoEscuro: boolean;
+};
+
+export const UpdateUsuarioDtoZ = z4.strictObject({
+  nome: z4.string().min(1).max(32).optional(),
+  login: z4.string().min(1).max(32).optional(),
+  senha: SenhaZ.optional(),
+  descricao: z4.string().max(256).nullable().optional(),
+  habilitado: z4.boolean().optional(),
+  foto: z4.base64().nullable().optional(),
+});
+
+export type UpdateUsuarioDto = z4.infer<typeof UpdateUsuarioDtoZ>;
 
 class ServicoUsuarios {
   async inserir(
-    usuario: InsertUsuarioSchemaReq,
+    usuario: SetUsuarioDto,
     opts?: {
       cargos?: Permissoes[];
     },
-  ): Promise<UuidResult> {
-    const hashedPassword = await hashSenha(usuario.password);
+  ): Promise<string> {
     // Verifica se login já existe
-    const _usuario = await repositorioUsuarios.selecionarPorLogin(
+    const registro = await repositorioUsuarios.selecionarPorLogin(
       usuario.login,
     );
-    if (_usuario) throw new ClientError("Login já existe.", 409);
+    if (registro) {
+      throw new ClientError("Login já existe.", 409);
+    }
+    const hashedPassword = await hashSenha(usuario.password);
     const insertUsuario = InsertUsuarioSchemaZ.parse({
       nome: usuario.nome,
       login: usuario.login,
       foto: usuario.foto,
       descricao: usuario.descricao,
       habilitado: usuario.habilitado,
-      nivelPermissoes: usuario.nivelPermissoes,
       hashedPassword: hashedPassword,
     });
     const res = await repositorioUsuarios.inserir(insertUsuario);
-    if (res.length !== 1 || !res[0]) throw new ClientError("", 500);
-    if (opts?.cargos) {
-      await servicoPermissoes.adicionarPermissoesUsuario(
-        res[0].id,
-        ...opts.cargos,
-      );
+    if (res[0]) {
+      const usuarioId = res[0].id;
+      if (opts?.cargos) {
+        const ok = await servicoPermissoes.adicionarPermissoesUsuario(
+          usuarioId,
+          ...opts.cargos,
+        );
+        if (!ok) {
+          error(
+            "Novo usuário criado, mas não foi possível configurar as permissões.",
+          );
+        }
+      }
+      return usuarioId;
+    } else {
+      throw new ServerError("Não foi possível criar o usuário.");
     }
-    debug(`Novo usuário criado!`, { label: "UsuarioServ" });
-    return res[0];
-  }
-
-  async listarUnicoPublico(
-    id: string,
-  ): Promise<SelectUsuarioInfoSchema | null> {
-    const res = await repositorioUsuarios.selecionarPorId(id);
-    if (!res) return null;
-    return {
-      id: res.id,
-      nome: res.nome,
-      descricao: res.descricao,
-      foto: res.foto as string | null,
-    };
   }
 
   /** Listar seleciona apenas as informações públicas */
-  async listarTodosPerfil() {
-    const res = await repositorioUsuarios.selecionarTodos(0, 0);
-    const usuarios = res.map((u) => ({
-      id: u.id,
-      nome: u.nome,
-      login: u.login,
-      descricao: u.descricao,
-      habilitado: u.habilitado,
-      modoEscuro: u.modoEscuro,
-      foto: u.foto,
+  async listarUnicoPublico(id: string): Promise<GetUsuarioSimplesDto | null> {
+    const registro = await repositorioUsuarios.selecionarPorId(id);
+    if (registro) {
+      return {
+        id: registro.id,
+        nome: registro.nome,
+        descricao: registro.descricao,
+        foto: registro.foto as string | null,
+      };
+    } else {
+      return null;
+    }
+  }
+
+  async selecionarTodos(): Promise<GetUsuarioDto[]> {
+    const registros = await repositorioUsuarios.selecionarTodos();
+    return registros.map((registro) => ({
+      id: registro.id,
+      nome: registro.nome,
+      login: registro.login,
+      descricao: registro.descricao,
+      habilitado: registro.habilitado,
+      modoEscuro: registro.modoEscuro,
+      foto: registro.foto as string,
     }));
-    return usuarios;
   }
 
-  async selecionarPorId(id: string) {
-    const res = await repositorioUsuarios.selecionarPorId(id);
-    debug(`Retornando usuário ${id}`, { label: "UsuarioServ" });
-    return res;
-  }
-
-  async selecionarTodos() {
-    const usuarios = await repositorioUsuarios.selecionarTodos(0, 0);
-    debug(`Retornando usuário`, { label: "UsuarioServ" });
-    return usuarios;
+  async selecionarPorId(id: string): Promise<GetUsuarioDto | null> {
+    const registro = await repositorioUsuarios.selecionarPorId(id);
+    if (registro) {
+      return {
+        id: registro.id,
+        nome: registro.nome,
+        login: registro.login,
+        descricao: registro.descricao,
+        habilitado: registro.habilitado,
+        modoEscuro: registro.modoEscuro,
+        foto: registro.foto as string,
+      };
+    } else {
+      return null;
+    }
   }
 
   // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
-  selecionarIdTodos() {
-    return repositorioUsuarios.selecionarIdTodos();
+  async listarIds(): Promise<string[]> {
+    const registros = await repositorioUsuarios.selecionarIdsTodos();
+    return registros.map((registro) => registro.id);
   }
 
-  async atualizar(id: string, usuario: UpdateUsuarioSchema) {
-    const res = await repositorioUsuarios.atualizarPorId(id, usuario);
-    debug(`Informações do usuário ${id} atualizadas!`, {
-      label: "UsuarioServ",
-    });
-    return res;
+  // TODO: Simplificar? 4 queries na base de dados
+  async atualizar(id: string, usuario: UpdateUsuarioDto): Promise<boolean> {
+    const registro = await repositorioUsuarios.selecionarPorId(id);
+    if (registro) {
+      let senha: string | null = null;
+      if (usuario.senha) {
+        senha = usuario.senha;
+        delete usuario.senha;
+      }
+      const atualizacoes = await repositorioUsuarios.atualizarPorId(
+        id,
+        usuario,
+      );
+      if (atualizacoes > 0) {
+        if (senha) {
+          return this.substituirSenha(id, senha);
+        } else {
+          return true;
+        }
+      } else {
+        throw new ServerError(
+          "Não foi possível atualizar as informações do usuário.",
+        );
+      }
+    } else {
+      return false;
+    }
   }
 
-  async excluirPorId(id: string) {
-    const res = await repositorioUsuarios.excluirPorId(id);
-    debug(`Informações do usuário ${id} excluidas!`, {
-      label: "UsuarioServ",
-    });
-    return res;
+  async excluirPorId(id: string): Promise<boolean> {
+    const registro = await repositorioUsuarios.selecionarPorId(id);
+    if (registro) {
+      const atualizacoes = await repositorioUsuarios.excluirPorId(id);
+      if (atualizacoes > 0) {
+        return true;
+      } else {
+        throw new ServerError("Não foi possível excluir a categoria.");
+      }
+    } else {
+      return false;
+    }
   }
 
-  async contar() {
+  async contar(): Promise<number> {
     const res = await repositorioUsuarios.contar();
-    if (!res[0]) return 0;
-    return res[0].count;
+    return res!.count;
   }
 
   // TODO: Unificar validação de senha
   // async validarSenhaPorLogin(): Promise<boolean> {}
   // async validarSenhaPorLogin(): Promise<boolean> {}
 
-  async substituirSenha(usuarioId: string, senha: string) {
-    // Realizar hash da nova senha
-    const hashedPassword = await hashSenha(senha);
-    // Atualizar a senha
-    const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
-      hashedPassword,
-    });
-    // TODO: Verificar necessidade de invalidar sessões
-    return updates === 1;
+  // TODO: Verificar necessidade de invalidar sessões
+  async substituirSenha(usuarioId: string, senha: string): Promise<boolean> {
+    const registro = await repositorioUsuarios.selecionarPorId(usuarioId);
+    if (registro) {
+      // Realizar hash da nova senha
+      const hashedPassword = await hashSenha(senha);
+      // Atualizar a senha
+      const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
+        hashedPassword,
+      });
+      if (updates === 1) {
+        return true;
+      } else {
+        throw new ServerError(
+          "Não foi possível substituir a senha do usuário.",
+        );
+      }
+    } else {
+      return false;
+    }
   }
 
   async alterarSenha(
+    usuarioId: string,
     senhaAnterior: string,
     senhaNova: string,
-    usuarioId: string,
   ): Promise<boolean> {
     // Verificar se a senha confere
-    const usuario = await repositorioUsuarios.selecionarPorId(usuarioId);
-    if (!usuario) {
+    const registro = await repositorioUsuarios.selecionarPorId(usuarioId);
+    if (registro) {
+      const passwordCheck = await compare(
+        senhaAnterior,
+        registro.hashedPassword,
+      );
+      if (!passwordCheck) {
+        error("A senha informada não confere.", { label: "Auth" });
+        throw new ClientError("Unauthorized", 401);
+      }
+      // Realizar hash da nova senha
+      const hashedPassword = await hashSenha(senhaNova);
+      // Atualizar a senha
+      const updates = await repositorioUsuarios.atualizarPorId(usuarioId, {
+        hashedPassword,
+      });
+      if (updates === 1) {
+        return true;
+      } else {
+        throw new ServerError(
+          "Não foi possível substituir a senha do usuário.",
+        );
+      }
+    } else {
       error("Nenhum usuário com o login informado foi encontrado.", {
         label: "Auth",
       });
       throw new ClientError("Unauthorized", 401);
     }
-    const passwordCheck = await compare(senhaAnterior, usuario.hashedPassword);
-    if (!passwordCheck) {
-      error("A senha informada não confere.", { label: "Auth" });
-      throw new ClientError("Unauthorized", 401);
-    }
-    return this.substituirSenha(usuarioId, senhaNova);
   }
 }
 

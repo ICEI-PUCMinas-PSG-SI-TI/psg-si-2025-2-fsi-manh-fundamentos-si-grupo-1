@@ -1,42 +1,83 @@
-import type { UuidResult } from "../api/v1/objects";
-import type { InsertUnidadesMedidaSchema } from "../db/schema/unidadesMedida";
-import { HttpError } from "../error";
-import { debug } from "../logging";
-import { RepositorioUnidadesMedida } from "../repository/repositorioUnidadesMedida";
+import { ClientError, ServerError } from "../error";
+import repositorioProdutos from "../repository/repositorioProdutos";
+import repositorioUnidadesMedida from "../repository/repositorioUnidadesMedida";
+import * as z4 from "zod/v4";
 
-const repositorioUnidadesMedida = new RepositorioUnidadesMedida();
+export const SetUnidadeDtoZ = z4.object({
+  nome: z4.string().min(1).max(128),
+  abreviacao: z4.string().min(1).max(8),
+});
+
+export type SetUnidadeDTO = z4.infer<typeof SetUnidadeDtoZ>;
+
+export type GetUnidadeDto = {
+  id: string;
+  nome: string;
+  abreviacao: string;
+};
 
 class ServicoUnidadesMedida {
-  async inserir(
-    unidadesMedida: InsertUnidadesMedidaSchema,
-  ): Promise<UuidResult> {
-    const res = await repositorioUnidadesMedida.inserir(unidadesMedida);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
-    debug(`Nova unidade de medida criada!`, { label: "UnidadesMedidaServico" });
-    return res[0];
+  // TODO: Verificar se entidade já existe
+  async inserir(unidadesMedida: SetUnidadeDTO): Promise<string> {
+    const res = await repositorioUnidadesMedida.inserir({
+      nome: unidadesMedida.nome,
+      abreviacao: unidadesMedida.abreviacao,
+    });
+    if (!res[0]) {
+      throw new ServerError("Não foi possível criar categoria.");
+    } else {
+      return res[0].id;
+    }
   }
 
-  selecionarPorId(id: string) {
-    return repositorioUnidadesMedida.selecionarPorId(id);
+  async selecionarPorId(id: string): Promise<GetUnidadeDto | null> {
+    const registro = await repositorioUnidadesMedida.selecionarPorId(id);
+    if (registro) {
+      return {
+        id: registro.id,
+        nome: registro.nome,
+        abreviacao: registro.abreviacao,
+      };
+    } else {
+      return null;
+    }
   }
 
-  selecionarTodos() {
-    return repositorioUnidadesMedida.selecionarTodos(0, 0);
+  async selecionarTodos(): Promise<GetUnidadeDto[]> {
+    const registros = await repositorioUnidadesMedida.selecionarTodos();
+    return registros.map((r) => ({
+      id: r.id,
+      nome: r.nome,
+      abreviacao: r.abreviacao,
+    }));
   }
 
-  selecionarIdTodos() {
-    return repositorioUnidadesMedida.selecionarIdTodos();
+  async listarIds(): Promise<string[]> {
+    const registros = await repositorioUnidadesMedida.selecionarIdsTodos();
+    return registros.map((registro) => registro.id);
   }
 
-  // TODO: validar UUID
-  excluirPorId(id: string) {
-    return repositorioUnidadesMedida.excluirPorId(id);
+  async excluirPorId(id: string): Promise<boolean> {
+    const registro = await repositorioUnidadesMedida.selecionarPorId(id);
+    if (registro) {
+      const usos = await repositorioProdutos.selecionarPorUnidadeMedida(id);
+      if (usos!.count > 0) {
+        throw new ClientError("Há produtos cadastrados com essa unidade!", 409);
+      }
+      const atualizacoes = await repositorioUnidadesMedida.excluirPorId(id);
+      if (atualizacoes > 0) {
+        return true;
+      } else {
+        throw new ServerError("Não foi possível excluir a unidade.");
+      }
+    } else {
+      return false;
+    }
   }
 
-  async contar() {
+  async contar(): Promise<number> {
     const res = await repositorioUnidadesMedida.contar();
-    if (!res[0]) return 0;
-    return res[0].count;
+    return res!.count;
   }
 }
 

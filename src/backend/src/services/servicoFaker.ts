@@ -1,24 +1,34 @@
-/* eslint-disable camelcase */
-import { faker, fakerPT_BR } from "@faker-js/faker";
+import { Permissoes } from "../db/enums/permissoes";
+// import { StatusProduto } from "../db/enums/produtos";
+import { StatusProduto } from "../db/enums/statusProduto";
+import { geradorCodigo } from "../db/geradorCodigos";
+import type { InsertProdutosSchema } from "../db/schema/produtos";
+import { HttpError } from "../error";
+import { warning } from "../logging";
+import repositorioCategorias from "../repository/repositorioCategorias";
+import repositorioLotes from "../repository/repositorioLotes";
+import repositorioPermissoes from "../repository/repositorioPermissoes";
+import repositorioProdutos from "../repository/repositorioProdutos";
+import repositorioMovimentacoes from "../repository/repositorioTransacoes";
+import repositorioUnidadesMedida from "../repository/repositorioUnidadesMedida";
+import repositorioUsuarios from "../repository/repositorioUsuarios";
+import { hashSenha } from "../system/auth";
+import servicoCategorias from "./servicoCategorias";
 import servicoLotes from "./servicoLotes";
 import servicoProdutos from "./servicoProdutos";
-import { HttpError } from "../error";
-import servicoTransacoes from "./servicoTransacoes";
-import servicoUsuarios from "./servicoUsuarios";
 import servicoUnidadesMedida from "./servicoUnidadesMedida";
-import { StatusProduto } from "../db/schema/produtos";
-import { warning } from "../logging";
-import servicoCategorias from "./servicoCategorias";
+import servicoUsuarios from "./servicoUsuarios";
+import { faker, fakerPT_BR as fakerPtBr } from "@faker-js/faker";
 
-function fakerLocal() {
+function fakerLocal(): string {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;
 }
 
-function fakerLote() {
+function fakerLote(): string {
   return faker.string.alphanumeric({ casing: "upper", length: 12 });
 }
 
-function fakerDimensoes() {
+function fakerDimensoes(): string {
   return [
     faker.number.int({ min: 1, max: 100 }),
     "cm x ",
@@ -38,7 +48,9 @@ function fakerImage() {
 
 function escolherAleatorios<T>(quant: number, valores: T[]): T[] {
   const _filtro: T[] = [];
-  if (valores.length === 0) throw new Error();
+  if (valores.length === 0) {
+    throw new Error();
+  }
   for (let i = 0; i < quant; i++) {
     const n = faker.number.int({ min: 0, max: valores.length - 1 });
     _filtro.push(valores[n]!);
@@ -50,54 +62,69 @@ function escolherAleatorios<T>(quant: number, valores: T[]): T[] {
 async function escolherUnidadesMedida(
   canRecurse: boolean,
   quant: number,
-): Promise<{ id: string }[]> {
+): Promise<string[]> {
   let quantUnidades = await servicoUnidadesMedida.contar();
   if (quantUnidades === 0) {
-    if (canRecurse) await servicoFaker.criarUnidadesMedida(quant);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarUnidadesMedida(quant);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantUnidades = await servicoUnidadesMedida.contar();
-  if (quantUnidades === 0)
+  if (quantUnidades === 0) {
     throw new HttpError("Can't create relational data", 400);
-  const unidades = await servicoUnidadesMedida.selecionarIdTodos();
-  if (!unidades || unidades.length === 0)
+  }
+  const unidades = await servicoUnidadesMedida.listarIds();
+  if (!unidades || unidades.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, unidades);
 }
 
 async function escolherProdutos(
   canRecurse: boolean,
   quant: number,
-): Promise<{ id: string }[]> {
+): Promise<string[]> {
   let quantProdutos = await servicoProdutos.contar();
   if (quantProdutos === 0) {
-    if (canRecurse) await servicoFaker.criarProdutos(quant, canRecurse);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarProdutos(quant, canRecurse);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantProdutos = await servicoProdutos.contar();
-  if (quantProdutos === 0)
+  if (quantProdutos === 0) {
     throw new HttpError("Can't create relational data", 400);
-  const produtosId = await servicoProdutos.selecionarIdTodos();
-  if (!produtosId || produtosId.length === 0)
+  }
+  const produtosId = await servicoProdutos.listarIds();
+  if (!produtosId || produtosId.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, produtosId);
 }
 
 async function escolherUsuarios(
   canRecurse: boolean,
   quant: number,
-): Promise<{ id: string }[]> {
+): Promise<string[]> {
   let quantUsuarios = await servicoUsuarios.contar();
   if (quantUsuarios === 0) {
-    if (canRecurse) await servicoFaker.criarUsuarios(quant);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarUsuarios(quant);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantUsuarios = await servicoUsuarios.contar();
-  if (quantUsuarios === 0)
+  if (quantUsuarios === 0) {
     throw new HttpError("Can't create relational data", 400);
-  const usuariosId = await servicoUsuarios.selecionarIdTodos();
-  if (!usuariosId || usuariosId.length === 0)
+  }
+  const usuariosId = await servicoUsuarios.listarIds();
+  if (!usuariosId || usuariosId.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, usuariosId);
 }
 
@@ -107,15 +134,20 @@ async function escolherLotes(
 ): Promise<{ id: string; produtoId: string }[]> {
   let quantLotes = await servicoLotes.contar();
   if (quantLotes === 0) {
-    if (canRecurse) await servicoFaker.criarLotes(quant, canRecurse);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarLotes(quant, canRecurse);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantLotes = await servicoLotes.contar();
-  if (quantLotes === 0)
+  if (quantLotes === 0) {
     throw new HttpError("Can't create relational data", 400);
-  const lotes = await servicoLotes.selecionarIdProdutosTodos();
-  if (!lotes || lotes.length === 0)
+  }
+  const lotes = await repositorioLotes.selecionarIdProdutosTodos();
+  if (!lotes || lotes.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, lotes);
 }
 
@@ -125,81 +157,101 @@ async function escolherCategorias(
 ): Promise<{ id: string }[]> {
   let quantCategorias = await servicoCategorias.contar();
   if (quantCategorias === 0) {
-    if (canRecurse) await servicoFaker.criarCategorias(quant);
-    else throw new HttpError("No relational data found", 400);
+    if (canRecurse) {
+      await servicoFaker.criarCategorias(quant);
+    } else {
+      throw new HttpError("No relational data found", 400);
+    }
   }
   quantCategorias = await servicoCategorias.contar();
-  if (quantCategorias === 0)
+  if (quantCategorias === 0) {
     throw new HttpError("Can't create relational data", 400);
+  }
   const categorias = await servicoCategorias.selecionarTodos();
-  if (!categorias || categorias.length === 0)
+  if (!categorias || categorias.length === 0) {
     throw new HttpError("Can't retrieve relational data", 400);
+  }
   return escolherAleatorios(quant, categorias);
 }
 
-export class ServicoFaker {
-  async criarProdutos(quant: number, canRecurse: boolean) {
+class ServicoFaker {
+  async criarProdutos(quant: number, canRecurse: boolean): Promise<void> {
     const unidades = await escolherUnidadesMedida(canRecurse, quant);
-    if (!unidades || !unidades.length) throw new Error();
+    if (!unidades || !unidades.length) {
+      throw new Error();
+    }
 
     const categorias = await escolherCategorias(canRecurse, quant);
-    if (!categorias || !categorias.length) throw new Error();
+    if (!categorias || !categorias.length) {
+      throw new Error();
+    }
 
+    const produtos: InsertProdutosSchema[] = [];
     for (let i = 0; i < quant; i++) {
-      await servicoProdutos.inserir({
-        nome: fakerPT_BR.commerce.product(),
+      produtos.push({
+        nome: fakerPtBr.commerce.product(),
         sku: fakerLote(),
         codigoBarra: fakerLote(),
-        descricao: fakerPT_BR.commerce.productDescription(),
-        categoria: fakerPT_BR.commerce.department(),
+        descricao: fakerPtBr.commerce.productDescription(),
         categoriaId: categorias[i]!.id,
-        marca: fakerPT_BR.company.name(),
-        fornecedor: fakerPT_BR.company.name(),
+        marca: fakerPtBr.company.name(),
+        fornecedor: fakerPtBr.company.name(),
         dimensoes: fakerDimensoes(),
         peso: faker.number.int({ min: 10000, max: 1000000 }),
         precoCusto: faker.number.int({ min: 10000, max: 10000000 }),
         precoVenda: faker.number.int({ min: 10000, max: 10000000 }),
         precoPromocao: faker.number.int({ min: 10000, max: 10000000 }),
-        quantidadeUnidadeMedida: unidades[i]!.id,
+        unidadeMedidaId: unidades[i]!,
         quantidadeMinima: faker.number.int({ min: 10000, max: 100000 }),
         quantidadeMaxima: faker.number.int({ min: 100001, max: 10000000 }),
         localizacao: fakerLocal(),
         // imagem: fakerImage(),
         status: StatusProduto.Ativo,
+        codigo: geradorCodigo(),
       });
     }
+
+    await repositorioProdutos.inserir(...produtos);
     warning(`Criado ${quant} produtos.`, { label: "Faker" });
   }
 
-  async criarLotes(quant: number, canRecurse: boolean) {
+  async criarLotes(quant: number, canRecurse: boolean): Promise<void> {
     const produtos = await escolherProdutos(canRecurse, quant);
-    if (!produtos || !produtos.length) throw new Error();
+    if (!produtos || !produtos.length) {
+      throw new Error();
+    }
 
+    const lotes = [];
     for (let i = 0; i < quant; i++) {
-      const produto = produtos[i];
-      if (!produto) throw new Error();
-      await servicoLotes.inserir({
-        produtoId: produto.id,
+      lotes.push({
+        produtoId: produtos[i]!,
         codigo: fakerLote(),
         quantidade: faker.number.int({ min: 1000, max: 10000000 }),
         validade: faker.date.future({ years: 1 }),
       });
     }
+
+    await repositorioLotes.inserir(...lotes);
     warning(`Criado ${quant} lotes.`, { label: "Faker" });
   }
 
-  async criarTransacoes(quant: number, canRecurse: boolean) {
+  async criarTransacoes(quant: number, canRecurse: boolean): Promise<void> {
     const lotes = await escolherLotes(canRecurse, quant);
-    if (!lotes || !lotes.length) throw new Error();
+    if (!lotes || !lotes.length) {
+      throw new Error();
+    }
 
     const usuarios = await escolherUsuarios(canRecurse, quant);
-    if (!usuarios || !usuarios.length) throw new Error();
+    if (!usuarios || !usuarios.length) {
+      throw new Error();
+    }
 
+    const movimentacoes = [];
     for (let i = 0; i < quant; i++) {
-      await servicoTransacoes.inserir({
-        // TODO: invalidar produto?
+      movimentacoes.push({
+        // TODO: invalidar campo produto (já possui lote)?
         produtoId: lotes[i]!.produtoId,
-        usuarioId: usuarios[i]!.id,
+        usuarioId: usuarios[i]!,
         loteId: lotes[i]!.id,
         quantidade: faker.number.int({ min: 100000, max: 1000000 }),
         horario: faker.date.past({ years: 1 }),
@@ -209,42 +261,63 @@ export class ServicoFaker {
         motivo: faker.number.int({ min: 0, max: 9 }).toString(),
       });
     }
+
+    await repositorioMovimentacoes.inserir(...movimentacoes);
     warning(`Criado ${quant} transações.`, { label: "Faker" });
   }
-  async criarUsuarios(quant: number) {
+
+  async criarUsuarios(quant: number): Promise<void> {
+    const usuarios = [];
     for (let i = 0; i < quant; i++) {
-      await servicoUsuarios.inserir({
+      const hashedPassword = await hashSenha(
+        faker.string.hexadecimal({ length: 32 }),
+      );
+      usuarios.push({
         nome: faker.person.fullName(),
         login: faker.internet.username(),
-        password: faker.string.hexadecimal({ length: 32 }),
+        hashedPassword,
         descricao: faker.person.jobDescriptor(),
         habilitado: faker.datatype.boolean(),
-        // modoEscuro: faker.datatype.boolean(),
-        nivelPermissoes: faker.number.int({ min: 0, max: 3 }),
+        modoEscuro: faker.datatype.boolean(),
         // foto: fakerImage(),
       });
     }
+
+    const usuarioIds = await repositorioUsuarios.inserir(...usuarios);
+    const permissoes = usuarioIds.map((u) => ({
+      usuarioId: u.id,
+      cargo: Permissoes.Operacional,
+    }));
+    await repositorioPermissoes.inserir(...permissoes);
     warning(`Criado ${quant} usuários.`, { label: "Faker" });
   }
 
-  async criarUnidadesMedida(quant: number) {
+  async criarUnidadesMedida(quant: number): Promise<void> {
+    const unidadesMedida = [];
     for (let i = 0; i < quant; i++) {
       const unit = faker.science.unit();
-      await servicoUnidadesMedida.inserir({
+      unidadesMedida.push({
         nome: unit.name,
         abreviacao: unit.symbol,
       });
     }
+
+    await repositorioUnidadesMedida.inserirIgnorandoDuplicatas(
+      ...unidadesMedida,
+    );
     warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
   }
 
-  async criarCategorias(quant: number) {
+  async criarCategorias(quant: number): Promise<void> {
+    const categorias = [];
     for (let i = 0; i < quant; i++) {
-      await servicoCategorias.inserir({
-        nome: faker.commerce.department(),
+      categorias.push({
+        nome: fakerPtBr.commerce.department(),
       });
     }
-    warning(`Criado ${quant} unidades de medida.`, { label: "Faker" });
+
+    await repositorioCategorias.inserirIgnorandoDuplicatas(...categorias);
+    warning(`Criado ${quant} categorias.`, { label: "Faker" });
   }
 }
 

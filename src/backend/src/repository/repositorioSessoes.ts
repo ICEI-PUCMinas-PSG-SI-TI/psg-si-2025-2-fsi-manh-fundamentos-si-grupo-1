@@ -1,14 +1,15 @@
-import "dotenv/config";
-import { eq } from "drizzle-orm";
+import bancoDados from "../db";
 import {
-  tabelaSessoes,
   type InsertSessaoSchema,
   type SelectSessaoSchema,
+  tabelaSessoes,
 } from "../db/schema/sessoes";
-import bancoDados from "../db";
+import type { RefRegistro } from "./common";
+import "dotenv/config";
+import { eq } from "drizzle-orm";
 
-export class RepositorioSessoes {
-  inserir(sessao: InsertSessaoSchema) {
+class RepositorioSessoes {
+  inserir(sessao: InsertSessaoSchema): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx.insert(tabelaSessoes).values(sessao).returning({
         id: tabelaSessoes.id,
@@ -16,37 +17,32 @@ export class RepositorioSessoes {
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectSessaoSchema | null> {
-    return bancoDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaSessoes)
-        .where(eq(tabelaSessoes.id, id));
-      if (res.length && res[0]) return res[0];
-      return null;
-    });
+  selecionarPorId(id: string): Promise<SelectSessaoSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaSessoes)
+      .where(eq(tabelaSessoes.id, id))
+      .get();
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectSessaoSchema[]> {
+    return bancoDados.select().from(tabelaSessoes);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectSessaoSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaSessoes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaSessoes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaSessoes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
   }
 
   // or .returning()
-  async excluirPorId(id: string): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaSessoes)
         .where(eq(tabelaSessoes.id, id));
@@ -55,8 +51,8 @@ export class RepositorioSessoes {
   }
 
   // or .returning()
-  async excluirPorUsuarioId(usuarioId: string): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
+  excluirPorUsuarioId(usuarioId: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaSessoes)
         .where(eq(tabelaSessoes.usuarioId, usuarioId));
@@ -64,8 +60,14 @@ export class RepositorioSessoes {
     });
   }
 
-  async limparSessoes(): Promise<number> {
-    const resultSet = await bancoDados.delete(tabelaSessoes);
-    return resultSet.rowsAffected;
+  excluirTodos(): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx.delete(tabelaSessoes);
+      return resultSet.rowsAffected;
+    });
   }
 }
+
+const repositorioSessoes = new RepositorioSessoes();
+
+export default repositorioSessoes;

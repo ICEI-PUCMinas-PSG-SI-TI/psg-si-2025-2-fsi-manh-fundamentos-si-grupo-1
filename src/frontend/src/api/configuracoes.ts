@@ -1,16 +1,15 @@
 import { fetchW, HttpMethods } from './fetchWrapper'
-import type { ParamsInserirConfiguracoes } from '../../../backend'
-import type { SelectConfiguracaoSchema } from '../../../backend/src/db/schema/configuracoes'
+import type { GetConfiguracaoDto, UpdateConfiguracaoDto, Identificador } from '../../../backend'
 
 const endpoint_path = `/api/v1/configuracoes`
 
 export class ApiConfiguracoes {
   obterTodos() {
-    return fetchW<SelectConfiguracaoSchema>(endpoint_path)
+    return fetchW<GetConfiguracaoDto>(endpoint_path)
   }
 
   // TODO: Como retornar status? 400, 500, ...
-  atualizar(opts: ParamsInserirConfiguracoes) {
+  atualizar(opts: UpdateConfiguracaoDto) {
     return fetchW(endpoint_path, {
       method: HttpMethods.Patch,
       body: opts,
@@ -19,5 +18,12 @@ export class ApiConfiguracoes {
 
   ping() {
     return fetchW('/ping')
+  }
+
+  alterarIdentificador(identificador: Identificador) {
+    return fetchW(`${endpoint_path}/codigo`, {
+      method: HttpMethods.Patch,
+      body: { identificador },
+    })
   }
 }

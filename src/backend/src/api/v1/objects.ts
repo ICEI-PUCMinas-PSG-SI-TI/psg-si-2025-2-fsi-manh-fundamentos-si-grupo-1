@@ -1,10 +1,8 @@
-import z from "zod";
+import * as z4 from "zod/v4";
 
-export const ParamsIdSchemaZ = z.strictObject({
-  id: z.uuid(),
+export const ParamsIdSchemaZ = z4.strictObject({
+  id: z4.uuid(),
 });
 
-export type UuidResult = z.infer<typeof ParamsIdSchemaZ>;
-
 // TODO: Adicionar mais regras
-export const PasswordZ = z.string().min(8).max(64);
+export const SenhaZ = z4.string().min(8).max(64);

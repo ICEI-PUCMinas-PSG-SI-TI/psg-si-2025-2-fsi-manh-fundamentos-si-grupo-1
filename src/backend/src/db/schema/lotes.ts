@@ -1,16 +1,14 @@
-import { sql } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { v4 as genUUID } from "uuid";
-import type { InferSelectModel } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
-import z from "zod";
 import { tabelaProdutos } from "./produtos";
+import type { InferSelectModel } from "drizzle-orm";
+import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema } from "drizzle-zod";
+import * as z4 from "zod/v4";
 
 export const tabelaLotes = sqliteTable("lotes", {
   id: text()
     .primaryKey()
     .notNull()
-    .$defaultFn(() => genUUID()),
+    .$defaultFn(() => crypto.randomUUID()),
   produtoId: text("produto_id")
     .notNull()
     .references(() => tabelaProdutos.id),
@@ -30,24 +28,16 @@ export const tabelaLotes = sqliteTable("lotes", {
   // Default to current Unix epoch in seconds
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date()),
   updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
-});
-
-// Campos da tabela que podem ser atualizados. Os campos não são inferidos
-// diretamente para evitar a permissão de edição de futuros campos que podem
-// ser adicionados a tabela.
-export const UpdateLoteSchemaZ = z.strictObject({
-  lote: z.string().min(1).optional(),
-  quantidade: z.number().optional(),
-  validade: z.coerce.date().optional(),
+    .$defaultFn(() => new Date())
+    .$onUpdateFn(() => new Date()),
 });
 
 export const InsertLoteSchemaZ = createInsertSchema(tabelaLotes, {
-  id: z.uuid().optional(),
-  produtoId: z.uuid(),
+  id: z4.uuid().optional(),
+  produtoId: z4.uuid(),
 })
   .omit({
     createdAt: true,
@@ -56,5 +46,5 @@ export const InsertLoteSchemaZ = createInsertSchema(tabelaLotes, {
   .strict();
 
 export type SelectLoteSchema = InferSelectModel<typeof tabelaLotes>;
-export type UpdateLoteSchema = z.infer<typeof UpdateLoteSchemaZ>;
-export type InsertLoteSchema = z.infer<typeof InsertLoteSchemaZ>;
+export type UpdateLoteSchema = Partial<InferSelectModel<typeof tabelaLotes>>;
+export type InsertLoteSchema = z4.infer<typeof InsertLoteSchemaZ>;

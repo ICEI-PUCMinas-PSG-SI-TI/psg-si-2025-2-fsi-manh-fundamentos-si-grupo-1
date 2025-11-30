@@ -1,8 +1,9 @@
-import type { NextFunction, Response } from "express";
-import type { ExtendedRequest } from "./middlewares";
-import { DrizzleQueryError } from "drizzle-orm";
-import z, { ZodError } from "zod";
 import { error } from "./logging";
+import type { ExtendedRequest } from "./middlewares";
+import { DrizzleError, DrizzleQueryError } from "drizzle-orm";
+import type { NextFunction, Response } from "express";
+import * as z4 from "zod/v4";
+import { ZodError } from "zod/v4";
 
 // TODO: Extend HttpError
 export class ClientError extends Error {
@@ -27,25 +28,45 @@ export class HttpError extends Error {
   }
 }
 
+export class ServerError extends Error {
+  code: number;
+
+  constructor(message: string) {
+    super(message);
+    Object.setPrototypeOf(this, ServerError.prototype);
+    this.name = "ServerError";
+    this.code = 500;
+  }
+}
+
 export function mdwError(
   err: Error,
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): void {
   const id = req._requestId;
   if (err) {
-    if (err instanceof ClientError || err instanceof HttpError) {
+    if (err instanceof ServerError) {
+      error(err.message, { label: "mdwErr.HTTP", reqId: id });
+      res.sendStatus(err.code);
+    } else if (err instanceof ClientError || err instanceof HttpError) {
+      error(err.message, { label: "mdwErr.HTTP", reqId: id });
       res.status(err.code).send(err.message);
     } else if (err instanceof ZodError) {
-      const errMessage = z.prettifyError(err);
-      error(errMessage, { reqId: id });
+      const errMessage = z4.prettifyError(err);
+      error(errMessage, { label: "mdwErr.Zod", reqId: id });
       res.status(400).send("Parâmetros inválidos!");
     } else if (err instanceof DrizzleQueryError && err.cause instanceof Error) {
-      error(err.cause?.message, { label: "query", reqId: id });
+      error(err.cause?.message, { label: "mdwErr.Query", reqId: id });
+      res.sendStatus(500);
+    } else if (err instanceof DrizzleError) {
+      error(err.message, { label: "mdwErr.ORM", reqId: id });
       res.sendStatus(500);
     } else {
-      if (err instanceof Error) error(err.message, { reqId: id });
+      if (err instanceof Error) {
+        error(err.message, { label: "mdwErr.Unk", reqId: id });
+      }
       res.sendStatus(500);
     }
   } else {

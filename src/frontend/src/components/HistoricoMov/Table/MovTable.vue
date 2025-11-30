@@ -2,27 +2,18 @@
 import { ApiMovimentacoes } from '@/api/movimentacoes'
 import MovTableRow from './MovTableRow.vue'
 import { ref, type Ref } from 'vue'
+import type { GetConsultaMovimentacaoDto } from '../../../../../backend'
 
 const movimentacoes = new ApiMovimentacoes()
-const refMovimentacoes: Ref<
-  {
-    id: string
-    produtoId: string
-    usuarioId: string
-    loteId: string
-    motivo: string
-    quantidade: number
-    horario: string
-    localOrigem: string
-    localDestino: string
-    observacao: string
-  }[]
-> = ref([])
+const refMovimentacoes: Ref<GetConsultaMovimentacaoDto[]> = ref([])
 
 async function obterMovimentacoes() {
-  const res = await movimentacoes.obterTodos()
+  const res = await movimentacoes.obterTodos({
+    pagina: 1,
+    paginaTamanho: 100,
+  })
   if (res.ok && res.responseBody) {
-    refMovimentacoes.value = res.responseBody as []
+    refMovimentacoes.value = res.responseBody
   }
 }
 
@@ -53,9 +44,13 @@ obterMovimentacoes()
           :col-lote-id="mov.loteId"
           :col-quantidade="mov.quantidade"
           :col-tipo="mov.motivo"
-          :col-origem="mov.localOrigem"
-          :col-destino="mov.localDestino"
-          :col-observacao="mov.observacao"
+          :col-origem="mov.localOrigem || 'N/A'"
+          :col-destino="mov.localDestino || 'N/A'"
+          :col-observacao="mov.observacao || ''"
+          :col-usuario="mov._usuario.nome"
+          :col-produto-nome="mov._produto.nome"
+          :col-produto-codigo="mov._produto.codigo"
+          :col-lote="mov._lote.codigo"
         />
       </tbody>
     </table>

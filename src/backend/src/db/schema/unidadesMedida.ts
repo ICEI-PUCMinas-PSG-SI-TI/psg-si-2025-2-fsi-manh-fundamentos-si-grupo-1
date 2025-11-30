@@ -1,38 +1,30 @@
-import { sql, type InferSelectModel } from "drizzle-orm";
-import { sqliteTable, text, int } from "drizzle-orm/sqlite-core";
+import { type InferSelectModel } from "drizzle-orm";
+import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-import { v4 as genUUID } from "uuid";
-import z from "zod";
+import * as z4 from "zod/v4";
 
 export const tabelaUnidadesMedida = sqliteTable("unidades_medida", {
   id: text()
     .primaryKey()
     .notNull()
-    .$defaultFn(() => genUUID()),
-  nome: text().notNull(),
-  abreviacao: text().notNull(),
+    .$defaultFn(() => crypto.randomUUID()),
+  nome: text().notNull().unique(),
+  abreviacao: text().notNull().unique(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date()),
   updatedAt: int("updated_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
-});
-
-// Campos da tabela que podem ser atualizados. Os campos não são inferidos
-// diretamente para evitar a permissão de edição de futuros campos que podem
-// ser adicionados a tabela.
-export const UpdateUnidadesMedidasSchemaZ = z.strictObject({
-  nome: z.string().min(1).max(128).optional(),
-  abreviacao: z.string().min(1).max(16).optional(),
+    .$defaultFn(() => new Date())
+    .$onUpdateFn(() => new Date()),
 });
 
 export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
   tabelaUnidadesMedida,
   {
-    id: z.uuid().optional(),
-    nome: z.string().min(1).max(128),
-    abreviacao: z.string().min(1).max(16),
+    id: z4.uuid().optional(),
+    nome: z4.string().min(1).max(128),
+    abreviacao: z4.string().min(1).max(16),
   },
 )
   .omit({
@@ -44,9 +36,9 @@ export const InsertUnidadesMedidasSchemaZ = createInsertSchema(
 export type SelectUnidadesMedidaSchema = InferSelectModel<
   typeof tabelaUnidadesMedida
 >;
-export type UpdateUnidadesMedidaSchema = z.infer<
-  typeof UpdateUnidadesMedidasSchemaZ
+export type UpdateUnidadesMedidaSchema = Partial<
+  InferSelectModel<typeof tabelaUnidadesMedida>
 >;
-export type InsertUnidadesMedidaSchema = z.infer<
+export type InsertUnidadesMedidaSchema = z4.infer<
   typeof InsertUnidadesMedidasSchemaZ
 >;

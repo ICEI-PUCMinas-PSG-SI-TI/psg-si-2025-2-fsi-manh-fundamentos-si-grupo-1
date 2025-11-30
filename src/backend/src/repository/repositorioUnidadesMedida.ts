@@ -1,84 +1,106 @@
-import "dotenv/config";
-import { count, eq } from "drizzle-orm";
 import bancoDados from "../db";
 import {
-  tabelaUnidadesMedida,
   type InsertUnidadesMedidaSchema,
   type SelectUnidadesMedidaSchema,
   type UpdateUnidadesMedidaSchema,
+  tabelaUnidadesMedida,
 } from "../db/schema/unidadesMedida";
+import type { Count, RefRegistro } from "./common";
+import "dotenv/config";
+import { count, eq } from "drizzle-orm";
 
-export class RepositorioUnidadesMedida {
-  inserir(unidadeMedida: InsertUnidadesMedidaSchema) {
-    return bancoDados.transaction((tx) => {
-      return tx.insert(tabelaUnidadesMedida).values(unidadeMedida).returning({
-        id: tabelaUnidadesMedida.id,
-      });
-    });
-  }
-
-  async selecionarPorId(id: string): Promise<SelectUnidadesMedidaSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      return await tx
-        .select()
-        .from(tabelaUnidadesMedida)
-        .where(eq(tabelaUnidadesMedida.id, id));
-    });
-  }
-
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
-  ): Promise<SelectUnidadesMedidaSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaUnidadesMedida)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaUnidadesMedida);
-      }
-    });
-  }
-
-  selecionarIdTodos(): Promise<{ id: string }[]> {
+class RepositorioUnidadesMedida {
+  inserir(
+    ...unidadeMedida: InsertUnidadesMedidaSchema[]
+  ): Promise<RefRegistro[]> {
     return bancoDados.transaction((tx) => {
       return tx
-        .select({
+        .insert(tabelaUnidadesMedida)
+        .values(unidadeMedida)
+        .onConflictDoNothing()
+        .returning({
           id: tabelaUnidadesMedida.id,
-        })
-        .from(tabelaUnidadesMedida);
+        });
     });
   }
 
-  async atualizarPorId(
+  inserirIgnorandoDuplicatas(
+    ...unidadeMedida: InsertUnidadesMedidaSchema[]
+  ): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
+      return tx
+        .insert(tabelaUnidadesMedida)
+        .values(unidadeMedida)
+        .onConflictDoNothing()
+        .returning({
+          id: tabelaUnidadesMedida.id,
+        });
+    });
+  }
+
+  selecionarPorId(id: string): Promise<SelectUnidadesMedidaSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaUnidadesMedida)
+      .where(eq(tabelaUnidadesMedida.id, id))
+      .get();
+  }
+
+  selecionarTodos(): Promise<SelectUnidadesMedidaSchema[]> {
+    return bancoDados.select().from(tabelaUnidadesMedida);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
+  ): Promise<SelectUnidadesMedidaSchema[]> {
+    return bancoDados
+      .select()
+      .from(tabelaUnidadesMedida)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
+  }
+
+  selecionarIdsTodos(): Promise<RefRegistro[]> {
+    return bancoDados
+      .select({
+        id: tabelaUnidadesMedida.id,
+      })
+      .from(tabelaUnidadesMedida);
+  }
+
+  atualizarPorId(
     id: string,
-    unidadeMedida: UpdateUnidadesMedidaSchema,
+    valores: UpdateUnidadesMedidaSchema,
   ): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
-      return (
-        await tx
-          .update(tabelaUnidadesMedida)
-          .set(unidadeMedida)
-          .where(eq(tabelaUnidadesMedida.id, id))
-      ).rowsAffected;
+    valores.updatedAt = new Date();
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .update(tabelaUnidadesMedida)
+        .set(valores)
+        .where(eq(tabelaUnidadesMedida.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
-  async excluirPorId(id: string) {
-    return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (
-        await tx
-          .delete(tabelaUnidadesMedida)
-          .where(eq(tabelaUnidadesMedida.id, id))
-      ).rowsAffected;
+  // or .returning()
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaUnidadesMedida)
+        .where(eq(tabelaUnidadesMedida.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
-  contar() {
-    return bancoDados.select({ count: count() }).from(tabelaUnidadesMedida);
+  contar(): Promise<Count | undefined> {
+    return bancoDados
+      .select({ count: count() })
+      .from(tabelaUnidadesMedida)
+      .get();
   }
 }
+
+const repositorioUnidadesMedida = new RepositorioUnidadesMedida();
+
+export default repositorioUnidadesMedida;

@@ -86,12 +86,14 @@
                     })
                   }}
                 </td>
-                <td class="py-2">{{ i.tipo === 1 ? 'Compra' : 'Venda' }}</td>
+                <td class="py-2">{{ i.motivo === '1' ? 'Compra' : 'Venda' }}</td>
                 <td class="py-2">
-                  <MovTableProduct :product-id="i.produtoId" :lote-id="i.loteId" />
+                  {{ i._produto.nome }}
+                  <br />
+                  <span class="badge badge-sm badge-primary">{{ i._produto.codigo }}</span>
                 </td>
                 <td class="py-2">{{ i.quantidade }}</td>
-                <td class="py-2">{{ i.usuarioId }}</td>
+                <td class="py-2">{{ i._usuario.nome }}</td>
               </tr>
               <tr v-if="movimentacoes.length === 0">
                 <td colspan="5" class="py-4 text-center text-white">
@@ -109,7 +111,6 @@
 
 <script setup lang="ts">
 import { ApiMovimentacoes } from '@/api/movimentacoes'
-import MovTableProduct from '@/components/HistoricoMov/Table/MovTableProduct.vue'
 import {
   ShoppingCartIcon,
   ShoppingBagIcon,
@@ -119,6 +120,7 @@ import {
 import { onMounted, ref } from 'vue'
 import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
 import { ApiProdutos } from '@/api/produtos'
+import type { GetConsultaMovimentacaoDto } from '../../../backend'
 
 const produtosCache = ref<Record<string, string>>({})
 
@@ -148,28 +150,17 @@ async function carregarProdutos() {
 const botaoAtivoC = ref<boolean>(true)
 const botaoAtivoV = ref<boolean>(false)
 
-interface Movimentacao {
-  id: string
-  produtoId: string
-  usuarioId: string
-  loteId: string
-  tipo: number
-  quantidade: number
-  horario: string
-  local_origem_id: string
-  local_destino_id: string
-  observacao: string
-}
-
 const api = new ApiMovimentacoes()
-const movimentacoes = ref<Movimentacao[]>([])
+const movimentacoes = ref<GetConsultaMovimentacaoDto[]>([])
 const dataSelecionada = ref<string>(formatarDataLocalParaInput(new Date()))
 const produtoFiltro = ref<string | null>('')
 
 async function carregarMovimentacoesDoDia() {
-  const res = await api.obterTodos()
+  const res = await api.obterTodos({ pagina: 1, paginaTamanho: 100 })
   /* const resp = await api.obterPorData(dataSelecionada.value) */
   if (res.ok && res.responseBody) {
+    movimentacoes.value = res.responseBody
+    /*
     const dados = res.responseBody as Movimentacao[]
     let filtradas = dados.filter(
       (i) => (botaoAtivoC.value && i.tipo === 1) || (botaoAtivoV.value && i.tipo != 1),
@@ -182,6 +173,7 @@ async function carregarMovimentacoesDoDia() {
       )
     }
     movimentacoes.value = filtradas
+    */
   }
 }
 

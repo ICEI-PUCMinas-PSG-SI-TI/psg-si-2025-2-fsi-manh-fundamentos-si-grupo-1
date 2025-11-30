@@ -1,28 +1,31 @@
-import { type ExtendedRequest } from "../../middlewares";
-import { Router, type NextFunction, type Response } from "express";
-import servicoUsuarios from "../../services/servicoUsuarios";
-import z from "zod";
 import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
-import { ParamsIdSchemaZ, PasswordZ } from "./objects";
+import { type ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
+import servicoUsuarios from "../../services/servicoUsuarios";
+import { ParamsIdSchemaZ, SenhaZ } from "./objects";
+import { type NextFunction, type Response, Router } from "express";
+import * as z4 from "zod/v4";
 
 const apiV1UsuariosRouter = Router();
 
-const AlteracaoSenhaZ = z.strictObject({
-  senhaAnterior: PasswordZ,
-  senhaNova: PasswordZ,
+const AlteracaoSenhaZ = z4.strictObject({
+  senhaAnterior: SenhaZ,
+  senhaNova: SenhaZ,
 });
 
 async function getUsuarioId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
     const consulta = await servicoUsuarios.listarUnicoPublico(params.id);
-    if (consulta) res.send(consulta);
-    else res.sendStatus(404);
+    if (consulta) {
+      res.json(consulta);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -32,17 +35,20 @@ async function alterarSenha(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const usuario = req._usuario!;
     const senhas = AlteracaoSenhaZ.parse(req.body);
     const ok = await servicoUsuarios.alterarSenha(
+      usuario.id,
       senhas.senhaAnterior,
       senhas.senhaNova,
-      usuario.id,
     );
-    if (ok) res.send();
-    else res.sendStatus(401);
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(401);
+    }
   } catch (err) {
     next(err);
   }
@@ -59,13 +65,16 @@ async function patchUsuario(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
-    const updateFields = UpdateUsuarioEndpointSchema.parse(req.body);
+    const parsedBody = UpdateUsuarioEndpointSchema.parse(req.body);
     const usuario = req._usuario!;
-    const updates = await servicoUsuarios.atualizar(usuario.id, updateFields);
-    if (updates > 0) res.send();
-    else res.sendStatus(400);
+    const atualizado = await servicoUsuarios.atualizar(usuario.id, parsedBody);
+    if (atualizado) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(400);
+    }
   } catch (err) {
     next(err);
   }

@@ -7,7 +7,7 @@ import LabeledInput from '../LabeledInput.vue'
 import { ApiPerfil } from '@/api/perfil'
 import { PasswordZ } from '@/services/objects'
 import { useNotificationStore } from '@/store/config/toast'
-import { ZodError } from 'zod'
+import { ZodError } from 'zod/v4'
 
 const visivel = defineModel()
 

@@ -1,4 +1,3 @@
-import { and, count, eq, type SQLWrapper } from "drizzle-orm";
 import bancoDados from "../db";
 import { tabelaUsuarios } from "../db/schema/usuarios";
 import type {
@@ -6,132 +5,113 @@ import type {
   SelectUsuarioSchema,
   UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
-import {
-  QueryBuilder,
-  type SQLiteSelectQueryBuilder,
-} from "drizzle-orm/sqlite-core";
+import type { Count, RefRegistro } from "./common";
+import { SQL, and, count, eq } from "drizzle-orm";
 
-class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
-  _query: T;
-  _where: SQLWrapper[];
+export type RepoConsultaParamsUsuarios = {
+  pagina?: number;
+  paginaTamanho?: number;
+  comId?: string;
+  comLogin?: string;
+};
 
-  constructor(queryBase: T) {
-    this._query = queryBase;
-    this._where = [];
-  }
-
-  comPaginacao(page: number = 1, pageSize: number = 10) {
-    this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
-    return this;
-  }
-
-  comId(id: string) {
-    this._where.push(eq(tabelaUsuarios.id, id));
-    return this;
-  }
-
-  comLogin(login: string) {
-    this._where.push(eq(tabelaUsuarios.login, login));
-    return this;
-  }
-
-  async executarConsulta(): Promise<SelectUsuarioSchema[]> {
-    this._query.where(and(...this._where));
-    return await bancoDados.transaction(async (tx) => {
-      return await tx.all(this._query.getSQL());
-    });
-  }
-}
-
-export class RepositorioUsuarios {
-  async inserir(usuario: InsertUsuarioSchema) {
-    return await bancoDados.transaction((tx) => {
+class RepositorioUsuarios {
+  inserir(...usuario: InsertUsuarioSchema[]): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaUsuarios).values(usuario).returning({
         id: tabelaUsuarios.id,
       });
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectUsuarioSchema | null> {
-    return bancoDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaUsuarios)
-        .where(eq(tabelaUsuarios.id, id));
-      if (res.length && res[0]) return res[0];
-      return null;
-    });
-  }
-
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
-  ): Promise<SelectUsuarioSchema[]> {
-    return await bancoDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaUsuarios)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaUsuarios);
-      }
-    });
-  }
-
-  async selecionarPorLogin(login: string): Promise<SelectUsuarioSchema | null> {
-    return await bancoDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaUsuarios)
-        .where(eq(tabelaUsuarios.login, login));
-      if (res.length && res[0]) return res[0];
-      return null;
-    });
-  }
-
-  selecionarQuery() {
-    const queryBase = new QueryBuilder()
+  selecionarPorId(id: string): Promise<SelectUsuarioSchema | undefined> {
+    return bancoDados
       .select()
       .from(tabelaUsuarios)
-      .$dynamic();
-    return new RepositorioLotesConsulta(queryBase);
+      .where(eq(tabelaUsuarios.id, id))
+      .get();
   }
 
-  selecionarIdTodos(): Promise<{ id: string }[]> {
-    return bancoDados.transaction((tx) => {
-      return tx
-        .select({
-          id: tabelaUsuarios.id,
-        })
-        .from(tabelaUsuarios);
+  selecionarTodos(): Promise<SelectUsuarioSchema[]> {
+    return bancoDados.select().from(tabelaUsuarios);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
+  ): Promise<SelectUsuarioSchema[]> {
+    return bancoDados
+      .select()
+      .from(tabelaUsuarios)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
+  }
+
+  selecionarPorLogin(login: string): Promise<SelectUsuarioSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaUsuarios)
+      .where(eq(tabelaUsuarios.login, login))
+      .get();
+  }
+
+  selecionarQuery(
+    opts?: RepoConsultaParamsUsuarios,
+  ): Promise<SelectUsuarioSchema[]> {
+    const comId = (id: string): SQL => eq(tabelaUsuarios.id, id);
+    const comLogin = (login: string): SQL => eq(tabelaUsuarios.login, login);
+
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
+      .select()
+      .from(tabelaUsuarios)
+      .where(
+        and(
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comLogin ? comLogin(opts.comLogin) : undefined,
+        ),
+      )
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
+
+  selecionarIdsTodos(): Promise<RefRegistro[]> {
+    return bancoDados
+      .select({
+        id: tabelaUsuarios.id,
+      })
+      .from(tabelaUsuarios);
+  }
+
+  atualizarPorId(id: string, valores: UpdateUsuarioSchema): Promise<number> {
+    valores.updatedAt = new Date();
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .update(tabelaUsuarios)
+        .set(valores)
+        .where(eq(tabelaUsuarios.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
-  async atualizarPorId(
-    id: string,
-    usuario: UpdateUsuarioSchema,
-  ): Promise<number> {
-    return await bancoDados.transaction(async (tx) => {
-      return (
-        await tx
-          .update(tabelaUsuarios)
-          .set(usuario)
-          .where(eq(tabelaUsuarios.id, id))
-      ).rowsAffected;
+  // or .returning()
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaUsuarios)
+        .where(eq(tabelaUsuarios.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
-  async excluirPorId(id: string) {
-    return await bancoDados.transaction(async (tx) => {
-      // or .returning()
-      return (await tx.delete(tabelaUsuarios).where(eq(tabelaUsuarios.id, id)))
-        .rowsAffected;
-    });
-  }
-
-  contar() {
-    return bancoDados.select({ count: count() }).from(tabelaUsuarios);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaUsuarios).get();
   }
 }
+
+const repositorioUsuarios = new RepositorioUsuarios();
+
+export default repositorioUsuarios;

@@ -1,35 +1,79 @@
-import type { UuidResult } from "../api/v1/objects";
-import type { InsertCategoriaSchema } from "../db/schema/categorias";
-import { HttpError } from "../error";
-import { RepositorioCategorias } from "../repository/repositorioCategorias";
+import { ClientError, ServerError } from "../error";
+import repositorioCategorias from "../repository/repositorioCategorias";
+import repositorioProdutos from "../repository/repositorioProdutos";
+import * as z4 from "zod/v4";
 
-const repositorioCategorias = new RepositorioCategorias();
+export const SetCategoriaDtoZ = z4.strictObject({
+  nome: z4.string().min(1).max(128),
+});
+
+export type SetCategoriaDTO = z4.infer<typeof SetCategoriaDtoZ>;
+
+export const GetCategoriaDtoZ = z4.strictObject({
+  id: z4.uuid(),
+  nome: z4.string().min(1).max(128),
+});
+
+export type GetCategoriaDTO = z4.infer<typeof GetCategoriaDtoZ>;
 
 class ServicoCategorias {
-  // TODO: Verificar se categoria já existe ou colocar nome como "unico"
-  async inserir(categoria: InsertCategoriaSchema): Promise<UuidResult> {
-    const res = await repositorioCategorias.inserir(categoria);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
-    return res[0];
+  // TODO: Verificar se nome já existe (Testar Upper/Lowercase)
+  async inserir(categoria: SetCategoriaDTO): Promise<string> {
+    const res = await repositorioCategorias.inserir({
+      nome: categoria.nome,
+    });
+    if (!res[0]) {
+      throw new ServerError("Não foi possível criar categoria.");
+    } else {
+      return res[0].id;
+    }
   }
 
-  selecionarPorId(id: string) {
-    return repositorioCategorias.selecionarPorId(id);
+  async selecionarPorId(id: string): Promise<GetCategoriaDTO | null> {
+    const registro = await repositorioCategorias.selecionarPorId(id);
+    if (registro) {
+      return {
+        id: registro.id,
+        nome: registro.nome,
+      };
+    } else {
+      return null;
+    }
   }
 
-  selecionarTodos() {
-    return repositorioCategorias.selecionarTodos(0, 0);
+  async selecionarTodos(): Promise<GetCategoriaDTO[]> {
+    const registros = await repositorioCategorias.selecionarTodos();
+    return registros.map((registro) => ({
+      id: registro.id,
+      nome: registro.nome,
+    }));
   }
 
   // TODO: validar UUID
-  excluirPorId(id: string) {
-    return repositorioCategorias.excluirPorId(id);
+  async excluirPorId(id: string): Promise<boolean> {
+    const registro = await repositorioCategorias.selecionarPorId(id);
+    if (registro) {
+      const usos = await repositorioProdutos.selecionarPorCategoriaId(id);
+      if (usos!.count > 0) {
+        throw new ClientError(
+          "Há produtos cadastrados com essa categoria!",
+          409,
+        );
+      }
+      const atualizacoes = await repositorioCategorias.excluirPorId(id);
+      if (atualizacoes > 0) {
+        return true;
+      } else {
+        throw new ServerError("Não foi possível excluir a categoria.");
+      }
+    } else {
+      return false;
+    }
   }
 
-  async contar() {
+  async contar(): Promise<number> {
     const res = await repositorioCategorias.contar();
-    if (!res[0]) return 0;
-    return res[0].count;
+    return res!.count;
   }
 }
 

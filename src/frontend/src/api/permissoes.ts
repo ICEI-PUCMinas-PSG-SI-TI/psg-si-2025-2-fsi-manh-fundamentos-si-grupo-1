@@ -1,4 +1,4 @@
-import type { Permissoes } from '../../../backend/src/db/schema/permissoes'
+import type { Permissoes } from '../../../backend'
 import { fetchW, HttpMethods } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/permissoes`
@@ -31,3 +31,4 @@ export class ApiPermissoes {
     })
   }
 }
+

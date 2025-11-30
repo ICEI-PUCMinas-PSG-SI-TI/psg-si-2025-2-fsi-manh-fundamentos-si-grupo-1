@@ -1,9 +1,9 @@
-import { Router, type NextFunction, type Response } from "express";
-import { ParamsIdSchemaZ } from "./objects";
-import servicoCategorias from "../../services/servicoCategorias";
 import { InsertCategoriaSchemaZ } from "../../db/schema/categorias";
 import type { ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
+import servicoCategorias from "../../services/servicoCategorias";
+import { ParamsIdSchemaZ } from "./objects";
+import { type NextFunction, type Response, Router } from "express";
 
 const apiV1CategoriasRouter = Router();
 
@@ -11,10 +11,10 @@ async function getCategorias(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const categorias = await servicoCategorias.selecionarTodos();
-    res.send(categorias);
+    res.json(categorias);
   } catch (err) {
     next(err);
   }
@@ -24,11 +24,11 @@ async function postCategoria(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const categoria = InsertCategoriaSchemaZ.parse(req.body);
-    const id = await servicoCategorias.inserir(categoria);
-    res.send(id);
+    const idRegistro = await servicoCategorias.inserir(categoria);
+    res.send(idRegistro);
   } catch (err) {
     next(err);
   }
@@ -38,12 +38,15 @@ async function getCategoria(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    // TODO: if length === 0 return 404
     const categoria = await servicoCategorias.selecionarPorId(params.id);
-    res.send(categoria);
+    if (categoria) {
+      res.json(categoria);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -53,12 +56,15 @@ async function deleteCategorias(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
-    // TODO: Verificar se uuid existe
     const params = ParamsIdSchemaZ.parse(req.params);
-    await servicoCategorias.excluirPorId(params.id);
-    res.send();
+    const ok = await servicoCategorias.excluirPorId(params.id);
+    if (ok) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }

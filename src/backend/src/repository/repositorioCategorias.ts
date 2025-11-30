@@ -1,65 +1,80 @@
-import { eq, like, count } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
 import {
-  tabelaCategorias,
   type InsertCategoriaSchema,
   type SelectCategoriaSchema,
+  tabelaCategorias,
 } from "../db/schema/categorias";
+import type { Count, RefRegistro } from "./common";
+import { count, eq, like } from "drizzle-orm";
 
-export class RepositorioCategorias {
-  inserir(categoria: InsertCategoriaSchema) {
-    return baseDados.transaction((tx) => {
+class RepositorioCategorias {
+  inserir(...categoria: InsertCategoriaSchema[]): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaCategorias).values(categoria).returning({
         id: tabelaCategorias.id,
       });
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectCategoriaSchema[]> {
-    return await baseDados.transaction(async (tx) => {
-      return await tx
-        .select()
-        .from(tabelaCategorias)
-        .where(eq(tabelaCategorias.id, id));
+  inserirIgnorandoDuplicatas(
+    ...unidadeMedida: InsertCategoriaSchema[]
+  ): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
+      return tx
+        .insert(tabelaCategorias)
+        .values(unidadeMedida)
+        .onConflictDoNothing()
+        .returning({
+          id: tabelaCategorias.id,
+        });
     });
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarPorId(id: string): Promise<SelectCategoriaSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaCategorias)
+      .where(eq(tabelaCategorias.id, id))
+      .get();
+  }
+
+  selecionarTodos(): Promise<SelectCategoriaSchema[]> {
+    return bancoDados.select().from(tabelaCategorias);
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectCategoriaSchema[]> {
-    return await baseDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaCategorias)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaCategorias);
-      }
+    return bancoDados
+      .select()
+      .from(tabelaCategorias)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho);
+  }
+
+  selecionarLike(nome: string): Promise<SelectCategoriaSchema[]> {
+    return bancoDados
+      .select()
+      .from(tabelaCategorias)
+      .where(like(tabelaCategorias.nome, `%${nome}%`));
+  }
+
+  // or .returning()
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaCategorias)
+        .where(eq(tabelaCategorias.id, id));
+      return resultSet.rowsAffected;
     });
   }
 
-  async selecionarLike(nome: string) {
-    return await baseDados.transaction(async (tx) => {
-      return await tx
-        .select()
-        .from(tabelaCategorias)
-        .where(like(tabelaCategorias.nome, `%${nome}%`));
-    });
-  }
-
-  async excluirPorId(id: string) {
-    return await baseDados.transaction(async (tx) => {
-      // or .returning()
-      return (
-        await tx.delete(tabelaCategorias).where(eq(tabelaCategorias.id, id))
-      ).rowsAffected;
-    });
-  }
-
-  contar() {
-    return baseDados.select({ count: count() }).from(tabelaCategorias);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaCategorias).get();
   }
 }
+
+const repositorioCategorias = new RepositorioCategorias();
+
+export default repositorioCategorias;

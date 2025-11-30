@@ -2,6 +2,9 @@
 
 bracketSameLine = true
 trailingComma = "all"
-endOfLine = "auto"
+endOfLine = "crlf"
 bracketSpacing = true
 printWidth = 80
+
+plugins = ["@trivago/prettier-plugin-sort-imports"]
+importOrderSortSpecifiers = true

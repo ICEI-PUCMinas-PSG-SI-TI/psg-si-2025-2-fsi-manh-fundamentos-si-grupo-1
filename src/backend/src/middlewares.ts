@@ -1,11 +1,13 @@
-import type { NextFunction, Request, Response } from "express";
+import { COOKIE_SESSION_TOKEN } from "./auth";
+import { alfabetoHexadecimal } from "./db/enums/identificador";
+import { Permissoes } from "./db/enums/permissoes";
 import { ClientError } from "./error";
 import { error, warning } from "./logging";
 import servicoAutenticacao, {
-  type UserSessionInfo,
+  type GetSessaoDto,
 } from "./services/servicoAutenticacao";
-import { COOKIE_SESSION_TOKEN } from "./auth";
-import { Permissoes } from "./db/schema/permissoes";
+import type { NextFunction, Request, Response } from "express";
+import { customAlphabet } from "nanoid";
 
 export type Cookies = {
   tokenSessao?: string;
@@ -16,13 +18,15 @@ export interface ExtendedRequest extends Request {
    * @deprecated Utilizar _cookies.tokenSessao
    */
   _sessionToken?: string;
-  _usuario?: UserSessionInfo;
+  _usuario?: GetSessaoDto;
   _requestId?: string;
   _cookies?: Cookies;
 }
 
 function extrairCookies(cookies: unknown): Cookies | null {
-  if (!cookies || typeof cookies !== "object") return null;
+  if (!cookies || typeof cookies !== "object") {
+    return null;
+  }
   const _cookies: Cookies = {};
   if (
     COOKIE_SESSION_TOKEN in cookies &&
@@ -37,11 +41,12 @@ export function mdwLoadSessionCookies(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
+): void {
   try {
     const cookies = extrairCookies(req.cookies);
-    if (typeof cookies?.tokenSessao !== "string")
+    if (typeof cookies?.tokenSessao !== "string") {
       throw new ClientError("Não autenticado!", 400);
+    }
     req._cookies = cookies;
     req._sessionToken = cookies.tokenSessao;
     next();
@@ -58,11 +63,12 @@ export async function mdwAutenticacao(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const cookies = extrairCookies(req.cookies);
-    if (typeof cookies?.tokenSessao !== "string")
+    if (typeof cookies?.tokenSessao !== "string") {
       throw new ClientError("Unauthorized", 401);
+    }
     req._cookies = cookies;
     req._sessionToken = cookies.tokenSessao;
     if (!req._cookies.tokenSessao || req._cookies.tokenSessao.length === 0) {
@@ -87,8 +93,10 @@ export async function mdwAutenticacao(
   }
 }
 
-export function mdwPermissoes(...perms: Permissoes[]) {
-  return (req: ExtendedRequest, _res: Response, next: NextFunction) => {
+export function mdwPermissoes(
+  ...perms: Permissoes[]
+): (e: ExtendedRequest, r: Response, n: NextFunction) => void {
+  return (req: ExtendedRequest, _res: Response, next: NextFunction): void => {
     try {
       const usuario = req._usuario;
       let permitido = false;
@@ -98,7 +106,9 @@ export function mdwPermissoes(...perms: Permissoes[]) {
           permitido,
         );
       }
-      if (!permitido) throw new ClientError("Unauthorized", 401);
+      if (!permitido) {
+        throw new ClientError("Unauthorized", 401);
+      }
       next();
     } catch (err) {
       next(err);
@@ -106,20 +116,14 @@ export function mdwPermissoes(...perms: Permissoes[]) {
   };
 }
 
+const createRequestId = customAlphabet(alfabetoHexadecimal, 4);
+
 export function mdwRequestId(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
-  // Source - https://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
-  // Posted by kennytm
-  // Retrieved 11/5/2025, License - CC-BY-SA 4.0
-
-  const firstPart = (Math.random() * 46656) | 0;
-  const secondPart = (Math.random() * 46656) | 0;
-  req._requestId =
-    ("000" + firstPart.toString(36)).slice(-3) +
-    ("000" + secondPart.toString(36)).slice(-3);
+): void {
+  req._requestId = createRequestId();
   next();
 }
 
@@ -127,7 +131,7 @@ export function mdwSemBody(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
+): void {
   if (req.body) {
     error("Invalid request with body.", {
       reqId: req._requestId,
@@ -142,7 +146,7 @@ export function mdwRequerBody(
   req: ExtendedRequest,
   _res: Response,
   next: NextFunction,
-) {
+): void {
   if (!req.body) {
     error("No body.", { reqId: req._requestId });
     next(new ClientError("Bad Request"));
