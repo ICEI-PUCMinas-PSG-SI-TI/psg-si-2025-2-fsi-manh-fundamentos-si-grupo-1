@@ -1,5 +1,6 @@
-import { ServerError } from "../error";
+import { ClientError, ServerError } from "../error";
 import repositorioCategorias from "../repository/repositorioCategorias";
+import repositorioProdutos from "../repository/repositorioProdutos";
 import * as z4 from "zod/v4";
 
 export const SetCategoriaDtoZ = z4.strictObject({
@@ -52,6 +53,13 @@ class ServicoCategorias {
   async excluirPorId(id: string): Promise<boolean> {
     const registro = await repositorioCategorias.selecionarPorId(id);
     if (registro) {
+      const usos = await repositorioProdutos.selecionarPorCategoriaId(id);
+      if (usos!.count > 0) {
+        throw new ClientError(
+          "Há produtos cadastrados com essa categoria!",
+          409,
+        );
+      }
       const atualizacoes = await repositorioCategorias.excluirPorId(id);
       if (atualizacoes > 0) {
         return true;

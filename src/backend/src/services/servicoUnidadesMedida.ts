@@ -1,4 +1,5 @@
-import { ServerError } from "../error";
+import { ClientError, ServerError } from "../error";
+import repositorioProdutos from "../repository/repositorioProdutos";
 import repositorioUnidadesMedida from "../repository/repositorioUnidadesMedida";
 import * as z4 from "zod/v4";
 
@@ -59,6 +60,10 @@ class ServicoUnidadesMedida {
   async excluirPorId(id: string): Promise<boolean> {
     const registro = await repositorioUnidadesMedida.selecionarPorId(id);
     if (registro) {
+      const usos = await repositorioProdutos.selecionarPorUnidadeMedida(id);
+      if (usos!.count > 0) {
+        throw new ClientError("Há produtos cadastrados com essa unidade!", 409);
+      }
       const atualizacoes = await repositorioUnidadesMedida.excluirPorId(id);
       if (atualizacoes > 0) {
         return true;

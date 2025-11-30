@@ -66,7 +66,15 @@ export async function fetchW<T>(
       }
     } else {
       if (!opts?.muteNotifications) {
-        notificacoes.addNotification(response.statusText, { isError: true })
+        if (response.status === 409) {
+          const data2 = await response.text()
+          notificacoes.addNotification(data2, {
+            title: response.statusText,
+            isError: true,
+          })
+        } else {
+          notificacoes.addNotification(response.statusText, { isError: true })
+        }
       }
       return {
         ok: false,

@@ -131,6 +131,22 @@ class RepositorioProdutos extends RepositorioBase {
       .from(tabelaProdutos);
   }
 
+  selecionarPorCategoriaId(id: string): Promise<Count | undefined> {
+    return bancoDados
+      .select({ count: count() })
+      .from(tabelaProdutos)
+      .where(eq(tabelaProdutos.categoriaId, id))
+      .get();
+  }
+
+  selecionarPorUnidadeMedida(id: string): Promise<Count | undefined> {
+    return bancoDados
+      .select({ count: count() })
+      .from(tabelaProdutos)
+      .where(eq(tabelaProdutos.unidadeMedidaId, id))
+      .get();
+  }
+
   selecionarConsulta(
     opts?: RepoConsultaParamsProduto,
   ): Promise<SelectProdutosSchema[]> {

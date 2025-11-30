@@ -7,13 +7,14 @@ import { ApiCategorias } from '@/api/categorias'
 import { useNotificationStore } from '@/store/config/toast'
 import ButtonComponent from '../ButtonComponent.vue'
 import type { GetCategoriaDTO } from '../../../../backend'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 
 const categorias = new ApiCategorias()
 
 const notificacoes = useNotificationStore()
 
 const refNovaCategoria = ref()
-const refCategorias = ref([] as GetCategoriaDTO[])
+const refCategorias = ref<GetCategoriaDTO[]>([])
 
 async function adicionarCategoria() {
   const res = await categorias.criar(refNovaCategoria.value)
@@ -69,7 +70,7 @@ obterCategorias()
         >
           <p>{{ categoria.nome }}</p>
           <button class="btn btn-xs btn-primary" @click="removerCategorias(categoria.id)">
-            <XMarkIcon class="size-4" />
+            <XMarkIcon class="size-6" />
           </button>
         </div>
       </div>
