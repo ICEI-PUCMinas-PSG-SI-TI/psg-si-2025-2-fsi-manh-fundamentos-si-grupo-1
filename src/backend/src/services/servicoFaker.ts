@@ -1,3 +1,4 @@
+import { MotivoTransacoes } from "../db/enum/motivoTransacao";
 import { Permissoes } from "../db/enums/permissoes";
 // import { StatusProduto } from "../db/enums/produtos";
 import { StatusProduto } from "../db/enums/statusProduto";
@@ -206,7 +207,7 @@ class ServicoFaker {
         quantidadeMaxima: faker.number.int({ min: 100001, max: 10000000 }),
         localizacao: fakerLocal(),
         // imagem: fakerImage(),
-        status: StatusProduto.Ativo,
+        status: faker.helpers.enumValue(StatusProduto),
         codigo: geradorCodigo(),
       });
     }
@@ -258,7 +259,7 @@ class ServicoFaker {
         localOrigem: fakerLocal(),
         localDestino: fakerLocal(),
         observacao: faker.lorem.paragraph(2),
-        motivo: faker.number.int({ min: 0, max: 9 }).toString(),
+        motivo: faker.helpers.enumValue(MotivoTransacoes),
       });
     }
 
@@ -324,3 +325,4 @@ class ServicoFaker {
 const servicoFaker = new ServicoFaker();
 
 export default servicoFaker;
+

@@ -103,7 +103,7 @@
                     })
                   }}
                 </td>
-                <td class="py-2 px-2">{{}}</td>
+                <td class="py-2 px-2">{{ i.motivo }}</td>
                 <td class="py-2">
                   {{ i._produto.nome }} <br />
                   <span class="badge badge-sm badge-primary">{{ i._produto.codigo }}</span>
