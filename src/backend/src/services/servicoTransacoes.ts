@@ -25,7 +25,7 @@ export const SetMovimentacaoDtoZ = z4.strictObject({
   produtoId: z4.uuid(),
   usuarioId: z4.uuid(),
   loteId: z4.uuid(),
-  motivo: z4.string(),
+  motivo: z4.enum(MotivoTransacoes),
   quantidade: z4.int(),
   horario: z4.iso.datetime(),
   localOrigem: z4.string().optional(),

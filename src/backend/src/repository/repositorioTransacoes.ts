@@ -1,9 +1,8 @@
-
+import bancoDados from "../db";
+import type { MotivoTransacoes } from "../db/enum/motivoTransacao";
 import { tabelaCategorias } from "../db/schema/categorias";
 import { tabelaLotes } from "../db/schema/lotes";
 import { tabelaProdutos } from "../db/schema/produtos";
-import "dotenv/config";
-import bancoDados from "../db";
 import {
   type InsertTransacoesSchema,
   type SelectTransacoesSchema,
@@ -12,6 +11,7 @@ import {
 } from "../db/schema/transacoes";
 import { tabelaUsuarios } from "../db/schema/usuarios";
 import type { RefRegistro } from "./common";
+import "dotenv/config";
 import "dotenv/config";
 import "dotenv/config";
 import { type SQL, and, eq, getTableColumns } from "drizzle-orm";
@@ -25,6 +25,7 @@ export type RepoConsultaParamsTransacoes = {
   comLoteId?: string;
   comDataMaiorQue?: Date;
   comDataMenorQue?: Date;
+  comMotivo?: MotivoTransacoes;
 };
 
 type SelectConsultaTransacoesSchema = SelectTransacoesSchema & {
@@ -79,6 +80,8 @@ class RepositorioTransacoes {
       eq(tabelaTransacoes.horario, data);
     const comDataMenorQue = (data: Date): SQL =>
       eq(tabelaTransacoes.horario, data);
+    const comMotivo = (motivo: MotivoTransacoes): SQL =>
+      eq(tabelaTransacoes.motivo, motivo);
 
     const pagina = opts?.pagina || 1;
     const paginaTamanho = opts?.paginaTamanho || 100;
@@ -113,6 +116,7 @@ class RepositorioTransacoes {
           opts?.comDataMenorQue
             ? comDataMenorQue(opts.comDataMenorQue)
             : undefined,
+          opts?.comMotivo ? comMotivo(opts.comMotivo) : undefined,
         ),
       )
       .leftJoin(
@@ -189,3 +193,4 @@ class RepositorioTransacoes {
 const repositorioMovimentacoes = new RepositorioTransacoes();
 
 export default repositorioMovimentacoes;
+

@@ -17,7 +17,9 @@
             <option :value="MotivoTransacoes.Venda">{{ MotivoTransacoes.Venda }}</option>
             <option :value="MotivoTransacoes.Devolucao">{{ MotivoTransacoes.Devolucao }}</option>
             <option :value="MotivoTransacoes.Perda">{{ MotivoTransacoes.Perda }}</option>
-            <option :value="MotivoTransacoes.Transferencia">{{ MotivoTransacoes.Transferencia  }}</option>
+            <option :value="MotivoTransacoes.Transferencia">
+              {{ MotivoTransacoes.Transferencia }}
+            </option>
           </select>
         </div>
 
@@ -163,9 +165,6 @@ async function carregarMovimentacoesDoDia() {
   const inicioDia = inicioDoDiaUTC(dataSelecionada.value)
   const fimDia = fimDoDiaUTC(dataSelecionada.value)
   const filtros = {
-    motivo: motivo.value ?? undefined,
-    dataApos: inicioDia.toISOString(),
-    dataAntes: fimDia.toISOString(),
     pagina: pagina.value,
     paginaTamanho: paginaTamanho.value,
   } as ConsultaMovimentacoesParams
@@ -173,6 +172,10 @@ async function carregarMovimentacoesDoDia() {
   if (checkBoxFiltro.value) {
     filtros.dataAntes = fimDia.toISOString()
     filtros.dataApos = inicioDia.toISOString()
+  }
+
+  if (motivo.value) {
+    filtros.motivo = motivo.value
   }
 
   const res = await api.obterTodos(filtros)

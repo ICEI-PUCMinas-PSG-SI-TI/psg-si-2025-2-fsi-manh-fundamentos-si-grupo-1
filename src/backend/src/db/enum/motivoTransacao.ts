@@ -1,8 +1,8 @@
-
-export enum MotivoTransacoes{
+export enum MotivoTransacoes {
   Compra = "Compra",
   Venda = "Venda",
   Devolucao = "Devolução",
   Perda = "Perda",
-  Transferencia = "Transferência"
+  Transferencia = "Transferência",
 }
+

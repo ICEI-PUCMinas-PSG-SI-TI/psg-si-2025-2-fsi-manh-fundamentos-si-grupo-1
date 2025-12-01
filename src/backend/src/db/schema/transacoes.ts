@@ -1,3 +1,4 @@
+import { MotivoTransacoes } from "../enum/motivoTransacao";
 import { tabelaLotes } from "./lotes";
 import { tabelaProdutos } from "./produtos";
 import { tabelaUsuarios } from "./usuarios";
@@ -19,7 +20,15 @@ export const tabelaTransacoes = sqliteTable("transacoes", {
     .notNull()
     .references(() => tabelaLotes.id),
   // TODO: Utilizar enum?
-  motivo: text().notNull(),
+  motivo: text({
+    enum: [
+      MotivoTransacoes.Compra,
+      MotivoTransacoes.Venda,
+      MotivoTransacoes.Devolucao,
+      MotivoTransacoes.Perda,
+      MotivoTransacoes.Transferencia,
+    ],
+  }).notNull(),
   quantidade: int().notNull(),
   horario: int({ mode: "timestamp_ms" })
     .notNull()
@@ -41,3 +50,4 @@ export type UpdateTransacoesSchema = Partial<
   InferSelectModel<typeof tabelaTransacoes>
 >;
 export type InsertTransacoesSchema = InferInsertModel<typeof tabelaTransacoes>;
+
