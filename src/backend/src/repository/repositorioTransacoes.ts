@@ -14,7 +14,7 @@ import type { RefRegistro } from "./common";
 import "dotenv/config";
 import "dotenv/config";
 import "dotenv/config";
-import { type SQL, and, eq, getTableColumns } from "drizzle-orm";
+import { type SQL, and, eq, getTableColumns, gte, lte } from "drizzle-orm";
 
 export type RepoConsultaParamsTransacoes = {
   pagina?: number;
@@ -77,9 +77,9 @@ class RepositorioTransacoes {
       eq(tabelaTransacoes.usuarioId, id);
     const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
     const comDataMaiorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      gte(tabelaTransacoes.horario, data);
     const comDataMenorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      lte(tabelaTransacoes.horario, data);
     const comMotivo = (motivo: MotivoTransacoes): SQL =>
       eq(tabelaTransacoes.motivo, motivo);
 
@@ -147,9 +147,9 @@ class RepositorioTransacoes {
       eq(tabelaTransacoes.usuarioId, id);
     const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
     const comDataMaiorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      gte(tabelaTransacoes.horario, data);
     const comDataMenorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      lte(tabelaTransacoes.horario, data);
 
     const pagina = opts?.pagina || 1;
     const paginaTamanho = opts?.paginaTamanho || 100;

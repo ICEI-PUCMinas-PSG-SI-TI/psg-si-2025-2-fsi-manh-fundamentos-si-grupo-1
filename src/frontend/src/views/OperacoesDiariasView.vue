@@ -162,16 +162,14 @@ const checkBoxFiltro = ref<boolean>(false)
 const movimentacoes = ref<GetConsultaMovimentacaoDto[]>([])
 
 async function carregarMovimentacoesDoDia() {
-  const inicioDia = inicioDoDiaUTC(dataSelecionada.value)
-  const fimDia = fimDoDiaUTC(dataSelecionada.value)
   const filtros = {
     pagina: pagina.value,
     paginaTamanho: paginaTamanho.value,
   } as ConsultaMovimentacoesParams
 
-  if (checkBoxFiltro.value) {
-    filtros.dataAntes = fimDia.toISOString()
-    filtros.dataApos = inicioDia.toISOString()
+  if (checkBoxFiltro.value && dataSelecionada.value) {
+    filtros.dataApos = inicioDoDiaUTCIso(dataSelecionada.value)
+    filtros.dataAntes = fimDoDiaUTCIso(dataSelecionada.value)
   }
 
   if (motivo.value) {
@@ -185,14 +183,16 @@ async function carregarMovimentacoesDoDia() {
   }
 }
 
-function inicioDoDiaUTC(dateStr: string) {
-  const d = new Date(dateStr)
-  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0))
+function inicioDoDiaUTCIso(dateStr: string): string {
+  const [ano, mes, dia] = dateStr.split('-').map(Number)
+  const localStart = new Date(ano, mes - 1, dia, 0, 0, 0, 0)
+  return localStart.toISOString()
 }
 
-function fimDoDiaUTC(dateStr: string) {
-  const d = new Date(dateStr)
-  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999))
+function fimDoDiaUTCIso(dateStr: string): string {
+  const [ano, mes, dia] = dateStr.split('-').map(Number)
+  const localEnd = new Date(ano, mes - 1, dia, 23, 59, 59, 999)
+  return localEnd.toISOString()
 }
 
 onMounted(async () => {
