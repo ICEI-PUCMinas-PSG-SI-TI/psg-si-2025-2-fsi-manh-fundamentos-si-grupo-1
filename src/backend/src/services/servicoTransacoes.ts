@@ -106,6 +106,9 @@ class ServicoTransacoes {
       filtros.pagina = opts?.pagina;
       filtros.paginaTamanho = opts?.paginaTamanho;
     }
+    if (opts?.motivo){
+      filtros.comMotivo = opts.motivo;
+    }
 
     const registros =
       await repositorioMovimentacoes.selecionarConsulta(filtros);

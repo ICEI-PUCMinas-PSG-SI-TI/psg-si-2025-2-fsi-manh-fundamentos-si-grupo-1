@@ -157,7 +157,7 @@ const dataSelecionada = ref<string>(formatarDataLocalParaInput(new Date()))
 const produtoFiltro = ref<string | null>('')
 const novaMovimentacao = ref<boolean>(false)
 const pagina = ref(1)
-const paginaTamanho = ref(100)
+const paginaTamanho = ref(30)
 const checkBoxFiltro = ref<boolean>(false)
 const movimentacoes = ref<GetConsultaMovimentacaoDto[]>([])
 
