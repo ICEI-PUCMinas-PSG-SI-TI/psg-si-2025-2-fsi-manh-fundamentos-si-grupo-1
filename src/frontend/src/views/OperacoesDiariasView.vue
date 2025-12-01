@@ -7,7 +7,7 @@
         <div class="flex flex-col flex-1 min-w-[200px]">
           <label class="text-sm font-medium mb-2">Tipo de Movimentação</label>
           <select
-            class="cursor-pointer select select-bordered w-full bg-white text-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+            class="cursor-pointer select select-bordered w-full rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary"
             v-model="motivo"
             @change="resetarPagina()"
           >
@@ -24,14 +24,14 @@
         </div>
 
         <!-- Filtro de Data -->
-        <div class="flex flex-col flex-1 min-w-[200px] bg-stone-700 p-4 rounded-xl">
-          <label class="text-sm font-medium mb-3 text-white">Filtrar por data</label>
+        <div class="flex flex-col flex-1 min-w-[200px] p-4 rounded-xl">
+          <label class="text-sm font-medium mb-3 text-center">Filtrar por data</label>
           <div class="flex items-center gap-4 w-full">
             <input
               type="checkbox"
               v-model="checkBoxFiltro"
               @change="resetarPagina"
-              class="checkbox h-6 w-6 rounded-md border-2 border-white bg-stone-600 checked:bg-green-500 checked:border-green-400 transition-all duration-110"
+              class="checkbox h-6 w-6 rounded-md border-2 border-white checked:bg-green-500 checked:border-green-400 transition-all duration-110"
             />
             <input
               type="date"
@@ -43,24 +43,24 @@
         </div>
       </div>
       <!--div buscar produto, nova movimentação e histórico-->
-      <div class="bg-stone-700 rounded-2xl p-4 flex flex-col flex-1 min-h-[60vh]">
+      <div class="rounded-2xl p-4 flex flex-col flex-1 min-h-[60vh]">
         <!-- Busca + Botão Nova Movimentação -->
         <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
           <!-- Campo de busca -->
-          <div class="relative w-full md:w-80">
+          <div class="relative w-full md:w-80 text-white">
             <input
               type="text"
               v-model="produtoFiltro"
               @input="carregarMovimentacoesDoDia"
               placeholder="BUSCAR PRODUTO..."
-              class="w-full px-10 py-2 rounded-3xl bg-white text-black focus:outline-none"
+              class="w-full px-10 py-2 rounded-3xl bg-neutral focus:outline-none"
             />
-            <MagnifyingGlassIcon class="w-6 text-black absolute left-2 top-1/2 -translate-y-1/2" />
+            <MagnifyingGlassIcon class="w-6 text-white absolute left-2 top-1/2 -translate-y-1/2" />
           </div>
 
           <!-- Botão Nova Movimentação -->
           <button
-            class="cursor-pointer bg-white w-full md:w-60 flex justify-center text-black font-semibold px-4 py-2 rounded-xl transition-transform duration-100 hover:scale-[1.03]"
+            class="cursor-pointer bg-neutral w-full md:w-60 flex justify-center text-white font-semibold px-4 py-2 rounded-xl transition-transform duration-100 hover:scale-[1.03]"
             @click="novaMovimentacao = true"
           >
             <PlusIcon class="w-5 mr-2"></PlusIcon> NOVA MOVIMENTAÇÃO
@@ -68,11 +68,11 @@
         </div>
 
         <!-- TABELA  -->
-        <h3 class="text-3xl font-semibold mb-4 text-white">Histórico</h3>
+        <h3 class="text-3xl font-semibold mb-4">Histórico</h3>
         <div class="overflow-x-auto overflow-y-hidden flex-1">
           <table class="min-w-full text-left border-t border-white">
-            <thead class="sticky top-0 z-10 text-white bg-stone-700">
-              <tr class="text-white text-xl">
+            <thead class="sticky top-0 z-10">
+              <tr class="text-xl">
                 <th class="py-3 px-2">Data/Hora</th>
                 <th class="py-3 px-2">Tipo</th>
                 <th class="py-3 px-2">Produto</th>
@@ -82,11 +82,7 @@
             </thead>
 
             <tbody>
-              <tr
-                v-for="i in movimentacoes"
-                :key="i.id"
-                class="text-xl text-white border-b border-stone-500"
-              >
+              <tr v-for="i in movimentacoes" :key="i.id" class="text-lg border-b border-stone-500">
                 <td class="py-2 px-2">
                   {{
                     new Date(i.horario).toLocaleDateString('pt-BR', {
@@ -112,9 +108,7 @@
                 <td class="py-2">{{ i._usuario.nome }}</td>
               </tr>
               <tr v-if="movimentacoes.length === 0">
-                <td colspan="5" class="py-4 text-center text-white">
-                  Nenhuma movimentação encontrada
-                </td>
+                <td colspan="5" class="py-4 text-center">Nenhuma movimentação encontrada</td>
               </tr>
             </tbody>
           </table>
