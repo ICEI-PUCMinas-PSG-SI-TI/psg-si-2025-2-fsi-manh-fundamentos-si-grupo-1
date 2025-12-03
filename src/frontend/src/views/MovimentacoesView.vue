@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen w-screen p-4 overflow-y-auto">
+  <div class="flex flex-col h-full w-full p-4 overflow-y-auto">
     <div class="shrink-0 p-2 mb-4">
       <h3 class="text-lg font-semibold mb-2">Filtrar por Data</h3>
       <div class="flex gap-2">

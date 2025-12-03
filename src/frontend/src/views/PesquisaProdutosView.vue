@@ -1,5 +1,5 @@
 <template>
-  <main class="flex-1 bg-white p-8 min-h-screen">
+  <main class="flex-1 bg-white p-8 min-h-full">
     <div class="flex justify-between items-center mb-6">
       <div>
         <h2 class="text-3xl font-bold">CATÁLOGO</h2>

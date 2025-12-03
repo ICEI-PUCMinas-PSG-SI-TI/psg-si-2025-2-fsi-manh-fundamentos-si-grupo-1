@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen p-6 overflow-x-hidden">
+  <div class="w-full min-h-full p-6 overflow-x-hidden">
     <h1 class="text-5xl font-bold mb-4">Cadastro de usuários</h1>
 
     <!-- Formulário -->

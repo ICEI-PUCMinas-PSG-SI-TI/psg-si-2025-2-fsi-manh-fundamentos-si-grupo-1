@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full h-full p-4 justify-center max-w-4xl mx-auto">
+  <div class="flex flex-col p-4 justify-center max-w-4xl mx-auto">
     <!-- Perfil do usuário -->
     <ConfigUsuario />
     <!-- Configurações do sistema -->

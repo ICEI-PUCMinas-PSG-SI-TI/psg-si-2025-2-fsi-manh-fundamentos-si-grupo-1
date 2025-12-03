@@ -20,8 +20,8 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
 </script>
 
 <template>
-  <div class="h-screen bg-base-200 top-0 overflow-y-auto sticky w-full max-w-72">
-    <ul class="flex flex-col menu menu-lg w-full min-h-screen">
+  <div class="h-full bg-base-200 top-0 overflow-y-auto sticky w-full">
+    <ul class="flex flex-col menu menu-lg w-full min-h-full">
       <LogoMenuItem class="mb-2" />
 
       <NavigationMenuItemSeparator />
