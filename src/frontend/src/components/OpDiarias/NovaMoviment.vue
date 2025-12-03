@@ -188,6 +188,7 @@ import { onMounted, ref, watch, computed, type Ref } from 'vue'
 import { ApiProdutos } from '@/api/produtos'
 import { ApiAutenticacao } from '@/api/auth'
 
+const emit = defineEmits(['atualizar'])
 const visivel = defineModel()
 
 // Refs
@@ -288,7 +289,7 @@ async function confirmar() {
       const dataLote = await resLote.json();
       console.log(dataLote)
       loteId = dataLote.id;
-      alert("LOte criado") // pega o ID do lote recém-criado
+      alert("Lote criado") // pega o ID do lote recém-criado
     }
     else
     {
@@ -322,6 +323,7 @@ async function confirmar() {
     }
 
     alert('Movimentação criada com sucesso!');
+    emit('atualizar')
     visivel.value = false;
 
   } catch (error) {

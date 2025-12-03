@@ -163,7 +163,7 @@
         </div>
       </div>
     </div>
-    <NovaMoviment v-if="novaMovimentacao" v-model="novaMovimentacao"></NovaMoviment>
+    <NovaMoviment v-if="novaMovimentacao" v-model="novaMovimentacao" @atualizar="carregarMovimentacoesDoDia"></NovaMoviment>
   </template>
 
 <script setup lang="ts">
