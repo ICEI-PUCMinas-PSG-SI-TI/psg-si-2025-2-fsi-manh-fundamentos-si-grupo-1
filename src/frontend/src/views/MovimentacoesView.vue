@@ -24,7 +24,7 @@
       <!-- Conteúdo -->
       <div class="flex card card-border bg-base-200 h-full w-full">
         <div class="card-body flex-col h-full gap-4">
-          <h2 class="text-left font-bold text-lg">Histórico de Transações</h2>
+          <h2 class="text-left font-bold text-4xl">Histórico de Transações</h2>
 
           <div class="w-full overflow-x-auto rounded-xl">
             <table class="min-w-full text-left divide-y divide-white/20">
@@ -79,8 +79,8 @@
                     <span class="badge badge-sm badge-primary mt-1">{{ i._produto.codigo }}</span>
                   </td>
                   <td class="p-4 font-semibold">{{ i.quantidade }}</td>
-                  <td class="p-4">{{ i.localOrigem || 'N/A' }}</td>
-                  <td class="p-4">{{ i.localDestino || 'N/A' }}</td>
+                  <td class="p-4">{{ i.motivo=== MotivoTransacoes.Transferencia? i.localOrigem : '-' }}</td>
+                  <td class="p-4">{{ i.motivo === MotivoTransacoes.Transferencia? i.localDestino:'-' }}</td>
                   <!-- Limit to 80 characters-->
                   <td class="p-4">{{ i.observacao }}</td>
                 </tr>
@@ -115,7 +115,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ApiMovimentacoes } from '@/api/movimentacoes'
-import type { ConsultaMovimentacoesParams, GetConsultaMovimentacaoDto } from '../../../backend'
+import { MotivoTransacoes, type ConsultaMovimentacoesParams, type GetConsultaMovimentacaoDto } from '../../../backend'
 
 const paginaAtual = ref(1)
 const paginaTamanho = ref(30)
