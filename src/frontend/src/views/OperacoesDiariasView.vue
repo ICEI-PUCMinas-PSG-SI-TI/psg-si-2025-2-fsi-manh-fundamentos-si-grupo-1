@@ -108,11 +108,7 @@
                     </span>
                   </td>
 
-                  <td class="p-3 font-bold" :class="{
-                    'text-red-500':i.motivo=== 'Perda' || i.motivo==='Venda',
-                    'text-blue-500':i.motivo==='Transferência',
-                    'text-green-500':i.motivo==='Compra' || i.motivo === 'Devolução'
-                  }">{{ i.motivo }}</td>
+                  <td class="p-3 font-bold" >{{ i.motivo }}</td>
 
                   <td class="p-3">
                     <span class="font-medium">{{ i._produto.nome }}</span>
@@ -128,11 +124,7 @@
                     <span class="opacity-90">{{ i.localDestino }}</span>
                   </td>
                   <td class="p-3 font-semibold "
-                  :class="{
-                    'text-red-500':i.motivo=== 'Perda' || i.motivo==='Venda',
-                    'text-blue-500':i.motivo==='Transferência',
-                    'text-green-500':i.motivo==='Compra' || i.motivo === 'Devolução'
-                  }">{{ i.quantidade }}</td>
+                  >{{ i.quantidade }}</td>
 
                   <td class="p-3 whitespace-nowrap">
                     <div class="flex items-center gap-2">
