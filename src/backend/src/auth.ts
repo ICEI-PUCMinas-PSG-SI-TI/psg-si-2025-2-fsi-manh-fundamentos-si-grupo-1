@@ -4,7 +4,6 @@ import {
   type Response,
   Router,
 } from "express";
-import { ClientError } from "./error";
 import { error } from "./logging";
 import {
   type ExtendedRequest,
@@ -34,13 +33,13 @@ async function sessao(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const _sessionToken = req._sessionToken;
-    if (!_sessionToken) {
-      throw new ClientError("Não autenticado!", 401);
+    const token = req._sessionToken;
+    if (!token) {
+      res.sendStatus(401);
+    } else {
+      const sessao = await servicoAutenticacao.consultarSessaoPorToken(token);
+      res.json(sessao);
     }
-    const sessao =
-      await servicoAutenticacao.consultarSessaoPorToken(_sessionToken);
-    res.json(sessao);
   } catch (err) {
     next(err);
   }

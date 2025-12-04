@@ -3,7 +3,6 @@ import { customAlphabet } from "nanoid";
 import { COOKIE_SESSION_TOKEN } from "./auth";
 import { alfabetoHexadecimal } from "./db/enums/identificador";
 import { Permissoes } from "./db/enums/permissoes";
-import { ClientError } from "./error";
 import { error, warning } from "./logging";
 import servicoAutenticacao, {
   type GetSessaoDto,
@@ -39,13 +38,14 @@ function extrairCookies(cookies: unknown): Cookies | null {
 
 export function mdwLoadSessionCookies(
   req: ExtendedRequest,
-  _res: Response,
+  res: Response,
   next: NextFunction,
 ): void {
   try {
     const cookies = extrairCookies(req.cookies);
     if (typeof cookies?.tokenSessao !== "string") {
-      throw new ClientError("Não autenticado!", 400);
+      res.sendStatus(400);
+      return;
     }
     req._cookies = cookies;
     req._sessionToken = cookies.tokenSessao;
@@ -67,7 +67,8 @@ export async function mdwAutenticacao(
   try {
     const cookies = extrairCookies(req.cookies);
     if (typeof cookies?.tokenSessao !== "string") {
-      throw new ClientError("Unauthorized", 401);
+      res.sendStatus(401);
+      return;
     }
     req._cookies = cookies;
     req._sessionToken = cookies.tokenSessao;
@@ -75,7 +76,8 @@ export async function mdwAutenticacao(
       warning("Cookies de sessão não encontrados na request.", {
         label: "Session",
       });
-      throw new ClientError("Unauthorized", 401);
+      res.sendStatus(401);
+      return;
     }
     const usuarioSessao = await servicoAutenticacao.consultarSessaoPorToken(
       req._cookies?.tokenSessao,
@@ -84,7 +86,8 @@ export async function mdwAutenticacao(
       warning("Sessão inválida", {
         label: "Session",
       });
-      throw new ClientError("Unauthorized", 401);
+      res.sendStatus(401);
+      return;
     }
     req._usuario = usuarioSessao;
     next();
@@ -95,8 +98,8 @@ export async function mdwAutenticacao(
 
 export function mdwPermissoes(
   ...perms: Permissoes[]
-): (e: ExtendedRequest, r: Response, n: NextFunction) => void {
-  return (req: ExtendedRequest, _res: Response, next: NextFunction): void => {
+): (e: ExtendedRequest, res: Response, n: NextFunction) => void {
+  return (req: ExtendedRequest, res: Response, next: NextFunction): void => {
     try {
       const usuario = req._usuario;
       let permitido = false;
@@ -106,10 +109,12 @@ export function mdwPermissoes(
           permitido,
         );
       }
-      if (!permitido) {
-        throw new ClientError("Unauthorized", 401);
+      if (permitido) {
+        next();
+      } else {
+        res.sendStatus(401);
+        return;
       }
-      next();
     } catch (err) {
       next(err);
     }
@@ -129,14 +134,14 @@ export function mdwRequestId(
 
 export function mdwSemBody(
   req: ExtendedRequest,
-  _res: Response,
+  res: Response,
   next: NextFunction,
 ): void {
   if (req.body) {
     error("Invalid request with body.", {
       reqId: req._requestId,
     });
-    next(new ClientError("Bad Request"));
+    res.sendStatus(400);
   } else {
     next();
   }
@@ -144,12 +149,12 @@ export function mdwSemBody(
 
 export function mdwRequerBody(
   req: ExtendedRequest,
-  _res: Response,
+  res: Response,
   next: NextFunction,
 ): void {
   if (!req.body) {
     error("No body.", { reqId: req._requestId });
-    next(new ClientError("Bad Request"));
+    res.sendStatus(400);
   } else {
     next();
   }
