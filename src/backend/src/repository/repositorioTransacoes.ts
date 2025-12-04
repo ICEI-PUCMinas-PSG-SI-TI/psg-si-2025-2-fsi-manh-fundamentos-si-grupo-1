@@ -14,7 +14,15 @@ import type { RefRegistro } from "./common";
 import "dotenv/config";
 import "dotenv/config";
 import "dotenv/config";
-import { type SQL, and, desc, eq, getTableColumns, gte, lte } from "drizzle-orm";
+import {
+  type SQL,
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  gte,
+  lte,
+} from "drizzle-orm";
 
 export type RepoConsultaParamsTransacoes = {
   pagina?: number;
@@ -68,75 +76,75 @@ class RepositorioTransacoes {
   }
 
   selecionarConsulta(
-  opts?: RepoConsultaParamsTransacoes,
-): Promise<SelectConsultaTransacoesSchema[]> {
-  const comId = (id: string): SQL => eq(tabelaTransacoes.id, id);
-  const comProdutoId = (id: string): SQL =>
-    eq(tabelaTransacoes.produtoId, id);
-  const comUsuarioId = (id: string): SQL =>
-    eq(tabelaTransacoes.usuarioId, id);
-  const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
-  const comDataMaiorQue = (data: Date): SQL =>
-    gte(tabelaTransacoes.horario, data);
-  const comDataMenorQue = (data: Date): SQL =>
-    lte(tabelaTransacoes.horario, data);
-  const comMotivo = (motivo: MotivoTransacoes): SQL =>
-    eq(tabelaTransacoes.motivo, motivo);
+    opts?: RepoConsultaParamsTransacoes,
+  ): Promise<SelectConsultaTransacoesSchema[]> {
+    const comId = (id: string): SQL => eq(tabelaTransacoes.id, id);
+    const comProdutoId = (id: string): SQL =>
+      eq(tabelaTransacoes.produtoId, id);
+    const comUsuarioId = (id: string): SQL =>
+      eq(tabelaTransacoes.usuarioId, id);
+    const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
+    const comDataMaiorQue = (data: Date): SQL =>
+      gte(tabelaTransacoes.horario, data);
+    const comDataMenorQue = (data: Date): SQL =>
+      lte(tabelaTransacoes.horario, data);
+    const comMotivo = (motivo: MotivoTransacoes): SQL =>
+      eq(tabelaTransacoes.motivo, motivo);
 
-  const pagina = opts?.pagina || 1;
-  const paginaTamanho = opts?.paginaTamanho || 100;
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
 
-  return bancoDados
-    .select({
-      ...getTableColumns(tabelaTransacoes),
-      _usuario: {
-        nome: tabelaUsuarios.nome,
-      },
-      _categoria: {
-        nome: tabelaCategorias.nome,
-      },
-      _produto: {
-        nome: tabelaProdutos.nome,
-        codigo: tabelaProdutos.codigo,
-      },
-      _lote: {
-        codigo: tabelaLotes.codigo,
-      },
-    })
-    .from(tabelaTransacoes)
-    .where(
-      and(
-        opts?.comId ? comId(opts.comId) : undefined,
-        opts?.comProdutoId ? comProdutoId(opts.comProdutoId) : undefined,
-        opts?.comUsuarioId ? comUsuarioId(opts.comUsuarioId) : undefined,
-        opts?.comLoteId ? comLoteId(opts.comLoteId) : undefined,
-        opts?.comDataMaiorQue
-          ? comDataMaiorQue(opts.comDataMaiorQue)
-          : undefined,
-        opts?.comDataMenorQue
-          ? comDataMenorQue(opts.comDataMenorQue)
-          : undefined,
-        opts?.comMotivo ? comMotivo(opts.comMotivo) : undefined,
-      ),
-    )
-    .leftJoin(
-      tabelaUsuarios,
-      eq(tabelaTransacoes.usuarioId, tabelaUsuarios.id),
-    )
-    .innerJoin(
-      tabelaCategorias,
-      eq(tabelaProdutos.categoriaId, tabelaCategorias.id),
-    )
-    .leftJoin(
-      tabelaProdutos,
-      eq(tabelaTransacoes.produtoId, tabelaProdutos.id),
-    )
-    .leftJoin(tabelaLotes, eq(tabelaTransacoes.loteId, tabelaLotes.id))
-    .orderBy(desc(tabelaTransacoes.horario))
-    .limit(paginaTamanho)
-    .offset((pagina - 1) * paginaTamanho)
-    .execute();
-}
+    return bancoDados
+      .select({
+        ...getTableColumns(tabelaTransacoes),
+        _usuario: {
+          nome: tabelaUsuarios.nome,
+        },
+        _categoria: {
+          nome: tabelaCategorias.nome,
+        },
+        _produto: {
+          nome: tabelaProdutos.nome,
+          codigo: tabelaProdutos.codigo,
+        },
+        _lote: {
+          codigo: tabelaLotes.codigo,
+        },
+      })
+      .from(tabelaTransacoes)
+      .where(
+        and(
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comProdutoId ? comProdutoId(opts.comProdutoId) : undefined,
+          opts?.comUsuarioId ? comUsuarioId(opts.comUsuarioId) : undefined,
+          opts?.comLoteId ? comLoteId(opts.comLoteId) : undefined,
+          opts?.comDataMaiorQue
+            ? comDataMaiorQue(opts.comDataMaiorQue)
+            : undefined,
+          opts?.comDataMenorQue
+            ? comDataMenorQue(opts.comDataMenorQue)
+            : undefined,
+          opts?.comMotivo ? comMotivo(opts.comMotivo) : undefined,
+        ),
+      )
+      .leftJoin(
+        tabelaUsuarios,
+        eq(tabelaTransacoes.usuarioId, tabelaUsuarios.id),
+      )
+      .innerJoin(
+        tabelaCategorias,
+        eq(tabelaProdutos.categoriaId, tabelaCategorias.id),
+      )
+      .leftJoin(
+        tabelaProdutos,
+        eq(tabelaTransacoes.produtoId, tabelaProdutos.id),
+      )
+      .leftJoin(tabelaLotes, eq(tabelaTransacoes.loteId, tabelaLotes.id))
+      .orderBy(desc(tabelaTransacoes.horario))
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
 
   selecionarConsultaSimples(
     opts?: RepoConsultaParamsTransacoes,
@@ -194,4 +202,3 @@ class RepositorioTransacoes {
 const repositorioMovimentacoes = new RepositorioTransacoes();
 
 export default repositorioMovimentacoes;
-

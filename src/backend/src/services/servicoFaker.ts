@@ -325,4 +325,3 @@ class ServicoFaker {
 const servicoFaker = new ServicoFaker();
 
 export default servicoFaker;
-

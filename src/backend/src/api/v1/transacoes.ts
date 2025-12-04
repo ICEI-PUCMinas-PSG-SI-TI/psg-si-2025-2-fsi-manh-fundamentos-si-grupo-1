@@ -31,16 +31,16 @@ async function getTransacoes(
 apiV1TransacoesRouter.get("/", getTransacoes);
 
 async function criarTransacao(
-  req:ExtendedRequest,
-  res:Response,
+  req: ExtendedRequest,
+  res: Response,
   next: NextFunction,
-): Promise<void>{
-  try{
+): Promise<void> {
+  try {
     const dados = SetMovimentacaoDtoZ.parse({
       loteId: req.body.loteId,
       quantidade: req.body.quantidade,
       motivo: req.body.motivo,
-      produtoId:req.body.produtoId,
+      produtoId: req.body.produtoId,
       localOrigem: req.body.localOrigem ?? null,
       localDestino: req.body.localDestino ?? null,
       observacao: req.body.observacao ?? null,
@@ -49,11 +49,11 @@ async function criarTransacao(
     });
 
     const id = await servicoTransacoes.inserir(dados);
-    res.status(201).json({id});
-  }catch(err){
+    res.status(201).json({ id });
+  } catch (err) {
     next(err);
   }
 }
-apiV1TransacoesRouter.post("/",criarTransacao);
+apiV1TransacoesRouter.post("/", criarTransacao);
 
 export default apiV1TransacoesRouter;

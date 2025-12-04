@@ -1,15 +1,15 @@
 <template>
-  <main class="flex-1 p-8 min-h-screen">
-    <div class="flex justify-between items-center mb-6">
+  <main class="min-h-screen flex-1 p-8">
+    <div class="mb-6 flex items-center justify-between">
       <div>
         <h2 class="text-3xl font-bold">CATÁLOGO</h2>
-        <p class="text-sm text-gray-500 mt-1">Gerencie seus produtos aqui.</p>
+        <p class="mt-1 text-sm text-gray-500">Gerencie seus produtos aqui.</p>
       </div>
 
       <div class="flex gap-3">
         <button
           @click="criarProduto"
-          class="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800"
+          class="rounded-full bg-black px-4 py-2 text-white hover:bg-gray-800"
         >
           + PRODUTO
         </button>
@@ -22,18 +22,18 @@
         v-model="search"
         type="text"
         placeholder="BUSCAR PRODUTO..."
-        class="border rounded-l-full px-4 py-2 w-1/2 focus:outline-none"
+        class="w-1/2 rounded-l-full border px-4 py-2 focus:outline-none"
       />
       <button
         @click="limparPesquisa"
-        class="border rounded-r-full px-4 py-2 hover:cursor-pointer transition-transform duration-200 transform hover:scale-102"
+        class="transform rounded-r-full border px-4 py-2 transition-transform duration-200 hover:scale-102 hover:cursor-pointer"
       >
         Limpar
       </button>
 
       <div class="ml-auto flex items-center gap-2">
         <label class="text-sm">Filtrar categoria:</label>
-        <select v-model="categoriaFilter" class="border px-2 py-1 rounded">
+        <select v-model="categoriaFilter" class="rounded border px-2 py-1">
           <option class="text-black" value="">Todas</option>
           <option class="text-black" v-for="c in categorias" :key="c.id" :value="c.id">
             {{ c.nome }}
@@ -43,16 +43,16 @@
     </div>
 
     <!-- Tabela -->
-    <div class="border-2 border-green-500 rounded-lg p-4 overflow-x-auto">
+    <div class="overflow-x-auto rounded-lg border-2 border-green-500 p-4">
       <table class="w-full border-collapse">
         <thead>
           <tr class="border-b">
-            <th class="text-left p-2"># Identificador</th>
-            <th class="text-left p-2">NOME DO PRODUTO</th>
-            <th class="text-left p-2">CATEGORIA</th>
-            <th class="text-left p-2">QUANTIDADE</th>
-            <th class="text-left p-2">PREÇO CUSTO</th>
-            <th class="p-2 justify-center">AÇÕES</th>
+            <th class="p-2 text-left"># Identificador</th>
+            <th class="p-2 text-left">NOME DO PRODUTO</th>
+            <th class="p-2 text-left">CATEGORIA</th>
+            <th class="p-2 text-left">QUANTIDADE</th>
+            <th class="p-2 text-left">PREÇO CUSTO</th>
+            <th class="justify-center p-2">AÇÕES</th>
           </tr>
         </thead>
         <tbody>
@@ -70,16 +70,16 @@
                   : 'N/A'
               }}
             </td>
-            <td class="p-2 flex justify-center gap-2">
+            <td class="flex justify-center gap-2 p-2">
               <button
                 @click="visualizarProduto(produto)"
-                class="bg-blue-800 text-white px-3 py-1 rounded-full hover:bg-blue-900 hover:cursor-pointer"
+                class="rounded-full bg-blue-800 px-3 py-1 text-white hover:cursor-pointer hover:bg-blue-900"
               >
                 Visualizar
               </button>
               <button
                 @click="remover(produto)"
-                class="bg-red-600 text-white px-3 py-1 rounded-full hover:bg-red-700 hover:cursor-pointer"
+                class="rounded-full bg-red-600 px-3 py-1 text-white hover:cursor-pointer hover:bg-red-700"
               >
                 Remover
               </button>
@@ -94,33 +94,33 @@
     </div>
 
     <!-- Modal simples para criar/editar -->
-    <div v-if="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div class="bg-white rounded-lg p-6 w-96">
-        <h3 class="text-lg font-bold mb-4">Novo Produto</h3>
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black/40">
+      <div class="w-96 rounded-lg bg-white p-6">
+        <h3 class="mb-4 text-lg font-bold">Novo Produto</h3>
         <div v-if="form" class="space-y-3">
-          <input v-model="form.nome" placeholder="Nome" class="w-full border px-3 py-2 rounded" />
+          <input v-model="form.nome" placeholder="Nome" class="w-full rounded border px-3 py-2" />
           <input
             v-model="form.categoria"
             placeholder="Categoria"
-            class="w-full border px-3 py-2 rounded"
+            class="w-full rounded border px-3 py-2"
           />
           <input
             v-model.number="form.quantidade"
             type="number"
             placeholder="Quantidade"
-            class="w-full border px-3 py-2 rounded"
+            class="w-full rounded border px-3 py-2"
           />
           <input
             v-model.number="form.preco"
             type="number"
             step="0.01"
             placeholder="Preço"
-            class="w-full border px-3 py-2 rounded"
+            class="w-full rounded border px-3 py-2"
           />
         </div>
         <div class="mt-4 flex justify-end gap-2">
-          <button @click="closeModal" class="px-4 py-2 rounded border">Cancelar</button>
-          <button @click="save" class="px-4 py-2 rounded bg-green-800 text-white">Salvar</button>
+          <button @click="closeModal" class="rounded border px-4 py-2">Cancelar</button>
+          <button @click="save" class="rounded bg-green-800 px-4 py-2 text-white">Salvar</button>
         </div>
       </div>
     </div>
@@ -128,11 +128,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, watch } from 'vue'
-import { ApiProdutos } from '@/api/produtos'
 import { ApiCategorias } from '@/api/categorias'
-import type { GetCategoriaDTO, GetConsultaProdutoDto, GetProdutoDto } from '../../../backend'
+import { ApiProdutos } from '@/api/produtos'
 import { notificacoes } from '@/main'
+import { ref, type Ref, watch } from 'vue'
+import type { GetCategoriaDTO, GetConsultaProdutoDto, GetProdutoDto } from '../../../backend'
 
 const search = ref('')
 const categoriaFilter = ref('')

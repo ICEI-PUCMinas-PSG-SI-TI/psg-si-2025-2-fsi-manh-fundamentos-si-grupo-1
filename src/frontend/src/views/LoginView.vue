@@ -1,38 +1,38 @@
 <template>
-  <div class="relative flex justify-center items-center w-screen h-screen overflow-hidden p-4">
+  <div class="relative flex h-screen w-screen items-center justify-center overflow-hidden p-4">
     <div class="relative w-full max-w-md sm:max-w-lg lg:max-w-xl xl:-mt-16">
       <LogoLoginItem
-        class="absolute -top-5 left-1/2 transform -translate-x-1/2 w-30 h-45 sm:w-45 md:w-42 md:h-45"
+        class="absolute -top-5 left-1/2 h-45 w-30 -translate-x-1/2 transform sm:w-45 md:h-45 md:w-42"
       />
 
       <!-- Formulário -->
       <div class="flex justify-center">
         <form
           @submit.prevent="login"
-          class="w-105 h-100 pt-25 mt-20 bg-gray-300 bg-opacity-90 rounded-3xl shadow-xl p-8 flex flex-col gap-4 text-white"
+          class="bg-opacity-90 mt-20 flex h-100 w-105 flex-col gap-4 rounded-3xl bg-gray-300 p-8 pt-25 text-white shadow-xl"
         >
           <!-- Usuário -->
           <div
-            class="flex items-center bg-neutral-600 rounded- px-3 py-2 focus-within:rin transition"
+            class="rounded- focus-within:rin flex items-center bg-neutral-600 px-3 py-2 transition"
           >
-            <UserIcon class="w-6 h-7 mr-2 text-white" />
+            <UserIcon class="mr-2 h-7 w-6 text-white" />
             <input
               v-model="refFormulario.usuario"
               type="text"
               placeholder="USUÁRIO"
-              class="bg-transparent outline-none flex-1 text-white placeholder-gray-400"
+              class="flex-1 bg-transparent text-white placeholder-gray-400 outline-none"
               required
             />
           </div>
 
           <!-- Senha -->
-          <div class="flex items-center bg-neutral-600 px-3 py-2 focus-within:rin transition">
-            <LockClosedIcon class="w-6 h-7 mr-2 text-white" />
+          <div class="focus-within:rin flex items-center bg-neutral-600 px-3 py-2 transition">
+            <LockClosedIcon class="mr-2 h-7 w-6 text-white" />
             <input
               v-model="refFormulario.senha"
               :type="mostrarSenha ? 'text' : 'password'"
               placeholder="SENHA"
-              class="bg-transparent outline-none flex-1 text-white placeholder-gray-400"
+              class="flex-1 bg-transparent text-white placeholder-gray-400 outline-none"
               required
             />
           </div>
@@ -40,15 +40,15 @@
           <!-- Checkbox para mostrar senha -->
           <div class="flex items-center">
             <input type="checkbox" id="mostrarSenha" class="mr-2" v-model="mostrarSenha" />
-            <label for="mostrarSenha" class="text-gray-700 cursor-pointer">Mostrar senha</label>
+            <label for="mostrarSenha" class="cursor-pointer text-gray-700">Mostrar senha</label>
           </div>
 
-          <p v-if="erro" class="text-red-500 mt-2 text-center text-sm sm:text-base">{{ erro }}</p>
+          <p v-if="erro" class="mt-2 text-center text-sm text-red-500 sm:text-base">{{ erro }}</p>
 
           <!-- Botão -->
           <button
             type="submit"
-            class="shadow-xl cursor-pointer mt-4 w-full bg-rose-600 text-white font-bold py-2 transition transform hover:scale-105"
+            class="mt-4 w-full transform cursor-pointer bg-rose-600 py-2 font-bold text-white shadow-xl transition hover:scale-105"
           >
             Login
           </button>
@@ -59,15 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
-import { ref, type Ref } from 'vue'
 import { ApiAutenticacao } from '@/api/auth'
 import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
-import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
-import { useNotificationStore } from '@/store/config/toast'
-import { useSessaoStore } from '@/store/config/sessao'
-import { useRoute, useRouter } from 'vue-router'
 import { CrecenciaisZ } from '@/services/objects'
+import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
+import { useSessaoStore } from '@/store/config/sessao'
+import { useNotificationStore } from '@/store/config/toast'
+import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
+import { ref, type Ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 

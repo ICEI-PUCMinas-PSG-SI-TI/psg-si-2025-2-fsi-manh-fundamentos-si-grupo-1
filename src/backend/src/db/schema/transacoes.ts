@@ -50,4 +50,3 @@ export type UpdateTransacoesSchema = Partial<
   InferSelectModel<typeof tabelaTransacoes>
 >;
 export type InsertTransacoesSchema = InferInsertModel<typeof tabelaTransacoes>;
-

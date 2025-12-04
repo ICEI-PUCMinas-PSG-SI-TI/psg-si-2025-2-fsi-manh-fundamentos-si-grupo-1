@@ -29,10 +29,10 @@ function show() {
 </script>
 
 <template>
-  <div class="card bg-base-100 border-2 border-base-300">
+  <div class="card bg-base-100 border-base-300 border-2">
     <div class="card-body">
-      <div class="flex flex-col p-2 gap-2">
-        <div class="font-semibold text-xl mb-4">Lotes</div>
+      <div class="flex flex-col gap-2 p-2">
+        <div class="mb-4 text-xl font-semibold">Lotes</div>
         <strong>Criar lotes com dados aleatórios</strong>
         <LabeledInput html-type="number" html-place-holder="Quantidade" v-model="quant" />
         <div class="flex flex-row items-center">

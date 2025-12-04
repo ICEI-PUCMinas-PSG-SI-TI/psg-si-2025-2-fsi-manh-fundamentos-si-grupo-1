@@ -6,3 +6,5 @@ endOfLine = "crlf"
 bracketSpacing = true
 trailingComma = "all"
 bracketSameLine = false
+
+plugins = ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"]

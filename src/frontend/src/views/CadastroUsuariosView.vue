@@ -1,19 +1,19 @@
 <template>
-  <div class="w-full min-h-screen p-6 overflow-x-hidden">
-    <h1 class="text-5xl font-bold mb-4">Cadastro de usuários</h1>
+  <div class="min-h-screen w-full overflow-x-hidden p-6">
+    <h1 class="mb-4 text-5xl font-bold">Cadastro de usuários</h1>
 
     <!-- Formulário -->
-    <div class="bg-base-200 p-6 rounded-2xl mb-8">
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-base-200 mb-8 rounded-2xl p-6">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <!--Primeira coluna-->
-        <div class="flex flex-col gap-4 h-full justify-end-safe">
+        <div class="flex h-full flex-col justify-end-safe gap-4">
           <h1 class="text-2xl">{{ editando ? 'Editando usuário' : 'Novo usuário' }}</h1>
           <p v-if="editando">{{ refFields.id }}</p>
-          <div class="flex flex-col items-center mt-8">
+          <div class="mt-8 flex flex-col items-center">
             <img
               src="https://img.daisyui.com/images/profile/demo/3@94.webp"
               alt="avatar"
-              class="w-30 h-30 rounded-full"
+              class="h-30 w-30 rounded-full"
             />
           </div>
           <LabeledInput
@@ -49,10 +49,10 @@
         </div>
 
         <!-- Coluna Permissões -->
-        <div class="flex flex-col h-full justify-center">
-          <h2 class="text-xl font-semibold mb-4 flex flex-col items-center">Permissões</h2>
+        <div class="flex h-full flex-col justify-center">
+          <h2 class="mb-4 flex flex-col items-center text-xl font-semibold">Permissões</h2>
           <div class="flex flex-col gap-1">
-            <label class="flex flex-row justify-start items-center">
+            <label class="flex flex-row items-center justify-start">
               <input
                 type="radio"
                 v-model="permissoes"
@@ -63,9 +63,9 @@
               />
               Administrador
             </label>
-            <p class="text-sm mb-2">Acesso total ao sistema.</p>
+            <p class="mb-2 text-sm">Acesso total ao sistema.</p>
 
-            <label class="flex flex-row justify-start items-center">
+            <label class="flex flex-row items-center justify-start">
               <input
                 type="radio"
                 v-model="permissoes"
@@ -75,11 +75,11 @@
               />
               Operacional
             </label>
-            <p class="text-sm mb-2">
+            <p class="mb-2 text-sm">
               Permite realizar movimentações, visualizar e cadastrar produtos.
             </p>
 
-            <label class="flex flex-row justify-start items-center">
+            <label class="flex flex-row items-center justify-start">
               <input
                 type="radio"
                 v-model="permissoes"
@@ -96,13 +96,13 @@
         <div class="m-auto">
           <div class="flex flex-col items-end gap-4">
             <button
-              class="text-white btn bg-green-600 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              class="btn w-32 rounded-4xl bg-green-600 text-white transition-transform duration-100 hover:scale-105"
               @click="confirmar"
             >
               Confirmar
             </button>
             <button
-              class="text-white btn bg-red-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              class="btn w-32 rounded-4xl bg-red-500 text-white transition-transform duration-100 hover:scale-105"
               @click="limparCampos"
             >
               Cancelar
@@ -113,7 +113,7 @@
     </div>
 
     <!-- Lista de usuários -->
-    <div class="flex flex-col gap-4 w-full">
+    <div class="flex w-full flex-col gap-4">
       <InfoUsuario
         :nome="usuario.nome"
         :login="usuario.login"
@@ -131,13 +131,13 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 
+import { ApiPermissoes } from '@/api/permissoes'
+import { ApiUsuario } from '@/api/usuarios'
 import InfoUsuario from '@/components/CadastroUsuario/InfoUsuario.vue'
 import LabeledInput from '@/components/LabeledInput.vue'
-import { ApiUsuario } from '@/api/usuarios'
-import { Permissoes, type GetUsuarioDto } from '../../../backend'
-import { ApiPermissoes } from '@/api/permissoes'
 import { notificacoes } from '@/main'
 import { CrecenciaisZ } from '@/services/objects'
+import { Permissoes, type GetUsuarioDto } from '../../../backend'
 
 // TODO: Não exportar senhas para o frontend
 const refUsuarios: Ref<GetUsuarioDto[] | null> = ref(null)

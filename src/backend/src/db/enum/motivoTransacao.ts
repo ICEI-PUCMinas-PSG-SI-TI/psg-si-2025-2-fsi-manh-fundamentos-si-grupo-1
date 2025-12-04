@@ -5,4 +5,3 @@ export enum MotivoTransacoes {
   Perda = "Perda",
   Transferencia = "Transferência",
 }
-

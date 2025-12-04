@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { ApiAutenticacao } from '@/api/auth'
 import { ApiPerfil } from '@/api/perfil'
+import router from '@/router'
+import { limparConfiguracoes } from '@/services/storage'
+import { useSessaoStore } from '@/store/config/sessao'
+import { useNotificationStore } from '@/store/config/toast'
+import { ref } from 'vue'
+import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import AlterarSenha from '../config/AlterarSenha.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { ApiAutenticacao } from '@/api/auth'
-import { ref } from 'vue'
-import { useSessaoStore } from '@/store/config/sessao'
-import { useNotificationStore } from '@/store/config/toast'
-import { limparConfiguracoes } from '@/services/storage'
-import router from '@/router'
-import ButtonComponent from '../ButtonComponent.vue'
 
 const autenticacao = new ApiAutenticacao()
 const usuario = new ApiPerfil()
@@ -58,9 +58,9 @@ obterSessao()
 </script>
 
 <template>
-  <CardComponent class="flex flex-col mb-4">
+  <CardComponent class="mb-4 flex flex-col">
     <CardTitleBar title="Perfil do usuário" />
-    <div class="flex flex-col justify-center items-center">
+    <div class="flex flex-col items-center justify-center">
       <img
         class="avatar rounded-full border"
         width="100px"
@@ -75,17 +75,17 @@ obterSessao()
       </fieldset>
     </div>
     <div
-      class="grid grid-cols-1 md:grid-cols-2 gap-x-4 justify-center align-middle items-center mb-2"
+      class="mb-2 grid grid-cols-1 items-center justify-center gap-x-4 align-middle md:grid-cols-2"
     >
       <LabeledInput
-        class="floating-label justify-self-center w-full"
+        class="floating-label w-full justify-self-center"
         html-type="text"
         html-place-holder="Login"
         label-text="Login"
         v-model="refLogin"
       />
       <LabeledInput
-        class="floating-label justify-self-center w-full"
+        class="floating-label w-full justify-self-center"
         html-type="text"
         html-place-holder="Nome"
         label-text="Nome"
@@ -93,7 +93,7 @@ obterSessao()
       />
     </div>
     <div
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-center align-middle items-center"
+      class="grid grid-cols-1 items-center justify-center gap-4 align-middle md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       <ButtonComponent class="btn-accent" @click="alterarInformacoesUsuario">
         Salvar

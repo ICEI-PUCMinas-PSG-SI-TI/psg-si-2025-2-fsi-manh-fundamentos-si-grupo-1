@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { ApiConfiguracoes } from '@/api/configuracoes'
+import { useNotificationStore } from '@/store/config/toast'
 import { ref } from 'vue'
+import { Identificador } from '../../../../backend'
 import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { Identificador } from '../../../../backend'
-import { useNotificationStore } from '@/store/config/toast'
-import { ApiConfiguracoes } from '@/api/configuracoes'
 
 const configuracoes = new ApiConfiguracoes()
 
@@ -58,7 +58,7 @@ obterConfiguracoes()
     <div class="flex flex-col gap-3 pt-4">
       <h2>Dados do sistema</h2>
       <hr />
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-4 justify-between">
+      <div class="mb-4 grid grid-cols-1 justify-between md:grid-cols-2 lg:grid-cols-3">
         <LabeledInput
           class="floating-label me-2"
           html-type="text"

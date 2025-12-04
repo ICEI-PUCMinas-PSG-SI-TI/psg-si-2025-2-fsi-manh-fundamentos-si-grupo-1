@@ -1,17 +1,17 @@
 <template>
   <div
-    class="fixed inset-0 flex justify-center items-start overflow-y-auto bg-black/40 backdrop-blur-sm z-50 p-4 overflow-x-hidden"
+    class="fixed inset-0 z-50 flex items-start justify-center overflow-x-hidden overflow-y-auto bg-black/40 p-4 backdrop-blur-sm"
   >
     <CardComponent
-      class="w-full max-w-2xl bg-base-200 rounded-2xl shadow-2xl border border-gray-300 p- animate-fadeIn"
+      class="bg-base-200 p- animate-fadeIn w-full max-w-2xl rounded-2xl border border-gray-300 shadow-2xl"
     >
       <!-- Título -->
       <CardTitleBar title="Inserir Nova Movimentação" />
 
       <!-- Formulário -->
-      <form class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3 w-full" @submit.prevent="confirmar()">
+      <form class="mt-3 grid w-full grid-cols-1 gap-6 md:grid-cols-2" @submit.prevent="confirmar()">
         <!-- Produto + Lote + Botão Adicionar -->
-        <div class="col-span-2 flex flex-col md:flex-row gap-3 items-start md:items-end">
+        <div class="col-span-2 flex flex-col items-start gap-3 md:flex-row md:items-end">
           <!-- Produto -->
           <div class="form-control w-full">
             <label class="label">
@@ -46,7 +46,7 @@
           <!-- Botão Adicionar -->
           <button
             type="button"
-            class="btn btn-primary flex items-center gap-1 h-12 px-4 w-full md:w-auto"
+            class="btn btn-primary flex h-12 w-full items-center gap-1 px-4 md:w-auto"
           >
             <PlusIcon class="w-5" />
             Adicionar Produto
@@ -54,9 +54,9 @@
         </div>
 
         <!-- Criar novo lote -->
-        <div class="col-span-2 flex flex-col md:flex-row gap-3 items-center mt-2">
+        <div class="col-span-2 mt-2 flex flex-col items-center gap-3 md:flex-row">
           <!-- Checkbox Criar Lote -->
-          <label class="cursor-pointer flex items-center gap-2">
+          <label class="flex cursor-pointer items-center gap-2">
             <input type="checkbox" v-model="criarLote" />
             Criar novo lote
           </label>
@@ -99,9 +99,9 @@
         </div>
 
         <!-- Motivo -->
-        <fieldset class="w-full flex flex-col gap-2">
+        <fieldset class="flex w-full flex-col gap-2">
           <legend class="fieldset-legend text-lg font-semibold">Motivo *</legend>
-          <select class="select text-lg w-full" v-model="motivoSelect">
+          <select class="select w-full text-lg" v-model="motivoSelect">
             <option :value="MotivoTransacoes.Compra">{{ MotivoTransacoes.Compra }}</option>
             <option :value="MotivoTransacoes.Venda">{{ MotivoTransacoes.Venda }}</option>
             <option :value="MotivoTransacoes.Devolucao">{{ MotivoTransacoes.Devolucao }}</option>
@@ -159,16 +159,16 @@
         </div>
 
         <!-- Botões -->
-        <div class="flex flex-col md:flex-row justify-end gap-4 mt-8 col-span-2">
+        <div class="col-span-2 mt-8 flex flex-col justify-end gap-4 md:flex-row">
           <button
-            class="bg-red-600 text-white px-6 py-2 rounded-xl w-full md:w-auto cursor-pointer transition-transform duration-100 hover:scale-103"
+            class="w-full cursor-pointer rounded-xl bg-red-600 px-6 py-2 text-white transition-transform duration-100 hover:scale-103 md:w-auto"
             @click="visivel = false"
           >
             Cancelar
           </button>
 
           <button
-            class="bg-green-600 text-white px-6 py-2 rounded-xl w-full md:w-auto cursor-pointer transition-transform duration-100 hover:scale-103"
+            class="w-full cursor-pointer rounded-xl bg-green-600 px-6 py-2 text-white transition-transform duration-100 hover:scale-103 md:w-auto"
             type="submit"
           >
             Confirmar
@@ -180,13 +180,13 @@
 </template>
 
 <script setup lang="ts">
+import { ApiAutenticacao } from '@/api/auth'
+import { ApiProdutos } from '@/api/produtos'
 import { PlusIcon } from '@heroicons/vue/24/outline'
+import { computed, onMounted, ref, watch, type Ref } from 'vue'
 import { MotivoTransacoes, type GetConsultaProdutoDto } from '../../../../backend'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
-import { onMounted, ref, watch, computed, type Ref } from 'vue'
-import { ApiProdutos } from '@/api/produtos'
-import { ApiAutenticacao } from '@/api/auth'
 
 const emit = defineEmits(['atualizar'])
 const visivel = defineModel()

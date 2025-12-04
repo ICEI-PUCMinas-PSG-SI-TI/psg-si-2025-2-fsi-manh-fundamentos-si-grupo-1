@@ -34,7 +34,7 @@ async function postLote(
   try {
     const parsedBody = SetLoteDtoZ.parse(req.body);
     const idRegistro = await servicoLotes.inserir(parsedBody);
-    res.status(201).json({id:idRegistro})
+    res.status(201).json({ id: idRegistro });
   } catch (err) {
     next(err);
   }

@@ -1,13 +1,13 @@
 <template>
-  <div class="w-full min-h-screen max-w-full">
-    <div class="bg-base-200 md:m-9 mt-4 p-4 rounded-2xl flex flex-col">
+  <div class="min-h-screen w-full max-w-full">
+    <div class="bg-base-200 mt-4 flex flex-col rounded-2xl p-4 md:m-9">
       <!--Compras, vendas e filtrar por data-->
-      <div class="flex flex-wrap gap-6 mb-6 items-start">
+      <div class="mb-6 flex flex-wrap items-start gap-6">
         <!-- Select de Motivo -->
-        <div class="flex flex-col flex-1 min-w-[200px]">
-          <label class="text-sm font-medium mb-2">Tipo de Movimentação</label>
+        <div class="flex min-w-[200px] flex-1 flex-col">
+          <label class="mb-2 text-sm font-medium">Tipo de Movimentação</label>
           <select
-            class="cursor-pointer select select-bordered w-full bg-white text-black rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+            class="select select-bordered focus:ring-primary w-full cursor-pointer rounded-lg bg-white font-medium text-black focus:ring-2 focus:outline-none"
             v-model="motivo"
             @change="resetarPagina()"
           >
@@ -24,28 +24,28 @@
         </div>
 
         <!-- Filtro de Data -->
-        <div class="flex flex-col flex-1 min-w-[200px]">
-          <label class="text-sm font-medium mb-3">Filtrar por data</label>
-          <div class="flex items-center gap-4 w-full">
+        <div class="flex min-w-[200px] flex-1 flex-col">
+          <label class="mb-3 text-sm font-medium">Filtrar por data</label>
+          <div class="flex w-full items-center gap-4">
             <input
               type="checkbox"
               v-model="checkBoxFiltro"
               @change="resetarPagina"
-              class="checkbox h-6 w-6 rounded-md border-2 checked:bg-green-500 checked:border-green-400 transition-all duration-110"
+              class="checkbox h-6 w-6 rounded-md border-2 transition-all duration-110 checked:border-green-400 checked:bg-green-500"
             />
             <input
               type="date"
               v-model="dataSelecionada"
               @change="carregarMovimentacoesDoDia"
-              class="input input-bordered w-full px-3 py-2 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              class="input input-bordered focus:ring-primary w-full rounded-lg px-3 py-2 focus:ring-2 focus:outline-none"
             />
           </div>
         </div>
       </div>
       <!--div buscar produto, nova movimentação e histórico-->
-      <div class="rounded-2xl p-4 flex flex-col flex-1 min-h-[60vh]">
+      <div class="flex min-h-[60vh] flex-1 flex-col rounded-2xl p-4">
         <!-- Busca + Botão Nova Movimentação -->
-        <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
           <!-- Campo de busca -->
           <div class="relative w-full md:w-80">
             <input
@@ -53,24 +53,24 @@
               v-model="produtoFiltro"
               @input="carregarMovimentacoesDoDia"
               placeholder="BUSCAR PRODUTO..."
-              class="w-full px-10 py-2 rounded-3xl bg-white text-black focus:outline-none"
+              class="w-full rounded-3xl bg-white px-10 py-2 text-black focus:outline-none"
             />
-            <MagnifyingGlassIcon class="w-6 text-black absolute left-2 top-1/2 -translate-y-1/2" />
+            <MagnifyingGlassIcon class="absolute top-1/2 left-2 w-6 -translate-y-1/2 text-black" />
           </div>
 
           <!-- Botão Nova Movimentação -->
           <button
-            class="cursor-pointer bg-white w-full md:w-60 flex justify-center text-black font-semibold px-4 py-2 rounded-xl transition-transform duration-100 hover:scale-[1.03]"
+            class="flex w-full cursor-pointer justify-center rounded-xl bg-white px-4 py-2 font-semibold text-black transition-transform duration-100 hover:scale-[1.03] md:w-60"
             @click="novaMovimentacao = true"
           >
-            <PlusIcon class="w-5 mr-2"></PlusIcon> NOVA MOVIMENTAÇÃO
+            <PlusIcon class="mr-2 w-5"></PlusIcon> NOVA MOVIMENTAÇÃO
           </button>
         </div>
 
         <!-- TABELA  -->
-        <h3 class="text-3xl font-semibold mb-4">Histórico</h3>
+        <h3 class="mb-4 text-3xl font-semibold">Histórico</h3>
         <div class="w-full overflow-x-auto rounded-xl">
-          <table class="min-w-full text-left divide-y divide-white/20">
+          <table class="min-w-full divide-y divide-white/20 text-left">
             <thead class=" ">
               <tr class="text-xl">
                 <th class="p-3">Data/Hora</th>
@@ -85,7 +85,7 @@
 
             <tbody class="divide-y divide-white/10">
               <tr v-for="i in movimentacoes" :key="i.id" class="text-lg">
-                <td class="py-2 px-2">
+                <td class="px-2 py-2">
                   {{
                     new Date(i.horario).toLocaleDateString('pt-BR', {
                       day: '2-digit',
@@ -128,7 +128,7 @@
                 <td class="p-3 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <div
-                      class="w-8 h-8 rounded-full bg-stone-300 flex items-center justify-center text-black"
+                      class="flex h-8 w-8 items-center justify-center rounded-full bg-stone-300 text-black"
                     >
                       {{ i._usuario.nome[0].toUpperCase() }}
                     </div>
@@ -144,7 +144,7 @@
             </tbody>
           </table>
         </div>
-        <div class="flex justify-center mt-4 lg:justify-end items-center gap-2 join">
+        <div class="join mt-4 flex items-center justify-center gap-2 lg:justify-end">
           <button
             class="join-item btn btn-neutral"
             :class="pagina === 1 ? 'btn-disabled' : 'border-base-content'"
@@ -174,10 +174,10 @@
 <script setup lang="ts">
 import { ApiMovimentacoes } from '@/api/movimentacoes'
 
-import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
-import type { GetConsultaMovimentacaoDto } from '../../../backend'
+import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/vue/24/outline'
 import { onMounted, ref, watch } from 'vue'
+import type { GetConsultaMovimentacaoDto } from '../../../backend'
 import { MotivoTransacoes, type ConsultaMovimentacoesParams } from '../../../backend'
 
 const motivo = ref<MotivoTransacoes | null>(null)

@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full min-h-screen max-w-full">
-    <div class="bg-base-200 md:m-9 mt-4 p-4 rounded-2xl flex flex-col">
+  <div class="min-h-screen w-full max-w-full">
+    <div class="bg-base-200 mt-4 flex flex-col rounded-2xl p-4 md:m-9">
       <!-- Filtro -->
-      <div class="shrink-0 p-2 mb-4">
-        <h3 class="text-lg font-semibold mb-2">Filtrar por Data</h3>
+      <div class="mb-4 shrink-0 p-2">
+        <h3 class="mb-2 text-lg font-semibold">Filtrar por Data</h3>
 
         <div class="flex gap-2">
           <input
@@ -22,12 +22,12 @@
       </div>
 
       <!-- Conteúdo -->
-      <div class="flex card card-border bg-base-200 h-full w-full">
-        <div class="card-body flex-col h-full gap-4">
-          <h2 class="text-left font-bold text-4xl">Histórico de Transações</h2>
+      <div class="card card-border bg-base-200 flex h-full w-full">
+        <div class="card-body h-full flex-col gap-4">
+          <h2 class="text-left text-4xl font-bold">Histórico de Transações</h2>
 
           <div class="w-full overflow-x-auto rounded-xl">
-            <table class="min-w-full text-left divide-y divide-white/20">
+            <table class="min-w-full divide-y divide-white/20 text-left">
               <thead class=" ">
                 <tr class="text-xl">
                   <th class="p-4">Data</th>
@@ -43,7 +43,7 @@
 
               <tbody class="divide-y divide-white/10">
                 <tr v-for="i in movimentacoes" :key="i.id" class="text-md">
-                  <td class="py-2 px-2">
+                  <td class="px-2 py-2">
                     {{
                       new Date(i.horario).toLocaleDateString('pt-BR', {
                         day: '2-digit',
@@ -64,7 +64,7 @@
                   <td class="p-4 whitespace-nowrap">
                     <div class="flex items-center gap-2">
                       <div
-                        class="w-8 h-8 rounded-full bg-stone-300 flex items-center justify-center text-black"
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-stone-300 text-black"
                       >
                         {{ i._usuario.nome[0].toUpperCase() }}
                       </div>
@@ -92,7 +92,7 @@
           </div>
 
           <!-- Paginação -->
-          <div class="flex justify-center mt-4 lg:justify-end items-center gap-2 join">
+          <div class="join mt-4 flex items-center justify-center gap-2 lg:justify-end">
             <button
               class="join-item btn btn-neutral"
               :class="paginaAtual === 1 ? 'btn-disabled' : 'border-base-content'"
@@ -116,8 +116,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import { ApiMovimentacoes } from '@/api/movimentacoes'
+import { onMounted, ref } from 'vue'
 import {
   MotivoTransacoes,
   type ConsultaMovimentacoesParams,

@@ -106,7 +106,7 @@ class ServicoTransacoes {
       filtros.pagina = opts?.pagina;
       filtros.paginaTamanho = opts?.paginaTamanho;
     }
-    if (opts?.motivo){
+    if (opts?.motivo) {
       filtros.comMotivo = opts.motivo;
     }
 
@@ -166,4 +166,3 @@ class ServicoTransacoes {
 const servicoTransacoes = new ServicoTransacoes();
 
 export default servicoTransacoes;
-
