@@ -6,7 +6,7 @@
         <ExclamationTriangleIcon class="h-6 w-6 text-red-500" />
         <p class="text-base-content text-2xl font-semibold">ALERTAS</p>
       </div>
-      <button class="btn btn-outline btn-info">
+      <button class="btn btn-outline btn-info" @click="verificarAlertas">
         <ArrowPathIcon class="size-4" />
         Verificar
       </button>
@@ -118,6 +118,14 @@ async function silenciar(id: string) {
   const res = await apiAlertas.silenciar(id)
   if (res.ok) {
     notificacoes.addNotification('Alerta silenciado temporariamente.')
+    obterAlertas()
+  }
+}
+
+async function verificarAlertas() {
+  const res = await apiAlertas.verificar()
+  if (res.ok) {
+    notificacoes.addNotification('Alertas verificados.')
     obterAlertas()
   }
 }
