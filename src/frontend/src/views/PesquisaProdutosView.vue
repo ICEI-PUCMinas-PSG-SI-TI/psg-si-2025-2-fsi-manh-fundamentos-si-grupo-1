@@ -149,12 +149,12 @@ function criarProduto() {
   form.value = { id: 'id', nome: '', categoria: '', quantidade: 0, preco: 0 }
   showModal.value = true
   // TODO: redirect
-  alert('Redirect to produtos/new')
+  notificacoes.addNotification('Redirect to produtos/new', { isError: true })
 }
 
 function visualizarProduto(p: GetProdutoDto) {
   // TODO: redirect
-  alert('Redirect to produtos/' + p.id)
+  notificacoes.addNotification('Redirect to produtos/' + p.id, { isError: true })
 }
 
 function remover(_p: GetProdutoDto) {

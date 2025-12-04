@@ -16,15 +16,15 @@ async function gerar() {
 }
 
 function deleteAll() {
-  alert('deleteAll')
+  notificacoes.addNotification(`deleteAll`, { isError: true })
 }
 
 function deleteId(id: string) {
-  alert(`delete(${id})`)
+  notificacoes.addNotification(`delete(${id})`, { isError: true })
 }
 
 function show() {
-  alert('show')
+  notificacoes.addNotification('show', { isError: true })
 }
 </script>
 
