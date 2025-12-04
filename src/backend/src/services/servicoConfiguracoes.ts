@@ -33,8 +33,10 @@ async function inicializar(): Promise<void> {
   }
   await repositorioConfiguracoes.inserir({ id: defaultUuid });
   const resSel2 = await repositorioConfiguracoes.selecionarPorId(defaultUuid);
-  if (resSel2) {
-    throw new Error("Não foi possível inicializar os valores.");
+  if (!resSel2) {
+    throw new Error(
+      "Não foi possível inicializar os valores de configurações.",
+    );
   }
 }
 
