@@ -101,4 +101,3 @@ obterConfiguracoes()
     </div>
   </CardComponent>
 </template>
-

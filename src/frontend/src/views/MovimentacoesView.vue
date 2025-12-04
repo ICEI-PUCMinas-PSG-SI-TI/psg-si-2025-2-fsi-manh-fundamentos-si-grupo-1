@@ -64,12 +64,11 @@
                   <td class="p-4 whitespace-nowrap">
                     <div class="flex items-center gap-2">
                       <div
-                        class=" w-8 h-8 rounded-full bg-stone-300 flex items-center justify-center text-black"
+                        class="w-8 h-8 rounded-full bg-stone-300 flex items-center justify-center text-black"
                       >
                         {{ i._usuario.nome[0].toUpperCase() }}
                       </div>
                       <span class="font-bold">{{ i._usuario.nome }}</span>
-
                     </div>
                   </td>
                   <td class="p-4 font-semibold">{{ i.motivo }}</td>
@@ -79,8 +78,12 @@
                     <span class="badge badge-sm badge-primary mt-1">{{ i._produto.codigo }}</span>
                   </td>
                   <td class="p-4 font-semibold">{{ i.quantidade }}</td>
-                  <td class="p-4">{{ i.motivo=== MotivoTransacoes.Transferencia? i.localOrigem : '-' }}</td>
-                  <td class="p-4">{{ i.motivo === MotivoTransacoes.Transferencia? i.localDestino:'-' }}</td>
+                  <td class="p-4">
+                    {{ i.motivo === MotivoTransacoes.Transferencia ? i.localOrigem : '-' }}
+                  </td>
+                  <td class="p-4">
+                    {{ i.motivo === MotivoTransacoes.Transferencia ? i.localDestino : '-' }}
+                  </td>
                   <!-- Limit to 80 characters-->
                   <td class="p-4">{{ i.observacao }}</td>
                 </tr>
@@ -115,7 +118,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ApiMovimentacoes } from '@/api/movimentacoes'
-import { MotivoTransacoes, type ConsultaMovimentacoesParams, type GetConsultaMovimentacaoDto } from '../../../backend'
+import {
+  MotivoTransacoes,
+  type ConsultaMovimentacoesParams,
+  type GetConsultaMovimentacaoDto,
+} from '../../../backend'
 
 const paginaAtual = ref(1)
 const paginaTamanho = ref(30)

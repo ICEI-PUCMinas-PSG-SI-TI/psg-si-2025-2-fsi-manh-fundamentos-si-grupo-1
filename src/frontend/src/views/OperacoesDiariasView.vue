@@ -24,14 +24,14 @@
         </div>
 
         <!-- Filtro de Data -->
-        <div class="flex flex-col flex-1 min-w-[200px]  ">
-          <label class="text-sm font-medium mb-3 ">Filtrar por data</label>
+        <div class="flex flex-col flex-1 min-w-[200px]">
+          <label class="text-sm font-medium mb-3">Filtrar por data</label>
           <div class="flex items-center gap-4 w-full">
             <input
               type="checkbox"
               v-model="checkBoxFiltro"
               @change="resetarPagina"
-              class="checkbox h-6 w-6 rounded-md border-2   checked:bg-green-500 checked:border-green-400 transition-all duration-110"
+              class="checkbox h-6 w-6 rounded-md border-2 checked:bg-green-500 checked:border-green-400 transition-all duration-110"
             />
             <input
               type="date"
@@ -43,7 +43,7 @@
         </div>
       </div>
       <!--div buscar produto, nova movimentação e histórico-->
-      <div class=" rounded-2xl p-4 flex flex-col flex-1 min-h-[60vh]">
+      <div class="rounded-2xl p-4 flex flex-col flex-1 min-h-[60vh]">
         <!-- Busca + Botão Nova Movimentação -->
         <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
           <!-- Campo de busca -->
@@ -68,8 +68,8 @@
         </div>
 
         <!-- TABELA  -->
-        <h3 class="text-3xl font-semibold mb-4 ">Histórico</h3>
-        <div class="w-full overflow-x-auto rounded-xl ">
+        <h3 class="text-3xl font-semibold mb-4">Histórico</h3>
+        <div class="w-full overflow-x-auto rounded-xl">
           <table class="min-w-full text-left divide-y divide-white/20">
             <thead class=" ">
               <tr class="text-xl">
@@ -84,11 +84,7 @@
             </thead>
 
             <tbody class="divide-y divide-white/10">
-                <tr
-                  v-for="i in movimentacoes"
-                  :key="i.id"
-                  class=" text-lg "
-                >
+              <tr v-for="i in movimentacoes" :key="i.id" class="text-lg">
                 <td class="py-2 px-2">
                   {{
                     new Date(i.horario).toLocaleDateString('pt-BR', {
@@ -108,7 +104,7 @@
                   </span>
                 </td>
 
-                <td class="p-3 font-bold" >{{ i.motivo }}</td>
+                <td class="p-3 font-bold">{{ i.motivo }}</td>
 
                 <td class="p-3">
                   <span class="font-medium">{{ i._produto.nome }}</span>
@@ -117,18 +113,23 @@
                 </td>
 
                 <td class="p-3">
-                  <span class="opacity-90">{{i.motivo === MotivoTransacoes.Transferencia ? i.localOrigem : '-'}}</span>
+                  <span class="opacity-90">{{
+                    i.motivo === MotivoTransacoes.Transferencia ? i.localOrigem : '-'
+                  }}</span>
                 </td>
 
                 <td class="p-3">
-                  <span class="opacity-90">{{i.motivo === MotivoTransacoes.Transferencia ? i.localDestino : '-'}}</span>
+                  <span class="opacity-90">{{
+                    i.motivo === MotivoTransacoes.Transferencia ? i.localDestino : '-'
+                  }}</span>
                 </td>
-                <td class="p-3 font-semibold "
-                >{{ i.quantidade }}</td>
+                <td class="p-3 font-semibold">{{ i.quantidade }}</td>
 
                 <td class="p-3 whitespace-nowrap">
                   <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-stone-300 flex items-center justify-center text-black">
+                    <div
+                      class="w-8 h-8 rounded-full bg-stone-300 flex items-center justify-center text-black"
+                    >
                       {{ i._usuario.nome[0].toUpperCase() }}
                     </div>
                     {{ i._usuario.nome }}
@@ -136,7 +137,7 @@
                 </td>
               </tr>
               <tr v-if="movimentacoes.length === 0">
-                <td colspan="7" class="p-4 text-center  opacity-60">
+                <td colspan="7" class="p-4 text-center opacity-60">
                   Nenhuma movimentação encontrada
                 </td>
               </tr>
@@ -163,7 +164,11 @@
       </div>
     </div>
   </div>
-  <NovaMoviment v-if="novaMovimentacao" v-model="novaMovimentacao" @atualizar="carregarMovimentacoesDoDia"></NovaMoviment>
+  <NovaMoviment
+    v-if="novaMovimentacao"
+    v-model="novaMovimentacao"
+    @atualizar="carregarMovimentacoesDoDia"
+  ></NovaMoviment>
 </template>
 
 <script setup lang="ts">

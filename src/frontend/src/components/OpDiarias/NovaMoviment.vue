@@ -206,9 +206,7 @@ const refLotes: Ref<{ id: string; codigo: string }[]> = ref([])
 const criarLote = ref(false)
 const novoCodigoLote = ref('')
 
-const validade = ref<string|null>(null)
-
-
+const validade = ref<string | null>(null)
 
 const refProdutos: Ref<GetConsultaProdutoDto[]> = ref([])
 
@@ -266,11 +264,11 @@ async function obterSessao() {
 // Confirmar movimentação
 async function confirmar() {
   try {
-    let loteId: string;
-    let validadeIso:string | null = null
+    let loteId: string
+    let validadeIso: string | null = null
 
     if (criarLote.value && validade.value) {
-      validadeIso = new Date(validade.value).toISOString();
+      validadeIso = new Date(validade.value).toISOString()
       const resLote = await fetch('/api/v1/lotes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -278,23 +276,21 @@ async function confirmar() {
           produtoId: produto.value?.id,
           codigo: novoCodigoLote.value,
           quantidade: 0,
-          validade: validadeIso
-        })
-      });
+          validade: validadeIso,
+        }),
+      })
 
       if (!resLote.ok) {
-        throw new Error('Erro ao criar o lote');
+        throw new Error('Erro ao criar o lote')
       }
 
-      const dataLote = await resLote.json();
+      const dataLote = await resLote.json()
       console.log(dataLote)
-      loteId = dataLote.id;
-      alert("Lote criado") // pega o ID do lote recém-criado
-    }
-    else
-    {
-      if (!lote.value) throw new Error('Nenhum lote selecionado');
-      loteId = lote.value.id;
+      loteId = dataLote.id
+      alert('Lote criado') // pega o ID do lote recém-criado
+    } else {
+      if (!lote.value) throw new Error('Nenhum lote selecionado')
+      loteId = lote.value.id
     }
 
     if (!produto.value) {
@@ -309,27 +305,24 @@ async function confirmar() {
         quantidade: quantidade.value,
         motivo: motivoSelect.value,
         produtoId: produto.value.id,
-        localOrigem: origem.value ,
-        localDestino: destino.value ,
+        localOrigem: origem.value,
+        localDestino: destino.value,
         observacao: observacao.value,
         usuarioId: usuarioId.value,
         horario: new Date().toISOString(),
-
-      })
-    });
+      }),
+    })
 
     if (!resMov.ok) {
-      throw new Error('Erro ao criar a movimentação');
+      throw new Error('Erro ao criar a movimentação')
     }
 
-    alert('Movimentação criada com sucesso!');
+    alert('Movimentação criada com sucesso!')
     emit('atualizar')
-    visivel.value = false;
-
+    visivel.value = false
   } catch (error) {
-    console.error(error);
-    alert(`Ocorreu um erro: ${(error as Error).message}`);
+    console.error(error)
+    alert(`Ocorreu um erro: ${(error as Error).message}`)
   }
 }
-
 </script>
