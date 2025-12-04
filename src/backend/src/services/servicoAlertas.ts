@@ -1,5 +1,8 @@
+import * as z4 from "zod/v4";
 import { MotivoAlerta } from "../db/enums/motivoAlerta";
-import repositorioAlertas from "../repository/repositorioAlertas";
+import repositorioAlertas, {
+  type RepoConsultaParamsAlerta,
+} from "../repository/repositorioAlertas";
 import repositorioLotes from "../repository/repositorioLotes";
 import repositorioProdutos from "../repository/repositorioProdutos";
 
@@ -19,6 +22,19 @@ export type SetAlertasDto = {
   produtoId: string;
   loteId?: string | null;
   motivo: MotivoAlerta;
+};
+
+export const ParamsConsultaAlertasZ = z4.strictObject({
+  pagina: z4.coerce.number().int().gt(0).optional(),
+  paginaTamanho: z4.coerce.number().int().gt(0).optional(),
+  comMotivo: z4.enum(MotivoAlerta).optional(),
+});
+
+export type ParamsConsultaAlertas = z4.infer<typeof ParamsConsultaAlertasZ>;
+
+export type GetConsultaAlertasDto = GetAlertasDto & {
+  _produto: { nome: string; codigo: string } | null;
+  _lote: { codigo: string } | null;
 };
 
 class ServicoAlertas {
@@ -45,6 +61,33 @@ class ServicoAlertas {
       produtoId: registro.produtoId,
       motivo: registro.motivo,
       mutadoAte: registro.mutadoAte ? registro.mutadoAte.toISOString() : null,
+    }));
+  }
+
+  async consultar(
+    opts: ParamsConsultaAlertas,
+  ): Promise<GetConsultaAlertasDto[]> {
+    const filters = {
+      comMotivo: opts?.comMotivo,
+    } as RepoConsultaParamsAlerta;
+    const consulta = await repositorioAlertas.selecionarConsulta(filters);
+    return consulta.map((registro) => ({
+      id: registro.id,
+      produtoId: registro.produtoId,
+      loteId: registro.loteId,
+      motivo: registro.motivo,
+      mutadoAte: registro.mutadoAte?.toISOString() || null,
+      _produto: registro._produto
+        ? {
+            nome: registro._produto.nome,
+            codigo: registro._produto.codigo,
+          }
+        : null,
+      _lote: registro._lote
+        ? {
+            codigo: registro._lote.codigo,
+          }
+        : null,
     }));
   }
 

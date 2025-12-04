@@ -1,13 +1,20 @@
-import { fetchW, HttpMethods } from './fetchWrapper'
-import type { GetAlertasDto } from '../../../backend'
+import type { GetAlertasDto, GetConsultaAlertasDto, ParamsConsultaAlertas } from '../../../backend'
 import { UuidParseZ } from './common'
+import { fetchW, HttpMethods } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/alertas`
 
 export class ApiAlertas {
-  obterAlertas() {
+  obter() {
     return fetchW<GetAlertasDto[]>(endpoint_path, {
       method: HttpMethods.Get,
+    })
+  }
+
+  consultar(opts?: ParamsConsultaAlertas) {
+    return fetchW<GetConsultaAlertasDto[]>(endpoint_path, {
+      method: HttpMethods.Get,
+      params: opts,
     })
   }
 
@@ -30,3 +37,7 @@ export class ApiAlertas {
     })
   }
 }
+
+const apiAlertas = new ApiAlertas()
+
+export default apiAlertas

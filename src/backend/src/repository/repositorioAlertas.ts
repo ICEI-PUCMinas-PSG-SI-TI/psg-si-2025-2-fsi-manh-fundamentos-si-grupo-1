@@ -1,13 +1,36 @@
-import { count, eq, isNull, lte, or } from "drizzle-orm";
+import {
+  and,
+  count,
+  eq,
+  getTableColumns,
+  isNull,
+  lte,
+  or,
+  SQL,
+} from "drizzle-orm";
 import bancoDados from "../db";
+import type { MotivoAlerta } from "../db/enums/motivoAlerta";
 import {
   type InsertAlertaSchema,
   type SelectAlertaSchema,
   type UpdateAlertaSchema,
   tabelaAlertas,
 } from "../db/schema/alertas";
+import { tabelaLotes } from "../db/schema/lotes";
+import { tabelaProdutos } from "../db/schema/produtos";
 import type { Count, RefRegistro } from "./common";
 import { RepositorioBase } from "./repositorioBase";
+
+export type RepoConsultaParamsAlerta = {
+  pagina?: number;
+  paginaTamanho?: number;
+  comMotivo?: MotivoAlerta;
+};
+
+export type SelectConsultaAlertasSchema = SelectAlertaSchema & {
+  _produto: { nome: string; codigo: string } | null;
+  _lote: { codigo: string } | null;
+};
 
 class RepositorioAlertas extends RepositorioBase {
   inserir(...valores: InsertAlertaSchema[]): Promise<RefRegistro[]> {
@@ -50,6 +73,43 @@ class RepositorioAlertas extends RepositorioBase {
     return bancoDados
       .select()
       .from(tabelaAlertas)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
+
+  selecionarConsulta(
+    opts?: RepoConsultaParamsAlerta,
+  ): Promise<SelectConsultaAlertasSchema[]> {
+    const comMotivo = (motivo: MotivoAlerta): SQL =>
+      eq(tabelaAlertas.motivo, motivo);
+
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
+      .select({
+        ...getTableColumns(tabelaAlertas),
+        _produto: {
+          nome: tabelaProdutos.nome,
+          codigo: tabelaProdutos.codigo,
+        },
+        _lote: {
+          codigo: tabelaLotes.codigo,
+        },
+      })
+      .from(tabelaAlertas)
+      .where(
+        and(
+          opts?.comMotivo ? comMotivo(opts.comMotivo) : undefined,
+          or(
+            isNull(tabelaAlertas.mutadoAte),
+            lte(tabelaAlertas.mutadoAte, new Date()),
+          ),
+        ),
+      )
+      .leftJoin(tabelaProdutos, eq(tabelaAlertas.produtoId, tabelaProdutos.id))
+      .leftJoin(tabelaLotes, eq(tabelaAlertas.loteId, tabelaLotes.id))
       .limit(paginaTamanho)
       .offset((pagina - 1) * paginaTamanho)
       .execute();

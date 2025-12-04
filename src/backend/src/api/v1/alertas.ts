@@ -1,6 +1,8 @@
 import { type NextFunction, type Response, Router } from "express";
 import type { ExtendedRequest } from "../../middlewares";
-import servicoAlertas from "../../services/servicoAlertas";
+import servicoAlertas, {
+  ParamsConsultaAlertasZ,
+} from "../../services/servicoAlertas";
 import { ParamsIdSchemaZ } from "./objects";
 
 const apiV1AlertasRouter = Router();
@@ -11,8 +13,14 @@ async function getAlertas(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const alertas = await servicoAlertas.listarTodos();
-    res.json(alertas);
+    if (Object.keys(req.query).length === 0) {
+      const alertas = await servicoAlertas.listarTodos();
+      res.json(alertas);
+    } else {
+      const parsedQueryParams = ParamsConsultaAlertasZ.parse(req.query);
+      const alertas = await servicoAlertas.consultar(parsedQueryParams);
+      res.json(alertas);
+    }
   } catch (err) {
     next(err);
   }
@@ -67,7 +75,7 @@ async function postVerificar(
 apiV1AlertasRouter
   .get("/", getAlertas)
   .get("/quantidade-nao-mutado", getQuantidadeAlertasAtivos)
-  .patch("/silenciar", patchSilenciarAlerta)
+  .patch("/silenciar/:id", patchSilenciarAlerta)
   .post("/verificar", postVerificar);
 
 export default apiV1AlertasRouter;

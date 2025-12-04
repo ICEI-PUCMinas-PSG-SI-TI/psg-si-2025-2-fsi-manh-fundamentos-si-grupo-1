@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import apiAlertas from '@/api/alertas'
 import { useSessaoStore } from '@/store/config/sessao'
 import {
   ArchiveBoxIcon,
   ArrowsUpDownIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
+  MegaphoneIcon,
   UsersIcon,
 } from '@heroicons/vue/24/outline'
-import { computed } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 import { Permissoes } from '../../../backend'
 import DarkModeToggle from './DarkModeToggle.vue'
 import LogoMenuItem from './LogoMenuItem.vue'
@@ -17,6 +19,16 @@ import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
 const useSessao = useSessaoStore()
 const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador))
 const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor))
+const quantidadeAlertas: Ref<number> = ref(0)
+
+async function atualizarQuantidadeAlertas() {
+  const res = await apiAlertas.obterQuantidadeAtivos()
+  if (res.ok && res.responseBody) {
+    quantidadeAlertas.value = res.responseBody.quantidade
+  }
+}
+
+onMounted(() => atualizarQuantidadeAlertas())
 </script>
 
 <template>
@@ -44,6 +56,20 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
           <ArchiveBoxIcon class="m-2" />
           Produtos
+        </NavigationMenuItem>
+      </RouterLink>
+
+      <RouterLink to="/alertas" v-slot="{ href, navigate, isActive }" custom>
+        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
+          <MegaphoneIcon class="m-2" />
+          Alertas
+          <span
+            v-if="quantidadeAlertas >= 0"
+            class="badge badge-xs"
+            :class="{ 'bg-green-700 text-white': !isActive }"
+          >
+            {{ quantidadeAlertas }}
+          </span>
         </NavigationMenuItem>
       </RouterLink>
 
