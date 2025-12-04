@@ -7,6 +7,7 @@ import {
   eq,
   getTableColumns,
   gte,
+  isNotNull,
   like,
   lte,
   or,
@@ -151,6 +152,41 @@ class RepositorioProdutos extends RepositorioBase {
       .from(tabelaProdutos)
       .where(eq(tabelaProdutos.unidadeMedidaId, id))
       .get();
+  }
+
+  selecionarQuantidadesAlertas(): Promise<
+    {
+      id: string;
+      quantidadeMinima: number | null;
+      quantidadeMaxima: number | null;
+      quantidade: number;
+    }[]
+  > {
+    return bancoDados
+      .select({
+        id: tabelaProdutos.id,
+        quantidadeMinima: tabelaProdutos.quantidadeMinima,
+        quantidadeMaxima: tabelaProdutos.quantidadeMaxima,
+        quantidade: sql<number>`sum(${tabelaLotes.quantidade})`.as(
+          "quantidade_total",
+        ),
+      })
+      .from(tabelaProdutos)
+      .leftJoin(tabelaLotes, eq(tabelaProdutos.id, tabelaLotes.produtoId))
+      .groupBy(tabelaProdutos.id)
+      .having(
+        or(
+          and(
+            isNotNull(tabelaProdutos.quantidadeMinima),
+            gte(tabelaProdutos.quantidadeMinima, sql`quantidade_total`),
+          ),
+          and(
+            isNotNull(tabelaProdutos.quantidadeMaxima),
+            lte(tabelaProdutos.quantidadeMaxima, sql`quantidade_total`),
+          ),
+        ),
+      )
+      .execute();
   }
 
   selecionarConsulta(

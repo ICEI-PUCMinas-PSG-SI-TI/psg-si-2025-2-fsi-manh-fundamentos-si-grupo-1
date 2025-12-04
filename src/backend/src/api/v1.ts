@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Permissoes } from "../db/enums/permissoes";
 import { mdwPermissoes } from "../middlewares";
 import apiV1Admin from "./v1/admin";
+import apiV1Alertas from "./v1/alertas";
 import apiV1Categorias from "./v1/categorias";
 import apiV1Configuracoes from "./v1/configuracoes";
 import apiV1Dev from "./v1/dev";
@@ -34,6 +35,9 @@ apiV1Router.use("/transacoes", apiV1Transacoes);
 
 // {host}/papi/v1/produtos
 apiV1Router.use("/produtos", apiV1Produtos);
+
+// {host}/papi/v1/alertas
+apiV1Router.use("/alertas", apiV1Alertas);
 
 // {host}/api/v1/admin
 // TODO: Verificar se usuário tem permissões de alterar permissões

@@ -1,4 +1,5 @@
 import { sessao } from '@/main'
+import MotivoAlertaView from '@/views/AlertasView.vue'
 import CadastroUsuariosView from '@/views/CadastroUsuariosView.vue'
 import ConfiguracoesView from '@/views/ConfiguracoesView.vue'
 import DesenvolvedorView from '@/views/DesenvolvedorView.vue'
@@ -51,6 +52,14 @@ const router = createRouter({
       name: 'produtos',
       path: '/produtos',
       component: PesquisaProdutosView,
+      meta: {
+        requerAutenticacao: true,
+      },
+    },
+    {
+      name: 'alertas',
+      path: '/alertas',
+      component: MotivoAlertaView,
       meta: {
         requerAutenticacao: true,
       },
