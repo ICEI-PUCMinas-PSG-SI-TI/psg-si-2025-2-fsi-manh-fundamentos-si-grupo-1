@@ -49,7 +49,7 @@ obterUnidadesMedida()
 <template>
   <CardComponent class="mb-4">
     <CardTitleBar title="Unidades de medida" />
-    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full gap-4">
+    <div class="grid w-full grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
       <div class="xl:col-span-1">
         <LabeledInput
           class="w-full"
@@ -59,7 +59,7 @@ obterUnidadesMedida()
           v-model="refNovaUnidadeMedida.nome"
         />
         <LabeledInput
-          class="w-full mb-4"
+          class="mb-4 w-full"
           html-type="text"
           label-text="Abreviação"
           html-place-holder="Abreviação"
@@ -71,7 +71,7 @@ obterUnidadesMedida()
       </div>
       <div class="xl:col-span-2">
         <p
-          class="flex size-full text-center m-auto justify-center items-center"
+          class="m-auto flex size-full items-center justify-center text-center"
           v-if="refUnidadesMedida.length === 0"
         >
           Não há unidades de medida.

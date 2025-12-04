@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full min-h-full">
+  <div class="min-h-full w-full">
     <h1 class="m-15 mt-7 text-6xl font-bold">Operações Diárias</h1>
-    <div class="bg-base-200 m-12 pt-2 pb-1 rounded-2xl overflow-auto flex flex-col h-[83vh]">
+    <div class="bg-base-200 m-12 flex h-[83vh] flex-col overflow-auto rounded-2xl pt-2 pb-1">
       <!--Compras, vendas e filtrar por data-->
-      <div class="flex flex-row gap-8 m-6">
+      <div class="m-6 flex flex-row gap-8">
         <button
           @click="ativarCompra"
-          class="flex bg-stone-700 p-4 rounded-lg items-center cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
+          class="flex transform cursor-pointer items-center rounded-lg bg-stone-700 p-4 transition-transform duration-200 hover:scale-105 hover:bg-stone-700"
           :class="botaoAtivoC === true ? 'scale-104' : ''"
         >
           <ShoppingCartIcon
@@ -19,7 +19,7 @@
         </button>
         <button
           @click="ativarVenda"
-          class="flex bg-stone-700 p-4 rounded-lg items-center cursor-pointer hover:bg-stone-700 transition-transform duration-200 transform hover:scale-105"
+          class="flex transform cursor-pointer items-center rounded-lg bg-stone-700 p-4 transition-transform duration-200 hover:scale-105 hover:bg-stone-700"
           :class="botaoAtivoV === true ? 'scale-104' : ''"
         >
           <ShoppingBagIcon
@@ -27,48 +27,48 @@
             :class="botaoAtivoV === true ? 'text-green-500' : 'text-white'"
           >
           </ShoppingBagIcon>
-          <span class="text ml-6" :class="botaoAtivoV === true ? 'text-green-500 ' : 'text-white'"
+          <span class="text ml-6" :class="botaoAtivoV === true ? 'text-green-500' : 'text-white'"
             >Vendas</span
           >
         </button>
 
-        <div class="flex flex-col bg-stone-700 p-4 rounded-lg flex-1 items-center justify-center">
-          <span class="text font-medium mb-4 text-white">Filtrar por data</span>
+        <div class="flex flex-1 flex-col items-center justify-center rounded-lg bg-stone-700 p-4">
+          <span class="text mb-4 font-medium text-white">Filtrar por data</span>
           <input
             type="date"
             v-model="dataSelecionada"
             @change="carregarMovimentacoesDoDia"
-            class="input input-bordered w-70 px-2 rounded-lg"
+            class="input input-bordered w-70 rounded-lg px-2"
           />
         </div>
       </div>
       <!--div buscar produto, nova movimentação e histórico-->
-      <div class="bg-stone-700 m-6 rounded-2xl pt-1 flex flex-col h-[70vh]">
+      <div class="m-6 flex h-[70vh] flex-col rounded-2xl bg-stone-700 pt-1">
         <!--Buscar Produto e Nova Movimentação-->
-        <div class="m-6 flex justify-between items-center mb-6">
+        <div class="m-6 mb-6 flex items-center justify-between">
           <div class="relative w-80">
             <input
               type="text"
               v-model="produtoFiltro"
               @input="carregarMovimentacoesDoDia"
               placeholder="BUSCAR PRODUTO..."
-              class="w-full px-10 py-2 rounded-3xl bg-white text-black focus:outline-none"
+              class="w-full rounded-3xl bg-white px-10 py-2 text-black focus:outline-none"
             />
-            <MagnifyingGlassIcon class="w-6 text-black absolute left-2 top-1/2 -translate-y-1/2" />
+            <MagnifyingGlassIcon class="absolute top-1/2 left-2 w-6 -translate-y-1/2 text-black" />
           </div>
           <button
-            class="bg-white w-60 flex text-black font-semibold px-4 py-2 rounded-xl transition-tranform duration-100 transform hover:scale-103 cursor-pointer"
+            class="transition-tranform flex w-60 transform cursor-pointer rounded-xl bg-white px-4 py-2 font-semibold text-black duration-100 hover:scale-103"
             @click="novaMovimentacao = true"
           >
-            <PlusIcon class="w-5 mr-2"></PlusIcon> NOVA MOVIMENTAÇÃO
+            <PlusIcon class="mr-2 w-5"></PlusIcon> NOVA MOVIMENTAÇÃO
           </button>
         </div>
 
         <div class="m-6 flex-1 overflow-y-auto">
-          <h3 class="m-6 text-3xl font-semibold mb-2 text-white">Histórico</h3>
-          <table class="w-full text-left border-t border-white">
+          <h3 class="m-6 mb-2 text-3xl font-semibold text-white">Histórico</h3>
+          <table class="w-full border-t border-white text-left">
             <thead class="sticky z-10 text-white">
-              <tr class="text-white text-2xl">
+              <tr class="text-2xl text-white">
                 <th class="py-2">Hora</th>
                 <th class="py-2">Tipo</th>
                 <th class="py-2">Produto</th>

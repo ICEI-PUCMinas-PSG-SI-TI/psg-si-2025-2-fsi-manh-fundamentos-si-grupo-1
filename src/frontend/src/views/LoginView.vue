@@ -1,40 +1,40 @@
 <template>
-  <div class="relative flex justify-center items-center w-full h-full overflow-hidden p-4">
+  <div class="relative flex h-full w-full items-center justify-center overflow-hidden p-4">
     <div class="relative w-full max-w-md sm:max-w-lg lg:max-w-xl xl:-mt-16">
       <LogoLoginItem
-        class="absolute -top-5 left-1/2 transform -translate-x-1/2 w-30 h-45 sm:w-45 md:w-42 md:h-45"
+        class="absolute -top-5 left-1/2 h-45 w-30 -translate-x-1/2 transform sm:w-45 md:h-45 md:w-42"
       />
 
       <!-- Formulário -->
       <div class="flex justify-center">
         <form
           @submit.prevent="login"
-          class="w-105 pt-25 mt-20 bg-gray-300 bg-opacity-90 rounded-3xl shadow-xl p-8 flex flex-col gap-4 text-white"
+          class="bg-opacity-90 mt-20 flex w-105 flex-col gap-4 rounded-3xl bg-gray-300 p-8 pt-25 text-white shadow-xl"
         >
           <!-- Usuário -->
           <div
-            class="flex items-center bg-neutral-600 rounded- px-3 py-2 focus-within:rin transition rounded"
+            class="rounded- focus-within:rin flex items-center rounded bg-neutral-600 px-3 py-2 transition"
           >
-            <UserIcon class="w-6 h-7 mr-2 text-white" />
+            <UserIcon class="mr-2 h-7 w-6 text-white" />
             <input
               v-model="refFormulario.usuario"
               type="text"
               placeholder="Usuário"
-              class="bg-transparent outline-none flex-1 text-white placeholder-gray-400"
+              class="flex-1 bg-transparent text-white placeholder-gray-400 outline-none"
               required
             />
           </div>
 
           <!-- Senha -->
           <div
-            class="flex items-center bg-neutral-600 px-3 py-2 focus-within:rin transition rounded"
+            class="focus-within:rin flex items-center rounded bg-neutral-600 px-3 py-2 transition"
           >
-            <LockClosedIcon class="w-6 h-7 mr-2 text-white" />
+            <LockClosedIcon class="mr-2 h-7 w-6 text-white" />
             <input
               v-model="refFormulario.senha"
               :type="mostrarSenha ? 'text' : 'password'"
               placeholder="Senha"
-              class="bg-transparent outline-none flex-1 text-white placeholder-gray-400"
+              class="flex-1 bg-transparent text-white placeholder-gray-400 outline-none"
               required
             />
           </div>
@@ -47,12 +47,12 @@
             </label>
           </fieldset>
 
-          <p v-if="erro" class="text-red-500 mt-2 text-center text-sm sm:text-base">{{ erro }}</p>
+          <p v-if="erro" class="mt-2 text-center text-sm text-red-500 sm:text-base">{{ erro }}</p>
 
           <!-- Botão -->
           <button
             type="submit"
-            class="shadow-xl cursor-pointer mt-4 w-full bg-green-700 text-white font-bold py-2 transition transform hover:scale-105 rounded"
+            class="mt-4 w-full transform cursor-pointer rounded bg-green-700 py-2 font-bold text-white shadow-xl transition hover:scale-105"
           >
             Login
           </button>

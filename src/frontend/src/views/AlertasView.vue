@@ -1,8 +1,8 @@
 <template>
-  <div class="p-6 w-full flex flex-col gap-4">
+  <div class="flex w-full flex-col gap-4 p-6">
     <!-- HEADER -->
-    <div class="flex justify-between items-center">
-      <div class="tracking-wide flex items-center gap-2">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2 tracking-wide">
         <ExclamationTriangleIcon class="h-6 w-6 text-red-500" />
         <p class="text-base-content text-2xl font-semibold">ALERTAS</p>
       </div>
@@ -13,8 +13,8 @@
     </div>
     <!-- FILTRO POR MOTIVO -->
     <div class="flex items-center gap-4">
-      <label class="font-medium text-base-content">Filtrar por motivo:</label>
-      <select v-model="filtroMotivo" @change="obterAlertas" class="border rounded px-3 py-1">
+      <label class="text-base-content font-medium">Filtrar por motivo:</label>
+      <select v-model="filtroMotivo" @change="obterAlertas" class="rounded border px-3 py-1">
         <option :value="null">Todos</option>
         <option :value="MotivoAlerta.Validade">Perto da validade</option>
         <option :value="MotivoAlerta.QuantidadeMaxima">Estoque acima do máximo</option>
@@ -22,8 +22,8 @@
       </select>
     </div>
     <!-- TABLE WRAPPER -->
-    <div class="shadow rounded-2xl overflow-hidden border border-base-200 mt-4">
-      <table class="w-full text-left bg-base-200">
+    <div class="border-base-200 mt-4 overflow-hidden rounded-2xl border shadow">
+      <table class="bg-base-200 w-full text-left">
         <thead class="text-sm uppercase">
           <tr>
             <th class="px-6 py-3">Nome</th>
@@ -33,7 +33,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="a in alertas" :key="a.id" class="border-t hover:bg-base-100 transition">
+          <tr v-for="a in alertas" :key="a.id" class="hover:bg-base-100 border-t transition">
             <!-- DADOS -->
             <td class="px-6 py-4">{{ a._produto?.nome || a.produtoId }}</td>
             <td class="px-6 py-4">
@@ -59,19 +59,19 @@
               <template v-else> N/A </template>
             </td>
             <!-- AÇÕES: BOTÕES BONITOS -->
-            <td class="px-6 py-4 flex justify-center gap-2">
+            <td class="flex justify-center gap-2 px-6 py-4">
               <div class="tooltip" data-tip="Ignorar alerta por 24 horas">
                 <button
                   @click="silenciar(a.id)"
-                  class="flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition"
+                  class="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-gray-700 transition hover:bg-gray-200"
                 >
-                  <BellSlashIcon class="w-4 h-4" /> Ignorar
+                  <BellSlashIcon class="h-4 w-4" /> Ignorar
                 </button>
               </div>
               <button
-                class="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200 transition"
+                class="flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-blue-800 transition hover:bg-blue-200"
               >
-                <PencilSquareIcon class="w-4 h-4" /> Visualizar
+                <PencilSquareIcon class="h-4 w-4" /> Visualizar
               </button>
             </td>
           </tr>

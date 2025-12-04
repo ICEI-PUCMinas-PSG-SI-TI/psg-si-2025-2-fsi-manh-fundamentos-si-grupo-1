@@ -9,8 +9,8 @@ import DevCardUsuarios from '@/components/dev/DevCardUsuarios.vue'
 </script>
 
 <template>
-  <div class="flex flex-col p-3 w-full">
-    <div class="card bg-base-100 border-2 border-base-300 mb-4">
+  <div class="flex w-full flex-col p-3">
+    <div class="card bg-base-100 border-base-300 mb-4 border-2">
       <div class="card-body">
         <!-- TODO: Inserir o conteúdo dentro do title? -->
         <CardTitleBar title="Ferramentas de Desenvolvedor/Testes" class="mb-3" />
@@ -27,7 +27,7 @@ import DevCardUsuarios from '@/components/dev/DevCardUsuarios.vue'
         </div>
       </div>
     </div>
-    <div class="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div class="grid w-full grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
       <DevCardProdutos />
       <DevCardMovimentacoes />
       <DevCardUsuarios />

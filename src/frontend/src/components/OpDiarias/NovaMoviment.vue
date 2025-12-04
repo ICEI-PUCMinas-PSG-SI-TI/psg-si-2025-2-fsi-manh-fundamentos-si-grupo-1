@@ -1,13 +1,13 @@
 <template>
-  <div class="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-md z-50 p-4">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md">
     <CardComponent
-      class="w-full max-w-xl p-6 bg-base-200 rounded-2xl shadow-xl border border-gray-300"
+      class="bg-base-200 w-full max-w-xl rounded-2xl border border-gray-300 p-6 shadow-xl"
     >
       <!-- Título -->
       <CardTitleBar title="Inserir Nova Movimentação" />
 
       <!-- Formulário -->
-      <form class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      <form class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <LabeledInput
           class="w-full"
           html-type="text"
@@ -47,17 +47,17 @@
       </form>
 
       <!-- Mensagem de erro -->
-      <p class="text-red-500 text-center mt-3">{{}}</p>
+      <p class="mt-3 text-center text-red-500">{{}}</p>
 
       <!-- Botões -->
-      <div class="flex justify-end gap-4 mt-6">
+      <div class="mt-6 flex justify-end gap-4">
         <ButtonComponent
-          class="bg-red-500 text-white hover:bg-red-600 transition-colors"
+          class="bg-red-500 text-white transition-colors hover:bg-red-600"
           @click="visivel = false"
         >
           Cancelar
         </ButtonComponent>
-        <ButtonComponent class="bg-green-500 text-white hover:bg-green-600 transition-colors">
+        <ButtonComponent class="bg-green-500 text-white transition-colors hover:bg-green-600">
           Confirmar
         </ButtonComponent>
       </div>

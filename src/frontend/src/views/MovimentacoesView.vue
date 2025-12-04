@@ -1,18 +1,18 @@
 <template>
-  <div class="flex flex-col h-full w-full p-4 overflow-y-auto">
-    <div class="shrink-0 p-2 mb-4">
-      <h3 class="text-lg font-semibold mb-2">Filtrar por Data</h3>
+  <div class="flex h-full w-full flex-col overflow-y-auto p-4">
+    <div class="mb-4 shrink-0 p-2">
+      <h3 class="mb-2 text-lg font-semibold">Filtrar por Data</h3>
       <div class="flex gap-2">
         <input type="date" v-model="dataInicio" class="input input-bordered" />
         <input type="date" v-model="dataFim" class="input input-bordered" />
       </div>
     </div>
 
-    <div class="flex card card-border bg-base-200 h-full w-full">
-      <div class="card-body flex-col h-full gap-4">
+    <div class="card card-border bg-base-200 flex h-full w-full">
+      <div class="card-body h-full flex-col gap-4">
         <h2 class="text-left text-4xl font-bold">Histórico de Transações</h2>
         <MovTable :movimentacoes="transacoesPaginadas" class="flex-1 overflow-y-auto" />
-        <div class="flex justify-end items-center gap-2 join">
+        <div class="join flex items-center justify-end gap-2">
           <button
             class="join-item btn btn-neutral"
             :class="paginaAtual === 1 ? 'btn-disabled' : 'border-base-content'"

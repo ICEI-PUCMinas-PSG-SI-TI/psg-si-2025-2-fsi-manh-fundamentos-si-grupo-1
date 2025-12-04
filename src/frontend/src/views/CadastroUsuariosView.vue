@@ -1,19 +1,19 @@
 <template>
-  <div class="w-full min-h-full p-6 overflow-x-hidden">
-    <h1 class="text-5xl font-bold mb-4">Cadastro de usuários</h1>
+  <div class="min-h-full w-full overflow-x-hidden p-6">
+    <h1 class="mb-4 text-5xl font-bold">Cadastro de usuários</h1>
 
     <!-- Formulário -->
-    <div class="bg-base-200 p-6 rounded-2xl mb-8">
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-base-200 mb-8 rounded-2xl p-6">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <!--Primeira coluna-->
-        <div class="flex flex-col gap-4 h-full justify-end-safe">
-          <h1 class="text-2xl mb-2">{{ editando ? 'Editando usuário' : 'Novo usuário' }}</h1>
+        <div class="flex h-full flex-col justify-end-safe gap-4">
+          <h1 class="mb-2 text-2xl">{{ editando ? 'Editando usuário' : 'Novo usuário' }}</h1>
           <p v-if="editando">{{ usuarioId }}</p>
           <div class="flex flex-col items-center">
             <img
               :src="usuarioFoto || '/src/assets/profile.png'"
               alt="avatar"
-              class="w-24 h-24 rounded-full object-cover"
+              class="h-24 w-24 rounded-full object-cover"
             />
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Escolha uma imagem</legend>
@@ -59,10 +59,10 @@
         </div>
 
         <!-- Coluna Permissões -->
-        <div class="flex flex-col h-full justify-center">
-          <h2 class="text-xl font-semibold mb-4 flex flex-col items-center">Permissões</h2>
+        <div class="flex h-full flex-col justify-center">
+          <h2 class="mb-4 flex flex-col items-center text-xl font-semibold">Permissões</h2>
           <div class="flex flex-col gap-1">
-            <label class="flex flex-row justify-start items-center">
+            <label class="flex flex-row items-center justify-start">
               <input
                 type="radio"
                 v-model="permissoes"
@@ -73,9 +73,9 @@
               />
               Administrador
             </label>
-            <p class="text-sm mb-2">Acesso total ao sistema.</p>
+            <p class="mb-2 text-sm">Acesso total ao sistema.</p>
 
-            <label class="flex flex-row justify-start items-center">
+            <label class="flex flex-row items-center justify-start">
               <input
                 type="radio"
                 v-model="permissoes"
@@ -85,11 +85,11 @@
               />
               Operacional
             </label>
-            <p class="text-sm mb-2">
+            <p class="mb-2 text-sm">
               Permite realizar movimentações, visualizar e cadastrar produtos.
             </p>
 
-            <label class="flex flex-row justify-start items-center">
+            <label class="flex flex-row items-center justify-start">
               <input
                 type="radio"
                 v-model="permissoes"
@@ -106,13 +106,13 @@
         <div class="m-auto">
           <div class="flex flex-col items-end gap-4">
             <button
-              class="text-white btn bg-green-600 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              class="btn w-32 rounded-4xl bg-green-600 text-white transition-transform duration-100 hover:scale-105"
               @click="confirmar"
             >
               Confirmar
             </button>
             <button
-              class="text-white btn bg-red-500 w-32 rounded-4xl hover:scale-105 transition-transform duration-100"
+              class="btn w-32 rounded-4xl bg-red-500 text-white transition-transform duration-100 hover:scale-105"
               @click="limparCampos"
             >
               Cancelar
@@ -123,7 +123,7 @@
     </div>
 
     <!-- Lista de usuários -->
-    <div class="flex flex-col gap-4 w-full">
+    <div class="flex w-full flex-col gap-4">
       <InfoUsuario
         :nome="usuario.nome"
         :login="usuario.login"

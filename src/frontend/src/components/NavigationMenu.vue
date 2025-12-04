@@ -32,8 +32,8 @@ onMounted(() => atualizarQuantidadeAlertas())
 </script>
 
 <template>
-  <div class="h-full bg-base-200 top-0 overflow-y-auto sticky w-full">
-    <ul class="flex flex-col menu menu-lg w-full min-h-full">
+  <div class="bg-base-200 sticky top-0 h-full w-full overflow-y-auto">
+    <ul class="menu menu-lg flex min-h-full w-full flex-col">
       <LogoMenuItem class="mb-2" />
 
       <NavigationMenuItemSeparator />

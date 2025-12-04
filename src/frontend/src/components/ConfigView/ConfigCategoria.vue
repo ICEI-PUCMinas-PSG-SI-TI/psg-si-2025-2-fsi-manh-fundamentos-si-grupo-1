@@ -45,8 +45,8 @@ obterCategorias()
 <template>
   <CardComponent class="mb-4">
     <CardTitleBar title="Categorias" />
-    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 w-full gap-4">
-      <div class="flex flex-col w-full mb-4 gap-4 items-end xl:col-span-1">
+    <div class="grid w-full grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+      <div class="mb-4 flex w-full flex-col items-end gap-4 xl:col-span-1">
         <LabeledInput
           class="w-full"
           html-type="text"
@@ -58,7 +58,7 @@ obterCategorias()
       </div>
       <div class="xl:col-span-2">
         <p
-          class="flex size-full text-center m-auto justify-center items-center"
+          class="m-auto flex size-full items-center justify-center text-center"
           v-if="refCategorias.length === 0"
         >
           Não há categorias.

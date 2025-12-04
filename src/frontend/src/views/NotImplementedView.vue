@@ -3,7 +3,7 @@ import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 </script>
 
 <template>
-  <div class="flex flex-col h-full w-full items-center justify-center m-auto">
+  <div class="m-auto flex h-full w-full flex-col items-center justify-center">
     <ExclamationTriangleIcon class="size-12 text-red-500" />
     <p>Essa View ainda não foi implementada!</p>
   </div>
