@@ -2,14 +2,18 @@
   <div class="p-6 w-full flex flex-col gap-4">
     <!-- HEADER -->
     <div class="flex justify-between items-center">
-      <h1 class="text-lg font-semibold text-gray-700 tracking-wide flex items-center gap-2">
+      <div class="tracking-wide flex items-center gap-2">
         <ExclamationTriangleIcon class="h-6 w-6 text-red-500" />
-        <p class="text-2xl">ALERTAS</p>
-      </h1>
+        <p class="text-base-content text-2xl font-semibold">ALERTAS</p>
+      </div>
+      <button class="btn btn-outline btn-info">
+        <ArrowPathIcon class="size-4" />
+        Verificar
+      </button>
     </div>
     <!-- FILTRO POR MOTIVO -->
     <div class="flex items-center gap-4">
-      <label class="font-medium text-gray-700">Filtrar por motivo:</label>
+      <label class="font-medium text-base-content">Filtrar por motivo:</label>
       <select v-model="filtroMotivo" @change="obterAlertas" class="border rounded px-3 py-1">
         <option :value="null">Todos</option>
         <option :value="MotivoAlerta.Validade">Perto da validade</option>
@@ -18,9 +22,9 @@
       </select>
     </div>
     <!-- TABLE WRAPPER -->
-    <div class="bg-white shadow rounded-2xl overflow-hidden border border-gray-200 mt-4">
-      <table class="w-full text-left">
-        <thead class="bg-gray-50 text-gray-600 text-sm uppercase">
+    <div class="shadow rounded-2xl overflow-hidden border border-base-200 mt-4">
+      <table class="w-full text-left bg-base-200">
+        <thead class="text-sm uppercase">
           <tr>
             <th class="px-6 py-3">Nome</th>
             <th class="px-6 py-3">Motivo</th>
@@ -29,7 +33,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="a in alertas" :key="a.id" class="border-t hover:bg-gray-50 transition">
+          <tr v-for="a in alertas" :key="a.id" class="border-t hover:bg-base-100 transition">
             <!-- DADOS -->
             <td class="px-6 py-4">{{ a._produto?.nome || a.produtoId }}</td>
             <td class="px-6 py-4">
@@ -80,7 +84,12 @@
 <script setup lang="ts">
 import apiAlertas from '@/api/alertas'
 import { notificacoes } from '@/main'
-import { BellSlashIcon, ExclamationTriangleIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
+import {
+  ArrowPathIcon,
+  BellSlashIcon,
+  ExclamationTriangleIcon,
+  PencilSquareIcon,
+} from '@heroicons/vue/24/outline'
 import { onMounted, ref, type Ref } from 'vue'
 import {
   MotivoAlerta,
