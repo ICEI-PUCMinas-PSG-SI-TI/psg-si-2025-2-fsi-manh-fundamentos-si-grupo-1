@@ -6,7 +6,7 @@ const props = defineProps<{
   foto?: string | null
   nome: string
   login: string
-  descricao?: string
+  descricao?: string | null
   habilitado: boolean
 }>()
 const habilitadoCheked = ref(props.habilitado)
