@@ -9,46 +9,50 @@
       <div class="flex justify-center">
         <form
           @submit.prevent="login"
-          class="w-105 h-100 pt-25 mt-20 bg-gray-300 bg-opacity-90 rounded-3xl shadow-xl p-8 flex flex-col gap-4 text-white"
+          class="w-105 pt-25 mt-20 bg-gray-300 bg-opacity-90 rounded-3xl shadow-xl p-8 flex flex-col gap-4 text-white"
         >
           <!-- Usuário -->
           <div
-            class="flex items-center bg-neutral-600 rounded- px-3 py-2 focus-within:rin transition"
+            class="flex items-center bg-neutral-600 rounded- px-3 py-2 focus-within:rin transition rounded"
           >
             <UserIcon class="w-6 h-7 mr-2 text-white" />
             <input
               v-model="refFormulario.usuario"
               type="text"
-              placeholder="USUÁRIO"
+              placeholder="Usuário"
               class="bg-transparent outline-none flex-1 text-white placeholder-gray-400"
               required
             />
           </div>
 
           <!-- Senha -->
-          <div class="flex items-center bg-neutral-600 px-3 py-2 focus-within:rin transition">
+          <div
+            class="flex items-center bg-neutral-600 px-3 py-2 focus-within:rin transition rounded"
+          >
             <LockClosedIcon class="w-6 h-7 mr-2 text-white" />
             <input
               v-model="refFormulario.senha"
               :type="mostrarSenha ? 'text' : 'password'"
-              placeholder="SENHA"
+              placeholder="Senha"
               class="bg-transparent outline-none flex-1 text-white placeholder-gray-400"
               required
             />
           </div>
 
           <!-- Checkbox para mostrar senha -->
-          <div class="flex items-center">
-            <input type="checkbox" id="mostrarSenha" class="mr-2" v-model="mostrarSenha" />
-            <label for="mostrarSenha" class="text-gray-700 cursor-pointer">Mostrar senha</label>
-          </div>
+          <fieldset class="fieldset rounded-box w-64">
+            <label class="label text-gray-700">
+              <input type="checkbox" class="checkbox checkbox-neutral" v-model="mostrarSenha" />
+              Mostrar senha
+            </label>
+          </fieldset>
 
           <p v-if="erro" class="text-red-500 mt-2 text-center text-sm sm:text-base">{{ erro }}</p>
 
           <!-- Botão -->
           <button
             type="submit"
-            class="shadow-xl cursor-pointer mt-4 w-full bg-rose-600 text-white font-bold py-2 transition transform hover:scale-105"
+            class="shadow-xl cursor-pointer mt-4 w-full bg-green-700 text-white font-bold py-2 transition transform hover:scale-105 rounded"
           >
             Login
           </button>
