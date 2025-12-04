@@ -1,31 +1,32 @@
 // ENUMs
 
-export { Permissoes } from "./src/db/enums/permissoes";
 export { Identificador } from "./src/db/enums/identificador";
+export { Permissoes } from "./src/db/enums/permissoes";
 export { StatusProduto } from "./src/db/enums/statusProduto";
 
 // DTOs
 
 export type {
-  SetLoteDTO,
-  GetLoteDTO,
-  UpdateLoteDTO,
   ConsultaLoteParams,
+  GetLoteDTO,
+  SetLoteDTO,
+  UpdateLoteDTO,
 } from "./src/services/servicoLotes";
 
 export type {
-  SetCategoriaDTO,
   GetCategoriaDTO,
+  SetCategoriaDTO,
 } from "./src/services/servicoCategorias";
 
 export type {
-  SetUnidadeDTO,
   GetUnidadeDto,
+  SetUnidadeDTO,
 } from "./src/services/servicoUnidadesMedida";
 
 export type {
   GetUsuarioDto,
   GetUsuarioSimplesDto as GetUsuarioSimplesDTO,
+  SetPerfilDto,
   SetUsuarioDto,
   UpdateUsuarioDto,
 } from "./src/services/servicoUsuarios";
@@ -38,15 +39,14 @@ export type {
 export type { GetSessaoDto } from "./src/services/servicoAutenticacao";
 
 export type {
-  GetProdutoDto,
-  SetProdutoDto,
-  ParamsConsultaProdutos,
   GetConsultaProdutoDto,
+  GetProdutoDto,
+  ParamsConsultaProdutos,
+  SetProdutoDto,
 } from "./src/services/servicoProdutos";
 
 export type {
-  GetMovimentacaoDto,
-  GetConsultaMovimentacaoDto,
   ConsultaMovimentacoesParams,
+  GetConsultaMovimentacaoDto,
+  GetMovimentacaoDto,
 } from "./src/services/servicoTransacoes";
-

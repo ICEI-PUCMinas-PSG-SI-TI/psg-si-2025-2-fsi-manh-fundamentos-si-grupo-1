@@ -3,6 +3,7 @@ import type { Identificador } from "../db/enums/identificador";
 import { StatusProduto } from "../db/enums/statusProduto";
 import { configurarGerador, geradorCodigo } from "../db/geradorCodigos";
 import { HttpError } from "../error";
+import { z4Base64File } from "../helpers";
 import { debug } from "../logging";
 import repositorioProdutos, {
   type RepoConsultaParamsProdutoQuantidade,
@@ -26,7 +27,7 @@ export const SetProdutoDtoZ = z4.object({
   quantidadeMinima: z4.number().nullable(),
   quantidadeMaxima: z4.number().nullable(),
   localizacao: z4.string().nullable(),
-  imagem: z4.base64(),
+  imagem: z4Base64File,
   status: z4.enum(StatusProduto),
 });
 
@@ -51,7 +52,7 @@ export const GetProdutoDtoZ = z4.object({
   quantidadeMinima: z4.number().nullable(),
   quantidadeMaxima: z4.number().nullable(),
   localizacao: z4.string().nullable(),
-  imagem: z4.base64(),
+  imagem: z4Base64File,
   status: z4.enum(StatusProduto),
 });
 

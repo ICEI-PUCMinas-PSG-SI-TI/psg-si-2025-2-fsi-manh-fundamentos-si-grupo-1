@@ -3,7 +3,7 @@ import { PencilIcon, TrashIcon, UserCircleIcon } from '@heroicons/vue/24/outline
 import { ref } from 'vue'
 
 const props = defineProps<{
-  foto?: string
+  foto?: string | null
   nome: string
   login: string
   descricao?: string
@@ -18,8 +18,12 @@ defineEmits(['editar', 'desabilitar', 'excluir'])
     <div class="flex items-center gap-3">
       <div class="avatar">
         <div class="rounded-full w-12 h-12">
-          <img v-if="foto" :src="foto" alt="Avatar" />
-          <UserCircleIcon />
+          <UserCircleIcon v-if="!foto" />
+          <img
+            v-if="foto"
+            class="avatar rounded-full border object-cover w-full h-full"
+            :src="foto"
+          />
         </div>
       </div>
       <div>

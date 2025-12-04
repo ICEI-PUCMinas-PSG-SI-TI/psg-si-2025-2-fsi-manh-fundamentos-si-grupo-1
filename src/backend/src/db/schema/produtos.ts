@@ -2,6 +2,7 @@ import { type InferSelectModel } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
+import { z4Base64File } from "../../helpers";
 import { StatusProduto } from "../enums/statusProduto";
 import { tabelaCategorias } from "./categorias";
 import { tabelaUnidadesMedida } from "./unidadesMedida";
@@ -71,7 +72,7 @@ export const UpdateProdutosSchemaZ = z4.strictObject({
   quantidadeMinima: z4.int().optional(),
   quantidadeMaxima: z4.int().optional(),
   localizacao: z4.string().optional(),
-  imagem: z4.base64().optional(),
+  imagem: z4Base64File.optional(),
   status: z4
     .enum([
       StatusProduto.Ativo,
@@ -85,7 +86,7 @@ export const UpdateProdutosSchemaZ = z4.strictObject({
 // Os campos de inserção podem ser inferidos. Alguns deles podem ser adicionalmente validados como UUID e omitidos.
 export const InsertProdutosSchemaZ = createInsertSchema(tabelaProdutos, {
   id: z4.uuid().optional(),
-  imagem: z4.base64().optional(),
+  imagem: z4Base64File.optional(),
 })
   .omit({
     createdAt: true,

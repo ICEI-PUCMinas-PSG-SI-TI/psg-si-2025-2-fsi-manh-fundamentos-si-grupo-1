@@ -3,6 +3,7 @@ import * as z4 from "zod/v4";
 import { Permissoes } from "../db/enums/permissoes";
 import type { SelectSessaoSchema } from "../db/schema/sessoes";
 import { ClientError } from "../error";
+import { bufferTostring, z4Base64File } from "../helpers";
 import { debug, error, warning } from "../logging";
 import repositorioPermissoes from "../repository/repositorioPermissoes";
 import repositorioSessoes from "../repository/repositorioSessoes";
@@ -25,7 +26,7 @@ export const GetSessaoDtoZ = z4.strictObject({
   nome: z4.string(),
   login: z4.string(),
   modoEscuro: z4.boolean(),
-  foto: z4.base64(),
+  foto: z4Base64File.nullable(),
   permissoes: z4.array(z4.enum(Permissoes)),
 });
 
@@ -148,7 +149,8 @@ class ServicoAutenticacao {
       nome: usuario.nome,
       login: usuario.login,
       modoEscuro: usuario.modoEscuro,
-      foto: usuario.foto as string,
+      // as string,
+      foto: usuario.foto ? bufferTostring(usuario.foto as Uint8Array) : null,
       permissoes: perms,
     };
   }

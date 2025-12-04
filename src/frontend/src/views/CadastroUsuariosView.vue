@@ -117,6 +117,7 @@
       <InfoUsuario
         :nome="usuario.nome"
         :login="usuario.login"
+        :foto="usuario.foto"
         v-for="usuario in refUsuarios"
         :key="usuario.id"
         :habilitado="usuario.habilitado"

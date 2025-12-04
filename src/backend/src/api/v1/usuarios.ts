@@ -1,8 +1,7 @@
 import { type NextFunction, type Response, Router } from "express";
 import * as z4 from "zod/v4";
-import { UpdateUsuarioSchemaZ } from "../../db/schema/usuarios";
 import { type ExtendedRequest, mdwRequerBody } from "../../middlewares";
-import servicoUsuarios from "../../services/servicoUsuarios";
+import servicoUsuarios, { SetPerfilDtoZ } from "../../services/servicoUsuarios";
 import { ParamsIdSchemaZ, SenhaZ } from "./objects";
 
 const apiV1UsuariosRouter = Router();
@@ -53,20 +52,13 @@ async function alterarSenha(
   }
 }
 
-const UpdateUsuarioEndpointSchema = UpdateUsuarioSchemaZ.pick({
-  login: true,
-  nome: true,
-  modoEscuro: true,
-  foto: true,
-}).strict();
-
 async function patchUsuario(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
   try {
-    const parsedBody = UpdateUsuarioEndpointSchema.parse(req.body);
+    const parsedBody = SetPerfilDtoZ.parse(req.body);
     const usuario = req._usuario!;
     const atualizado = await servicoUsuarios.atualizar(usuario.id, parsedBody);
     if (atualizado) {
