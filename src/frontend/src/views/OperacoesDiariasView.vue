@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full min-h-screen">
+  <div class="w-full min-h-full">
     <h1 class="m-15 mt-7 text-6xl font-bold">Operações Diárias</h1>
     <div class="bg-base-200 m-12 pt-2 pb-1 rounded-2xl overflow-auto flex flex-col h-[83vh]">
       <!--Compras, vendas e filtrar por data-->
@@ -111,15 +111,15 @@
 
 <script setup lang="ts">
 import { ApiMovimentacoes } from '@/api/movimentacoes'
+import { ApiProdutos } from '@/api/produtos'
+import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
 import {
-  ShoppingCartIcon,
-  ShoppingBagIcon,
   MagnifyingGlassIcon,
   PlusIcon,
+  ShoppingBagIcon,
+  ShoppingCartIcon,
 } from '@heroicons/vue/24/outline'
 import { onMounted, ref } from 'vue'
-import NovaMoviment from '@/components/OpDiarias/NovaMoviment.vue'
-import { ApiProdutos } from '@/api/produtos'
 import type { GetConsultaMovimentacaoDto } from '../../../backend'
 
 const produtosCache = ref<Record<string, string>>({})

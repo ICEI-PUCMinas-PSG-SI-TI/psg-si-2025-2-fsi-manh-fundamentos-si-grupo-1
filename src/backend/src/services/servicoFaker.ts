@@ -1,5 +1,6 @@
 import { Permissoes } from "../db/enums/permissoes";
 // import { StatusProduto } from "../db/enums/produtos";
+import { faker, fakerPT_BR as fakerPtBr } from "@faker-js/faker";
 import { StatusProduto } from "../db/enums/statusProduto";
 import { geradorCodigo } from "../db/geradorCodigos";
 import type { InsertProdutosSchema } from "../db/schema/produtos";
@@ -18,7 +19,6 @@ import servicoLotes from "./servicoLotes";
 import servicoProdutos from "./servicoProdutos";
 import servicoUnidadesMedida from "./servicoUnidadesMedida";
 import servicoUsuarios from "./servicoUsuarios";
-import { faker, fakerPT_BR as fakerPtBr } from "@faker-js/faker";
 
 function fakerLocal(): string {
   return `Andar ${faker.number.int({ min: 1, max: 10 })}`;

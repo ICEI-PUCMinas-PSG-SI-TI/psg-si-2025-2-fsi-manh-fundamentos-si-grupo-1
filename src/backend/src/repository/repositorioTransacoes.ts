@@ -1,3 +1,5 @@
+import "dotenv/config";
+import { type SQL, and, eq, getTableColumns } from "drizzle-orm";
 import bancoDados from "../db";
 import { tabelaCategorias } from "../db/schema/categorias";
 import { tabelaLotes } from "../db/schema/lotes";
@@ -10,9 +12,6 @@ import {
 } from "../db/schema/transacoes";
 import { tabelaUsuarios } from "../db/schema/usuarios";
 import type { RefRegistro } from "./common";
-import "dotenv/config";
-import "dotenv/config";
-import { type SQL, and, eq, getTableColumns } from "drizzle-orm";
 
 export type RepoConsultaParamsTransacoes = {
   pagina?: number;

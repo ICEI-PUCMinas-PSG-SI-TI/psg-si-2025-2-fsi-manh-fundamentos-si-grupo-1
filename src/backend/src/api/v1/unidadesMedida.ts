@@ -1,9 +1,9 @@
+import { type NextFunction, type Response, Router } from "express";
 import { InsertUnidadesMedidasSchemaZ } from "../../db/schema/unidadesMedida";
 import type { ExtendedRequest } from "../../middlewares";
 import { mdwRequerBody } from "../../middlewares";
 import servicoUnidadesMedida from "../../services/servicoUnidadesMedida";
 import { ParamsIdSchemaZ } from "./objects";
-import { type NextFunction, type Response, Router } from "express";
 
 const apiV1UnidadesMedida = Router();
 

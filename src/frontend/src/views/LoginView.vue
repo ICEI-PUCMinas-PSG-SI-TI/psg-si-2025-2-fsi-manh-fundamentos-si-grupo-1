@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex justify-center items-center w-screen h-screen overflow-hidden p-4">
+  <div class="relative flex justify-center items-center w-full h-full overflow-hidden p-4">
     <div class="relative w-full max-w-md sm:max-w-lg lg:max-w-xl xl:-mt-16">
       <LogoLoginItem
         class="absolute -top-5 left-1/2 transform -translate-x-1/2 w-30 h-45 sm:w-45 md:w-42 md:h-45"
@@ -59,15 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
-import { ref, type Ref } from 'vue'
 import { ApiAutenticacao } from '@/api/auth'
 import LogoLoginItem from '@/components/login/LogoLoginItem.vue'
-import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
-import { useNotificationStore } from '@/store/config/toast'
-import { useSessaoStore } from '@/store/config/sessao'
-import { useRoute, useRouter } from 'vue-router'
 import { CrecenciaisZ } from '@/services/objects'
+import { CONFIG_KEY_DARK_THEME } from '@/services/storage'
+import { useSessaoStore } from '@/store/config/sessao'
+import { useNotificationStore } from '@/store/config/toast'
+import { LockClosedIcon, UserIcon } from '@heroicons/vue/24/outline'
+import { ref, type Ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 

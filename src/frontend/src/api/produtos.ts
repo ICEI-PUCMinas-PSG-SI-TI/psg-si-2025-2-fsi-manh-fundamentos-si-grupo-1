@@ -1,11 +1,11 @@
-import { fetchW, HttpMethods } from './fetchWrapper'
 import type {
+  GetConsultaProdutoDto,
+  GetProdutoDto,
   ParamsConsultaProdutos,
   SetProdutoDto,
-  GetProdutoDto,
-  GetConsultaProdutoDto,
 } from '../../../backend'
 import { UuidParseZ, type IdRegistro } from './common'
+import { fetchW, HttpMethods } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/produtos`
 

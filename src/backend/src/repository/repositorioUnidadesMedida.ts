@@ -1,3 +1,5 @@
+import "dotenv/config";
+import { count, eq } from "drizzle-orm";
 import bancoDados from "../db";
 import {
   type InsertUnidadesMedidaSchema,
@@ -6,8 +8,6 @@ import {
   tabelaUnidadesMedida,
 } from "../db/schema/unidadesMedida";
 import type { Count, RefRegistro } from "./common";
-import "dotenv/config";
-import { count, eq } from "drizzle-orm";
 
 class RepositorioUnidadesMedida {
   inserir(

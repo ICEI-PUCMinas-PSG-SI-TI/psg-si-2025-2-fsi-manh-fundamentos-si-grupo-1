@@ -1,7 +1,7 @@
-import bancoDados from "../db";
 import type { ResultSet } from "@libsql/client";
 import type { ExtractTablesWithRelations } from "drizzle-orm";
 import type { SQLiteTransaction } from "drizzle-orm/sqlite-core";
+import bancoDados from "../db";
 
 export type SQLiteTransactionCustom = SQLiteTransaction<
   "async",

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ApiMovimentacoes } from '@/api/movimentacoes'
-import MovTableRow from './MovTableRow.vue'
 import { ref, type Ref } from 'vue'
 import type { GetConsultaMovimentacaoDto } from '../../../../../backend'
+import MovTableRow from './MovTableRow.vue'
 
 const movimentacoes = new ApiMovimentacoes()
 const refMovimentacoes: Ref<GetConsultaMovimentacaoDto[]> = ref([])

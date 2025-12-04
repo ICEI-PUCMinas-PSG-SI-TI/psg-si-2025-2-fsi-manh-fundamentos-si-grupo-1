@@ -1,4 +1,3 @@
-import servicoFaker from "../../../services/servicoFaker";
 import {
   type NextFunction,
   type Request,
@@ -6,6 +5,7 @@ import {
   Router,
 } from "express";
 import * as z4 from "zod/v4";
+import servicoFaker from "../../../services/servicoFaker";
 
 const apiV1FakerRouter = Router();
 

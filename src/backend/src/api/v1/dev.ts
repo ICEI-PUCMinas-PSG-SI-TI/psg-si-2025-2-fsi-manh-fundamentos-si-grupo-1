@@ -1,5 +1,5 @@
-import apiV1Faker from "./dev/faker";
 import { Router } from "express";
+import apiV1Faker from "./dev/faker";
 
 const apiV1DevRouter = Router();
 

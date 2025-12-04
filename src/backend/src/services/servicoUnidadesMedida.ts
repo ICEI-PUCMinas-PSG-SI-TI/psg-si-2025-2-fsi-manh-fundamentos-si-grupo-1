@@ -1,7 +1,7 @@
+import * as z4 from "zod/v4";
 import { ClientError, ServerError } from "../error";
 import repositorioProdutos from "../repository/repositorioProdutos";
 import repositorioUnidadesMedida from "../repository/repositorioUnidadesMedida";
-import * as z4 from "zod/v4";
 
 export const SetUnidadeDtoZ = z4.object({
   nome: z4.string().min(1).max(128),

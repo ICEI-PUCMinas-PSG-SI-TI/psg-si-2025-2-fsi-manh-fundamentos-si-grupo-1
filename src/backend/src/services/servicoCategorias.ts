@@ -1,7 +1,7 @@
+import * as z4 from "zod/v4";
 import { ClientError, ServerError } from "../error";
 import repositorioCategorias from "../repository/repositorioCategorias";
 import repositorioProdutos from "../repository/repositorioProdutos";
-import * as z4 from "zod/v4";
 
 export const SetCategoriaDtoZ = z4.strictObject({
   nome: z4.string().min(1).max(128),

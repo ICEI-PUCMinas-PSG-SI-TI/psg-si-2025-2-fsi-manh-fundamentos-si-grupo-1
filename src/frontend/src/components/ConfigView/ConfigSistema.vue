@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { ApiConfiguracoes } from '@/api/configuracoes'
+import { useNotificationStore } from '@/store/config/toast'
 import { ref } from 'vue'
+import { Identificador } from '../../../../backend'
 import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { Identificador } from '../../../../backend'
-import { useNotificationStore } from '@/store/config/toast'
-import { ApiConfiguracoes } from '@/api/configuracoes'
 
 const configuracoes = new ApiConfiguracoes()
 
@@ -101,4 +101,3 @@ obterConfiguracoes()
     </div>
   </CardComponent>
 </template>
-

@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { ApiPerfil } from '@/api/perfil'
+import { PasswordZ } from '@/services/objects'
+import { useNotificationStore } from '@/store/config/toast'
 import { ref } from 'vue'
+import { ZodError } from 'zod/v4'
 import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { ApiPerfil } from '@/api/perfil'
-import { PasswordZ } from '@/services/objects'
-import { useNotificationStore } from '@/store/config/toast'
-import { ZodError } from 'zod/v4'
 
 const visivel = defineModel()
 

@@ -1,5 +1,6 @@
-import { HttpMethods, fetchW } from './fetchWrapper'
+import type { SetPerfilDto } from '../../../backend'
 import { UuidParseZ } from './common'
+import { HttpMethods, fetchW } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/usuarios`
 
@@ -7,6 +8,13 @@ export class ApiPerfil {
   obterPorId(id: string) {
     const _id = UuidParseZ.parse(id)
     return fetchW(`${endpoint_path}/${_id}`)
+  }
+
+  atualizarPerfil(opts: SetPerfilDto) {
+    return fetchW(`${endpoint_path}`, {
+      method: HttpMethods.Patch,
+      body: opts,
+    })
   }
 
   // TODO: Unificar funções e utilizar opts
@@ -30,4 +38,3 @@ export class ApiPerfil {
     })
   }
 }
-

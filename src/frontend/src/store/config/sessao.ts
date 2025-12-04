@@ -1,8 +1,7 @@
 import { ApiAutenticacao } from '@/api/auth'
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
-import { type GetSessaoDto } from '../../../../backend'
-import { Permissoes } from '../../../../backend'
+import { Permissoes, type GetSessaoDto } from '../../../../backend'
 
 const autenticacao = new ApiAutenticacao()
 

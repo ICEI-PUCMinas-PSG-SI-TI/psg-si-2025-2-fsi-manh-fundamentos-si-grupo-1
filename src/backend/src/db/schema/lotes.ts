@@ -1,8 +1,8 @@
-import { tabelaProdutos } from "./produtos";
 import type { InferSelectModel } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
+import { tabelaProdutos } from "./produtos";
 
 export const tabelaLotes = sqliteTable("lotes", {
   id: text()

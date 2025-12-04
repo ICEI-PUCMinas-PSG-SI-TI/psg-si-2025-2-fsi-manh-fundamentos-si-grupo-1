@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NavigationMenu from './components/NavigationMenu.vue'
-import { useTemaStore } from './store/config/tema'
-import { computed } from 'vue'
 import ToastContainer from './components/ToastContainer.vue'
+import { useTemaStore } from './store/config/tema'
 
 const tema = useTemaStore()
 const route = useRoute()
-const showMenu = computed(
+const mostrarMenu = computed(
   () => route.name !== 'login' && route.name !== 'loading' && route.name !== '404',
 )
 const dataTema = computed(() =>
-  showMenu.value ? (tema.isDarkModePreferred ? 'dark' : 'light') : '',
+  mostrarMenu.value ? (tema.isDarkModePreferred ? 'dark' : 'light') : '',
 )
 </script>
 
@@ -19,10 +19,14 @@ const dataTema = computed(() =>
   <div
     :data-theme="dataTema"
     class="size-full"
-    :class="[showMenu ? 'flex flex-row' : 'flex justify-center items-center ']"
+    :class="[mostrarMenu ? 'flex flex-row' : 'flex justify-center items-center ']"
   >
-    <NavigationMenu class="flex h-full" v-if="showMenu" />
-    <RouterView class="relative" />
+    <div class="fixed h-full top-0 bottom-0 left-0 overflow-y-auto max-w-64 w-64 z-5">
+      <NavigationMenu v-if="mostrarMenu" />
+    </div>
+    <div :class="{ 'ps-64': mostrarMenu }" class="w-screen h-screen overflow-y-auto">
+      <RouterView class="relative" />
+    </div>
     <ToastContainer />
   </div>
 </template>

@@ -1,13 +1,17 @@
+import { compare } from "bcrypt";
+import * as z4 from "zod/v4";
 import { SenhaZ } from "../api/v1/objects";
 import { Permissoes } from "../db/enums/permissoes";
-import { InsertUsuarioSchemaZ } from "../db/schema/usuarios";
+import {
+  InsertUsuarioSchemaZ,
+  UpdateUsuarioSchemaZ,
+} from "../db/schema/usuarios";
 import { ClientError, ServerError } from "../error";
+import { bufferTostring, z4Base64File } from "../helpers";
 import { error } from "../logging";
 import repositorioUsuarios from "../repository/repositorioUsuarios";
 import { hashSenha } from "../system/auth";
 import servicoPermissoes from "./servicoPermissoes";
-import { compare } from "bcrypt";
-import * as z4 from "zod/v4";
 
 export const SetUsuarioDtoZ = z4.strictObject({
   nome: z4.string().min(1).max(32),
@@ -17,7 +21,7 @@ export const SetUsuarioDtoZ = z4.strictObject({
   password: SenhaZ,
   descricao: z4.string().max(256).nullable().optional(),
   habilitado: z4.boolean().optional(),
-  foto: z4.base64().nullable().optional(),
+  foto: z4Base64File.nullable().optional(),
 });
 
 export type SetUsuarioDto = z4.infer<typeof SetUsuarioDtoZ>;
@@ -41,10 +45,19 @@ export const UpdateUsuarioDtoZ = z4.strictObject({
   senha: SenhaZ.optional(),
   descricao: z4.string().max(256).nullable().optional(),
   habilitado: z4.boolean().optional(),
-  foto: z4.base64().nullable().optional(),
+  foto: z4Base64File.nullable().optional(),
 });
 
 export type UpdateUsuarioDto = z4.infer<typeof UpdateUsuarioDtoZ>;
+
+export const SetPerfilDtoZ = UpdateUsuarioSchemaZ.pick({
+  login: true,
+  nome: true,
+  modoEscuro: true,
+  foto: true,
+}).strict();
+
+export type SetPerfilDto = z4.infer<typeof SetPerfilDtoZ>;
 
 class ServicoUsuarios {
   async inserir(
@@ -113,7 +126,7 @@ class ServicoUsuarios {
       descricao: registro.descricao,
       habilitado: registro.habilitado,
       modoEscuro: registro.modoEscuro,
-      foto: registro.foto as string,
+      foto: registro.foto ? bufferTostring(registro.foto as Uint8Array) : null,
     }));
   }
 

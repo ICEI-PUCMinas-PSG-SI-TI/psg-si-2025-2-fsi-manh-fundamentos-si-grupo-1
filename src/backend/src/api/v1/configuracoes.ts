@@ -1,3 +1,5 @@
+import { type NextFunction, type Response, Router } from "express";
+import z4 from "zod/v4";
 import { Identificador } from "../../db/enums/identificador";
 import { error } from "../../logging";
 import type { ExtendedRequest } from "../../middlewares";
@@ -6,8 +8,6 @@ import servicoConfiguracoes, {
   UpdateConfiguracaoDtoZ,
 } from "../../services/servicoConfiguracoes";
 import servicoProdutos from "../../services/servicoProdutos";
-import { type NextFunction, type Response, Router } from "express";
-import z4 from "zod/v4";
 
 const apiV1ConfiguracoesRouter = Router();
 

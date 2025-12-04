@@ -1,12 +1,12 @@
+import { SQL, and, count, eq } from "drizzle-orm";
 import bancoDados from "../db";
-import { tabelaUsuarios } from "../db/schema/usuarios";
 import type {
   InsertUsuarioSchema,
   SelectUsuarioSchema,
   UpdateUsuarioSchema,
 } from "../db/schema/usuarios";
+import { tabelaUsuarios } from "../db/schema/usuarios";
 import type { Count, RefRegistro } from "./common";
-import { SQL, and, count, eq } from "drizzle-orm";
 
 export type RepoConsultaParamsUsuarios = {
   pagina?: number;

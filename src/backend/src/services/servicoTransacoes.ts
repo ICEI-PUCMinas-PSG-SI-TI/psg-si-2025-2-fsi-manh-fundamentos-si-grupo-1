@@ -1,9 +1,9 @@
+import z from "zod";
+import * as z4 from "zod/v4";
 import { ServerError } from "../error";
 import repositorioMovimentacoes, {
   type RepoConsultaParamsTransacoes,
 } from "../repository/repositorioTransacoes";
-import z from "zod";
-import * as z4 from "zod/v4";
 
 export const GetMovimentacaoDtoZ = z4.strictObject({
   id: z4.uuid(),

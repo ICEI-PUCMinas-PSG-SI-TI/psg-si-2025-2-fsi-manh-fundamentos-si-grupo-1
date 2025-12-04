@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen w-screen p-4 overflow-y-auto">
+  <div class="flex flex-col h-full w-full p-4 overflow-y-auto">
     <div class="shrink-0 p-2 mb-4">
       <h3 class="text-lg font-semibold mb-2">Filtrar por Data</h3>
       <div class="flex gap-2">
@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import MovTable from '@/components/HistoricoMov/Table/MovTable.vue'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { GetConsultaMovimentacaoDto } from '../../../backend'
 // import { onMounted } from 'vue'
 

@@ -1,5 +1,5 @@
+import type { GetConfiguracaoDto, Identificador, UpdateConfiguracaoDto } from '../../../backend'
 import { fetchW, HttpMethods } from './fetchWrapper'
-import type { GetConfiguracaoDto, UpdateConfiguracaoDto, Identificador } from '../../../backend'
 
 const endpoint_path = `/api/v1/configuracoes`
 

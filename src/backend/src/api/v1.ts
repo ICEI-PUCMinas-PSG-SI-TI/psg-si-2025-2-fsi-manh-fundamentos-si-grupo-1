@@ -1,3 +1,4 @@
+import { Router } from "express";
 import { Permissoes } from "../db/enums/permissoes";
 import { mdwPermissoes } from "../middlewares";
 import apiV1Admin from "./v1/admin";
@@ -10,7 +11,6 @@ import apiV1Produtos from "./v1/produtos";
 import apiV1Transacoes from "./v1/transacoes";
 import apiV1UnidadesMedida from "./v1/unidadesMedida";
 import apiV1Usuarios from "./v1/usuarios";
-import { Router } from "express";
 
 const apiV1Router = Router();
 

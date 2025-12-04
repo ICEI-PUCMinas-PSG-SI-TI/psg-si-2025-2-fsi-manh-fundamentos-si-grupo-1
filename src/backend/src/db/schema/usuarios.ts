@@ -2,6 +2,7 @@ import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import * as z4 from "zod/v4";
+import { z4Base64File } from "../../helpers";
 
 export const tabelaUsuarios = sqliteTable("usuarios", {
   id: text()
@@ -35,14 +36,14 @@ export const UpdateUsuarioSchemaZ = z4.strictObject({
   descricao: z4.string().optional(),
   habilitado: z4.boolean().optional(),
   modoEscuro: z4.boolean().optional(),
-  foto: z4.base64().optional(),
+  foto: z4Base64File.optional(),
 });
 
 export const InsertUsuarioSchemaZ = createInsertSchema(tabelaUsuarios, {
   id: z4.uuid().optional(),
   habilitado: z4.boolean().optional(),
   modoEscuro: z4.boolean().optional(),
-  foto: z4.base64().optional(),
+  foto: z4Base64File.optional(),
   createdAt: z4.coerce.date().optional(),
   updatedAt: z4.coerce.date().optional(),
 })

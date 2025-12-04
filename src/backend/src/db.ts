@@ -1,3 +1,5 @@
+import { DrizzleQueryError, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/libsql";
 import { Permissoes } from "./db/enums/permissoes";
 import { tabelaCategorias } from "./db/schema/categorias";
 import { tabelaConfiguracoes } from "./db/schema/configuracoes";
@@ -10,8 +12,6 @@ import { tabelaUnidadesMedida } from "./db/schema/unidadesMedida";
 import { tabelaUsuarios } from "./db/schema/usuarios";
 import { LogLevel, error, json, notice, warning } from "./logging";
 import servicoUsuarios from "./services/servicoUsuarios";
-import { DrizzleQueryError, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/libsql";
 
 const DB_FILE_NAME = process.env.DB_FILE_NAME || "file:database.db";
 const bancoDados = drizzle(DB_FILE_NAME);
