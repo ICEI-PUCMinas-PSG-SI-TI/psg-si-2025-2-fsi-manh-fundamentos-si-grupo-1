@@ -28,3 +28,5 @@ export class ApiProdutos {
     })
   }
 }
+const apiProdutos = new ApiProdutos()
+export default apiProdutos

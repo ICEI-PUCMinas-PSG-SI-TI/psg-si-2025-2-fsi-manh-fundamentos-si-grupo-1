@@ -11,7 +11,7 @@ import repositorioProdutos, {
 
 export const SetProdutoDtoZ = z4.object({
   nome: z4.string(),
-  codigo: z4.string(),
+  codigo: z4.string().optional(),
   sku: z4.string().nullable(),
   codigoBarra: z4.string().nullable(),
   descricao: z4.string().nullable(),
@@ -23,7 +23,7 @@ export const SetProdutoDtoZ = z4.object({
   precoCusto: z4.number().nullable(),
   precoVenda: z4.number().nullable(),
   precoPromocao: z4.number().nullable(),
-  unidadeMedidaId: z4.uuid(),
+  unidadeMedidaId: z4.uuid().nullable(),
   quantidadeMinima: z4.number().nullable(),
   quantidadeMaxima: z4.number().nullable(),
   localizacao: z4.string().nullable(),
@@ -48,11 +48,11 @@ export const GetProdutoDtoZ = z4.object({
   precoCusto: z4.number().nullable(),
   precoVenda: z4.number().nullable(),
   precoPromocao: z4.number().nullable(),
-  unidadeMedidaId: z4.uuid(),
+  unidadeMedidaId: z4.uuid().nullable(),
   quantidadeMinima: z4.number().nullable(),
   quantidadeMaxima: z4.number().nullable(),
   localizacao: z4.string().nullable(),
-  imagem: z4Base64File,
+  imagem: z4Base64File.optional(),
   status: z4.enum(StatusProduto),
 });
 
@@ -86,7 +86,10 @@ export type ParamsConsultaProdutos = z4.infer<typeof ParamsConsultaProdutosZ>;
 class ServicoProdutos {
   async inserir(produto: SetProdutoDto): Promise<string> {
     produto.codigo = geradorCodigo();
-    const res = await repositorioProdutos.inserir(produto);
+    const res = await repositorioProdutos.inserir({
+      ...produto,
+      codigo: geradorCodigo(),
+    });
     if (res.length !== 1 || !res[0]) {
       throw new HttpError("", 500);
     }

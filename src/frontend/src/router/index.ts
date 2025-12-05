@@ -12,6 +12,7 @@ import PesquisaProdutosView from '@/views/PesquisaProdutosView.vue'
 import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-router'
 import { Permissoes } from '../../../backend'
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -56,6 +57,7 @@ const router = createRouter({
         requerAutenticacao: true,
       },
     },
+    
     {
       name: 'alertas',
       path: '/alertas',
@@ -96,6 +98,13 @@ const router = createRouter({
       name: '404',
       component: NotFoundView,
     },
+    {
+      path: '/criar-produto',
+      name: 'CriarProdutoView',
+      component: () => import('@/views/CriarProdutoView.vue'),
+    }
+,
+
   ],
 })
 

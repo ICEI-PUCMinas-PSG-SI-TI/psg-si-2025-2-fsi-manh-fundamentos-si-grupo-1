@@ -2,11 +2,25 @@ import { type NextFunction, type Response, Router } from "express";
 import type { ExtendedRequest } from "../../middlewares";
 import servicoProdutos, {
   ParamsConsultaProdutosZ,
+  SetProdutoDtoZ,
 } from "../../services/servicoProdutos";
 import { ParamsIdSchemaZ } from "./objects";
 
 const apiV1ProdutosRouter = Router();
 
+async function postProdutos(
+  req: ExtendedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const parsedBody = SetProdutoDtoZ.parse(req.body);
+    const idRegistro = await servicoProdutos.inserir(parsedBody);
+    res.status(201).json({ id: idRegistro });
+  } catch (err) {
+    next(err);
+  }
+}
 async function getProdutos(
   req: ExtendedRequest,
   res: Response,
@@ -44,7 +58,9 @@ async function getProdutoId(
   }
 }
 
-apiV1ProdutosRouter.get("/", getProdutos);
-apiV1ProdutosRouter.get("/:id", getProdutoId);
+apiV1ProdutosRouter
+  .get("/", getProdutos)
+  .get("/:id", getProdutoId)
+  .post("/", postProdutos);
 
 export default apiV1ProdutosRouter;

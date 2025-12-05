@@ -97,25 +97,16 @@
       <div class="w-96 rounded-lg bg-white p-6">
         <h3 class="mb-4 text-lg font-bold">Novo Produto</h3>
         <div v-if="form" class="space-y-3">
-          <input v-model="form.nome" placeholder="Nome" class="w-full rounded border px-3 py-2" />
+          <input required v-model="form.nome" placeholder="Nome" class="w-full rounded border px-3 py-2" />
+          
           <input
+          required
             v-model="form.categoria"
             placeholder="Categoria"
             class="w-full rounded border px-3 py-2"
           />
-          <input
-            v-model.number="form.quantidade"
-            type="number"
-            placeholder="Quantidade"
-            class="w-full rounded border px-3 py-2"
-          />
-          <input
-            v-model.number="form.preco"
-            type="number"
-            step="0.01"
-            placeholder="Preço"
-            class="w-full rounded border px-3 py-2"
-          />
+          
+          
         </div>
         <div class="mt-4 flex justify-end gap-2">
           <button @click="closeModal" class="rounded border px-4 py-2">Cancelar</button>
@@ -132,6 +123,8 @@ import { ApiProdutos } from '@/api/produtos'
 import { notificacoes } from '@/main'
 import { ref, type Ref, watch } from 'vue'
 import type { GetCategoriaDTO, GetConsultaProdutoDto, GetProdutoDto } from '../../../backend'
+import { routeLocationKey } from 'vue-router'
+import router from '@/router'
 
 const search = ref('')
 const categoriaFilter = ref('')
@@ -178,6 +171,9 @@ function closeModal() {
 }
 
 function save() {
+  
+  showModal.value = false
+  router.push({ name: 'CriarProdutoView' })
   /*
   const payload = { ...form.value }
   if (modalMode.value === 'create') {
@@ -188,7 +184,7 @@ function save() {
     if (idx !== -1) produtos.value[idx] = payload
   }
     */
-  showModal.value = false
+  
 }
 
 let searchInterval: NodeJS.Timeout | null = null

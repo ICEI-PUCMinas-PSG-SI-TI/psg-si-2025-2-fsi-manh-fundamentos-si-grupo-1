@@ -29,7 +29,6 @@ export const tabelaProdutos = sqliteTable("produtos", {
   precoVenda: int("preco_venda"),
   precoPromocao: int("preco_promocao"),
   unidadeMedidaId: text("quantidade_unidade_medida")
-    .notNull()
     .references(() => tabelaUnidadesMedida.id),
   quantidadeMinima: int("quantidade_minima"),
   quantidadeMaxima: int("quantidade_maxima"),
