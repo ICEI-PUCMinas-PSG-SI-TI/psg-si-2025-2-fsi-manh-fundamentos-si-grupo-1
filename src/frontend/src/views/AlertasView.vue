@@ -70,6 +70,7 @@
               </div>
               <button
                 class="flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-blue-800 transition hover:bg-blue-200"
+                @click="visualizarProduto(a.produtoId)"
               >
                 <PencilSquareIcon class="h-4 w-4" /> Visualizar
               </button>
@@ -91,6 +92,7 @@ import {
   PencilSquareIcon,
 } from '@heroicons/vue/24/outline'
 import { onMounted, ref, type Ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   MotivoAlerta,
   type GetConsultaAlertasDto,
@@ -128,6 +130,12 @@ async function verificarAlertas() {
     notificacoes.addNotification('Alertas verificados.')
     obterAlertas()
   }
+}
+
+const router = useRouter()
+
+function visualizarProduto(produtoId: string) {
+  router.push({ name: 'CriarProdutoView', params: { id: produtoId } })
 }
 
 onMounted(() => obterAlertas())

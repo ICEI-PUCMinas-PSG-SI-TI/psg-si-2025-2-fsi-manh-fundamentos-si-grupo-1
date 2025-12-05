@@ -71,7 +71,7 @@
             </td>
             <td class="flex justify-center gap-2 p-2">
               <button
-                @click="visualizarProduto(produto)"
+                @click="visualizarProduto(produto.id)"
                 class="rounded-full bg-blue-800 px-3 py-1 text-white hover:cursor-pointer hover:bg-blue-900"
               >
                 Visualizar
@@ -97,16 +97,19 @@
       <div class="w-96 rounded-lg bg-white p-6">
         <h3 class="mb-4 text-lg font-bold">Novo Produto</h3>
         <div v-if="form" class="space-y-3">
-          <input required v-model="form.nome" placeholder="Nome" class="w-full rounded border px-3 py-2" />
-          
           <input
-          required
+            required
+            v-model="form.nome"
+            placeholder="Nome"
+            class="w-full rounded border px-3 py-2"
+          />
+
+          <input
+            required
             v-model="form.categoria"
             placeholder="Categoria"
             class="w-full rounded border px-3 py-2"
           />
-          
-          
         </div>
         <div class="mt-4 flex justify-end gap-2">
           <button @click="closeModal" class="rounded border px-4 py-2">Cancelar</button>
@@ -121,10 +124,14 @@
 import { ApiCategorias } from '@/api/categorias'
 import { ApiProdutos } from '@/api/produtos'
 import { notificacoes } from '@/main'
-import { ref, type Ref, watch } from 'vue'
-import { StatusProduto, type GetCategoriaDTO, type GetConsultaProdutoDto, type GetProdutoDto } from '../../../backend'
-import { routeLocationKey } from 'vue-router'
-import router from '@/router'
+import { ref, watch, type Ref } from 'vue'
+import { useRouter } from 'vue-router'
+import {
+  StatusProduto,
+  type GetCategoriaDTO,
+  type GetConsultaProdutoDto,
+  type GetProdutoDto,
+} from '../../../backend'
 
 const search = ref('')
 const categoriaFilter = ref('')
@@ -143,17 +150,16 @@ const form: Ref<{
 
 const categorias: Ref<GetCategoriaDTO[]> = ref([])
 
+const router = useRouter()
+
 function criarProduto() {
   // modalMode.value = 'create'
   form.value = { id: 'id', nome: '', categoria: '', quantidade: 0, preco: 0 }
   showModal.value = true
-  // TODO: redirect
-  notificacoes.addNotification('Redirect to produtos/new', { isError: true })
 }
 
-function visualizarProduto(p: GetProdutoDto) {
-  // TODO: redirect
-  notificacoes.addNotification('Redirect to produtos/' + p.id, { isError: true })
+function visualizarProduto(produtoId: string) {
+  router.push({ name: 'CriarProdutoView', params: { id: produtoId } })
 }
 
 function remover(_p: GetProdutoDto) {
@@ -171,20 +177,17 @@ function closeModal() {
 }
 const nomeNovoProduto = ref('')
 async function save() {
-  
   showModal.value = false
   const res = await apiProdutos.criar({
-    nome: nomeNovoProduto.value,status: StatusProduto.Ativo
+    nome: nomeNovoProduto.value,
+    status: StatusProduto.Ativo,
   })
-  if (!res.ok || !res.responseBody) {
-    notificacoes.addNotification('Erro ao criar produto!', { isError: true })
-    return
-  }
-  else {
+  if (res.ok && res.responseBody) {
     notificacoes.addNotification('Produto criado com sucesso!', { time: 2000 })
-    router.push({ name: 'CriarProdutoView', params: { id: res.responseBody.id } })
+    visualizarProduto(res.responseBody.id)
+  } else {
+    notificacoes.addNotification('Erro ao criar produto!', { isError: true })
   }
- 
 }
 
 let searchInterval: NodeJS.Timeout | null = null
