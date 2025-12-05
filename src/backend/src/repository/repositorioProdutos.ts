@@ -67,6 +67,7 @@ const comTexto = (texto: string): SQL => {
   const _texto = `%${texto}%`;
   return or(
     like(tabelaProdutos.nome, _texto),
+    like(tabelaProdutos.codigo, _texto),
     like(tabelaProdutos.sku, _texto),
     like(tabelaProdutos.codigoBarra, _texto),
     like(tabelaProdutos.descricao, _texto),
