@@ -122,7 +122,7 @@ import { ApiCategorias } from '@/api/categorias'
 import { ApiProdutos } from '@/api/produtos'
 import { notificacoes } from '@/main'
 import { ref, type Ref, watch } from 'vue'
-import type { GetCategoriaDTO, GetConsultaProdutoDto, GetProdutoDto } from '../../../backend'
+import { StatusProduto, type GetCategoriaDTO, type GetConsultaProdutoDto, type GetProdutoDto } from '../../../backend'
 import { routeLocationKey } from 'vue-router'
 import router from '@/router'
 
@@ -169,22 +169,22 @@ function remover(_p: GetProdutoDto) {
 function closeModal() {
   showModal.value = false
 }
-
-function save() {
+const nomeNovoProduto = ref('')
+async function save() {
   
   showModal.value = false
-  router.push({ name: 'CriarProdutoView' })
-  /*
-  const payload = { ...form.value }
-  if (modalMode.value === 'create') {
-    payload.id = produtos.value.length ? Math.max(...produtos.value.map((x) => x.id)) + 1 : 1
-    produtos.value.push(payload)
-  } else {
-    const idx = produtos.value.findIndex((x) => x.id === payload.id)
-    if (idx !== -1) produtos.value[idx] = payload
+  const res = await apiProdutos.criar({
+    nome: nomeNovoProduto.value,status: StatusProduto.Ativo
+  })
+  if (!res.ok || !res.responseBody) {
+    notificacoes.addNotification('Erro ao criar produto!', { isError: true })
+    return
   }
-    */
-  
+  else {
+    notificacoes.addNotification('Produto criado com sucesso!', { time: 2000 })
+    router.push({ name: 'CriarProdutoView', params: { id: res.responseBody.id } })
+  }
+ 
 }
 
 let searchInterval: NodeJS.Timeout | null = null

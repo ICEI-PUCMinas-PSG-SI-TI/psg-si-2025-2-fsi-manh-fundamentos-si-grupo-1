@@ -11,7 +11,7 @@ const endpoint_path = `/api/v1/produtos`
 
 export class ApiProdutos {
   criar(opts: SetProdutoDto) {
-    return fetchW<IdRegistro>(endpoint_path, {
+    return fetchW<{id:string}>(endpoint_path, {
       method: HttpMethods.Post,
       body: opts,
     })

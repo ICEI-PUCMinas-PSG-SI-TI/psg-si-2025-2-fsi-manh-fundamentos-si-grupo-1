@@ -99,7 +99,7 @@ const router = createRouter({
       component: NotFoundView,
     },
     {
-      path: '/criar-produto',
+      path: '/produtos/:id',
       name: 'CriarProdutoView',
       component: () => import('@/views/CriarProdutoView.vue'),
     }
