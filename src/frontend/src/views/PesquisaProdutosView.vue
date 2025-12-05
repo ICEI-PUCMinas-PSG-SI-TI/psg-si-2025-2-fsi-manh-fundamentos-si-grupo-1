@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-full flex-1 bg-white p-8">
+  <main class="min-h-full flex-1 p-8">
     <div class="mb-6 flex items-center justify-between">
       <div>
         <h2 class="text-3xl font-bold">CATÁLOGO</h2>
@@ -24,19 +24,25 @@
         placeholder="BUSCAR PRODUTO..."
         class="w-1/2 rounded-l-full border px-4 py-2 focus:outline-none"
       />
-      <button @click="limparPesquisa" class="rounded-r-full border px-4 py-2">Limpar</button>
-
+      <button
+        @click="limparPesquisa"
+        class="transform rounded-r-full border px-4 py-2 transition-transform duration-200 hover:scale-102 hover:cursor-pointer"
+      >
+        Limpar
+      </button>
       <div class="ml-auto flex items-center gap-2">
-        <label class="text-sm text-gray-600">Filtrar categoria:</label>
+        <label class="text-sm">Filtrar categoria:</label>
         <select v-model="categoriaFilter" class="rounded border px-2 py-1">
-          <option value="">Todas</option>
-          <option v-for="c in categorias" :key="c.id" :value="c.id">{{ c.nome }}</option>
+          <option class="text-black" value="">Todas</option>
+          <option class="text-black" v-for="c in categorias" :key="c.id" :value="c.id">
+            {{ c.nome }}
+          </option>
         </select>
       </div>
     </div>
 
     <!-- Tabela -->
-    <div class="overflow-x-auto rounded-lg border-2 border-green-300 p-4">
+    <div class="overflow-x-auto rounded-lg border-2 border-green-500 p-4">
       <table class="w-full border-collapse">
         <thead>
           <tr class="border-b">
@@ -66,13 +72,13 @@
             <td class="flex justify-center gap-2 p-2">
               <button
                 @click="visualizarProduto(produto)"
-                class="rounded-full bg-green-800 px-3 py-1 text-white hover:bg-green-700"
+                class="rounded-full bg-blue-800 px-3 py-1 text-white hover:cursor-pointer hover:bg-blue-900"
               >
                 Visualizar
               </button>
               <button
                 @click="remover(produto)"
-                class="rounded-full bg-red-600 px-3 py-1 text-white hover:bg-red-500"
+                class="rounded-full bg-red-600 px-3 py-1 text-white hover:cursor-pointer hover:bg-red-700"
               >
                 Remover
               </button>

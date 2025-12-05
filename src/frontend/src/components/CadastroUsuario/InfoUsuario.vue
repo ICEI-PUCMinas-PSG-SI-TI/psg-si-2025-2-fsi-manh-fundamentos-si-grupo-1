@@ -23,6 +23,7 @@ defineEmits(['editar', 'desabilitar', 'excluir'])
             v-if="foto"
             class="avatar h-full w-full rounded-full border object-cover"
             :src="foto"
+            alt="Foto de perfil"
           />
         </div>
       </div>

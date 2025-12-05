@@ -1,5 +1,5 @@
-import z from "zod";
 import * as z4 from "zod/v4";
+import { MotivoTransacoes } from "../db/enum/motivoTransacao";
 import { ServerError } from "../error";
 import repositorioMovimentacoes, {
   type RepoConsultaParamsTransacoes,
@@ -24,7 +24,7 @@ export const SetMovimentacaoDtoZ = z4.strictObject({
   produtoId: z4.uuid(),
   usuarioId: z4.uuid(),
   loteId: z4.uuid(),
-  motivo: z4.string(),
+  motivo: z4.enum(MotivoTransacoes),
   quantidade: z4.int(),
   horario: z4.iso.datetime(),
   localOrigem: z4.string().optional(),
@@ -42,8 +42,9 @@ export const ConsultaMovimentacoesParamsZ = z4.strictObject({
   // corce: os parametros são recebidos como string
   pagina: z4.coerce.number().int().gt(0).optional(),
   paginaTamanho: z4.coerce.number().int().gt(0).optional(),
-  dataApos: z4.coerce.date().optional(),
-  dataAntes: z4.coerce.date().optional(),
+  dataApos: z4.iso.datetime().optional(),
+  dataAntes: z4.iso.datetime().optional(),
+  motivo: z4.enum(MotivoTransacoes).optional(),
 });
 
 export type ConsultaMovimentacoesParams = z4.infer<
@@ -60,7 +61,7 @@ export const GetConsultaMovimentacaoDtoZ = GetMovimentacaoDtoZ.extend({
   _lote: z4.object({ codigo: z4.string() }),
 });
 
-export type GetConsultaMovimentacaoDto = z.infer<
+export type GetConsultaMovimentacaoDto = z4.infer<
   typeof GetConsultaMovimentacaoDtoZ
 >;
 
@@ -103,6 +104,9 @@ class ServicoTransacoes {
     if (opts?.pagina && opts?.paginaTamanho) {
       filtros.pagina = opts?.pagina;
       filtros.paginaTamanho = opts?.paginaTamanho;
+    }
+    if (opts?.motivo) {
+      filtros.comMotivo = opts.motivo;
     }
 
     const registros =

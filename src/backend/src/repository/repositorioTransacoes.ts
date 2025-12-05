@@ -1,6 +1,15 @@
 import "dotenv/config";
-import { type SQL, and, eq, getTableColumns } from "drizzle-orm";
+import {
+  type SQL,
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  gte,
+  lte,
+} from "drizzle-orm";
 import bancoDados from "../db";
+import type { MotivoTransacoes } from "../db/enum/motivoTransacao";
 import { tabelaCategorias } from "../db/schema/categorias";
 import { tabelaLotes } from "../db/schema/lotes";
 import { tabelaProdutos } from "../db/schema/produtos";
@@ -22,6 +31,7 @@ export type RepoConsultaParamsTransacoes = {
   comLoteId?: string;
   comDataMaiorQue?: Date;
   comDataMenorQue?: Date;
+  comMotivo?: MotivoTransacoes;
 };
 
 type SelectConsultaTransacoesSchema = SelectTransacoesSchema & {
@@ -78,9 +88,11 @@ class RepositorioTransacoes {
       eq(tabelaTransacoes.usuarioId, id);
     const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
     const comDataMaiorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      gte(tabelaTransacoes.horario, data);
     const comDataMenorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      lte(tabelaTransacoes.horario, data);
+    const comMotivo = (motivo: MotivoTransacoes): SQL =>
+      eq(tabelaTransacoes.motivo, motivo);
 
     const pagina = opts?.pagina || 1;
     const paginaTamanho = opts?.paginaTamanho || 100;
@@ -115,6 +127,7 @@ class RepositorioTransacoes {
           opts?.comDataMenorQue
             ? comDataMenorQue(opts.comDataMenorQue)
             : undefined,
+          opts?.comMotivo ? comMotivo(opts.comMotivo) : undefined,
         ),
       )
       .leftJoin(
@@ -130,6 +143,7 @@ class RepositorioTransacoes {
         eq(tabelaTransacoes.produtoId, tabelaProdutos.id),
       )
       .leftJoin(tabelaLotes, eq(tabelaTransacoes.loteId, tabelaLotes.id))
+      .orderBy(desc(tabelaTransacoes.horario))
       .limit(paginaTamanho)
       .offset((pagina - 1) * paginaTamanho)
       .execute();
@@ -145,9 +159,9 @@ class RepositorioTransacoes {
       eq(tabelaTransacoes.usuarioId, id);
     const comLoteId = (id: string): SQL => eq(tabelaTransacoes.loteId, id);
     const comDataMaiorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      gte(tabelaTransacoes.horario, data);
     const comDataMenorQue = (data: Date): SQL =>
-      eq(tabelaTransacoes.horario, data);
+      lte(tabelaTransacoes.horario, data);
 
     const pagina = opts?.pagina || 1;
     const paginaTamanho = opts?.paginaTamanho || 100;

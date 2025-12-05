@@ -4,6 +4,7 @@ export { Identificador } from "./src/db/enums/identificador";
 export { MotivoAlerta } from "./src/db/enums/motivoAlerta";
 export { Permissoes } from "./src/db/enums/permissoes";
 export { StatusProduto } from "./src/db/enums/statusProduto";
+export { MotivoTransacoes } from "./src/db/enum/motivoTransacao";
 
 // DTOs
 
