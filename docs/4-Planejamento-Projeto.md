@@ -74,7 +74,7 @@ O quadro está organizado em colunas que representam as etapas do fluxo de traba
 
 ### 🔵 Sprint 3 – Desenvolvimento Inicial e Apresentação Parcial
 
-**Período estimado:** definido no Canvas (_os alunos podem colocar o período aqui_)
+**Prazo final da Entrega:** 10/11/2025
 **Objetivo:** Iniciar a implementação da solução e apresentar o progresso parcial.
 
 | Responsável | Função no Grupo | Tarefa | Início | Prazo | Status | Entrega |
@@ -82,18 +82,20 @@ O quadro está organizado em colunas que representam as etapas do fluxo de traba
 | Bruno | Front-end Dev | Página de pesquisa e dashboard. | 22/09 | 10/11 | ✔️ | — |
 | Mateus | Full-stack Dev | Criar estrutura de banco de dados, back-end e rotas. | 22/09 | 10/11 | ✔️ | — |
 | Mateus | Full-stack Dev | Página de configurações, comunicação da stack. | 22/09 | 10/11 | ✔️ | — |
-| Marcelo | Front-end Dev | Página de movimentações, login, cadastro de usuários e operações diárias.  | 22/09 | 10/11 | ✔️ | — |
+| Lucas | Front-end Dev | Página de movimentações, login, cadastro de usuários e operações diárias.  | 22/09 | 10/11 | ✔️ | — |
 | Marcelo | Apresentação | Organizar slides. | 22/09 | 10/11 | ✔️ | — |
 
 ---
 
 ### 🔴 Sprint 4 – Finalização e Relatório Final (APC)  
 
-**Período estimado:** definido no Canvas (_os alunos podem colocar o período aqui_)
+**Prazo final da Entrega:** 05/12/2025.  
 **Objetivo:** Concluir o sistema, realizar testes finais, validar com o cliente e preencher o relatório individual e coletivo.
 
 | Responsável | Função no Grupo | Tarefa | Início | Prazo | Status | Entrega |
 |-------------|------------------|--------|--------|--------|--------|---------|
-| AlunoK | Back-end Dev | Concluir rotinas de persistência e regras de negócio | 01/10 | 08/10 | ❌ | — |
-| AlunoY | Front-end Dev | Finalizar interface com feedback visual ao usuário | 02/10 | 10/10 | ❌ | — |
-| AlunaZ | QA/Testes | Testar sistema completo com dados reais | 06/10 | 10/10 | ❌ | — |
+| Mateus | Full-Stack Dev | Alertas, manutenção do código e página de produtos. | 10/11 | 05/11 | ✔️ | — |
+| Bruno | Front-end Dev | Página de alertas. | 10/11 | 05/11 | ✔️ | — |
+| Marcelo | Front-end Dev | Página de produtos. | 10/11 | 05/12 | ✔️ | — |
+| Lucas | Front-end Dev | Filtros, temas e manutenção geral do código. | 10/11 | 05/12 | ✔️ | — |
+
