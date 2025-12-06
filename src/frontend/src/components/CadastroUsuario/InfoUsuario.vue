@@ -3,10 +3,10 @@ import { PencilIcon, TrashIcon, UserCircleIcon } from '@heroicons/vue/24/outline
 import { ref } from 'vue'
 
 const props = defineProps<{
-  foto?: string
+  foto?: string | null
   nome: string
   login: string
-  descricao?: string
+  descricao?: string | null
   habilitado: boolean
 }>()
 const habilitadoCheked = ref(props.habilitado)
@@ -14,12 +14,17 @@ defineEmits(['editar', 'desabilitar', 'excluir'])
 </script>
 
 <template>
-  <div class="flex items-center justify-between bg-base-200 rounded-2xl p-3 shadow">
+  <div class="bg-base-200 flex items-center justify-between rounded-2xl p-3 shadow">
     <div class="flex items-center gap-3">
       <div class="avatar">
-        <div class="rounded-full w-12 h-12">
-          <img v-if="foto" :src="foto" alt="Avatar" />
-          <UserCircleIcon />
+        <div class="h-12 w-12 rounded-full">
+          <UserCircleIcon v-if="!foto" />
+          <img
+            v-if="foto"
+            class="avatar h-full w-full rounded-full border object-cover"
+            :src="foto"
+            alt="Foto de perfil"
+          />
         </div>
       </div>
       <div>
@@ -29,17 +34,17 @@ defineEmits(['editar', 'desabilitar', 'excluir'])
     </div>
 
     <div class="flex items-center gap-10">
-      <button class="hover:scale-110 transition-transform cursor-pointer" @click="$emit('editar')">
-        <PencilIcon class="w-6 h-6"></PencilIcon>
+      <button class="cursor-pointer transition-transform hover:scale-110" @click="$emit('editar')">
+        <PencilIcon class="h-6 w-6"></PencilIcon>
       </button>
       <button
-        class="hover:scale-105 transition-transform"
+        class="transition-transform hover:scale-105"
         @click="$emit('desabilitar', !habilitadoCheked)"
       >
         <input type="checkbox" class="toggle scale-85" v-model="habilitadoCheked" />
       </button>
-      <button class="hover:scale-110 transition-transform cursor-pointer" @click="$emit('excluir')">
-        <TrashIcon class="w-6 h-6"></TrashIcon>
+      <button class="cursor-pointer transition-transform hover:scale-110" @click="$emit('excluir')">
+        <TrashIcon class="h-6 w-6"></TrashIcon>
       </button>
     </div>
   </div>

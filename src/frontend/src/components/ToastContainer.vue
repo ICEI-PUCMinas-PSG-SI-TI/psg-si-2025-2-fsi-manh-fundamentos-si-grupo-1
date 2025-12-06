@@ -4,7 +4,7 @@
       v-for="notification in useNotifications.notificationList"
       :v-if="!notification.dismissed"
       :key="notification.id"
-      class="flex flex-col alert justify-items-center items-start"
+      class="alert flex flex-col items-start justify-items-center"
       :class="notification.isError ? 'alert-error' : 'alert-info'"
       @click="useNotifications.dismissNotification(notification.id)"
     >

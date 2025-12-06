@@ -1,13 +1,29 @@
-import z from 'zod'
-import { fetchW } from './fetchWrapper'
+import type { ConsultaLoteParams, GetLoteDTO, SetLoteDTO } from '../../../backend'
+import { UuidParseZ } from './common'
+import { fetchW, HttpMethods } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/lotes`
 
-const ParamIdSchemaZ = z.uuid()
-
 export class ApiLotes {
+  criar(opts: SetLoteDTO) {
+    return fetchW<{ id: string }>(endpoint_path, {
+      method: HttpMethods.Post,
+      body: opts,
+    })
+  }
+
   obter(id: string) {
-    const _id = ParamIdSchemaZ.parse(id)
-    return fetchW(`${endpoint_path}/${_id}`)
+    const _id = UuidParseZ.parse(id)
+    return fetchW<GetLoteDTO>(`${endpoint_path}/${_id}`)
+  }
+
+  consultar(opts: ConsultaLoteParams) {
+    return fetchW<GetLoteDTO[]>(endpoint_path, {
+      method: HttpMethods.Get,
+      params: opts,
+    })
   }
 }
+
+const apiLotes = new ApiLotes()
+export default apiLotes

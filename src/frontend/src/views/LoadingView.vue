@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-screen h-screen justify-center align-middle items-center">
+  <div class="flex h-full w-full flex-col items-center justify-center align-middle">
     <LogoLoginItem class="mb-6" />
     <span class="loading loading-bars mb-3 w-24"></span>
     <p v-if="status === Status.Conectando">Conectando ao servidor...</p>

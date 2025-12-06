@@ -1,7 +1,7 @@
-import { sql, type InferSelectModel } from "drizzle-orm";
+import { type InferSelectModel } from "drizzle-orm";
 import { blob, int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-import z from "zod";
+import * as z4 from "zod/v4";
 import { tabelaUsuarios } from "./usuarios";
 
 // NOTE: UserAgent and ipAddress will be recorded at login time, for now, this will not be updated or invalidated if user changes those infos
@@ -15,12 +15,12 @@ export const tabelaSessoes = sqliteTable("sessoes", {
   ipAddress: text("ip_address").notNull(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
-    .default(sql`(unixepoch()*1000)`),
+    .$defaultFn(() => new Date()),
 });
 
 export const InsertSessaoSchemaZ = createInsertSchema(tabelaSessoes, {
-  usuarioId: z.uuid(),
-  ipAddress: z.union([z.ipv4(), z.ipv6()]),
+  usuarioId: z4.uuid(),
+  ipAddress: z4.union([z4.ipv4(), z4.ipv6()]),
 })
   .omit({
     createdAt: true,
@@ -28,4 +28,4 @@ export const InsertSessaoSchemaZ = createInsertSchema(tabelaSessoes, {
   .strict();
 
 export type SelectSessaoSchema = InferSelectModel<typeof tabelaSessoes>;
-export type InsertSessaoSchema = z.infer<typeof InsertSessaoSchemaZ>;
+export type InsertSessaoSchema = z4.infer<typeof InsertSessaoSchemaZ>;

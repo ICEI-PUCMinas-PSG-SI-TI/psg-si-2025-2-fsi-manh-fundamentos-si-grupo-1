@@ -1,35 +1,28 @@
-import { z } from 'zod'
+import type { GetUsuarioDto, SetUsuarioDto, UpdateUsuarioDto } from '../../../backend'
+import { UuidParseZ, type IdRegistro } from './common'
 import { fetchW, HttpMethods } from './fetchWrapper'
-import type {
-  SelectUsuarioSchema,
-  UpdateUsuarioSchema,
-} from '../../../backend/src/db/schema/usuarios'
-import type { InsertUsuarioSchemaReq } from '../../../backend/src/services/servicoUsuarios'
-import type { UuidResult } from '../../../backend'
 
 const endpoint_path = `/api/v1/admin/usuarios`
 
-const ParamIdSchemaZ = z.uuid()
-
 export class ApiUsuario {
-  criar(opts: InsertUsuarioSchemaReq) {
-    return fetchW<UuidResult>(endpoint_path, {
+  criar(opts: SetUsuarioDto) {
+    return fetchW<IdRegistro>(endpoint_path, {
       method: HttpMethods.Post,
       body: opts,
     })
   }
 
   obterPorId(id: string) {
-    const _id = ParamIdSchemaZ.parse(id)
-    return fetchW(`${endpoint_path}/${_id}`)
+    const _id = UuidParseZ.parse(id)
+    return fetchW<GetUsuarioDto>(`${endpoint_path}/${_id}`)
   }
 
   obter() {
-    return fetchW<SelectUsuarioSchema[]>(endpoint_path)
+    return fetchW<GetUsuarioDto[]>(endpoint_path)
   }
 
   alterarSenha(usuarioId: string, senha: string) {
-    const _id = ParamIdSchemaZ.parse(usuarioId)
+    const _id = UuidParseZ.parse(usuarioId)
     return fetchW(`${endpoint_path}/alterar-senha/${_id}`, {
       method: HttpMethods.Post,
       body: {
@@ -38,8 +31,8 @@ export class ApiUsuario {
     })
   }
 
-  atualizar(usuarioId: string, body: UpdateUsuarioSchema) {
-    const _id = ParamIdSchemaZ.parse(usuarioId)
+  atualizar(usuarioId: string, body: UpdateUsuarioDto) {
+    const _id = UuidParseZ.parse(usuarioId)
     return fetchW(`${endpoint_path}/${_id}`, {
       method: HttpMethods.Patch,
       body: body,

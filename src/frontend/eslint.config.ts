@@ -1,7 +1,7 @@
-import { globalIgnores } from 'eslint/config'
+import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
 import pluginVue from 'eslint-plugin-vue'
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+import { globalIgnores } from 'eslint/config'
 
 // To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
 // import { configureVueProject } from '@vue/eslint-config-typescript'
@@ -33,6 +33,22 @@ export default defineConfigWithVueTs(
           destructuredArrayIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
+  {
+    rules: {
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector:
+            "CallExpression[callee.object.name='console'][callee.property.name!=/^(warn|error|info|trace)$/]",
+          message: 'log() não é recomendado, utilizar info(), error() or notificações.',
+        },
+        {
+          selector: "CallExpression[callee.name='alert']",
+          message: 'Utilize as notificações para mostrar alertas.',
         },
       ],
     },

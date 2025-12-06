@@ -1,13 +1,12 @@
 import { ApiAutenticacao } from '@/api/auth'
 import { defineStore } from 'pinia'
 import { ref, type Ref } from 'vue'
-import type { UserSessionInfo } from '../../../../backend'
-import { Permissoes } from '../../../../backend/src/db/schema/permissoes'
+import { Permissoes, type GetSessaoDto } from '../../../../backend'
 
 const autenticacao = new ApiAutenticacao()
 
 // TODO: Armazenar informações separadamente?
-const refUserInfo: Ref<UserSessionInfo | null> = ref(null)
+const refUserInfo: Ref<GetSessaoDto | null> = ref(null)
 const refDidFetch = ref(false)
 
 async function isUserLoggedIn(): Promise<boolean> {
@@ -23,15 +22,13 @@ async function isUserLoggedIn(): Promise<boolean> {
 export const useSessaoStore = defineStore('sessao', {
   state: () => ({ isLoggedIn: false, didFetch: refDidFetch }),
   getters: {
-    getUserInfo(): UserSessionInfo | null {
+    getUserInfo(): GetSessaoDto | null {
       return refUserInfo.value
     },
   },
   actions: {
     possuiPermissao(permissao: Permissoes): boolean {
-      return permissao === Permissoes.Administrador && refUserInfo.value?.nivelPermissoes === 0
-        ? true
-        : !!refUserInfo.value?.permissoes.includes(permissao)
+      return refUserInfo.value?.permissoes.includes(permissao) || false
     },
     logout() {
       refUserInfo.value = null

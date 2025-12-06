@@ -56,8 +56,13 @@ export async function fetchW<T>(
     })
     if (response.ok) {
       let data: T | undefined = undefined
-      if (response.headers.get('Content-Type')?.startsWith('application/json'))
+      const contentType = response.headers.get('Content-Type')
+      if (contentType?.startsWith('application/json')) {
         data = await response.json()
+      } else if (contentType?.startsWith('text')) {
+        // TODO: Retornar como .message ou algo parecido
+        data = (await response.text()) as T
+      }
       return {
         ok: true,
         responseBody: data,
@@ -66,7 +71,15 @@ export async function fetchW<T>(
       }
     } else {
       if (!opts?.muteNotifications) {
-        notificacoes.addNotification(response.statusText, { isError: true })
+        if (response.status === 409) {
+          const data2 = await response.text()
+          notificacoes.addNotification(data2, {
+            title: response.statusText,
+            isError: true,
+          })
+        } else {
+          notificacoes.addNotification(response.statusText, { isError: true })
+        }
       }
       return {
         ok: false,

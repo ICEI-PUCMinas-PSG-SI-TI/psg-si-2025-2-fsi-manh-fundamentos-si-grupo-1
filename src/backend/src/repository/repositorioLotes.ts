@@ -1,140 +1,163 @@
 import "dotenv/config";
-import { and, count, eq, gte, like, lte, type SQLWrapper } from "drizzle-orm";
-import { tabelaLotes } from "../db/schema/lotes";
-import baseDados from "../db";
-import {
-  QueryBuilder,
-  type SQLiteSelectQueryBuilder,
-} from "drizzle-orm/sqlite-core";
+import { SQL, and, count, eq, gte, isNotNull, like, lte } from "drizzle-orm";
+import bancoDados from "../db";
 import type {
   InsertLoteSchema,
   SelectLoteSchema,
   UpdateLoteSchema,
 } from "../db/schema/lotes";
+import { tabelaLotes } from "../db/schema/lotes";
+import type { Count, RefRegistro } from "./common";
 
-// TODO(!scope): Prevent calling where functions more than 1 time
-class RepositorioLotesConsulta<T extends SQLiteSelectQueryBuilder> {
-  _query: T;
-  _where: SQLWrapper[];
+export type RepoConsultaParamsLote = {
+  pagina?: number;
+  paginaTamanho?: number;
+  comCodigo?: string;
+  comId?: string;
+  comProdutoId?: string;
+  comValidadeMaiorIgualQue?: Date;
+  comValidadeMenorIgualQue?: Date;
+  comQuantidadeMaiorIgualQue?: number;
+  comQuantidadeMenorIgualQue?: number;
+};
 
-  constructor(queryBase: T) {
-    this._query = queryBase;
-    this._where = [];
-  }
-
-  comPaginacao(page: number = 1, pageSize: number = 10) {
-    this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
-    return this;
-  }
-
-  comId(id: string) {
-    this._where.push(eq(tabelaLotes.id, id));
-    return this;
-  }
-
-  comProdutoId(id: string) {
-    this._where.push(eq(tabelaLotes.produtoId, id));
-    return this;
-  }
-
-  comValidadeMaiorIgualQue(data: Date) {
-    this._where.push(gte(tabelaLotes.validade, data));
-    return this;
-  }
-
-  comValidadeMenorIgualQue(data: Date) {
-    this._where.push(lte(tabelaLotes.validade, data));
-    return this;
-  }
-
-  comQuantidadeMaiorIgualQue(valor: number) {
-    this._where.push(gte(tabelaLotes.quantidade, valor));
-    return this;
-  }
-
-  comQuantidadeMenorIgualQue(valor: number) {
-    this._where.push(lte(tabelaLotes.quantidade, valor));
-    return this;
-  }
-
-  comCodigo(lote: string) {
-    this._where.push(like(tabelaLotes.codigo, `%${lote}%`));
-    return this;
-  }
-
-  async executarConsulta(): Promise<SelectLoteSchema[]> {
-    this._query.where(and(...this._where));
-    return await baseDados.transaction(async (tx) => {
-      return await tx.all(this._query.getSQL());
-    });
-  }
-}
-
-export class RepositorioLotes {
-  inserir(lote: InsertLoteSchema) {
-    return baseDados.transaction((tx) => {
-      return tx.insert(tabelaLotes).values(lote).returning({
-        id: tabelaLotes.id,
-      });
+class RepositorioLotes {
+  inserir(...lote: InsertLoteSchema[]): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
+      return tx
+        .insert(tabelaLotes)
+        .values(lote)
+        .returning({
+          id: tabelaLotes.id,
+        })
+        .execute();
     });
   }
 
-  async selecionarPorId(id: string): Promise<SelectLoteSchema[]> {
-    return await baseDados.transaction(async (tx) => {
-      return await tx.select().from(tabelaLotes).where(eq(tabelaLotes.id, id));
-    });
+  selecionarPorId(id: string): Promise<SelectLoteSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaLotes)
+      .where(eq(tabelaLotes.id, id))
+      .get();
   }
 
-  async selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectLoteSchema[]> {
+    return bancoDados.select().from(tabelaLotes).execute();
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectLoteSchema[]> {
-    return await baseDados.transaction(async (tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return await tx
-          .select()
-          .from(tabelaLotes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return await tx.select().from(tabelaLotes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaLotes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
-  selecionarQuery() {
-    const queryBase = new QueryBuilder().select().from(tabelaLotes).$dynamic();
-    return new RepositorioLotesConsulta(queryBase);
+  selecionarValidadeAlertas(
+    data: Date,
+  ): Promise<{ id: string; produtoId: string; validade: Date | null }[]> {
+    return bancoDados
+      .select({
+        id: tabelaLotes.id,
+        produtoId: tabelaLotes.produtoId,
+        validade: tabelaLotes.validade,
+      })
+      .from(tabelaLotes)
+      .where(
+        and(isNotNull(tabelaLotes.validade), lte(tabelaLotes.validade, data)),
+      )
+      .execute();
+  }
+
+  selecionarConsulta(
+    opts?: RepoConsultaParamsLote,
+  ): Promise<SelectLoteSchema[]> {
+    const comCodigo = (lote: string): SQL =>
+      like(tabelaLotes.codigo, `%${lote}%`);
+    const comId = (id: string): SQL => eq(tabelaLotes.id, id);
+    const comProdutoId = (id: string): SQL => eq(tabelaLotes.produtoId, id);
+    const comValidadeMaiorIgualQue = (data: Date): SQL =>
+      gte(tabelaLotes.validade, data);
+    const comValidadeMenorIgualQue = (data: Date): SQL =>
+      lte(tabelaLotes.validade, data);
+    const comQuantidadeMaiorIgualQue = (valor: number): SQL =>
+      gte(tabelaLotes.quantidade, valor);
+    const comQuantidadeMenorIgualQue = (valor: number): SQL =>
+      lte(tabelaLotes.quantidade, valor);
+
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
+      .select()
+      .from(tabelaLotes)
+      .where(
+        and(
+          opts?.comCodigo ? comCodigo(opts.comCodigo) : undefined,
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comProdutoId ? comProdutoId(opts.comProdutoId) : undefined,
+          opts?.comValidadeMaiorIgualQue
+            ? comValidadeMaiorIgualQue(opts.comValidadeMaiorIgualQue)
+            : undefined,
+          opts?.comValidadeMenorIgualQue
+            ? comValidadeMenorIgualQue(opts.comValidadeMenorIgualQue)
+            : undefined,
+          opts?.comQuantidadeMaiorIgualQue
+            ? comQuantidadeMaiorIgualQue(opts.comQuantidadeMaiorIgualQue)
+            : undefined,
+          opts?.comQuantidadeMenorIgualQue
+            ? comQuantidadeMenorIgualQue(opts.comQuantidadeMenorIgualQue)
+            : undefined,
+        ),
+      )
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   selecionarIdProdutosTodos(): Promise<{ id: string; produtoId: string }[]> {
-    return baseDados.transaction((tx) => {
-      return tx
-        .select({
-          id: tabelaLotes.id,
-          produtoId: tabelaLotes.produtoId,
-        })
-        .from(tabelaLotes);
+    return bancoDados
+      .select({
+        id: tabelaLotes.id,
+        produtoId: tabelaLotes.produtoId,
+      })
+      .from(tabelaLotes)
+      .execute();
+  }
+
+  atualizarPorId(id: string, valores: UpdateLoteSchema): Promise<number> {
+    valores.updatedAt = new Date();
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .update(tabelaLotes)
+        .set(valores)
+        .where(eq(tabelaLotes.id, id))
+        .execute();
+      return resultSet.rowsAffected;
     });
   }
 
-  async atualizarPorId(id: string, lote: UpdateLoteSchema): Promise<number> {
-    return await baseDados.transaction(async (tx) => {
-      return (
-        await tx.update(tabelaLotes).set(lote).where(eq(tabelaLotes.id, id))
-      ).rowsAffected;
+  // or .returning()
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
+      const resultSet = await tx
+        .delete(tabelaLotes)
+        .where(eq(tabelaLotes.id, id))
+        .execute();
+      return resultSet.rowsAffected;
     });
   }
 
-  async excluirPorId(id: string) {
-    return await baseDados.transaction(async (tx) => {
-      // or .returning()
-      return (await tx.delete(tabelaLotes).where(eq(tabelaLotes.id, id)))
-        .rowsAffected;
-    });
-  }
-
-  contar() {
-    return baseDados.select({ count: count() }).from(tabelaLotes);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaLotes).get();
   }
 }
+
+const repositorioLotes = new RepositorioLotes();
+
+export default repositorioLotes;

@@ -1,35 +1,27 @@
+import { type NextFunction, type Response, Router } from "express";
 import type { ExtendedRequest } from "../../middlewares";
-import { LoteConsultaSchema, ServicoLotes } from "../../services/servicoLotes";
-import { Router, type NextFunction, type Response } from "express";
-import { ClientError } from "../../error";
-import { ParamsIdSchemaZ } from "./objects";
-import { InsertLoteSchemaZ } from "../../db/schema/lotes";
 import { mdwRequerBody } from "../../middlewares";
+import servicoLotes, {
+  LoteConsultaSchema,
+  SetLoteDtoZ,
+} from "../../services/servicoLotes";
+import { ParamsIdSchemaZ } from "./objects";
 
 const apiV1LotesRouter = Router();
-
-const lotes = new ServicoLotes();
-
-// GET / { queryParams: SelectLoteSchema }
-// POST / { body: InsertLoteSchema }
-// GET /:id
-// PUT /:id { body: UpdateLoteSchema }
-// PATCH /:id { body: UpdateLoteSchema }
-// DELETE /:id
 
 async function getLotes(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     if (Object.keys(req.query).length === 0) {
-      const consulta = await lotes.selecionarTodos();
-      res.send(consulta);
+      const consulta = await servicoLotes.selecionarTodos();
+      res.json(consulta);
     } else {
       const parsedQueryParams = LoteConsultaSchema.parse(req.query);
-      const consulta = await lotes.selecionarConsulta(parsedQueryParams);
-      res.send(consulta);
+      const consulta = await servicoLotes.selecionarConsulta(parsedQueryParams);
+      res.json(consulta);
     }
   } catch (err) {
     next(err);
@@ -40,11 +32,11 @@ async function postLote(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
-    const parsedBody = InsertLoteSchemaZ.parse(req.body);
-    const id = await lotes.inserir(parsedBody);
-    res.send(id);
+    const parsedBody = SetLoteDtoZ.parse(req.body);
+    const idRegistro = await servicoLotes.inserir(parsedBody);
+    res.status(201).json({ id: idRegistro });
   } catch (err) {
     next(err);
   }
@@ -54,12 +46,15 @@ async function getLoteId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await lotes.selecionarPorId(params.id);
-    if (!consulta) throw new ClientError("", 404);
-    res.send(consulta);
+    const consulta = await servicoLotes.selecionarPorId(params.id);
+    if (consulta) {
+      res.json(consulta);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -69,12 +64,15 @@ async function excluirLoteId(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     const params = ParamsIdSchemaZ.parse(req.params);
-    const consulta = await lotes.excluirPorId(params.id);
-    if (consulta === 0) throw new ClientError("", 404);
-    res.send(consulta);
+    const atualizado = await servicoLotes.excluirPorId(params.id);
+    if (atualizado) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (err) {
     next(err);
   }
@@ -84,7 +82,7 @@ function notImplemented(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): void {
   try {
     throw new Error("Not implemented");
   } catch (err) {

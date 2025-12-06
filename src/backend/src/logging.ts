@@ -18,23 +18,31 @@ export enum LogLevel {
 
 let logLevel = LogLevel.Informational;
 
-export function setLogLevel(level: LogLevel) {
+export function setLogLevel(level: LogLevel): void {
   logLevel = level;
 }
 
 function colorStatusCode(statusCode: number): string {
   let text;
-  if (statusCode >= 600) text = `${statusCode}`;
-  else if (statusCode >= 500) text = chalk.redBright(statusCode);
-  else if (statusCode >= 400) text = chalk.red(statusCode);
-  else if (statusCode >= 300) text = chalk.yellow(statusCode);
-  else if (statusCode >= 200) text = chalk.green(statusCode);
-  else if (statusCode >= 100) text = chalk.blue(statusCode);
-  else text = `${statusCode}`;
+  if (statusCode >= 600) {
+    text = `${statusCode}`;
+  } else if (statusCode >= 500) {
+    text = chalk.redBright(statusCode);
+  } else if (statusCode >= 400) {
+    text = chalk.red(statusCode);
+  } else if (statusCode >= 300) {
+    text = chalk.yellow(statusCode);
+  } else if (statusCode >= 200) {
+    text = chalk.green(statusCode);
+  } else if (statusCode >= 100) {
+    text = chalk.blue(statusCode);
+  } else {
+    text = `${statusCode}`;
+  }
   return text;
 }
 
-function colorLogLevel(level: LogLevel) {
+function colorLogLevel(level: LogLevel): string {
   let text;
   switch (level) {
     case LogLevel.Emergency:
@@ -73,10 +81,12 @@ export type LogOpts = {
   reqId?: string;
 };
 
-function log(messsage: string, level: LogLevel, opts?: LogOpts) {
-  if (level > logLevel) return;
+function log(messsage: string, level: LogLevel, opts?: LogOpts): void {
+  if (level > logLevel) {
+    return;
+  }
   const messageArray: string[] = [];
-  if (!opts?.excludeTimestamp)
+  if (!opts?.excludeTimestamp) {
     messageArray.push(
       new Date().toLocaleString(locale, {
         hour12: false,
@@ -89,31 +99,36 @@ function log(messsage: string, level: LogLevel, opts?: LogOpts) {
         fractionalSecondDigits: 3,
       }),
     );
+  }
   messageArray.push(colorLogLevel(level));
-  if (opts?.label?.length) messageArray.push(`[${opts.label}]`);
-  if (opts?.reqId?.length) messageArray.push(`{${opts.reqId}}`);
+  if (opts?.label?.length) {
+    messageArray.push(`[${opts.label}]`);
+  }
+  if (opts?.reqId?.length) {
+    messageArray.push(`{${opts.reqId}}`);
+  }
   messageArray.push(messsage);
   const finalMessage = messageArray.join(" ");
   console.info(finalMessage);
 }
 
-export function error(messsage: string, opts?: LogOpts | object) {
+export function error(messsage: string, opts?: LogOpts | object): void {
   log(messsage, LogLevel.Error, opts);
 }
 
-export function warning(messsage: string, opts?: LogOpts | object) {
+export function warning(messsage: string, opts?: LogOpts | object): void {
   log(messsage, LogLevel.Warning, opts);
 }
 
-export function notice(messsage: string, opts?: LogOpts | object) {
+export function notice(messsage: string, opts?: LogOpts | object): void {
   log(messsage, LogLevel.Notice, opts);
 }
 
-export function info(messsage: string, opts?: LogOpts | object) {
+export function info(messsage: string, opts?: LogOpts | object): void {
   log(messsage, LogLevel.Informational, opts);
 }
 
-export function debug(messsage: string, opts?: LogOpts | object) {
+export function debug(messsage: string, opts?: LogOpts | object): void {
   log(messsage, LogLevel.Debug, opts);
 }
 
@@ -121,7 +136,7 @@ export function json(
   message: object,
   level: LogLevel,
   opts?: LogOpts | object,
-) {
+): void {
   const stringMessage = JSON.stringify(message, null, 2);
   log(stringMessage, level, opts);
 }
@@ -130,7 +145,7 @@ export function middlewareHTTP(
   req: ExtendedRequest,
   res: Response,
   next: NextFunction,
-) {
+): void {
   const startTime = Date.now();
   // :date[iso] :remote-addr :method :url :status :response-time ms
   const remoteAddr = req.ip;

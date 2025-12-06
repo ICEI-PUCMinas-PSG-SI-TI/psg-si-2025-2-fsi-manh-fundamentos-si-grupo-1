@@ -16,23 +16,23 @@ async function gerar() {
 }
 
 function deleteAll() {
-  alert('deleteAll')
+  notificacoes.addNotification(`deleteAll`, { isError: true })
 }
 
 function deleteId(id: string) {
-  alert(`delete(${id})`)
+  notificacoes.addNotification(`delete(${id})`, { isError: true })
 }
 
 function show() {
-  alert('show')
+  notificacoes.addNotification('show', { isError: true })
 }
 </script>
 
 <template>
-  <div class="card bg-base-100 border-2 border-base-300">
+  <div class="card bg-base-100 border-base-300 border-2">
     <div class="card-body">
-      <div class="flex flex-col p-2 gap-2">
-        <div class="font-semibold text-xl mb-4">Unidades de medida</div>
+      <div class="flex flex-col gap-2 p-2">
+        <div class="mb-4 text-xl font-semibold">Unidades de medida</div>
         <strong>Criar unidades de medida com dados aleatórios</strong>
         <LabeledInput html-type="number" html-place-holder="Quantidade" v-model="quant" />
         <div class="flex flex-row items-center">

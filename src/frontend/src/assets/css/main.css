@@ -1,12 +1,12 @@
 @import 'tailwindcss';
-@plugin "daisyui" {
+@plugin 'daisyui' {
   themes:
     light --default,
     dark --prefersdark;
   exclude: properties;
 }
 /* https://daisyui.com/theme-generator */
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
   name: 'light';
   default: true;
   prefersdark: false;
@@ -23,7 +23,7 @@
   --depth: 0;
   --noise: 0;
 }
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
   name: 'dark';
   default: false;
   prefersdark: true;

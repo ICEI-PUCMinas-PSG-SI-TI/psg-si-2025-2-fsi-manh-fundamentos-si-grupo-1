@@ -1,38 +1,42 @@
 <script setup lang="ts">
+import apiAlertas from '@/api/alertas'
+import { useSessaoStore } from '@/store/config/sessao'
 import {
   ArchiveBoxIcon,
   ArrowsUpDownIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
-  PresentationChartBarIcon,
+  MegaphoneIcon,
   UsersIcon,
 } from '@heroicons/vue/24/outline'
-import NavigationMenuItem from './NavigationMenuItem.vue'
-import LogoMenuItem from './LogoMenuItem.vue'
-import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
+import { Permissoes } from '../../../backend'
 import DarkModeToggle from './DarkModeToggle.vue'
-import { useSessaoStore } from '@/store/config/sessao'
-import { computed } from 'vue'
-import { Permissoes } from '../../../backend/src/db/schema/permissoes'
+import LogoMenuItem from './LogoMenuItem.vue'
+import NavigationMenuItem from './NavigationMenuItem.vue'
+import NavigationMenuItemSeparator from './NavigationMenuItemSeparator.vue'
 
 const useSessao = useSessaoStore()
 const ehAdm = computed(() => useSessao.possuiPermissao(Permissoes.Administrador))
 const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor))
+const quantidadeAlertas: Ref<number> = ref(0)
+
+async function atualizarQuantidadeAlertas() {
+  const res = await apiAlertas.obterQuantidadeAtivos()
+  if (res.ok && res.responseBody) {
+    quantidadeAlertas.value = res.responseBody.quantidade
+  }
+}
+
+onMounted(() => atualizarQuantidadeAlertas())
 </script>
 
 <template>
-  <div class="h-screen bg-base-200 top-0 overflow-y-auto sticky w-full max-w-72">
-    <ul class="flex flex-col menu menu-lg w-full min-h-screen">
+  <div class="bg-base-200 sticky top-0 h-full w-full overflow-y-auto">
+    <ul class="menu menu-lg flex min-h-full w-full flex-col">
       <LogoMenuItem class="mb-2" />
 
       <NavigationMenuItemSeparator />
-
-      <RouterLink to="/dashboard" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <PresentationChartBarIcon class="m-2" />
-          Dashboard
-        </NavigationMenuItem>
-      </RouterLink>
 
       <RouterLink to="/operacoes" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
@@ -55,30 +59,19 @@ const ehDev = computed(() => useSessao.possuiPermissao(Permissoes.Desenvolvedor)
         </NavigationMenuItem>
       </RouterLink>
 
-      <!-- TODO: Funcionalidade não será implementada no momento (sprint 3)
-      <NavigationMenuItemSeparator />
-
-      <RouterLink to="/relatorio_1" v-slot="{ href, navigate, isActive }" custom>
+      <RouterLink to="/alertas" v-slot="{ href, navigate, isActive }" custom>
         <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 1
+          <MegaphoneIcon class="m-2" />
+          Alertas
+          <span
+            v-if="quantidadeAlertas >= 0"
+            class="badge badge-xs"
+            :class="{ 'bg-green-700 text-white': !isActive }"
+          >
+            {{ quantidadeAlertas }}
+          </span>
         </NavigationMenuItem>
       </RouterLink>
-
-      <RouterLink to="/relatorio_2" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 2
-        </NavigationMenuItem>
-      </RouterLink>
-
-      <RouterLink to="/relatorio_3" v-slot="{ href, navigate, isActive }" custom>
-        <NavigationMenuItem :href="href" :navigate="navigate" :is-active="isActive">
-          <ChartBarIcon class="m-2" />
-          Relatório 3
-        </NavigationMenuItem>
-      </RouterLink>
-      -->
 
       <NavigationMenuItemSeparator />
 

@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import MovTableProduct from './MovTableProduct.vue'
-import { ref, watch, type Ref } from 'vue'
-import { ApiPerfil } from '@/api/perfil'
 
 const props = defineProps<{
   colUserId: string
@@ -14,6 +11,10 @@ const props = defineProps<{
   colOrigem: string
   colDestino: string
   colObservacao: string
+  colUsuario: string
+  colProdutoNome: string
+  colProdutoCodigo: string
+  colLote: string
 }>()
 
 const data = computed(() => new Date(props.colData))
@@ -24,26 +25,11 @@ const dataTime = computed(() =>
   data.value.toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
 )
 
-const redUsuarioId = ref(props.colUserId)
-const refUsuariodata: Ref<{
-  id?: string
-  nome?: string
-}> = ref({})
-
-const usuarios = new ApiPerfil()
-
-async function obterUsuario(id: string) {
-  const res = await usuarios.obterPorId(id)
-  if (res.ok && res.responseBody) {
-    refUsuariodata.value = res.responseBody
-  }
-  // TODO: Criar campos padrão
-}
-
-watch(redUsuarioId, obterUsuario)
-obterUsuario(props.colUserId)
-
-// const isChecked = defineModel()
+const observacao = computed(() => {
+  if (props.colObservacao && props.colObservacao.length > 80) {
+    return props.colObservacao.substring(0, 77) + '...'
+  } else return props.colObservacao
+})
 </script>
 
 <template>
@@ -60,17 +46,17 @@ obterUsuario(props.colUserId)
       <p>{{ dataTime }}</p>
     </td>
     <td>
-      <p class="font-bold">{{ refUsuariodata.nome || 'N/A' }}</p>
+      <p class="font-bold">{{ colUsuario }}</p>
     </td>
     <td>
-      <MovTableProduct :product-id="colProductId" :lote-id="colLoteId" />
+      {{ colProdutoNome || 'Produto N/A' }}
+      <br />
+      <span class="badge badge-sm badge-primary">{{ colProdutoCodigo || 'Lote N/A' }}</span>
     </td>
     <td>{{ colQuantidade }}</td>
     <td>{{ colOrigem }}</td>
     <td>{{ colDestino }}</td>
     <!-- Limit to 80 characters-->
-    <td class="">
-      {{ colObservacao.substring(0, 80) }}
-    </td>
+    <td>{{ observacao }}</td>
   </tr>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <li class="navigation-menu-item">
     <a
-      class="px-3 py-2 rounded-xl mb-2"
+      class="mb-2 rounded-xl px-3 py-2"
       :class="{ 'menu-active': isActive }"
       :href="href"
       @click="navigate"

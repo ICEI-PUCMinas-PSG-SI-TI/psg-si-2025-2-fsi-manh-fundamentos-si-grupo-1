@@ -1,105 +1,157 @@
-import z from "zod";
-import { debug } from "../logging";
-import { RepositorioLotes } from "../repository/repositorioLotes";
-import type { InsertLoteSchema, UpdateLoteSchema } from "../db/schema/lotes";
-import { HttpError } from "../error";
-import type { UuidResult } from "../api/v1/objects";
+import * as z4 from "zod/v4";
+import { ServerError } from "../error";
+import repositorioLotes, {
+  type RepoConsultaParamsLote,
+} from "../repository/repositorioLotes";
 
-export const LoteConsultaSchema = z.strictObject({
-  id: z.uuid().optional(),
-  produtoId: z.uuid().optional(),
-  pagina: z.coerce.number().int().gt(0).optional(),
-  paginaTamanho: z.coerce.number().int().gt(0).optional(),
-  quantidadeMin: z.coerce.number().optional(),
-  quantidadeMax: z.coerce.number().optional(),
-  validadeAte: z.iso.datetime().optional(),
-  validadeApos: z.iso.datetime().optional(),
-  codigo: z.string().min(1).optional(),
+export const LoteConsultaSchema = z4.object({
+  id: z4.uuid().optional(),
+  produtoId: z4.uuid().optional(),
+  pagina: z4.coerce.number().int().gt(0).optional(),
+  paginaTamanho: z4.coerce.number().int().gt(0).optional(),
+  quantidadeMin: z4.coerce.number().optional(),
+  quantidadeMax: z4.coerce.number().optional(),
+  validadeAte: z4.iso.datetime().optional(),
+  validadeApos: z4.iso.datetime().optional(),
+  codigo: z4.string().min(1).optional(),
 });
 
-export type LoteConsultaZ = z.infer<typeof LoteConsultaSchema>;
+export type ConsultaLoteParams = z4.infer<typeof LoteConsultaSchema>;
 
-const repositorioLotes = new RepositorioLotes();
+export const SetLoteDtoZ = z4.object({
+  produtoId: z4.uuid(),
+  codigo: z4.string(),
+  quantidade: z4.number(),
+  validade: z4.string().nullable(),
+});
 
-export class ServicoLotes {
-  async inserir(lote: InsertLoteSchema): Promise<UuidResult> {
-    const res = await repositorioLotes.inserir(lote);
-    if (res.length !== 1 || !res[0]) throw new HttpError("", 500);
-    debug(`Novo lote criado!`, { label: "LoteService" });
-    return res[0];
-  }
+export type SetLoteDTO = z4.infer<typeof SetLoteDtoZ>;
 
-  async selecionarPorId(id: string) {
-    const res = await repositorioLotes.selecionarPorId(id);
-    if (res.length === 0) return null;
-    debug(`Retornando lote ${id}`, { label: "LoteService" });
-    return res[0]!;
-  }
+export type GetLoteDTO = {
+  id: string;
+  produtoId: string;
+  codigo: string;
+  quantidade: number;
+  validade: string | null;
+};
 
-  async selecionarConsulta(opts?: LoteConsultaZ) {
-    let query = repositorioLotes.selecionarQuery();
-    if (opts) {
-      if (opts.id) {
-        query = query.comId(opts.id);
-      }
-      if (opts.produtoId) {
-        query = query.comProdutoId(opts.produtoId);
-      }
-      if (opts.codigo) {
-        query = query.comCodigo(opts.codigo);
-      }
-      query = query.comPaginacao(opts.pagina, opts.paginaTamanho);
-      if (opts.validadeApos) {
-        const validadeApos = new Date(opts.validadeApos);
-        query = query.comValidadeMaiorIgualQue(validadeApos);
-      }
-      if (opts.validadeAte) {
-        const validadeAte = new Date(opts.validadeAte);
-        query = query.comValidadeMenorIgualQue(validadeAte);
-      }
-      if (opts.quantidadeMin) {
-        query = query.comQuantidadeMaiorIgualQue(opts.quantidadeMin);
-      }
-      if (opts.quantidadeMax) {
-        query = query.comQuantidadeMenorIgualQue(opts.quantidadeMax);
-      }
+export const UpdateLoteDtoZ = z4.strictObject({
+  codigo: z4.string().min(1).optional(),
+  quantidade: z4.number().optional(),
+  validade: z4.iso.datetime().optional().nullable(),
+});
+
+export type UpdateLoteDTO = z4.infer<typeof UpdateLoteDtoZ>;
+
+class ServicoLotes {
+  async inserir(lote: SetLoteDTO): Promise<string> {
+    // TODO: Verificar se Id do produto existe ou deixar dar erro na base de dados?
+    const res = await repositorioLotes.inserir({
+      produtoId: lote.produtoId,
+      codigo: lote.codigo,
+      quantidade: lote.quantidade | 0,
+      validade: lote.validade ? new Date(lote.validade) : null,
+    });
+    if (!res[0]) {
+      throw new ServerError("Não foi possível criar categoria.");
+    } else {
+      return res[0].id;
     }
-    const res = await query.executarConsulta();
-    debug(`Retornando lotes selecionados`, { label: "LoteService" });
-    return res;
   }
 
-  async selecionarTodos() {
-    const res = await repositorioLotes.selecionarTodos();
-    debug(`Retornando lotes`, { label: "LoteService" });
-    return res;
+  async selecionarPorId(id: string): Promise<GetLoteDTO | null> {
+    const registro = await repositorioLotes.selecionarPorId(id);
+    if (registro) {
+      return {
+        id: registro.id,
+        produtoId: registro.produtoId,
+        codigo: registro.codigo,
+        quantidade: registro.quantidade,
+        validade: registro.validade ? registro.validade.toISOString() : null,
+      };
+    } else {
+      return null;
+    }
   }
 
-  // NOTE: Utilizar com cuidado, atualmente utilizado apenas para faker.js
-  selecionarIdProdutosTodos() {
-    return repositorioLotes.selecionarIdProdutosTodos();
+  async selecionarConsulta(opts?: ConsultaLoteParams): Promise<GetLoteDTO[]> {
+    const filters = {
+      comId: opts?.id,
+      comProdutoId: opts?.produtoId,
+      comCodigo: opts?.codigo,
+      comQuantidadeMaiorIgualQue: opts?.quantidadeMin,
+      comQuantidadeMenorIgualQue: opts?.quantidadeMax,
+    } as RepoConsultaParamsLote;
+
+    if (opts?.validadeApos) {
+      const validadeApos = new Date(opts.validadeApos);
+      filters.comValidadeMaiorIgualQue = validadeApos;
+    }
+    if (opts?.validadeAte) {
+      const validadeAte = new Date(opts.validadeAte);
+      filters.comValidadeMenorIgualQue = validadeAte;
+    }
+    if (opts?.pagina && opts?.paginaTamanho) {
+      filters.pagina = opts?.pagina;
+      filters.paginaTamanho = opts?.paginaTamanho;
+    }
+    const consulta = await repositorioLotes.selecionarConsulta(filters);
+    return consulta.map((registro) => ({
+      id: registro.id,
+      produtoId: registro.produtoId,
+      codigo: registro.codigo,
+      quantidade: registro.quantidade,
+      validade: registro.validade ? registro.validade.toISOString() : null,
+    }));
   }
 
-  async atualizar(id: string, lote: UpdateLoteSchema) {
-    const res = await repositorioLotes.atualizarPorId(id, lote);
-    debug(`Informações do lote ${id} atualizadas!`, {
-      label: "LoteService",
-    });
-    return res;
+  async selecionarTodos(): Promise<GetLoteDTO[]> {
+    const registros = await repositorioLotes.selecionarTodos();
+    return registros.map((registro) => ({
+      id: registro.id,
+      produtoId: registro.produtoId,
+      codigo: registro.codigo,
+      quantidade: registro.quantidade,
+      validade: registro.validade ? registro.validade.toISOString() : null,
+    }));
   }
 
-  async excluirPorId(id: string) {
-    const res = await repositorioLotes.excluirPorId(id);
-    debug(`Informações do lote ${id} excluidas!`, {
-      label: "LoteService",
-    });
-    return res;
+  // TEST: As atualizações substituem todos os campos ou so alguns? (e se utilizar undefined?)
+  async atualizar(id: string, lote: UpdateLoteDTO): Promise<boolean> {
+    const registro = await repositorioLotes.selecionarPorId(id);
+    if (registro) {
+      const atualizacoes = await repositorioLotes.atualizarPorId(id, {
+        codigo: lote.codigo,
+        quantidade: lote.quantidade,
+        validade: lote.validade ? new Date(lote.validade) : null,
+      });
+      if (atualizacoes > 0) {
+        return true;
+      } else {
+        throw new ServerError("Erro ao atualizar lote.");
+      }
+    } else {
+      return false;
+    }
   }
 
-  async contar() {
+  async excluirPorId(id: string): Promise<boolean> {
+    const registro = await repositorioLotes.selecionarPorId(id);
+    if (registro) {
+      const atualizacoes = await repositorioLotes.excluirPorId(id);
+      if (atualizacoes > 0) {
+        return true;
+      } else {
+        throw new ServerError("Não foi possível excluir a categoria.");
+      }
+    } else {
+      return false;
+    }
+  }
+
+  async contar(): Promise<number> {
     const res = await repositorioLotes.contar();
-    if (!res[0]) return 0;
-    return res[0].count;
+    return res!.count;
   }
 }
 

@@ -1,5 +1,4 @@
 // @ts-check
-
 import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
@@ -15,6 +14,7 @@ export default defineConfig(
     },
   },
   [
+    // eslint (default)
     {
       rules: {
         camelcase: "warn",
@@ -46,12 +46,20 @@ export default defineConfig(
             uninitialized: "consecutive",
           },
         ],
+        curly: "warn",
+      },
+    },
+    // @typescript-eslint
+    {
+      rules: {
         "@typescript-eslint/no-misused-promises": "error",
         "@typescript-eslint/no-floating-promises": [
           "error",
           { checkThenables: true },
         ],
+        "@typescript-eslint/explicit-function-return-type": "warn",
       },
     },
   ],
 );
+

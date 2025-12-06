@@ -1,15 +1,17 @@
 import { Router } from "express";
-import apiV1Usuarios from "./v1/usuarios";
-import apiV1Lotes from "./v1/lotes";
-import apiV1Configuracoes from "./v1/configuracoes";
-import apiV1Categorias from "./v1/categorias";
-import apiV1UnidadesMedida from "./v1/unidadesMedida";
-import apiV1Admin from "./v1/admin";
-import apiV1Transacoes from "./v1/transacoes";
-import apiV1Produtos from "./v1/produtos";
-import apiV1Permissoes from "./v1/permissoes";
+import { Permissoes } from "../db/enums/permissoes";
 import { mdwPermissoes } from "../middlewares";
-import { Permissoes } from "../db/schema/permissoes";
+import apiV1Admin from "./v1/admin";
+import apiV1Alertas from "./v1/alertas";
+import apiV1Categorias from "./v1/categorias";
+import apiV1Configuracoes from "./v1/configuracoes";
+import apiV1Dev from "./v1/dev";
+import apiV1Lotes from "./v1/lotes";
+import apiV1Permissoes from "./v1/permissoes";
+import apiV1Produtos from "./v1/produtos";
+import apiV1Transacoes from "./v1/transacoes";
+import apiV1UnidadesMedida from "./v1/unidadesMedida";
+import apiV1Usuarios from "./v1/usuarios";
 
 const apiV1Router = Router();
 
@@ -34,6 +36,9 @@ apiV1Router.use("/transacoes", apiV1Transacoes);
 // {host}/papi/v1/produtos
 apiV1Router.use("/produtos", apiV1Produtos);
 
+// {host}/papi/v1/alertas
+apiV1Router.use("/alertas", apiV1Alertas);
+
 // {host}/api/v1/admin
 // TODO: Verificar se usuário tem permissões de alterar permissões
 apiV1Router.use(
@@ -48,5 +53,7 @@ apiV1Router.use(
   mdwPermissoes(Permissoes.Administrador, Permissoes.Desenvolvedor),
   apiV1Admin,
 );
+
+apiV1Router.use("/dev", mdwPermissoes(Permissoes.Desenvolvedor), apiV1Dev);
 
 export default apiV1Router;

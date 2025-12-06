@@ -1,4 +1,4 @@
-import type { UserSessionInfo } from '../../../backend'
+import type { GetSessaoDto } from '../../../backend'
 import { fetchW, HttpMethods } from './fetchWrapper'
 
 const endpoint_path = `/auth`
@@ -6,7 +6,7 @@ const endpoint_path = `/auth`
 // TODO: Adicionar tipagem de retorno
 export class ApiAutenticacao {
   login(login: string, senha: string) {
-    return fetchW<UserSessionInfo>(`${endpoint_path}/login`, {
+    return fetchW<GetSessaoDto>(`${endpoint_path}/login`, {
       method: HttpMethods.Post,
       body: {
         login,
@@ -16,7 +16,7 @@ export class ApiAutenticacao {
   }
 
   sessao() {
-    return fetchW<UserSessionInfo>(`${endpoint_path}/sessao`, {
+    return fetchW<GetSessaoDto>(`${endpoint_path}/sessao`, {
       method: HttpMethods.Get,
       muteNotifications: true,
     })

@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { ApiPerfil } from '@/api/perfil'
+import { PasswordZ } from '@/services/objects'
+import { useNotificationStore } from '@/store/config/toast'
 import { ref } from 'vue'
+import { ZodError } from 'zod/v4'
 import ButtonComponent from '../ButtonComponent.vue'
 import CardComponent from '../Card/CardComponent.vue'
 import CardTitleBar from '../Card/CardTitleBar.vue'
 import LabeledInput from '../LabeledInput.vue'
-import { ApiPerfil } from '@/api/perfil'
-import { PasswordZ } from '@/services/objects'
-import { useNotificationStore } from '@/store/config/toast'
-import { ZodError } from 'zod'
 
 const visivel = defineModel()
 
@@ -49,26 +49,26 @@ async function alterarSenha() {
 
 <template>
   <div
-    class="fixed flex size-full top-0 left-0 right-0 bottom-0 backdrop-blur-lg z-10 justify-center items-center align-middle"
+    class="fixed top-0 right-0 bottom-0 left-0 z-10 flex size-full items-center justify-center align-middle backdrop-blur-lg"
   >
-    <CardComponent class="w-full max-w-sm max-w-auto m-auto border">
+    <CardComponent class="max-w-auto m-auto w-full max-w-sm border">
       <CardTitleBar title="Alteração de senha" />
       <LabeledInput
-        class="floating-label justify-self-center w-full"
+        class="floating-label w-full justify-self-center"
         html-type="password"
         html-place-holder="Senha (Antiga)"
         label-text="Senha"
         v-model="senhas.anterior"
       />
       <LabeledInput
-        class="floating-label justify-self-center w-full"
+        class="floating-label w-full justify-self-center"
         html-type="password"
         html-place-holder="Nova Senha"
         label-text="Nova Senha"
         v-model="senhas.nova"
       />
       <LabeledInput
-        class="floating-label justify-self-center w-full mb-2"
+        class="floating-label mb-2 w-full justify-self-center"
         html-type="password"
         html-place-holder="Nova Senha (Confirmação)"
         label-text="Nova Senha (Confirmação)"

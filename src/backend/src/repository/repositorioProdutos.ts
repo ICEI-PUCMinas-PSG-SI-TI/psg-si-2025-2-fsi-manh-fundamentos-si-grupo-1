@@ -1,205 +1,173 @@
 import "dotenv/config";
 import {
+  SQL,
   and,
   asc,
   count,
   eq,
   getTableColumns,
   gte,
+  isNotNull,
   like,
   lte,
   or,
   sql,
-  SQL,
-  type SQLWrapper,
 } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
+import { tabelaCategorias } from "../db/schema/categorias";
+import { tabelaLotes } from "../db/schema/lotes";
 import {
-  QueryBuilder,
-  type SQLiteSelectQueryBuilder,
-} from "drizzle-orm/sqlite-core";
-import {
-  tabelaProdutos,
   type InsertProdutosSchema,
   type SelectProdutosSchema,
   type UpdateProdutosSchema,
+  tabelaProdutos,
 } from "../db/schema/produtos";
-import { tabelaLotes } from "../db/schema/lotes";
+import type { Count, RefRegistro } from "./common";
+import {
+  RepositorioBase,
+  type SQLiteTransactionCustom,
+} from "./repositorioBase";
 
-// TODO(!scope): Prevent calling where functions more than 1 time
-class RepositorioProdutosConsulta<T extends SQLiteSelectQueryBuilder> {
-  _query: T;
-  _whereAnd: SQLWrapper[];
-  _whereOr: SQL[];
+export type RepoConsultaParamsProduto = {
+  pagina?: number;
+  paginaTamanho?: number;
+  comId?: string;
+  comPrecoCustoMaiorIgualQue?: number;
+  comPrecoCustoMenorIgualQue?: number;
+  comPrecoVendaMaiorIgualQue?: number;
+  comPrecoVendaMenorIgualQue?: number;
+  comPrecoPromocaoMaiorIgualQue?: number;
+  comPrecoPromocaoMenorIgualQue?: number;
+  comPesoMaiorIgualQue?: number;
+  comPesoMenorIgualQue?: number;
+  comCategoriaId?: string;
+  comTexto?: string;
+};
 
-  constructor(queryBase: T) {
-    this._query = queryBase;
-    this._whereAnd = [];
-    this._whereOr = [];
-  }
+const comId = (id: string): SQL => eq(tabelaProdutos.id, id);
+const comPrecoCustoMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.precoCusto, valor);
+const comPrecoCustoMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.precoCusto, valor);
+const comPrecoVendaMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.precoVenda, valor);
+const comPrecoVendaMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.precoVenda, valor);
+const comPrecoPromocaoMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.precoPromocao, valor);
+const comPrecoPromocaoMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.precoPromocao, valor);
+const comPesoMaiorIgualQue = (valor: number): SQL =>
+  gte(tabelaProdutos.peso, valor);
+const comPesoMenorIgualQue = (valor: number): SQL =>
+  lte(tabelaProdutos.peso, valor);
+const comCategoriaId = (categoriaId: string): SQL =>
+  eq(tabelaProdutos.categoriaId, categoriaId);
+const comTexto = (texto: string): SQL => {
+  const _texto = `%${texto}%`;
+  return or(
+    like(tabelaProdutos.nome, _texto),
+    like(tabelaProdutos.codigo, _texto),
+    like(tabelaProdutos.sku, _texto),
+    like(tabelaProdutos.codigoBarra, _texto),
+    like(tabelaProdutos.descricao, _texto),
+    like(tabelaProdutos.marca, _texto),
+    like(tabelaProdutos.fornecedor, _texto),
+    // like(tabelaProdutos.localizacao, _texto),
+    // like(tabelaProdutos.dimensoes, _texto),
+  )!;
+};
 
-  comPaginacao(page: number = 1, pageSize: number = 10) {
-    this._query = this._query.limit(pageSize).offset((page - 1) * pageSize);
-    return this;
-  }
+const comQuantidadeMaiorIgualQue = (valor: number): SQL =>
+  gte(sql`quantidade_total`, valor);
+const comQuantidadeMenorIgualQue = (valor: number): SQL =>
+  lte(sql`quantidade_total`, valor);
 
-  comId(id: string) {
-    this._whereAnd.push(eq(tabelaProdutos.id, id));
-    return this;
-  }
+export type RepoConsultaParamsProdutoQuantidade = RepoConsultaParamsProduto & {
+  comQuantidadeMenorIgualQue?: number;
+  comQuantidadeMaiorIgualQue?: number;
+};
 
-  comPrecoCustoMaiorIgualQue(valor: number) {
-    this._whereAnd.push(gte(tabelaProdutos.precoCusto, valor));
-    return this;
-  }
+export type SelectConsultaProdutosSchema = SelectProdutosSchema & {
+  quantidade: number;
+  categoria: string | null;
+};
 
-  comPrecoCustoMenorIgualQue(valor: number) {
-    this._whereAnd.push(lte(tabelaProdutos.precoCusto, valor));
-    return this;
-  }
-
-  comPrecoVendaMaiorIgualQue(valor: number) {
-    this._whereAnd.push(gte(tabelaProdutos.precoVenda, valor));
-    return this;
-  }
-
-  comPrecoVendaMenorIgualQue(valor: number) {
-    this._whereAnd.push(lte(tabelaProdutos.precoVenda, valor));
-    return this;
-  }
-
-  comPrecoPromocaoMaiorIgualQue(valor: number) {
-    this._whereAnd.push(gte(tabelaProdutos.precoPromocao, valor));
-    return this;
-  }
-
-  comPrecoPromocaoMenorIgualQue(valor: number) {
-    this._whereAnd.push(lte(tabelaProdutos.precoPromocao, valor));
-    return this;
-  }
-
-  comPesoMaiorIgualQue(valor: number) {
-    this._whereAnd.push(gte(tabelaProdutos.peso, valor));
-    return this;
-  }
-
-  comPesoMenorIgualQue(valor: number) {
-    this._whereAnd.push(lte(tabelaProdutos.peso, valor));
-    return this;
-  }
-
-  comCategoria(categoria: string) {
-    this._whereAnd.push(eq(tabelaProdutos.categoria, categoria));
-    return this;
-  }
-
-  comTexto(texto: string) {
-    const _texto = `%${texto}%`;
-    this._whereOr.push(
-      like(tabelaProdutos.nome, _texto),
-      like(tabelaProdutos.sku, _texto),
-      like(tabelaProdutos.codigoBarra, _texto),
-      like(tabelaProdutos.descricao, _texto),
-      // like(tabelaProdutos.categoria, _texto),
-      like(tabelaProdutos.marca, _texto),
-      like(tabelaProdutos.fornecedor, _texto),
-      // like(tabelaProdutos.dimensoes, _texto),
-      // like(tabelaProdutos.localizacao, _texto),
-    );
-    return this;
-  }
-
-  executarConsulta(): Promise<SelectProdutosSchema[]> {
-    this._query.where(and(...this._whereAnd, or(...this._whereOr)));
-    return baseDados.transaction((tx) => {
-      return tx.all(this._query.getSQL());
-    });
-  }
-}
-
-class RepositorioProdutosLotesConsulta<
-  T extends SQLiteSelectQueryBuilder,
-> extends RepositorioProdutosConsulta<T> {
-  _having: SQL[];
-
-  constructor(queryBase: T) {
-    super(queryBase);
-    this._having = [];
-  }
-
-  comQuantidadeMaiorIgualQue(valor: number) {
-    this._having.push(gte(sql`quantidade_total`, valor));
-    return this;
-  }
-
-  comQuantidadeMenorIgualQue(valor: number) {
-    this._having.push(lte(sql`quantidade_total`, valor));
-    return this;
-  }
-
-  override executarConsulta(): Promise<SelectProdutosSchema[]> {
-    this._query.where(and(...this._whereAnd, or(...this._whereOr)));
-    this._query.having(and(...this._having));
-    return baseDados.transaction((tx) => {
-      return tx.all(this._query.getSQL());
-    });
-  }
-}
-
-export class RepositorioProdutos {
-  inserir(produto: InsertProdutosSchema) {
-    return baseDados.transaction((tx) => {
-      return tx.insert(tabelaProdutos).values(produto).returning({
-        id: tabelaProdutos.id,
-      });
-    });
-  }
-
-  selecionarPorId(id: string): Promise<SelectProdutosSchema[]> {
-    return baseDados.transaction((tx) => {
-      return tx.select().from(tabelaProdutos).where(eq(tabelaProdutos.id, id));
-    });
-  }
-
-  selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
-  ): Promise<SelectProdutosSchema[]> {
-    return baseDados.transaction((tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return tx
-          .select()
-          .from(tabelaProdutos)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return tx.select().from(tabelaProdutos);
-      }
-    });
-  }
-
-  selecionarIdTodos(): Promise<{ id: string }[]> {
-    return baseDados.transaction((tx) => {
+class RepositorioProdutos extends RepositorioBase {
+  inserir(...produto: InsertProdutosSchema[]): Promise<RefRegistro[]> {
+    return bancoDados.transaction((tx) => {
       return tx
-        .select({
+        .insert(tabelaProdutos)
+        .values(produto)
+        .returning({
           id: tabelaProdutos.id,
         })
-        .from(tabelaProdutos);
+        .execute();
     });
   }
 
-  selecionarQuery() {
-    const queryBase = new QueryBuilder()
+  selecionarPorId(id: string): Promise<SelectProdutosSchema | undefined> {
+    return bancoDados
       .select()
       .from(tabelaProdutos)
-      .$dynamic();
-    return new RepositorioProdutosConsulta(queryBase);
+      .where(eq(tabelaProdutos.id, id))
+      .get();
   }
 
-  selecionarQueryComLotes() {
-    const queryBase = new QueryBuilder()
+  selecionarTodos(): Promise<SelectProdutosSchema[]> {
+    return bancoDados.select().from(tabelaProdutos).execute();
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
+  ): Promise<SelectProdutosSchema[]> {
+    return bancoDados
+      .select()
+      .from(tabelaProdutos)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
+
+  selecionarIdsTodos(): Promise<{ id: string }[]> {
+    return bancoDados
       .select({
-        ...getTableColumns(tabelaProdutos),
+        id: tabelaProdutos.id,
+      })
+      .from(tabelaProdutos)
+      .execute();
+  }
+
+  selecionarPorCategoriaId(id: string): Promise<Count | undefined> {
+    return bancoDados
+      .select({ count: count() })
+      .from(tabelaProdutos)
+      .where(eq(tabelaProdutos.categoriaId, id))
+      .get();
+  }
+
+  selecionarPorUnidadeMedida(id: string): Promise<Count | undefined> {
+    return bancoDados
+      .select({ count: count() })
+      .from(tabelaProdutos)
+      .where(eq(tabelaProdutos.unidadeMedidaId, id))
+      .get();
+  }
+
+  selecionarQuantidadesAlertas(): Promise<
+    {
+      id: string;
+      quantidadeMinima: number | null;
+      quantidadeMaxima: number | null;
+      quantidade: number;
+    }[]
+  > {
+    return bancoDados
+      .select({
+        id: tabelaProdutos.id,
+        quantidadeMinima: tabelaProdutos.quantidadeMinima,
+        quantidadeMaxima: tabelaProdutos.quantidadeMaxima,
         quantidade: sql<number>`sum(${tabelaLotes.quantidade})`.as(
           "quantidade_total",
         ),
@@ -207,32 +175,179 @@ export class RepositorioProdutos {
       .from(tabelaProdutos)
       .leftJoin(tabelaLotes, eq(tabelaProdutos.id, tabelaLotes.produtoId))
       .groupBy(tabelaProdutos.id)
-      .orderBy(asc(tabelaProdutos.id))
-      .$dynamic();
-    return new RepositorioProdutosLotesConsulta(queryBase);
+      .having(
+        or(
+          and(
+            isNotNull(tabelaProdutos.quantidadeMinima),
+            gte(tabelaProdutos.quantidadeMinima, sql`quantidade_total`),
+          ),
+          and(
+            isNotNull(tabelaProdutos.quantidadeMaxima),
+            lte(tabelaProdutos.quantidadeMaxima, sql`quantidade_total`),
+          ),
+        ),
+      )
+      .execute();
   }
 
-  atualizarPorId(id: string, produto: UpdateProdutosSchema): Promise<number> {
-    return baseDados.transaction(async (tx) => {
+  selecionarConsulta(
+    opts?: RepoConsultaParamsProduto,
+  ): Promise<SelectProdutosSchema[]> {
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
+      .select()
+      .from(tabelaProdutos)
+      .where(
+        and(
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comPrecoCustoMaiorIgualQue
+            ? comPrecoCustoMaiorIgualQue(opts.comPrecoCustoMaiorIgualQue)
+            : undefined,
+          opts?.comPrecoCustoMenorIgualQue
+            ? comPrecoCustoMenorIgualQue(opts.comPrecoCustoMenorIgualQue)
+            : undefined,
+          opts?.comPrecoVendaMaiorIgualQue
+            ? comPrecoVendaMaiorIgualQue(opts.comPrecoVendaMaiorIgualQue)
+            : undefined,
+          opts?.comPrecoVendaMenorIgualQue
+            ? comPrecoVendaMenorIgualQue(opts.comPrecoVendaMenorIgualQue)
+            : undefined,
+          opts?.comPrecoPromocaoMaiorIgualQue
+            ? comPrecoPromocaoMaiorIgualQue(opts.comPrecoPromocaoMaiorIgualQue)
+            : undefined,
+          opts?.comPrecoPromocaoMenorIgualQue
+            ? comPrecoPromocaoMenorIgualQue(opts.comPrecoPromocaoMenorIgualQue)
+            : undefined,
+          opts?.comPesoMaiorIgualQue
+            ? comPesoMaiorIgualQue(opts.comPesoMaiorIgualQue)
+            : undefined,
+          opts?.comPesoMenorIgualQue
+            ? comPesoMenorIgualQue(opts.comPesoMenorIgualQue)
+            : undefined,
+          opts?.comCategoriaId
+            ? comCategoriaId(opts.comCategoriaId)
+            : undefined,
+          opts?.comTexto ? comTexto(opts.comTexto) : undefined,
+        ),
+      )
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
+
+  selecionarConsultaCompleta(
+    opts?: RepoConsultaParamsProdutoQuantidade,
+  ): Promise<SelectConsultaProdutosSchema[]> {
+    const pagina = opts?.pagina || 1;
+    const paginaTamanho = opts?.paginaTamanho || 100;
+
+    return bancoDados
+      .select({
+        ...getTableColumns(tabelaProdutos),
+        quantidade: sql<number>`sum(${tabelaLotes.quantidade})`.as(
+          "quantidade_total",
+        ),
+        categoria: tabelaCategorias.nome,
+      })
+      .from(tabelaProdutos)
+      .leftJoin(tabelaLotes, eq(tabelaProdutos.id, tabelaLotes.produtoId))
+      .leftJoin(
+        tabelaCategorias,
+        eq(tabelaProdutos.categoriaId, tabelaCategorias.id),
+      )
+      .groupBy(tabelaProdutos.id)
+      .orderBy(asc(tabelaProdutos.id))
+      .having(
+        and(
+          opts?.comQuantidadeMaiorIgualQue
+            ? comQuantidadeMaiorIgualQue(opts.comQuantidadeMaiorIgualQue)
+            : undefined,
+          opts?.comQuantidadeMenorIgualQue
+            ? comQuantidadeMenorIgualQue(opts.comQuantidadeMenorIgualQue)
+            : undefined,
+        ),
+      )
+      .where(
+        and(
+          opts?.comId ? comId(opts.comId) : undefined,
+          opts?.comPrecoCustoMaiorIgualQue
+            ? comPrecoCustoMaiorIgualQue(opts.comPrecoCustoMaiorIgualQue)
+            : undefined,
+          opts?.comPrecoCustoMenorIgualQue
+            ? comPrecoCustoMenorIgualQue(opts.comPrecoCustoMenorIgualQue)
+            : undefined,
+          opts?.comPrecoVendaMaiorIgualQue
+            ? comPrecoVendaMaiorIgualQue(opts.comPrecoVendaMaiorIgualQue)
+            : undefined,
+          opts?.comPrecoVendaMenorIgualQue
+            ? comPrecoVendaMenorIgualQue(opts.comPrecoVendaMenorIgualQue)
+            : undefined,
+          opts?.comPrecoPromocaoMaiorIgualQue
+            ? comPrecoPromocaoMaiorIgualQue(opts.comPrecoPromocaoMaiorIgualQue)
+            : undefined,
+          opts?.comPrecoPromocaoMenorIgualQue
+            ? comPrecoPromocaoMenorIgualQue(opts.comPrecoPromocaoMenorIgualQue)
+            : undefined,
+          opts?.comPesoMaiorIgualQue
+            ? comPesoMaiorIgualQue(opts.comPesoMaiorIgualQue)
+            : undefined,
+          opts?.comPesoMenorIgualQue
+            ? comPesoMenorIgualQue(opts.comPesoMenorIgualQue)
+            : undefined,
+          opts?.comCategoriaId
+            ? comCategoriaId(opts.comCategoriaId)
+            : undefined,
+          opts?.comTexto ? comTexto(opts.comTexto) : undefined,
+        ),
+      )
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
+  }
+
+  atualizarPorId(id: string, valores: UpdateProdutosSchema): Promise<number> {
+    valores.updatedAt = new Date();
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaProdutos)
-        .set(produto)
-        .where(eq(tabelaProdutos.id, id));
+        .set(valores)
+        .where(eq(tabelaProdutos.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
+  }
+
+  async atualizarPorIdTransacao(
+    tx: SQLiteTransactionCustom,
+    id: string,
+    valores: UpdateProdutosSchema,
+  ): Promise<unknown> {
+    valores.updatedAt = new Date();
+    return await tx
+      .update(tabelaProdutos)
+      .set(valores)
+      .where(eq(tabelaProdutos.id, id))
+      .execute();
   }
 
   // or .returning()
-  excluirPorId(id: string) {
-    return baseDados.transaction(async (tx) => {
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaProdutos)
-        .where(eq(tabelaProdutos.id, id));
+        .where(eq(tabelaProdutos.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
 
-  contar() {
-    return baseDados.select({ count: count() }).from(tabelaProdutos);
+  contar(): Promise<Count | undefined> {
+    return bancoDados.select({ count: count() }).from(tabelaProdutos).get();
   }
 }
+
+const repositorioProdutos = new RepositorioProdutos();
+
+export default repositorioProdutos;

@@ -1,11 +1,11 @@
-import type { ParamsConsultaTransacoes } from '../../../backend'
+import type { ConsultaMovimentacoesParams, GetConsultaMovimentacaoDto } from '../../../backend'
 import { fetchW } from './fetchWrapper'
 
 const endpoint_path = `/api/v1/transacoes`
 
 export class ApiMovimentacoes {
-  obterTodos(params?: ParamsConsultaTransacoes) {
-    return fetchW(endpoint_path, {
+  obterTodos(params?: ConsultaMovimentacoesParams) {
+    return fetchW<GetConsultaMovimentacaoDto[]>(endpoint_path, {
       params: params,
     })
   }

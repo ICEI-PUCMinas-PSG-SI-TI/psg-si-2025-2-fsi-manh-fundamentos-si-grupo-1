@@ -1,16 +1,9 @@
-import { sqliteTable, text, int, primaryKey } from "drizzle-orm/sqlite-core";
-import { tabelaUsuarios } from "./usuarios";
-import { sql, type InferSelectModel } from "drizzle-orm";
-import z from "zod";
+import { type InferSelectModel } from "drizzle-orm";
+import { int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
-
-// TODO: Tornar campos dinamicos
-export enum Permissoes {
-  Desenvolvedor = "DEV",
-  Administrador = "ADM",
-  Operacional = "OP",
-  Consulta = "CONSULTA",
-}
+import * as z4 from "zod/v4";
+import { Permissoes } from "../enums/permissoes";
+import { tabelaUsuarios } from "./usuarios";
 
 export const tabelaPermissoes = sqliteTable(
   "permissoes",
@@ -28,10 +21,11 @@ export const tabelaPermissoes = sqliteTable(
     }).notNull(),
     createdAt: int("created_at", { mode: "timestamp_ms" })
       .notNull()
-      .default(sql`(unixepoch()*1000)`),
+      .$defaultFn(() => new Date()),
     updatedAt: int("updated_at", { mode: "timestamp_ms" })
       .notNull()
-      .default(sql`(unixepoch()*1000)`),
+      .$defaultFn(() => new Date())
+      .$onUpdateFn(() => new Date()),
   },
   (table) => ({
     pk: primaryKey({
@@ -41,7 +35,7 @@ export const tabelaPermissoes = sqliteTable(
 );
 
 export const InsertPermissoesSchemaZ = createInsertSchema(tabelaPermissoes, {
-  usuarioId: z.uuid(),
+  usuarioId: z4.uuid(),
 })
   .omit({
     createdAt: true,
@@ -50,4 +44,4 @@ export const InsertPermissoesSchemaZ = createInsertSchema(tabelaPermissoes, {
   .strict();
 
 export type SelectPermissoesSchema = InferSelectModel<typeof tabelaPermissoes>;
-export type InsertPermissoesSchema = z.infer<typeof InsertPermissoesSchemaZ>;
+export type InsertPermissoesSchema = z4.infer<typeof InsertPermissoesSchemaZ>;

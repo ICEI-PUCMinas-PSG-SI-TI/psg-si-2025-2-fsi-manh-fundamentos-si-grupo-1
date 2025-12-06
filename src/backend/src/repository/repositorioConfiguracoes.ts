@@ -1,69 +1,72 @@
 import { eq } from "drizzle-orm";
-import baseDados from "../db";
+import bancoDados from "../db";
 import {
-  tabelaConfiguracoes,
   type InsertConfiguracaoSchema,
   type SelectConfiguracaoSchema,
   type UpdateConfiguracaoSchema,
+  tabelaConfiguracoes,
 } from "../db/schema/configuracoes";
 
-export class RepositorioConfiguracoes {
+class RepositorioConfiguracoes {
   inserir(
     configuracoes: InsertConfiguracaoSchema,
   ): Promise<SelectConfiguracaoSchema[]> {
-    return baseDados.transaction((tx) => {
+    return bancoDados.transaction((tx) => {
       return tx.insert(tabelaConfiguracoes).values(configuracoes).returning();
     });
   }
 
-  selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | null> {
-    return baseDados.transaction(async (tx) => {
-      const res = await tx
-        .select()
-        .from(tabelaConfiguracoes)
-        .where(eq(tabelaConfiguracoes.id, id));
-      if (res.length === 1) return res[0]!;
-      return null;
-    });
+  selecionarPorId(id: string): Promise<SelectConfiguracaoSchema | undefined> {
+    return bancoDados
+      .select()
+      .from(tabelaConfiguracoes)
+      .where(eq(tabelaConfiguracoes.id, id))
+      .get();
   }
 
-  selecionarTodos(
-    page: number = 1,
-    pageSize: number = 10,
+  selecionarTodos(): Promise<SelectConfiguracaoSchema[]> {
+    return bancoDados.select().from(tabelaConfiguracoes).execute();
+  }
+
+  selecionarPagina(
+    pagina: number = 1,
+    paginaTamanho: number = 10,
   ): Promise<SelectConfiguracaoSchema[]> {
-    return baseDados.transaction((tx) => {
-      if (page >= 1 && pageSize >= 1) {
-        return tx
-          .select()
-          .from(tabelaConfiguracoes)
-          .limit(pageSize)
-          .offset((page - 1) * pageSize);
-      } else {
-        return tx.select().from(tabelaConfiguracoes);
-      }
-    });
+    return bancoDados
+      .select()
+      .from(tabelaConfiguracoes)
+      .limit(paginaTamanho)
+      .offset((pagina - 1) * paginaTamanho)
+      .execute();
   }
 
   atualizarPorId(
     id: string,
-    configuracoes: UpdateConfiguracaoSchema,
+    valores: UpdateConfiguracaoSchema,
   ): Promise<number> {
-    return baseDados.transaction(async (tx) => {
+    valores.updatedAt = new Date();
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .update(tabelaConfiguracoes)
-        .set(configuracoes)
-        .where(eq(tabelaConfiguracoes.id, id));
+        .set(valores)
+        .where(eq(tabelaConfiguracoes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
 
   // or .returning()
-  excluirPorId(id: string) {
-    return baseDados.transaction(async (tx) => {
+  excluirPorId(id: string): Promise<number> {
+    return bancoDados.transaction(async (tx) => {
       const resultSet = await tx
         .delete(tabelaConfiguracoes)
-        .where(eq(tabelaConfiguracoes.id, id));
+        .where(eq(tabelaConfiguracoes.id, id))
+        .execute();
       return resultSet.rowsAffected;
     });
   }
 }
+
+const repositorioConfiguracoes = new RepositorioConfiguracoes();
+
+export default repositorioConfiguracoes;
