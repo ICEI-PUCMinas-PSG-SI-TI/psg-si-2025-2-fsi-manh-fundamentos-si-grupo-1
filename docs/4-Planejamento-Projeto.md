@@ -17,31 +17,11 @@ O projeto será realizado em **4 sprints**, cada uma com foco específico:
 
 ---
 
-## Organização da Equipe por Sprint
-
-Durante o projeto, um integrante será escolhido como **Líder do Grupo** em cada sprint. Os demais membros poderão assumir papéis como:
-
-- **Front-end**: responsável pelas interfaces com o usuário (HTML, CSS, JS)
-- **Back-end**: responsável pela lógica de programação e banco de dados
-- **Apoio Geral**: cuida da documentação, testes e suporte à equipe
-
-> ✏️ _Preencha com os papéis escolhidos pelo seu grupo em cada sprint:_
-
-### Exemplo – da Definição dos Papéis na Sprint 1, Sprint 2, Sprint 3 e Sprint 4
-
-- **Líder do Grupo**: Aluna x  
-- **Front-end**: Aluno y  
-- **Back-end**: Aluno K  
-- **Apoio Geral**: Aluna Z  
-
-> ✏️ _Se necessário podem alterar os papéis em CADA Sprint, mas você deverá informar repetindo o quadro anterior e separar por Sprint_
----
-
 ## 4.3 Planejamento de Sprints – Projeto de Extensão Universitária
 
 ## 4.3.1 Quadro de Tarefas (Kanban do GitHub)
 
-A divisão de tarefas e o acompanhamento da execução serão feitos utilizando o **Kanban do GitHub**, já disponível na aba **Projects** do repositório (template-base).  
+A divisão de tarefas e o acompanhamento da execução serão feitos utilizando o **Kanban do GitHub**, disponível na aba **Projects** do repositório.  
 O quadro está organizado em colunas que representam as etapas do fluxo de trabalho:
 
 - **A Fazer**: tarefas pendentes de início.  
@@ -50,44 +30,9 @@ O quadro está organizado em colunas que representam as etapas do fluxo de traba
 - **Teste**: tarefas em validação.  
 - **Feito**: tarefas concluídas.
 
-> **Importante:** A coluna _Implantar_ não será utilizada neste trabalho, pois não faz parte do escopo do Projeto Extensão, mas caso o aluno resolva implantar na empresa/ONG para o qual desenvolveu, gentileza informar no quadro Kanban.
-
-**PARA CADA SPRINT:**
-
-1. Registre todas as tarefas na coluna **A Fazer**.  
-2. Movimente os cartões conforme o andamento do trabalho.  
-3. Mantenha atualizado o **responsável**, a **descrição** e o **prazo** em cada cartão.  
-4. Ao final da sprint, arquive o projeto/board para manter o histórico.
-
-**_📌Exemplo de uso no GitHub Kanban:📌_**  
-
-- **A Fazer**: Criar página de login (Responsável: AlunoY, Prazo: 10/09).  
-- **Desenvolver**: Implementar CSS unificado (Responsável: AlunaZ, Prazo: 15/09).  
-- **Teste**: Validar script de login (Responsável: AlunoK, Prazo: 20/10).  
-
----
-
-## 4.3.1.1 Modelo de Sprint: 4 Kanbans no template-base (Kanban do GitHub)
-
-Recomenda-se criar **um board (Kanban) para cada sprint** no repositório template, assim cada aluno recebe os 4 quadros prontos ao clonar o repositório via GitHub Classroom.
-
-### Nomes sugeridos dos boards
-
-- `Sprint 1 — Kanban`  
-- `Sprint 2 — Kanban`  
-- `Sprint 3 — Kanban`  
-- `Sprint 4 — Kanban`
-
-### Estrutura de cada board
-
-- Colunas: **A Fazer** | **Desenvolver** | **Fila para Teste** | **Teste** | **Feito**  
-- Cada cartão deve conter: título curto, descrição com subtarefas (se houver), responsável, label (ex.: front, back, doc, teste), data de início e prazo.
-
 ---
 
 ## 4.3.2 Quadro de Tarefas (Kanban dentro deste documento)
-
-_O grupo poderá usar esta parte para informar a professora quais tarefas estão sendo desenvolvidas, caso não tenham gostado de utilizar o Kanban do GitHub._
 
 ### 📋 Legenda para o Status do Quadro de Tarefas
 
@@ -152,10 +97,3 @@ _O grupo poderá usar esta parte para informar a professora quais tarefas estão
 | AlunoK | Back-end Dev | Concluir rotinas de persistência e regras de negócio | 01/10 | 08/10 | ❌ | — |
 | AlunoY | Front-end Dev | Finalizar interface com feedback visual ao usuário | 02/10 | 10/10 | ❌ | — |
 | AlunaZ | QA/Testes | Testar sistema completo com dados reais | 06/10 | 10/10 | ❌ | — |
-
----
-
-## 🔗 Links Úteis
-
-- [11 Passos Essenciais para Implantar Scrum no seu Projeto](https://kanbanize.com/pt/blog/implantacao-scrum/)
-- [Scrum em 9 minutos (YouTube)](https://www.youtube.com/watch?v=9TycLR0TqFA)

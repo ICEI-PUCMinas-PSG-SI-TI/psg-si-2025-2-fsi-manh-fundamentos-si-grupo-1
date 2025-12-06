@@ -3,8 +3,6 @@
 <span style="color:red">Pré-requisitos:</span>
 [Implementação](5-Implementação.md)
 
-_Apresentem, aqui, a conclusão do trabalho, que deve conter uma síntese dos principais resultados obtidos com a melhoria dos processos, uma discussão das limitações da solução proposta e sugestões de novas linhas de estudo._
-
 O desenvolvimento do sistema de controle de estoque permitiu aplicar de forma prática os conhecimentos adquiridos ao longo do curso, resultando em uma solução funcional capaz de atender às necessidades reais da empresa parceira. A partir do levantamento inicial de requisitos, foi possível identificar problemas recorrentes, como o uso de planilhas manuais, inconsistências no estoque, falta de visibilidade das movimentações e ausência de alertas automáticos. Esses desafios orientaram a construção de uma plataforma completa e intuitiva, desenvolvida com base na metodologia ágil Scrum.
 
 Entre os principais resultados obtidos, destacam-se as funcionalidades que automatizam e organizam o processo de gestão de estoque. O sistema possibilita registrar movimentações de forma prática, criar produtos e lotes, acompanhar entradas, saídas, transferências e perdas, além de oferecer filtros eficientes por data, motivo e nome do produto. A página de alertas foi outro ponto de destaque, pois permite identificar rapidamente lotes próximos da validade, estoques abaixo ou acima dos limites definidos e outras situações críticas. Esses recursos contribuem diretamente para a redução de erros, maior confiabilidade das informações e agilidade na tomada de decisões.

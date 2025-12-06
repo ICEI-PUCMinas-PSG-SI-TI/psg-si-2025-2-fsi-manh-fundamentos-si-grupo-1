@@ -14,16 +14,18 @@
 
 ## 5.2 Acompanhamento das Interfaces do Sistema
 
-> Esta seção deve funcionar como **registro contínuo do progresso** do projeto.  
-> Inclua sempre **descrição**, **status**, **data de atualização** e **imagem real** da tela.
-
 ### 📋 Quadro de Progresso das Telas
 
 | Requisito/Tela                | Status | Última atualização | Próxima entrega |
 |--------------------------------|--------|--------------------|-----------------|
-| Tela principal                 | 🟢 Concluída     | 10/08/2025         | -               |
-| Tela de login                  | 🟡 Em andamento | 09/08/2025         | 15/08/2025      |
-| Tela de cadastro de produto    | 🔴 Não iniciada | -                  | 20/08/2025      |
+| Tela de Login                 | 🟢 Concluída    | N/A         | N/A      |
+| Tela de Operações                 | 🟢 Concluída    | N/A         | N/A      |
+| Tela de Histórico de Movimentações | 🟢 Concluída    | N/A         | N/A      |
+| Tela de Catálogo de Produtos                 | 🟢 Concluída    | N/A         | N/A      |
+| Tela de Informações do Produto                 | 🟢 Concluída    | N/A         | N/A      |
+| Tela de Alertas                 | 🟢 Concluída    | N/A         | N/A      |
+| Tela de Cadastro de Usuário                 | 🟢 Concluída    | N/A         | N/A      |
+| Tela de Configurações do Sistema                 | 🟢 Concluída    | N/A         | N/A      |
 
 Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 
@@ -31,42 +33,39 @@ Legenda: 🟢 Concluído | 🟡 Em andamento | 🔴 Não iniciado
 
 ### 5.3 Registro Visual das Telas
 
-#### 5.3.1 Tela principal do sistema
+#### 5.3.1 Tela de login
 
-**Descrição:** Apresenta visão geral das funcionalidades e acessos principais.  
-![`Tela principal do sistema`](images/operacoes_trem.jpeg.jpg)
+**Descrição:** Página de login
+![alt text](images/paginas/login.png)
 
+#### 5.3.2 Tela de Operações
 
----
+**Descrição:** Página de operações diárias para registro de movimentações.
+![alt text](images/paginas/operacoes.png)
 
-#### 5.3.2 Tela de login
+#### 5.3.3 Histórico de movimentações
 
-**Descrição:** Permite acesso de usuários registrados.  
-![`Tela de login`](images/login_trem.png)
+**Descrição:** Página com registro de movimentações.
+![alt text](images/paginas/movimentacoes.png)
 
+#### 5.3.4 Catálogo de produtos
 
----
+![alt text](images/paginas/catalogo.png)
 
-#### 5.3.3 Tela de cadastro de produto
+#### 5.3.5 Informações do Produto
 
-**Descrição:** Formulário para inserir novos produtos no estoque.  
-![`Tela de cadastro`](images/produtos_trem.png)
+**Descrição:** Página de cadastro/edição/visualização das informações do produto.
+![alt text](images/paginas/produto.png)
 
+#### 5.3.5 Alertas
 
----
+**Descrição:** Alertas de quantidade min. e max, validade.
+![alt text](images/paginas/alertas.png)
 
-## 5.4 Orientações de Atualização para os Alunos
+#### 5.3.5 Cadastro de usuários
 
-1. **Ao final de cada sprint**, atualizar o quadro de progresso com:
-   - Status da tela (🟢, 🟡 ou 🔴)
-   - Data da última modificação
-   - Próxima previsão de entrega
-2. Adicionar **imagens reais** das telas desenvolvidas no diretório `images/`.
-3. Descrever brevemente as funcionalidades implementadas ou mudanças feitas desde a última atualização.
+![alt text](images/paginas/cadastro-usuarios.png)
 
-📌 **Objetivo**: Esta seção deve permitir que o professor visualize rapidamente **o que já foi entregue, o que está em andamento e o que ainda falta desenvolver**, garantindo acompanhamento eficaz do projeto.
+#### 5.3.6 Configurações de usuário e sistema
 
-
-
-
-
+![alt text](images/paginas/configuracoes.png)
